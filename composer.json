@@ -1,6 +1,6 @@
 {
   "name": "thbighead/wordless-framework",
-  "description": "Wordless Framework",
+  "description": "Wordless Framework.",
   "license": "MIT",
   "autoload": {
     "psr-4": {
