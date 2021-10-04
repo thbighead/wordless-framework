@@ -23,6 +23,22 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
+    public static function commands(string $additional_path = ''): string
+    {
+        $relative_path = "Commands/$additional_path";
+
+        try {
+            return self::src($relative_path);
+        } catch (PathNotFoundException $exception) {
+            return self::root($relative_path);
+        }
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     public static function controllers(string $additional_path = ''): string
     {
         return self::root("Controllers/$additional_path");
