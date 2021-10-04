@@ -55,7 +55,6 @@ class WordlessInstall extends WordlessCommand
     public function __construct(string $name = null)
     {
         parent::__construct($name);
-        $this->wp_languages = explode(',', $this->getEnvVariableByKey('WP_LANGUAGES', ''));
     }
 
     protected function arguments(): array
@@ -88,6 +87,7 @@ class WordlessInstall extends WordlessCommand
         $this->resolveForceMode();
 
         $this->resolveDotEnv();
+        $this->loadWpLanguages();
 
         $this->downloadWpCore();
         $this->createWpConfigFromStub();
@@ -314,6 +314,16 @@ class WordlessInstall extends WordlessCommand
         return $this->fresh_new_env_content[$key] ?? Environment::get($key, $default);
     }
 
+    private function getWpLanguages(): array
+    {
+        return $this->wp_languages;
+    }
+
+    private function loadWpLanguages(): void
+    {
+        $this->wp_languages = explode(',', $this->getEnvVariableByKey('WP_LANGUAGES', ''));
+    }
+
     /**
      * @return string
      * @throws FailedToCopyDotEnvExampleIntoNewDotEnv
@@ -458,16 +468,16 @@ class WordlessInstall extends WordlessCommand
      */
     private function installWpLanguages()
     {
-        if (empty($this->wp_languages)) {
+        if (empty($wp_languages = $this->getWpLanguages())) {
             $this->output->writeln(
                 'Environment variable WP_LANGUAGES has no value. Skipping language install.'
             );
             return;
         }
 
-        $this->installWpCoreLanguage($this->wp_languages[0]);
+        $this->installWpCoreLanguage($wp_languages[0]);
 
-        foreach ($this->wp_languages as $language) {
+        foreach ($wp_languages as $language) {
             $this->installWpPluginsLanguage($language);
         }
     }
