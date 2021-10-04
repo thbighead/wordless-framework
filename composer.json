@@ -1,0 +1,35 @@
+{
+  "name": "thbighead/wordless-framework",
+  "description": "Wordless Framework",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Wordless\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Thales Nathan",
+      "email": "thcmatias@gmail.com"
+    }
+  ],
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": "^7.4",
+    "symfony/console": "^5.3",
+    "symfony/dotenv": "^5.3",
+    "symfony/http-client": "^5.3",
+    "symfony/http-foundation": "^5.3",
+    "wp-cli/wp-cli-bundle": "^2.5"
+  },
+  "require-dev": {
+    "psy/psysh": "^0.10.8",
+    "symfony/var-dumper": "^5.3"
+  }
+}
