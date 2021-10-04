@@ -69,7 +69,7 @@ class ProjectPath
      */
     public static function src(string $additional_path = ''): string
     {
-        return self::root("src/$additional_path");
+        return self::vendor("wordless-framework/src/$additional_path");
     }
 
     /**
@@ -79,7 +79,13 @@ class ProjectPath
      */
     public static function stubs(string $additional_path = ''): string
     {
-        return self::src("stubs/$additional_path");
+        $relative_path = "stubs/$additional_path";
+
+        try {
+            return self::root($relative_path);
+        } catch (PathNotFoundException $exception) {
+            return self::src($relative_path);
+        }
     }
 
     /**
