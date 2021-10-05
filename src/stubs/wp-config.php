@@ -38,7 +38,7 @@ InternalCache::load();
 
 (new Dotenv)->load(ProjectPath::root('.env'));
 
-// https://wordpress.org/support/article/editing-wp-config-php/#require-ssl-for-admin-and-logins
+// https://wordpress.org/support/article/editing-wp-config-php/#disable-plugin-and-theme-update-and-installation
 const DISALLOW_FILE_MODS = true;
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-wordpress-auto-updates
 const AUTOMATIC_UPDATER_DISABLED = true;
