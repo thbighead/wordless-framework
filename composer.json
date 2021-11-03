@@ -22,6 +22,7 @@
   "prefer-stable": true,
   "require": {
     "php": "^7.4",
+    "ext-json": "*",
     "symfony/console": "^5.3",
     "symfony/dotenv": "^5.3",
     "symfony/http-client": "^5.3",
