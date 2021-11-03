@@ -52,6 +52,7 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
             $include_files_script,
             $mu_plugins_directory_path
         );
+        $this->mountIncludeFilesScriptByMuPluginsJsonExtraRules($include_files_script);
 
         (new WpLoadMuPluginsStubMounter($wp_load_mu_plugins_destiny_path))->setReplaceContentDictionary([
             '// {include plugins script}' => $include_files_script,
@@ -104,7 +105,7 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
         return $this->mountPartialScript($relative_file_path);
     }
 
-    private function mountIncludeFilesScriptByMuPluginsJsonExtraRules()
+    private function mountIncludeFilesScriptByMuPluginsJsonExtraRules(string &$include_files_script)
     {
         foreach ($this->mu_plugins_extra_rules as $plugin_directory_name => $relative_php_scripts_path_to_load) {
             $this->concatPartialIncludeScript(
