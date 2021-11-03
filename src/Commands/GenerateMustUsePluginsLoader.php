@@ -152,10 +152,13 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
 
     /**
      * @return array
-     * @throws PathNotFoundException
      */
     private function readMuPluginsJson(): array
     {
-        return json_decode(file_get_contents(ProjectPath::root('mu-plugins.json')), true);
+        try {
+            return json_decode(file_get_contents(ProjectPath::root('mu-plugins.json')), true);
+        } catch (PathNotFoundException $exception) {
+            return [];
+        }
     }
 }
