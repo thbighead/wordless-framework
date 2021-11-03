@@ -95,8 +95,8 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
     private function mountAutomaticPartialScript(string $relative_file_path): ?string
     {
         $plugin_directory_name = Str::before(
-            self::SLASH,
-            Str::after(self::SLASH, $relative_file_path)
+            Str::after($relative_file_path, self::SLASH),
+            self::SLASH
         );
 
         if ($this->mu_plugins_extra_rules[$plugin_directory_name] ?? false) {
