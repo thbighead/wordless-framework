@@ -19,6 +19,7 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
     private const SLASH = '/';
     private const WP_LOAD_MU_PLUGINS_FILENAME = 'wp-load-mu-plugins.php';
 
+    private string $mu_plugins_directory_path;
     private array $mu_plugins_extra_rules;
 
     protected function arguments(): array
@@ -42,16 +43,15 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
     {
         $output->write('Generating MU Plugins autoloader...');
 
-        $mu_plugins_directory_path = ProjectPath::wpMustUsePlugins();
-        $wp_load_mu_plugins_destiny_path = Str::finishWith($mu_plugins_directory_path, DIRECTORY_SEPARATOR)
-            . self::WP_LOAD_MU_PLUGINS_FILENAME;
+        $this->mu_plugins_directory_path = ProjectPath::wpMustUsePlugins();
+        $wp_load_mu_plugins_destiny_path = Str::finishWith(
+                $this->mu_plugins_directory_path,
+                DIRECTORY_SEPARATOR
+            ) . self::WP_LOAD_MU_PLUGINS_FILENAME;
         $include_files_script = '';
         $this->mu_plugins_extra_rules = $this->readMuPluginsJson();
 
-        $this->mountIncludeFilesScriptByReadingMuPluginsDirectory(
-            $include_files_script,
-            $mu_plugins_directory_path
-        );
+        $this->mountIncludeFilesScriptByReadingMuPluginsDirectory($include_files_script);
         $this->mountIncludeFilesScriptByMuPluginsJsonExtraRules($include_files_script);
 
         (new WpLoadMuPluginsStubMounter($wp_load_mu_plugins_destiny_path))->setReplaceContentDictionary([
@@ -83,10 +83,10 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
             PHP_EOL . $include_once_file_partial_script;
     }
 
-    private function extractRelativeFilePath(string $filepath, string $mu_plugins_directory_path)
+    private function extractRelativeFilePath(string $filepath)
     {
         return str_replace('\\', self::SLASH, Str::startWith(
-            Str::after($filepath, $mu_plugins_directory_path),
+            Str::after($filepath, $this->mu_plugins_directory_path),
             DIRECTORY_SEPARATOR
         ));
     }
@@ -105,9 +105,34 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
         return $this->mountPartialScript($relative_file_path);
     }
 
+    /**
+     * @param string $include_files_script
+     * @throws PathNotFoundException
+     */
     private function mountIncludeFilesScriptByMuPluginsJsonExtraRules(string &$include_files_script)
     {
         foreach ($this->mu_plugins_extra_rules as $plugin_directory_name => $relative_php_scripts_path_to_load) {
+            if ($relative_php_scripts_path_to_load === '.') {
+                foreach (DirectoryFiles::recursiveRead(
+                    ProjectPath::wpMustUsePlugins($plugin_directory_name)
+                ) as $filepath_to_load) {
+                    if (!Str::endsWith($filepath_to_load, '.php')) {
+                        continue;
+                    }
+
+                    try {
+                        ProjectPath::wpMustUsePlugins(basename($filepath_to_load));
+                        continue;
+                    } catch (PathNotFoundException $exception) {
+                        $this->concatPartialIncludeScript(
+                            $include_files_script,
+                            $this->mountPartialScript($this->extractRelativeFilePath($filepath_to_load))
+                        );
+                    }
+                }
+                continue;
+            }
+
             $this->concatPartialIncludeScript(
                 $include_files_script,
                 $this->mountPartialScript(
@@ -119,14 +144,11 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
 
     /**
      * @param string $include_files_script
-     * @param string $mu_plugins_directory_path
      * @throws PathNotFoundException
      */
-    private function mountIncludeFilesScriptByReadingMuPluginsDirectory(
-        string &$include_files_script,
-        string $mu_plugins_directory_path)
+    private function mountIncludeFilesScriptByReadingMuPluginsDirectory(string &$include_files_script)
     {
-        foreach (DirectoryFiles::recursiveRead($mu_plugins_directory_path) as $filepath) {
+        foreach (DirectoryFiles::recursiveRead($this->mu_plugins_directory_path) as $filepath) {
             if (!Str::endsWith($filepath, '.php')) {
                 continue;
             }
@@ -135,7 +157,7 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
                 ProjectPath::wpMustUsePlugins(basename($filepath));
                 continue;
             } catch (PathNotFoundException $exception) {
-                $relative_file_path = $this->extractRelativeFilePath($filepath, $mu_plugins_directory_path);
+                $relative_file_path = $this->extractRelativeFilePath($filepath);
 
                 if (!($include_once_file_partial_script = $this->mountAutomaticPartialScript($relative_file_path))) {
                     continue;
