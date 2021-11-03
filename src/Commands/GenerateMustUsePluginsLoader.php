@@ -9,6 +9,7 @@ use Wordless\Abstractions\StubMounters\WpLoadMuPluginsStubMounter;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Exception\FailedToCopyStub;
 use Wordless\Exception\PathNotFoundException;
+use Wordless\Helpers\Arr;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
@@ -111,8 +112,8 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
      */
     private function mountIncludeFilesScriptByMuPluginsJsonExtraRules(string &$include_files_script)
     {
-        foreach ($this->mu_plugins_extra_rules as $plugin_directory_name => $relative_php_scripts_path_to_load) {
-            if ($relative_php_scripts_path_to_load === '.') {
+        foreach ($this->mu_plugins_extra_rules as $plugin_directory_name => $relative_php_scripts_paths_to_load) {
+            if ($relative_php_scripts_paths_to_load === '.') {
                 foreach (DirectoryFiles::recursiveRead(
                     ProjectPath::wpMustUsePlugins($plugin_directory_name)
                 ) as $filepath_to_load) {
@@ -133,12 +134,14 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
                 continue;
             }
 
-            $this->concatPartialIncludeScript(
-                $include_files_script,
-                $this->mountPartialScript(
-                    "/$plugin_directory_name/$relative_php_scripts_path_to_load"
-                )
-            );
+            foreach (Arr::wrap($relative_php_scripts_paths_to_load) as $path_to_load) {
+                $this->concatPartialIncludeScript(
+                    $include_files_script,
+                    $this->mountPartialScript(
+                        "/$plugin_directory_name/$path_to_load"
+                    )
+                );
+            }
         }
     }
 
