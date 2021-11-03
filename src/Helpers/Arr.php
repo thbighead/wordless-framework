@@ -36,4 +36,13 @@ class Arr
 
         return $joined_array;
     }
+
+    public static function wrap($something): array
+    {
+        if (is_array($something)) {
+            return $something;
+        }
+
+        return [$something];
+    }
 }
