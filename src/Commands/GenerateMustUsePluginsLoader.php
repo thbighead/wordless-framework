@@ -53,11 +53,11 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
                 ProjectPath::wpMustUsePlugins(basename($filepath));
                 continue;
             } catch (PathNotFoundException $exception) {
-                $relative_file_path = Str::startWith(
+                $relative_file_path = str_replace('\\', '/', Str::startWith(
                     Str::after($filepath, $mu_plugins_directory_path),
                     DIRECTORY_SEPARATOR
-                );
-                $include_once_file_partial_script = "include_once __DIR__ . $relative_file_path;";
+                ));
+                $include_once_file_partial_script = "include_once __DIR__ . '$relative_file_path';";
 
                 $include_files_script .= empty($include_files_script) ?
                     $include_once_file_partial_script :
