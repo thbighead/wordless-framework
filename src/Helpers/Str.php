@@ -35,6 +35,11 @@ class Str
         return $result === false ? $string : $result;
     }
 
+    public static function beginsWith(string $string, string $substring): bool
+    {
+        return substr($string, 0, strlen($substring)) === $substring;
+    }
+
     /**
      * @param string $haystack
      * @param string|string[] $needles
