@@ -48,6 +48,7 @@ class WpCliCaller extends WordlessCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $wp_cli_full_command_string = $input->getArgument(self::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME);
+        $this->treatWpCliCommand($wp_cli_full_command_string);
         $wp_cli_filepath = $this->chooseWpCliScriptByOperationalSystem();
         $full_command = "$wp_cli_filepath $wp_cli_full_command_string --path=public_html/wp-cms/wp-core";
 
