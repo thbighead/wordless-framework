@@ -83,7 +83,7 @@ class WpCliCaller extends WordlessCommand
 
     private function guessOperationalSystem(): string
     {
-        if ($this->operational_system) {
+        if (isset($this->operational_system)) {
             return $this->operational_system;
         }
 
