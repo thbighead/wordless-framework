@@ -107,7 +107,7 @@ class WpCliCaller extends WordlessCommand
              * pathing (https://github.com/wp-cli/wp-cli/issues/2677#issue-149924458)
              */
             $wp_cli_full_command_string = preg_replace(
-                '/(\'|")\/(.+)(\'|")/',
+                '/(\'|")?\/(.+)(\'|")?/',
                 '$1$2$3',
                 $wp_cli_full_command_string
             );
