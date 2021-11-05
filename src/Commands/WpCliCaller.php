@@ -8,13 +8,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Exception\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Str;
 
 class WpCliCaller extends WordlessCommand
 {
     public const COMMAND_NAME = 'wp:run';
     public const WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME = 'wp_cli_full_command_string';
+    private const NON_WINDOWS_OS = 'non-windows';
+    private const PARTIAL_REWRITE_STRUCTURE_COMMAND = 'rewrite structure ';
+    private const WINDOWS_OS = 'windows';
 
     protected static $defaultName = self::COMMAND_NAME;
+
+    private string $operational_system;
 
     protected function arguments(): array
     {
@@ -70,8 +76,45 @@ class WpCliCaller extends WordlessCommand
      */
     private function chooseWpCliScriptByOperationalSystem(): string
     {
-        $script_filename = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ? 'wp.bat' : 'wp';
+        $script_filename = $this->isOnWindows() ? 'wp.bat' : 'wp';
 
         return ProjectPath::vendor("bin/$script_filename");
+    }
+
+    private function guessOperationalSystem(): string
+    {
+        if ($this->operational_system) {
+            return $this->operational_system;
+        }
+
+        return $this->operational_system = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ?
+            self::WINDOWS_OS : self::NON_WINDOWS_OS;
+    }
+
+    private function isOnWindows(): bool
+    {
+        return $this->guessOperationalSystem() === self::WINDOWS_OS;
+    }
+
+    private function treatRewriteStructureOnWindows(string &$wp_cli_full_command_string)
+    {
+        if ($this->isOnWindows()
+            && Str::beginsWith($wp_cli_full_command_string, self::PARTIAL_REWRITE_STRUCTURE_COMMAND)) {
+            /**
+             * Trimming any '/' char from beginning of <permastruct> option of rewrite structure command
+             * (https://developer.wordpress.org/cli/commands/rewrite/structure/#options) to avoid strange git full
+             * pathing (https://github.com/wp-cli/wp-cli/issues/2677#issue-149924458)
+             */
+            $wp_cli_full_command_string = preg_replace(
+                '/(\'|")\/(.+)(\'|")/',
+                '$1$2$3',
+                $wp_cli_full_command_string
+            );
+        }
+    }
+
+    private function treatWpCliCommand(string &$wp_cli_full_command_string)
+    {
+        $this->treatRewriteStructureOnWindows($wp_cli_full_command_string);
     }
 }
