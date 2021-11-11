@@ -44,9 +44,9 @@ class ProjectPath
         $relative_path = "config/$additional_path";
 
         try {
-            return self::src($relative_path);
-        } catch (PathNotFoundException $exception) {
             return self::root($relative_path);
+        } catch (PathNotFoundException $exception) {
+            return self::src($relative_path);
         }
     }
 
