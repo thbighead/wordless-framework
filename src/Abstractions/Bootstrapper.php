@@ -2,12 +2,19 @@
 
 namespace Wordless\Abstractions;
 
-use Wordless\Bootables\BootControllers;
+use Wordless\Exception\PathNotFoundException;
+use Wordless\Helpers\ProjectPath;
 
 class Bootstrapper
 {
+    /**
+     * @throws PathNotFoundException
+     */
     public static function bootAll()
     {
-        BootControllers::boot();
+        foreach (include ProjectPath::config('bootable.php') as $bootable_class_namespace) {
+            /** @var AbstractBootable $bootable_class_namespace */
+            $bootable_class_namespace::boot();
+        }
     }
 }
