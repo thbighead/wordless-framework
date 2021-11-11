@@ -50,7 +50,7 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
                 DIRECTORY_SEPARATOR
             ) . self::WP_LOAD_MU_PLUGINS_FILENAME;
         $include_files_script = '';
-        $this->mu_plugins_extra_rules = $this->readMuPluginsJson();
+        $this->mu_plugins_extra_rules = $this->readMuPluginsConfig();
 
         $this->mountIncludeFilesScriptByReadingMuPluginsDirectory($include_files_script);
         $this->mountIncludeFilesScriptByMuPluginsJsonExtraRules($include_files_script);
@@ -179,10 +179,10 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
     /**
      * @return array
      */
-    private function readMuPluginsJson(): array
+    private function readMuPluginsConfig(): array
     {
         try {
-            return json_decode(file_get_contents(ProjectPath::root('mu-plugins.json')), true);
+            return include ProjectPath::config('mu-plugins.php');
         } catch (PathNotFoundException $exception) {
             return [];
         }
