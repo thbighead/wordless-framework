@@ -5,10 +5,8 @@ namespace Wordless\Abstractions\Cachers;
 use ReflectionException;
 use ReflectionMethod;
 use Wordless\Adapters\WordlessController;
+use Wordless\Bootables\BootControllers;
 use Wordless\Exception\PathNotFoundException;
-use Wordless\Helpers\DirectoryFiles;
-use Wordless\Helpers\ProjectPath;
-use Wordless\Helpers\Str;
 
 class ControllerCacher extends BaseCacher
 {
@@ -24,34 +22,18 @@ class ControllerCacher extends BaseCacher
     protected function mountCacheArray(): array
     {
         $controllers_cache_array = [];
-        $controllers_directory_path = ProjectPath::controllers();
 
-        foreach (DirectoryFiles::recursiveRead($controllers_directory_path) as $controller_path) {
-            if (is_dir($controller_path)) {
-                continue;
-            }
+        foreach (
+            BootControllers::yieldBootableControllersPathAndNamespaceByReadingDirectory()
+            as $controller_path_and_namespace
+        ) {
+            require_once $controller_path_and_namespace[0];
+            /** @var WordlessController $controller */
+            $controller = new $controller_path_and_namespace[1];
 
-            if (Str::endsWith($controller_path, 'Controller.php')) {
-                $controller_relative_filepath_without_extension = trim(Str::after(
-                    substr($controller_path, 0, -4), // Removes '.php'
-                    $controllers_directory_path
-                ), DIRECTORY_SEPARATOR);
-                $controller_full_namespace = '\\Controllers';
-
-                foreach (explode(
-                             DIRECTORY_SEPARATOR,
-                             $controller_relative_filepath_without_extension
-                         ) as $controller_pathing) {
-                    $controller_full_namespace .= "\\$controller_pathing";
-                }
-
-                require_once $controller_path;
-                /** @var WordlessController $controller */
-                $controller = new $controller_full_namespace;
-
-                $controllers_cache_array[$controller_full_namespace] = $this
-                    ->extractNamespaceAndVersionFromController($controller, $controller_full_namespace);
-            }
+            $controllers_cache_array[$controller_path_and_namespace[1]] = [
+                    'path' => $controller_path_and_namespace[0],
+                ] + $this->extractNamespaceAndVersionFromController($controller, $controller_path_and_namespace[1]);
         }
 
         return $controllers_cache_array;

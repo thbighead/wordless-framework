@@ -105,10 +105,16 @@ $table_prefix = Environment::get('DB_TABLE_PREFIX', 'wp_');
  *
  * @link https://wordpress.org/support/article/debugging-in-wordpress/
  */
+// https://wordpress.org/support/article/editing-wp-config-php/#wp_environment_type
+define('WP_ENVIRONMENT_TYPE', $environment = Environment::get('APP_ENV', Environment::LOCAL));
+
 define('WP_DEBUG', $debug = Environment::get('WP_DEBUG', false));
 // https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
 define('WP_DEBUG_LOG', $debug);
 define('WP_DISABLE_FATAL_ERROR_HANDLER', $debug);
+// https://wordpress.org/support/article/debugging-in-wordpress/#wp_debug_display
+// Enabled only when WP_DEBUG is on in non-production environments and WP_DEBUG_LOG is off, otherwise check debug.log file.
+define('WP_DEBUG_DISPLAY', $debug && (WP_ENVIRONMENT_TYPE !== Environment::PRODUCTION) && (WP_DEBUG_LOG === false));
 
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-wordpress-auto-updates
 define('COOKIE_DOMAIN', Str::after($site_url = Environment::get('APP_URL'), '://'));
@@ -123,9 +129,6 @@ define('WP_SITEURL', "{$site_url}wp-cms/wp-core");
 // https://wordpress.org/support/article/editing-wp-config-php/#moving-wp-content-folder
 define('WP_CONTENT_DIR', realpath(__DIR__ . '/../wp-content'));
 define('WP_CONTENT_URL', "{$site_url}wp-content");
-
-// https://wordpress.org/support/article/editing-wp-config-php/#wp_environment_type
-define('WP_ENVIRONMENT_TYPE', $environment = Environment::get('APP_ENV', Environment::LOCAL));
 
 // https://wordpress.org/support/article/editing-wp-config-php/#require-ssl-for-admin-and-logins
 define('FORCE_SSL_ADMIN', $environment === Environment::PRODUCTION);
