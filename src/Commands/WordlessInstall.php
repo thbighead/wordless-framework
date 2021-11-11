@@ -541,7 +541,7 @@ class WordlessInstall extends WordlessCommand
      */
     private function resolveForceMode()
     {
-        if ($this->input->getOption('force')) {
+        if ($this->modes[self::FORCE_MODE]) {
             DirectoryFiles::recursiveDelete(
                 ProjectPath::wpCore(),
                 [ProjectPath::wpCore('.gitignore')],
