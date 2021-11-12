@@ -12,7 +12,7 @@ class Bootstrapper
      */
     public static function bootAll()
     {
-        foreach (include ProjectPath::config('bootable.php') as $bootable_class_namespace) {
+        foreach (include ProjectPath::config('bootables.php') as $bootable_class_namespace) {
             /** @var AbstractBootable $bootable_class_namespace */
             $bootable_class_namespace::boot();
         }
