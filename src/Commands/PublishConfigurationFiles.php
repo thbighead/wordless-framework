@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Exception\FailedToCopyConfig;
 use Wordless\Exception\PathNotFoundException;
+use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
@@ -20,6 +21,8 @@ class PublishConfigurationFiles extends WordlessCommand
     private const CONFIG_FILENAME_ARGUMENT_NAME = 'config_filename';
 
     private array $modes;
+    private InputInterface $input;
+    private OutputInterface $output;
 
     protected function arguments(): array
     {
@@ -48,25 +51,14 @@ class PublishConfigurationFiles extends WordlessCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->setup($input);
+        $this->setup($input, $output);
 
-        $config_filenames = $input->getArgument(self::CONFIG_FILENAME_ARGUMENT_NAME);
+        $config_filenames = $this->input->getArgument(self::CONFIG_FILENAME_ARGUMENT_NAME);
 
-        foreach ($config_filenames as $config_filename) {
-            $config_filename_with_extension = Str::finishWith($config_filename, '.php');
-            $config_relative_filepath = "config/$config_filename_with_extension";
-            $config_filepath_from = ProjectPath::src($config_relative_filepath);
-
-            try {
-                $config_filepath_to = ProjectPath::root($config_relative_filepath);
-                if (!$this->isForceMode()) {
-                    continue;
-                }
-            } catch (PathNotFoundException $exception) {
-                $config_filepath_to = ProjectPath::root() . DIRECTORY_SEPARATOR . $config_relative_filepath;
-            }
-
-            $this->copyConfig($config_filepath_from, $config_filepath_to);
+        if (!empty($config_filenames)) {
+            $this->publishConfigFilesFromCommandArgument($config_filenames);
+        } else {
+            $this->publishConfigFilesFromSrcDirectory();
         }
 
         return Command::SUCCESS;
@@ -106,10 +98,65 @@ class PublishConfigurationFiles extends WordlessCommand
         return $this->modes[self::FORCE_MODE];
     }
 
-    private function setup(InputInterface $input)
+    /**
+     * @param array $config_filenames
+     * @throws FailedToCopyConfig
+     * @throws PathNotFoundException
+     */
+    private function publishConfigFilesFromCommandArgument(array $config_filenames)
     {
+        foreach ($config_filenames as $config_filename) {
+            $config_filename_with_extension = Str::finishWith($config_filename, '.php');
+            $config_relative_filepath = "config/$config_filename_with_extension";
+            $config_filepath_from = ProjectPath::src($config_relative_filepath);
+
+            $this->skipOrCopiedConfigFile($config_filepath_from);
+        }
+    }
+
+    /**
+     * @throws FailedToCopyConfig
+     * @throws PathNotFoundException
+     */
+    private function publishConfigFilesFromSrcDirectory()
+    {
+        foreach (DirectoryFiles::recursiveRead(ProjectPath::src('config')) as $config_filepath_from) {
+            $this->skipOrCopiedConfigFile($config_filepath_from);
+        }
+    }
+
+    private function setup(InputInterface $input, OutputInterface $output)
+    {
+        $this->input = $input;
+        $this->output = $output;
         $this->modes = [
             self::FORCE_MODE => $input->getOption(self::FORCE_MODE),
         ];
+    }
+
+    /**
+     * @param string $config_filepath_from
+     * @throws FailedToCopyConfig
+     * @throws PathNotFoundException
+     */
+    private function skipOrCopiedConfigFile(string $config_filepath_from)
+    {
+        $config_relative_filepath = 'config/' . basename($config_filepath_from);
+
+        try {
+            $config_filepath_to = ProjectPath::root($config_relative_filepath);
+            $this->output->write("File destination at $config_filepath_to already exists... ");
+            if (!$this->isForceMode()) {
+                $this->output->writeln('We are not in force mode, so let\'s skip this copy.');
+                return;
+            }
+        } catch (PathNotFoundException $exception) {
+            $config_filepath_to = ProjectPath::root() . DIRECTORY_SEPARATOR . $config_relative_filepath;
+            $this->output->write("File destination at $config_filepath_to does not exists... ");
+        }
+
+        $this->output->writeln("Let's copy file from $config_filepath_from to $config_filepath_to");
+        $this->copyConfig($config_filepath_from, $config_filepath_to);
+        $this->output->writeln('Done!');
     }
 }
