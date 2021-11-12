@@ -7,6 +7,7 @@ use Wordless\Abstractions\AbstractBootable;
 use Wordless\Abstractions\InternalCache;
 use Wordless\Adapters\WordlessController;
 use Wordless\Exception\FailedToFindCachedKey;
+use Wordless\Exception\FailedToGetControllerPathFromCachedData;
 use Wordless\Exception\PathNotFoundException;
 use Wordless\Exception\WordPressFailedToCreateRole;
 use Wordless\Helpers\DirectoryFiles;
@@ -25,9 +26,15 @@ class BootControllers extends AbstractBootable
             $cached_controllers_data = InternalCache::getValueOrFail('controllers');
 
             foreach ($cached_controllers_data as $controller_full_namespace => $controller_cached_data) {
+                $controller_pathing = $controller_cached_data['path'] ?? false;
+
+                if (!$controller_pathing) {
+                    throw new FailedToGetControllerPathFromCachedData($controller_cached_data);
+                }
+
                 self::requireAndRegisterController($controller_cached_data['path'], $controller_full_namespace);
             }
-        } catch (FailedToFindCachedKey $exception) {
+        } catch (FailedToFindCachedKey | FailedToGetControllerPathFromCachedData $exception) {
             foreach (
                 self::yieldBootableControllersPathAndNamespaceByReadingDirectory() as $controller_path_and_namespace
             ) {
