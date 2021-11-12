@@ -64,7 +64,7 @@ class BootControllers extends AbstractBootable
                     substr($controller_path, 0, -4), // Removes '.php'
                     $controllers_directory_path
                 ), DIRECTORY_SEPARATOR);
-                $controller_full_namespace = '\\Controllers';
+                $controller_full_namespace = '\\Wordless\\Controllers';
 
                 foreach (explode(
                              DIRECTORY_SEPARATOR,
