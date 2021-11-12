@@ -13,7 +13,7 @@ abstract class AbstractBootable
      */
     protected const TYPE = 'action';
 
-    abstract protected static function register();
+    abstract public static function register();
 
     public static function boot(int $hook_priority = 10)
     {

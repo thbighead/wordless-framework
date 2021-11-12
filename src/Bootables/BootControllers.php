@@ -16,6 +16,30 @@ use Wordless\Helpers\Str;
 class BootControllers extends AbstractBootable
 {
     /**
+     * @throws PathNotFoundException
+     * @throws WordPressFailedToCreateRole
+     */
+    public static function register()
+    {
+        try {
+            $cached_controllers_data = InternalCache::getValueOrFail('controllers');
+
+            foreach ($cached_controllers_data as $controller_full_namespace => $controller_cached_data) {
+                self::requireAndRegisterController($controller_cached_data['path'], $controller_full_namespace);
+            }
+        } catch (FailedToFindCachedKey $exception) {
+            foreach (
+                self::yieldBootableControllersPathAndNamespaceByReadingDirectory() as $controller_path_and_namespace
+            ) {
+                self::requireAndRegisterController(
+                    $controller_path_and_namespace[0],
+                    $controller_path_and_namespace[1]
+                );
+            }
+        }
+    }
+
+    /**
      * @return Generator
      * @throws PathNotFoundException
      */
@@ -43,30 +67,6 @@ class BootControllers extends AbstractBootable
                 }
 
                 yield [$controller_path, $controller_full_namespace];
-            }
-        }
-    }
-
-    /**
-     * @throws PathNotFoundException
-     * @throws WordPressFailedToCreateRole
-     */
-    protected static function register()
-    {
-        try {
-            $cached_controllers_data = InternalCache::getValueOrFail('controllers');
-
-            foreach ($cached_controllers_data as $controller_full_namespace => $controller_cached_data) {
-                self::requireAndRegisterController($controller_cached_data['path'], $controller_full_namespace);
-            }
-        } catch (FailedToFindCachedKey $exception) {
-            foreach (
-                self::yieldBootableControllersPathAndNamespaceByReadingDirectory() as $controller_path_and_namespace
-            ) {
-                self::requireAndRegisterController(
-                    $controller_path_and_namespace[0],
-                    $controller_path_and_namespace[1]
-                );
             }
         }
     }
