@@ -32,6 +32,7 @@ class WordlessInstall extends WordlessCommand
     protected static $defaultName = 'wordless:install';
     private const FORCE_MODE = 'force';
     private const NO_ASK_MODE = 'no-ask';
+    private const NO_DB_CREATION_MODE = 'no-db-creation';
     private const WORDPRESS_SALT_FILLABLE_VALUES = [
         '$AUTH_KEY',
         '$SECURE_AUTH_KEY',
@@ -119,6 +120,11 @@ class WordlessInstall extends WordlessCommand
                 self::OPTION_SHORTCUT_FIELD => 'f',
                 self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
                 self::OPTION_DESCRIPTION_FIELD => 'Forces a project reinstallation.',
+            ],
+            [
+                self::OPTION_NAME_FIELD => self::NO_DB_CREATION_MODE,
+                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
+                self::OPTION_DESCRIPTION_FIELD => 'Don\'t run WP CLI to check and create a database for application.',
             ],
             [
                 self::OPTION_NAME_FIELD => self::NO_ASK_MODE,
@@ -222,6 +228,14 @@ class WordlessInstall extends WordlessCommand
      */
     private function createWpDatabase()
     {
+        if ($this->modes[self::NO_DB_CREATION_MODE]) {
+            if ($this->output->isVerbose()) {
+                $this->output->writeln('Running with no database creation mode. Skipping database check and creation.');
+            }
+
+            return;
+        }
+
         $database_username = $this->getEnvVariableByKey('DB_USER');
         $database_password = $this->getEnvVariableByKey('DB_PASSWORD');
 
@@ -585,6 +599,7 @@ class WordlessInstall extends WordlessCommand
         $this->modes = [
             self::FORCE_MODE => $input->getOption(self::FORCE_MODE),
             self::NO_ASK_MODE => $input->getOption(self::NO_ASK_MODE),
+            self::NO_DB_CREATION_MODE => $input->getOption(self::NO_DB_CREATION_MODE),
         ];
         $this->input = $input;
         $this->output = $output;
