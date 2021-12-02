@@ -1,7 +1,7 @@
 {
-  "name": "thbighead/wordless-framework",
+  "name": "infobaseit/wordless-framework",
   "description": "Wordless Framework.",
-  "license": "MIT",
+  "license": "proprietary",
   "autoload": {
     "psr-4": {
       "Wordless\\": "src/"
@@ -10,7 +10,7 @@
   "authors": [
     {
       "name": "Thales Nathan",
-      "email": "thcmatias@gmail.com"
+      "email": "thales.matias@infobase.com.br"
     }
   ],
   "config": {
