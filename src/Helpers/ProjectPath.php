@@ -101,7 +101,7 @@ class ProjectPath
      */
     public static function src(string $additional_path = ''): string
     {
-        return self::vendor("thbighead/wordless-framework/src/$additional_path");
+        return self::vendor("infobaseit/wordless-framework/src/$additional_path");
     }
 
     /**
