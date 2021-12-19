@@ -15,13 +15,14 @@ class BootHttpRemoteCallsLog extends AbstractBootable
         }
     }
 
-    public static function debugWordPressRemoteRequest($response, $context, $class, $r, $url)
+    public static function debugWordPressRemoteRequest($response, $context, $class, $request, $url)
     {
         if (Str::beginsWith($url, Environment::get('APP_URL'))) {
-            $request = json_encode([
-                'http_method' => $r['method'] ?? null,
-                'headers' => $r['headers'] ?? null,
-                'body' => is_string($body = ($r['body'] ?? null)) ? json_decode($r['body'], true) : $body,
+            $request_as_json = json_encode([
+                'http_method' => $request['method'] ?? null,
+                'headers' => $request['headers'] ?? null,
+                'body' => is_string($body = ($request['body'] ?? null)) ?
+                    json_decode($request['body'], true) : $body,
             ], JSON_PRETTY_PRINT);
             $http_response = $response['http_response'];
 
@@ -32,7 +33,7 @@ class BootHttpRemoteCallsLog extends AbstractBootable
             }
 
             error_log(self::headerLog('REMOTE API CALL')
-                . "> URL: $url\n> REQUEST:\n$request\n> RESPONSE:\n$raw_response"
+                . "> URL: $url\n> REQUEST:\n$request_as_json\n> RESPONSE:\n$raw_response"
                 . self::headerLog('REMOTE API CALL END'));
         }
     }
