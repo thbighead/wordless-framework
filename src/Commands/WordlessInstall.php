@@ -609,7 +609,7 @@ class WordlessInstall extends WordlessCommand
     private function resolveWpConfigChmod()
     {
         if ($this->getEnvVariableByKey('APP_ENV') === Environment::PRODUCTION) {
-            chmod(ProjectPath::wpCore('wp-config.php'), 660);
+            chmod(ProjectPath::wpCore('wp-config.php'), 0660);
         }
     }
 
