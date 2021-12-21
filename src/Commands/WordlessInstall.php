@@ -53,6 +53,7 @@ class WordlessInstall extends WordlessCommand
     private QuestionHelper $questionHelper;
     private Command $wpCliCommand;
     private array $wp_languages;
+    private bool $maintenance_mode;
 
     public function __construct(string $name = null)
     {
@@ -641,6 +642,7 @@ class WordlessInstall extends WordlessCommand
         $this->input = $input;
         $this->output = $output;
         $this->wpCliCommand = $this->getApplication()->find(WpCliCaller::COMMAND_NAME);
+        $this->maintenance_mode = false;
     }
 
     /**
@@ -649,8 +651,14 @@ class WordlessInstall extends WordlessCommand
      */
     private function switchingMaintenanceMode(bool $switch)
     {
-        $switch = $switch ? 'activate' : 'deactivate';
+        $switch_string = $switch ? 'activate' : 'deactivate';
 
-        $this->runWpCliCommand("maintenance-mode $switch");
+        if ($this->maintenance_mode === $switch) {
+            $this->output->writeln("Maintenance mode already {$switch_string}d. Skipping...");
+        }
+
+        $this->runWpCliCommand("maintenance-mode $switch_string");
+
+        $this->maintenance_mode = $switch;
     }
 }
