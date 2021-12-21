@@ -22,6 +22,7 @@ use Wordless\Exception\FailedToCopyStub;
 use Wordless\Exception\FailedToDeletePath;
 use Wordless\Exception\FailedToRewriteDotEnvFile;
 use Wordless\Exception\PathNotFoundException;
+use Wordless\Exception\WpCliCommandReturnedNonZero;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
@@ -52,6 +53,7 @@ class WordlessInstall extends WordlessCommand
     private QuestionHelper $questionHelper;
     private Command $wpCliCommand;
     private array $wp_languages;
+    private bool $maintenance_mode;
 
     public function __construct(string $name = null)
     {
@@ -94,13 +96,17 @@ class WordlessInstall extends WordlessCommand
         $this->createWpConfigFromStub();
         $this->createRobotsTxtFromStub();
         $this->createWpDatabase();
-        $this->installWpCore();
-        $this->flushWpRewriteRules();
-        $this->activateWpTheme();
-        $this->activateWpPlugins();
-        $this->installWpLanguages();
-        $this->makeWpBlogPublic();
-        $this->switchingMaintenanceMode(false);
+        $this->installWpCore(); // calls switchingMaintenanceMode(false)
+
+        try {
+            $this->flushWpRewriteRules();
+            $this->activateWpTheme();
+            $this->activateWpPlugins();
+            $this->installWpLanguages();
+            $this->makeWpBlogPublic();
+        } finally {
+            $this->switchingMaintenanceMode(false);
+        }
 
         $this->resolveWpConfigChmod();
 
@@ -438,23 +444,26 @@ class WordlessInstall extends WordlessCommand
             $this->switchingMaintenanceMode(true);
 
             if ($this->getEnvVariableByKey('WP_VERSION', 'latest') === 'latest') {
-                $this->runWpCliCommand('core update --minor --allow-root');
+                $this->performMinorUpdate();
             }
 
             return;
         }
 
-        $app_url = Str::finishWith($this->getEnvVariableByKey('APP_URL'), '/');
+        $app_url = $this->getEnvVariableByKey('APP_URL');
+        $app_url_with_final_slash = Str::finishWith($app_url, '/');
         $app_name = $this->getEnvVariableByKey('APP_NAME', 'Wordless App');
         $wp_admin_email = $this->getEnvVariableByKey('WP_ADMIN_EMAIL', 'php-team@infobase.com.br');
         $wp_admin_password = $this->getEnvVariableByKey('WP_ADMIN_PASSWORD', 'infobase123');
         $wp_admin_user = $this->getEnvVariableByKey('WP_ADMIN_USER', 'infobase');
 
         $this->runWpCliCommand(
-            "core install --url=$app_url --title=\"$app_name\" --admin_user=$wp_admin_user --admin_password=$wp_admin_password --admin_email=$wp_admin_email"
+            "core install --url=$app_url_with_final_slash --title=\"$app_name\" --admin_user=$wp_admin_user --admin_password=$wp_admin_password --admin_email=$wp_admin_email"
         );
+
         $this->switchingMaintenanceMode(true);
-        $this->runWpCliCommand("option update siteurl {$app_url}wp-cms/wp-core/");
+
+        $this->performUrlDatabaseFix($app_url, $app_url_with_final_slash);
     }
 
     /**
@@ -536,6 +545,35 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
+     * @return void
+     * @throws Exception
+     */
+    private function performMinorUpdate()
+    {
+        try {
+            $this->runWpCliCommand('core update --minor --allow-root');
+        } finally {
+            $this->switchingMaintenanceMode(false);
+        }
+    }
+
+    /**
+     * @param string $app_url
+     * @param string $app_url_with_final_slash
+     * @return void
+     * @throws Exception
+     */
+    private function performUrlDatabaseFix(string $app_url, string $app_url_with_final_slash)
+    {
+        try {
+            $this->runWpCliCommand("option update siteurl {$app_url_with_final_slash}wp-cms/wp-core/");
+            $this->runWpCliCommand("option update home $app_url");
+        } finally {
+            $this->switchingMaintenanceMode(false);
+        }
+    }
+
+    /**
      * @throws ClientExceptionInterface
      * @throws FailedToCopyDotEnvExampleIntoNewDotEnv
      * @throws FailedToRewriteDotEnvFile
@@ -572,7 +610,7 @@ class WordlessInstall extends WordlessCommand
     private function resolveWpConfigChmod()
     {
         if ($this->getEnvVariableByKey('APP_ENV') === Environment::PRODUCTION) {
-            chmod(ProjectPath::wpCore('wp-config.php'), 660);
+            chmod(ProjectPath::wpCore('wp-config.php'), 0660);
         }
     }
 
@@ -587,7 +625,7 @@ class WordlessInstall extends WordlessCommand
         if (($return_var = $this->wpCliCommand->run(new ArrayInput([
                 WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => $command,
             ]), $this->output)) && !$return_script_code) {
-            exit($return_var);
+            throw new WpCliCommandReturnedNonZero($command, $return_var);
         }
 
         return $return_var;
@@ -604,6 +642,7 @@ class WordlessInstall extends WordlessCommand
         $this->input = $input;
         $this->output = $output;
         $this->wpCliCommand = $this->getApplication()->find(WpCliCaller::COMMAND_NAME);
+        $this->maintenance_mode = false;
     }
 
     /**
@@ -612,8 +651,14 @@ class WordlessInstall extends WordlessCommand
      */
     private function switchingMaintenanceMode(bool $switch)
     {
-        $switch = $switch ? 'activate' : 'deactivate';
+        $switch_string = $switch ? 'activate' : 'deactivate';
 
-        $this->runWpCliCommand("maintenance-mode $switch");
+        if ($this->maintenance_mode === $switch) {
+            $this->output->writeln("Maintenance mode already {$switch_string}d. Skipping...");
+        }
+
+        $this->runWpCliCommand("maintenance-mode $switch_string");
+
+        $this->maintenance_mode = $switch;
     }
 }
