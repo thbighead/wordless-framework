@@ -31,6 +31,7 @@ use Wordless\Helpers\Str;
 class WordlessInstall extends WordlessCommand
 {
     protected static $defaultName = 'wordless:install';
+    private const ALLOW_ROOT_MODE = 'allow-root';
     private const FORCE_MODE = 'force';
     private const NO_ASK_MODE = 'no-ask';
     private const NO_DB_CREATION_MODE = 'no-db-creation';
@@ -122,20 +123,25 @@ class WordlessInstall extends WordlessCommand
     {
         return [
             [
+                self::OPTION_NAME_FIELD => self::ALLOW_ROOT_MODE,
+                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
+                self::OPTION_DESCRIPTION_FIELD => 'Runs every WP-CLI using --allow-root flag',
+            ],
+            [
                 self::OPTION_NAME_FIELD => self::FORCE_MODE,
                 self::OPTION_SHORTCUT_FIELD => 'f',
                 self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
                 self::OPTION_DESCRIPTION_FIELD => 'Forces a project reinstallation.',
             ],
             [
-                self::OPTION_NAME_FIELD => self::NO_DB_CREATION_MODE,
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Don\'t run WP CLI to check and create a database for application.',
-            ],
-            [
                 self::OPTION_NAME_FIELD => self::NO_ASK_MODE,
                 self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
                 self::OPTION_DESCRIPTION_FIELD => 'Don\'t ask for any input while running.',
+            ],
+            [
+                self::OPTION_NAME_FIELD => self::NO_DB_CREATION_MODE,
+                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
+                self::OPTION_DESCRIPTION_FIELD => 'Don\'t run WP CLI to check and create a database for application.',
             ],
         ];
     }
@@ -622,6 +628,10 @@ class WordlessInstall extends WordlessCommand
      */
     private function runWpCliCommand(string $command, bool $return_script_code = false): int
     {
+        if ($this->modes[self::ALLOW_ROOT_MODE]) {
+            $command = "$command --allow-root";
+        }
+
         if (($return_var = $this->wpCliCommand->run(new ArrayInput([
                 WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => $command,
             ]), $this->output)) && !$return_script_code) {
@@ -635,6 +645,7 @@ class WordlessInstall extends WordlessCommand
     {
         $this->questionHelper = $this->getHelper('question');
         $this->modes = [
+            self::ALLOW_ROOT_MODE => $input->getOption(self::ALLOW_ROOT_MODE),
             self::FORCE_MODE => $input->getOption(self::FORCE_MODE),
             self::NO_ASK_MODE => $input->getOption(self::NO_ASK_MODE),
             self::NO_DB_CREATION_MODE => $input->getOption(self::NO_DB_CREATION_MODE),
