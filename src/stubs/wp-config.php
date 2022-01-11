@@ -26,6 +26,11 @@ if (!defined('ROOT_PROJECT_PATH')) {
     define('ROOT_PROJECT_PATH', __DIR__ . '/../../..');
 }
 
+// Nginx TOO_MANY_REDIRECTS error resolution
+if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+    $_SERVER['HTTPS'] = 'on';
+}
+
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use Symfony\Component\Dotenv\Dotenv;
