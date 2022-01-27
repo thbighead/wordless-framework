@@ -19,7 +19,10 @@
  */
 
 /**
- * Customized wp-config.php. DO NOT CHANGE THIS COMMENT!
+ * Customized wp-config.php.
+ * If you change the following comment line with author definition Wordless will overwrite
+ * public_html/wp-cms/wp-core/wp-config.php by stubs/wp-core.php (or directly from vendor
+ * if this path doesn't exist) on every 'php console wordless:install' command.
  * @author Wordless
  */
 if (!defined('ROOT_PROJECT_PATH')) {
