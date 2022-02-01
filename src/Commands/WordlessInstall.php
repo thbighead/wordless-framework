@@ -270,7 +270,7 @@ class WordlessInstall extends WordlessCommand
      */
     private function downloadWpCore()
     {
-        if ($this->runWpCliCommand("core version --extra", true) == 0) {
+        if ($this->runWpCliCommand('core version --extra', true) == 0) {
             if ($this->output->isVerbose()) {
                 $this->output->writeln('WordPress Core already downloaded, skipping.');
             }
