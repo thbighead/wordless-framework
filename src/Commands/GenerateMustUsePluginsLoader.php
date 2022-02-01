@@ -16,9 +16,10 @@ use Wordless\Helpers\Str;
 
 class GenerateMustUsePluginsLoader extends WordlessCommand
 {
-    protected static $defaultName = 'mup:loader';
+    public const COMMAND_NAME = 'mup:loader';
     private const SLASH = '/';
     private const WP_LOAD_MU_PLUGINS_FILENAME = 'wp-load-mu-plugins.php';
+    protected static $defaultName = self::COMMAND_NAME;
 
     private string $mu_plugins_directory_path;
     private array $mu_plugins_extra_rules;
