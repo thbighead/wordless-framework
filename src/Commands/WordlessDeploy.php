@@ -1,0 +1,340 @@
+<?php
+
+namespace Wordless\Commands;
+
+use Exception;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Wordless\Adapters\WordlessCommand;
+use Wordless\Exception\FailedToCopyStub;
+use Wordless\Exception\PathNotFoundException;
+use Wordless\Exception\WpCliCommandReturnedNonZero;
+use Wordless\Helpers\Environment;
+use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Str;
+
+class WordlessDeploy extends WordlessCommand
+{
+    protected static $defaultName = 'wordless:deploy';
+    private const ALLOW_ROOT_MODE = 'allow-root';
+
+    private InputInterface $input;
+    private array $modes;
+    private OutputInterface $output;
+    private Command $wpCliCommand;
+    private array $wp_languages;
+    private bool $maintenance_mode;
+
+    public function __construct(string $name = null)
+    {
+        parent::__construct($name);
+    }
+
+    protected function arguments(): array
+    {
+        return [];
+    }
+
+    protected function description(): string
+    {
+        return 'Deploys a project.';
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     * @throws FailedToCopyStub
+     * @throws PathNotFoundException
+     * @throws WpCliCommandReturnedNonZero
+     * @throws Exception
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $this->setup($input, $output);
+
+        $this->loadWpLanguages();
+
+        $this->overwriteWpConfigFromStub();
+        $this->overwriteRobotsTxtFromStub();
+        $this->switchingMaintenanceMode(true);
+        $this->performCoreVersionUpdate();
+
+        try {
+            $this->flushWpRewriteRules();
+            $this->changeWpTheme();
+            $this->activateWpPlugins();
+            $this->installWpLanguages();
+            $this->makeWpBlogPublic();
+        } finally {
+            $this->switchingMaintenanceMode(false);
+        }
+
+        $this->resolveWpConfigChmod();
+
+        $this->improveWordless();
+
+        return Command::SUCCESS;
+    }
+
+    protected function help(): string
+    {
+        return 'Deploy a project with all commands needed to update it after developing new features.';
+    }
+
+    protected function options(): array
+    {
+        return [
+            [
+                self::OPTION_NAME_FIELD => self::ALLOW_ROOT_MODE,
+                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
+                self::OPTION_DESCRIPTION_FIELD => 'Runs every WP-CLI using --allow-root flag',
+            ],
+        ];
+    }
+
+    /**
+     * @return void
+     * @throws WpCliCommandReturnedNonZero
+     */
+    private function activateWpPlugins()
+    {
+        $this->runWpCliCommand('plugin activate --all');
+    }
+
+    /**
+     * @return void
+     * @throws WpCliCommandReturnedNonZero
+     */
+    private function changeWpTheme()
+    {
+        $this->runWpCliCommand(
+            "theme activate {$this->getEnvVariableByKey('WP_THEME', 'wordless')}"
+        );
+    }
+
+    /**
+     * @return void
+     * @throws WpCliCommandReturnedNonZero
+     */
+    private function flushWpRewriteRules()
+    {
+        $permalink_structure = $this->getEnvVariableByKey('WP_PERMALINK', '/%postname%/');
+        $this->runWpCliCommand("rewrite structure '$permalink_structure' --hard");
+        $this->runWpCliCommand('rewrite flush --hard');
+    }
+
+    private function getEnvVariableByKey(string $key, $default = null)
+    {
+        return Environment::get($key, $default);
+    }
+
+    private function getWpLanguages(): array
+    {
+        return $this->wp_languages;
+    }
+
+    private function loadWpLanguages(): void
+    {
+        $this->wp_languages = explode(',', $this->getEnvVariableByKey('WP_LANGUAGES', ''));
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function improveWordless()
+    {
+        $this->getApplication()
+            ->find(GenerateMustUsePluginsLoader::COMMAND_NAME)
+            ->run(new ArrayInput([]), $this->output);
+        $this->getApplication()
+            ->find(CreateInternalCache::COMMAND_NAME)
+            ->run(new ArrayInput([]), $this->output);
+    }
+
+    /**
+     * @param string $language
+     * @return void
+     * @throws WpCliCommandReturnedNonZero
+     */
+    private function installWpCoreLanguage(string $language)
+    {
+        if ($this->runWpCliCommand("language core is-installed $language", true) == 0) {
+            if ($this->output->isVerbose()) {
+                $this->output->writeln("WordPress Core Language $language already installed, updating.");
+            }
+
+            $this->runWpCliCommand('language core update', true);
+            $this->runWpCliCommand("language core activate $language", true);
+
+            return;
+        }
+
+        $this->runWpCliCommand("language core install $language --activate");
+    }
+
+    /**
+     * @return void
+     * @throws WpCliCommandReturnedNonZero
+     */
+    private function installWpLanguages()
+    {
+        if (empty($wp_languages = $this->getWpLanguages())) {
+            $this->output->writeln(
+                'Environment variable WP_LANGUAGES has no value. Skipping language install.'
+            );
+            return;
+        }
+
+        $this->installWpCoreLanguage($wp_languages[0]);
+
+        foreach ($wp_languages as $language) {
+            $this->installWpPluginsLanguage($language);
+        }
+    }
+
+    /**
+     * @param string $language
+     * @return void
+     * @throws WpCliCommandReturnedNonZero
+     */
+    private function installWpPluginsLanguage(string $language)
+    {
+        $this->runWpCliCommand("language plugin install $language --all --allow-root", true);
+        $this->runWpCliCommand("language plugin update $language --all --allow-root", true);
+    }
+
+    /**
+     * @return void
+     * @throws WpCliCommandReturnedNonZero
+     */
+    private function makeWpBlogPublic()
+    {
+        $blog_public = $this->getEnvVariableByKey('APP_ENV') === Environment::PRODUCTION ? '1' : '0';
+
+        $this->runWpCliCommand("option update blog_public $blog_public");
+    }
+
+    /**
+     * @throws PathNotFoundException
+     */
+    private function overwriteRobotsTxtFromStub()
+    {
+        $filename = 'robots.txt';
+        $new_robots_txt_filepath = ProjectPath::publicHtml($filename);
+
+        $robots_txt_content = file_get_contents(ProjectPath::stubs($filename));
+
+        preg_match_all('/{(\S+)}/', $robots_txt_content, $replaceable_values_regex_result);
+        $env_variables_to_replace_into_robots_txt_stub = $replaceable_values_regex_result[1] ?? [];
+
+        if (empty($env_variables_to_replace_into_robots_txt_stub)) {
+            file_put_contents($new_robots_txt_filepath, $robots_txt_content);
+            return;
+        }
+
+        $robots_txt_content = str_replace(
+            $replaceable_values_regex_result[0] ?? [],
+            array_map(function ($env_variable_name) {
+                $env_variable_value = $this->getEnvVariableByKey($env_variable_name, '');
+
+                return str_contains($env_variable_name, 'URL') ?
+                    Str::finishWith($env_variable_value, '/') : $env_variable_value;
+            }, $env_variables_to_replace_into_robots_txt_stub),
+            $robots_txt_content
+        );
+
+        file_put_contents($new_robots_txt_filepath, $robots_txt_content);
+    }
+
+    /**
+     * @throws FailedToCopyStub
+     * @throws PathNotFoundException
+     */
+    private function overwriteWpConfigFromStub()
+    {
+        $filename = 'wp-config.php';
+        $new_wp_config_filepath = ProjectPath::wpCore($filename);
+
+        if (!copy($wp_config_stub_filepath = ProjectPath::stubs($filename), $new_wp_config_filepath)) {
+            throw new FailedToCopyStub($wp_config_stub_filepath, $new_wp_config_filepath);
+        }
+    }
+
+    /**
+     * @return void
+     * @throws WpCliCommandReturnedNonZero
+     */
+    private function performCoreVersionUpdate()
+    {
+        try {
+            $this->runWpCliCommand("core update --version={$this->getEnvVariableByKey('WP_VERSION')}");
+        } finally {
+            $this->switchingMaintenanceMode(false);
+        }
+    }
+
+    /**
+     * @throws PathNotFoundException
+     */
+    private function resolveWpConfigChmod()
+    {
+        if ($this->getEnvVariableByKey('APP_ENV') === Environment::PRODUCTION) {
+            chmod(ProjectPath::wpCore('wp-config.php'), 0660);
+        }
+    }
+
+    /**
+     * @param string $command
+     * @param bool $return_script_code
+     * @return int
+     * @throws Exception
+     * @throws WpCliCommandReturnedNonZero
+     */
+    private function runWpCliCommand(string $command, bool $return_script_code = false): int
+    {
+        if ($this->modes[self::ALLOW_ROOT_MODE]) {
+            $command = "$command --allow-root";
+        }
+
+        if (($return_var = $this->wpCliCommand->run(new ArrayInput([
+                WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => $command,
+            ]), $this->output)) && !$return_script_code) {
+            throw new WpCliCommandReturnedNonZero($command, $return_var);
+        }
+
+        return $return_var;
+    }
+
+    private function setup(InputInterface $input, OutputInterface $output)
+    {
+        $this->modes = [
+            self::ALLOW_ROOT_MODE => $input->getOption(self::ALLOW_ROOT_MODE),
+        ];
+        $this->input = $input;
+        $this->output = $output;
+        $this->wpCliCommand = $this->getApplication()->find(WpCliCaller::COMMAND_NAME);
+        $this->maintenance_mode = false;
+    }
+
+    /**
+     * @param bool $switch
+     * @return void
+     * @throws WpCliCommandReturnedNonZero
+     */
+    private function switchingMaintenanceMode(bool $switch)
+    {
+        $switch_string = $switch ? 'activate' : 'deactivate';
+
+        if ($this->maintenance_mode === $switch) {
+            $this->output->writeln("Maintenance mode already {$switch_string}d. Skipping...");
+        }
+
+        $this->runWpCliCommand("maintenance-mode $switch_string");
+
+        $this->maintenance_mode = $switch;
+    }
+}
