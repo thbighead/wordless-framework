@@ -453,7 +453,7 @@ class WordlessInstall extends WordlessCommand
             $this->writelnWhenVerbose("WordPress Core Language $language already installed, updating.");
 
             $this->runWpCliCommand('language core update', true);
-            $this->runWpCliCommand("language core activate $language", true);
+            $this->runWpCliCommand("site switch-language $language", true);
 
             return;
         }
