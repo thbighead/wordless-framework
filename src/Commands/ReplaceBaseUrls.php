@@ -4,7 +4,6 @@ namespace Wordless\Commands;
 
 use Exception;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,9 +20,6 @@ class ReplaceBaseUrls extends WordlessCommand
 
     private string $app_url;
     private array $base_urls_to_search;
-    private InputInterface $input;
-    private OutputInterface $output;
-    private Command $wpCliCommand;
 
     protected function arguments(): array
     {
@@ -62,7 +58,7 @@ class ReplaceBaseUrls extends WordlessCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->setup($input, $output);
+        parent::execute($input, $output);
 
         $search_urls_string_list = implode(', ', $this->base_urls_to_search);
         $this->writeWhenVerbose("Searching for $search_urls_string_list to replace by $this->app_url");
@@ -70,6 +66,26 @@ class ReplaceBaseUrls extends WordlessCommand
         $this->runDatabaseSearchReplace();
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return void
+     * @throws DotEnvNotSetException
+     */
+    protected function setup(InputInterface $input, OutputInterface $output)
+    {
+        parent::setup($input, $output);
+
+        $app_url_env_variable_name = 'APP_URL';
+        $this->base_urls_to_search = $this->defineBaseUrlsToSearch();
+
+        if (($this->app_url = Environment::get($app_url_env_variable_name)) === null) {
+            throw new DotEnvNotSetException(
+                ".env seems to be not correctly set for application because \"$app_url_env_variable_name\" returned a not expected value."
+            );
+        }
     }
 
     private function defineBaseUrlsToSearch(): array
@@ -102,39 +118,10 @@ class ReplaceBaseUrls extends WordlessCommand
      */
     private function runWpCliCommand(string $command): void
     {
-        if (($return_var = $this->wpCliCommand->run(new ArrayInput([
+        if (($return_var = $this->executeWordlessCommand(WpCliCaller::COMMAND_NAME, [
             WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => $command,
-        ]), $this->output))) {
+        ], $this->output))) {
             throw new WpCliCommandReturnedNonZero($command, $return_var);
-        }
-
-    }
-
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return void
-     * @throws DotEnvNotSetException
-     */
-    private function setup(InputInterface $input, OutputInterface $output)
-    {
-        $app_url_env_variable_name = 'APP_URL';
-        $this->input = $input;
-        $this->output = $output;
-        $this->wpCliCommand = $this->getApplication()->find(WpCliCaller::COMMAND_NAME);
-        $this->base_urls_to_search = $this->defineBaseUrlsToSearch();
-
-        if (($this->app_url = Environment::get($app_url_env_variable_name)) === null) {
-            throw new DotEnvNotSetException(
-                ".env seems to be not correctly set for application because \"$app_url_env_variable_name\" returned a not expected value."
-            );
-        }
-    }
-
-    private function writeWhenVerbose(string $message)
-    {
-        if ($this->output->isVerbose()) {
-            $this->output->writeln($message);
         }
     }
 }

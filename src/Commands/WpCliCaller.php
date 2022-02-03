@@ -4,7 +4,6 @@ namespace Wordless\Commands;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Exception\PathNotFoundException;
@@ -16,13 +15,8 @@ class WpCliCaller extends WordlessCommand
     public const COMMAND_NAME = 'wp:run';
     public const WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME = 'wp_cli_full_command_string';
     private const NON_WINDOWS_OS = 'non-windows';
-    private const OUTPUT_AS_STRING_MODE = 'output-as-string';
     private const PARTIAL_REWRITE_STRUCTURE_COMMAND = 'rewrite structure ';
     private const WINDOWS_OS = 'windows';
-
-    private InputInterface $input;
-    private array $modes;
-    private OutputInterface $output;
 
     protected static $defaultName = self::COMMAND_NAME;
 
@@ -53,16 +47,14 @@ class WpCliCaller extends WordlessCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->setup($input, $output);
+        parent::execute($input, $output);
 
         $wp_cli_full_command_string = $this->input->getArgument(self::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME);
         $this->treatWpCliCommand($wp_cli_full_command_string);
         $wp_cli_filepath = $this->chooseWpCliScriptByOperationalSystem();
         $full_command = "$wp_cli_filepath $wp_cli_full_command_string";
 
-        if ($output->isVerbose()) {
-            $output->writeln("Executing $full_command...");
-        }
+        $this->writelnWhenVerbose("Executing $full_command...");
 
         return $this->executeCommand($full_command);
     }
@@ -74,13 +66,7 @@ class WpCliCaller extends WordlessCommand
 
     protected function options(): array
     {
-        return [
-            [
-                self::OPTION_NAME_FIELD => self::OUTPUT_AS_STRING_MODE,
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Returns the entire command output as string to OutputInterface.',
-            ],
-        ];
+        return [];
     }
 
     /**
@@ -92,18 +78,6 @@ class WpCliCaller extends WordlessCommand
         $script_filename = $this->isOnWindows() ? 'wp.bat' : 'wp';
 
         return ProjectPath::vendor("bin/$script_filename");
-    }
-
-    private function executeCommand(string $full_command): int
-    {
-        if ($this->modes[self::OUTPUT_AS_STRING_MODE]) {
-            exec($full_command, $output, $result_code);
-            $this->output->writeln($output);
-        } else {
-            passthru($full_command, $result_code);
-        }
-
-        return $result_code;
     }
 
     private function guessOperationalSystem(): string
@@ -119,15 +93,6 @@ class WpCliCaller extends WordlessCommand
     private function isOnWindows(): bool
     {
         return $this->guessOperationalSystem() === self::WINDOWS_OS;
-    }
-
-    private function setup(InputInterface $input, OutputInterface $output)
-    {
-        $this->modes = [
-            self::OUTPUT_AS_STRING_MODE => $input->getOption(self::OUTPUT_AS_STRING_MODE),
-        ];
-        $this->input = $input;
-        $this->output = $output;
     }
 
     private function treatRewriteStructureOnWindows(string &$wp_cli_full_command_string)

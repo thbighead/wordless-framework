@@ -4,34 +4,28 @@ namespace Wordless\Commands;
 
 use Exception;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
+use Wordless\Contracts\WordlessCommandRunWpCliCommand;
+use Wordless\Contracts\WordlessCommandWriteRobotsTxt;
 use Wordless\Exception\FailedToCopyStub;
 use Wordless\Exception\PathNotFoundException;
 use Wordless\Exception\WpCliCommandReturnedNonZero;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
-use Wordless\Helpers\Str;
 
 class WordlessDeploy extends WordlessCommand
 {
+    use WordlessCommandRunWpCliCommand, WordlessCommandWriteRobotsTxt;
+
     protected static $defaultName = 'wordless:deploy';
     private const ALLOW_ROOT_MODE = 'allow-root';
 
-    private InputInterface $input;
     private array $modes;
-    private OutputInterface $output;
-    private Command $wpCliCommand;
     private array $wp_languages;
     private bool $maintenance_mode;
-
-    public function __construct(string $name = null)
-    {
-        parent::__construct($name);
-    }
 
     protected function arguments(): array
     {
@@ -54,7 +48,7 @@ class WordlessDeploy extends WordlessCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->setup($input, $output);
+        parent::execute($input, $output);
 
         $this->loadWpLanguages();
 
@@ -94,6 +88,16 @@ class WordlessDeploy extends WordlessCommand
                 self::OPTION_DESCRIPTION_FIELD => 'Runs every WP-CLI using --allow-root flag',
             ],
         ];
+    }
+
+    protected function setup(InputInterface $input, OutputInterface $output)
+    {
+        parent::setup($input, $output);
+
+        $this->modes = [
+            self::ALLOW_ROOT_MODE => $input->getOption(self::ALLOW_ROOT_MODE),
+        ];
+        $this->maintenance_mode = false;
     }
 
     /**
@@ -147,12 +151,8 @@ class WordlessDeploy extends WordlessCommand
      */
     private function improveWordless()
     {
-        $this->getApplication()
-            ->find(GenerateMustUsePluginsLoader::COMMAND_NAME)
-            ->run(new ArrayInput([]), $this->output);
-        $this->getApplication()
-            ->find(CreateInternalCache::COMMAND_NAME)
-            ->run(new ArrayInput([]), $this->output);
+        $this->executeWordlessCommand(GenerateMustUsePluginsLoader::COMMAND_NAME, [], $this->output);
+        $this->executeWordlessCommand(CreateInternalCache::COMMAND_NAME, [], $this->output);
     }
 
     /**
@@ -163,9 +163,7 @@ class WordlessDeploy extends WordlessCommand
     private function installWpCoreLanguage(string $language)
     {
         if ($this->runWpCliCommand("language core is-installed $language", true) == 0) {
-            if ($this->output->isVerbose()) {
-                $this->output->writeln("WordPress Core Language $language already installed, updating.");
-            }
+            $this->writelnWhenVerbose("WordPress Core Language $language already installed, updating.");
 
             $this->runWpCliCommand('language core update', true);
             $this->runWpCliCommand("language core activate $language", true);
@@ -226,28 +224,7 @@ class WordlessDeploy extends WordlessCommand
         $filename = 'robots.txt';
         $new_robots_txt_filepath = ProjectPath::publicHtml($filename);
 
-        $robots_txt_content = file_get_contents(ProjectPath::stubs($filename));
-
-        preg_match_all('/{(\S+)}/', $robots_txt_content, $replaceable_values_regex_result);
-        $env_variables_to_replace_into_robots_txt_stub = $replaceable_values_regex_result[1] ?? [];
-
-        if (empty($env_variables_to_replace_into_robots_txt_stub)) {
-            file_put_contents($new_robots_txt_filepath, $robots_txt_content);
-            return;
-        }
-
-        $robots_txt_content = str_replace(
-            $replaceable_values_regex_result[0] ?? [],
-            array_map(function ($env_variable_name) {
-                $env_variable_value = $this->getEnvVariableByKey($env_variable_name, '');
-
-                return str_contains($env_variable_name, 'URL') ?
-                    Str::finishWith($env_variable_value, '/') : $env_variable_value;
-            }, $env_variables_to_replace_into_robots_txt_stub),
-            $robots_txt_content
-        );
-
-        file_put_contents($new_robots_txt_filepath, $robots_txt_content);
+        $this->mountRobotsTxtFromStub($filename, $new_robots_txt_filepath);
     }
 
     /**
@@ -285,39 +262,6 @@ class WordlessDeploy extends WordlessCommand
         if ($this->getEnvVariableByKey('APP_ENV') === Environment::PRODUCTION) {
             chmod(ProjectPath::wpCore('wp-config.php'), 0660);
         }
-    }
-
-    /**
-     * @param string $command
-     * @param bool $return_script_code
-     * @return int
-     * @throws Exception
-     * @throws WpCliCommandReturnedNonZero
-     */
-    private function runWpCliCommand(string $command, bool $return_script_code = false): int
-    {
-        if ($this->modes[self::ALLOW_ROOT_MODE]) {
-            $command = "$command --allow-root";
-        }
-
-        if (($return_var = $this->wpCliCommand->run(new ArrayInput([
-                WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => $command,
-            ]), $this->output)) && !$return_script_code) {
-            throw new WpCliCommandReturnedNonZero($command, $return_var);
-        }
-
-        return $return_var;
-    }
-
-    private function setup(InputInterface $input, OutputInterface $output)
-    {
-        $this->modes = [
-            self::ALLOW_ROOT_MODE => $input->getOption(self::ALLOW_ROOT_MODE),
-        ];
-        $this->input = $input;
-        $this->output = $output;
-        $this->wpCliCommand = $this->getApplication()->find(WpCliCaller::COMMAND_NAME);
-        $this->maintenance_mode = false;
     }
 
     /**
