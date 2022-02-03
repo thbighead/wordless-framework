@@ -54,8 +54,8 @@ class WordlessDeploy extends WordlessCommand
 
         $this->overwriteWpConfigFromStub();
         $this->overwriteRobotsTxtFromStub();
-        $this->switchingMaintenanceMode(true);
         $this->performCoreVersionUpdate();
+        $this->switchingMaintenanceMode(true);
 
         try {
             $this->flushWpRewriteRules();
@@ -166,7 +166,7 @@ class WordlessDeploy extends WordlessCommand
             $this->writelnWhenVerbose("WordPress Core Language $language already installed, updating.");
 
             $this->runWpCliCommand('language core update', true);
-            $this->runWpCliCommand("language core activate $language", true);
+            $this->runWpCliCommand("site switch-language $language", true);
 
             return;
         }
@@ -201,8 +201,8 @@ class WordlessDeploy extends WordlessCommand
      */
     private function installWpPluginsLanguage(string $language)
     {
-        $this->runWpCliCommand("language plugin install $language --all --allow-root", true);
-        $this->runWpCliCommand("language plugin update $language --all --allow-root", true);
+        $this->runWpCliCommand("language plugin install $language --all", true);
+        $this->runWpCliCommand("language plugin update $language --all", true);
     }
 
     /**
@@ -244,14 +244,19 @@ class WordlessDeploy extends WordlessCommand
     /**
      * @return void
      * @throws WpCliCommandReturnedNonZero
+     * @throws Exception
      */
     private function performCoreVersionUpdate()
     {
-        try {
-            $this->runWpCliCommand("core update --version={$this->getEnvVariableByKey('WP_VERSION')}");
-        } finally {
-            $this->switchingMaintenanceMode(false);
+        $defined_version_in_env = $this->getEnvVariableByKey('WP_VERSION');
+
+        if (trim($this->runAndGetWpCliCommandOutput('core version')) === $defined_version_in_env) {
+            $this->output->writeln("WordPress core is already at version $defined_version_in_env.");
+            return;
         }
+
+        $this->runWpCliCommand("core update --force --version=$defined_version_in_env");
+        $this->runWpCliCommand('core update-db');
     }
 
     /**
