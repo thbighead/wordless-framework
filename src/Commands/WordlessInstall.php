@@ -5,7 +5,6 @@ namespace Wordless\Commands;
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,12 +16,13 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Wordless\Adapters\WordlessCommand;
+use Wordless\Contracts\WordlessCommandRunWpCliCommand;
+use Wordless\Contracts\WordlessCommandWriteRobotsTxt;
 use Wordless\Exception\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Exception\FailedToCopyStub;
 use Wordless\Exception\FailedToDeletePath;
 use Wordless\Exception\FailedToRewriteDotEnvFile;
 use Wordless\Exception\PathNotFoundException;
-use Wordless\Exception\WpCliCommandReturnedNonZero;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
@@ -30,6 +30,8 @@ use Wordless\Helpers\Str;
 
 class WordlessInstall extends WordlessCommand
 {
+    use WordlessCommandRunWpCliCommand, WordlessCommandWriteRobotsTxt;
+
     protected static $defaultName = 'wordless:install';
     private const ALLOW_ROOT_MODE = 'allow-root';
     private const FORCE_MODE = 'force';
@@ -48,18 +50,10 @@ class WordlessInstall extends WordlessCommand
     private const WORDPRESS_SALT_URL_GETTER = 'https://api.wordpress.org/secret-key/1.1/salt/';
 
     private array $fresh_new_env_content;
-    private InputInterface $input;
     private array $modes;
-    private OutputInterface $output;
     private QuestionHelper $questionHelper;
-    private Command $wpCliCommand;
     private array $wp_languages;
     private bool $maintenance_mode;
-
-    public function __construct(string $name = null)
-    {
-        parent::__construct($name);
-    }
 
     protected function arguments(): array
     {
@@ -86,7 +80,7 @@ class WordlessInstall extends WordlessCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->setup($input, $output);
+        parent::execute($input, $output);
 
         $this->resolveForceMode();
 
@@ -146,6 +140,20 @@ class WordlessInstall extends WordlessCommand
         ];
     }
 
+    protected function setup(InputInterface $input, OutputInterface $output)
+    {
+        parent::setup($input, $output);
+
+        $this->questionHelper = $this->getHelper('question');
+        $this->modes = [
+            self::ALLOW_ROOT_MODE => $input->getOption(self::ALLOW_ROOT_MODE),
+            self::FORCE_MODE => $input->getOption(self::FORCE_MODE),
+            self::NO_ASK_MODE => $input->getOption(self::NO_ASK_MODE),
+            self::NO_DB_CREATION_MODE => $input->getOption(self::NO_DB_CREATION_MODE),
+        ];
+        $this->maintenance_mode = false;
+    }
+
     /**
      * @throws Exception
      */
@@ -178,36 +186,11 @@ class WordlessInstall extends WordlessCommand
         $new_robots_txt_filepath = ProjectPath::publicHtml() . "/$filename";
 
         if (($supposed_already_existing_robots_txt_filepath = realpath($new_robots_txt_filepath)) !== false) {
-            if ($this->output->isVerbose()) {
-                $this->output->writeln(
-                    "$supposed_already_existing_robots_txt_filepath already exists, skipping."
-                );
-            }
+            $this->writelnWhenVerbose("$supposed_already_existing_robots_txt_filepath already exists, skipping.");
             return;
         }
 
-        $robots_txt_content = file_get_contents(ProjectPath::stubs($filename));
-
-        preg_match_all('/{(\S+)}/', $robots_txt_content, $replaceable_values_regex_result);
-        $env_variables_to_replace_into_robots_txt_stub = $replaceable_values_regex_result[1] ?? [];
-
-        if (empty($env_variables_to_replace_into_robots_txt_stub)) {
-            file_put_contents($new_robots_txt_filepath, $robots_txt_content);
-            return;
-        }
-
-        $robots_txt_content = str_replace(
-            $replaceable_values_regex_result[0] ?? [],
-            array_map(function ($env_variable_name) {
-                $env_variable_value = $this->getEnvVariableByKey($env_variable_name, '');
-
-                return str_contains($env_variable_name, 'URL') ?
-                    Str::finishWith($env_variable_value, '/') : $env_variable_value;
-            }, $env_variables_to_replace_into_robots_txt_stub),
-            $robots_txt_content
-        );
-
-        file_put_contents($new_robots_txt_filepath, $robots_txt_content);
+        $this->mountRobotsTxtFromStub($filename, $new_robots_txt_filepath);
     }
 
     /**
@@ -221,11 +204,9 @@ class WordlessInstall extends WordlessCommand
 
         if ((($supposed_already_existing_wp_config_filepath = realpath($new_wp_config_filepath)) !== false)
             && str_contains(file_get_contents($new_wp_config_filepath), '@author Wordless')) {
-            if ($this->output->isVerbose()) {
-                $this->output->writeln(
-                    "Wordless seems to already have created a config file at $supposed_already_existing_wp_config_filepath, skipping."
-                );
-            }
+            $this->writelnWhenVerbose(
+                "Wordless seems to already have created a config file at $supposed_already_existing_wp_config_filepath, skipping."
+            );
 
             return;
         }
@@ -241,9 +222,9 @@ class WordlessInstall extends WordlessCommand
     private function createWpDatabase()
     {
         if ($this->modes[self::NO_DB_CREATION_MODE]) {
-            if ($this->output->isVerbose()) {
-                $this->output->writeln('Running with no database creation mode. Skipping database check and creation.');
-            }
+            $this->writelnWhenVerbose(
+                'Running with no database creation mode. Skipping database check and creation.'
+            );
 
             return;
         }
@@ -255,9 +236,7 @@ class WordlessInstall extends WordlessCommand
                 "db check --dbuser=$database_username --dbpass=$database_password",
                 true
             ) == 0) {
-            if ($this->output->isVerbose()) {
-                $this->output->writeln('WordPress Database already created, skipping.');
-            }
+            $this->writelnWhenVerbose('WordPress Database already created, skipping.');
 
             return;
         }
@@ -270,17 +249,15 @@ class WordlessInstall extends WordlessCommand
      */
     private function downloadWpCore()
     {
-        if ($this->runWpCliCommand("core version --extra", true) == 0) {
-            if ($this->output->isVerbose()) {
-                $this->output->writeln('WordPress Core already downloaded, skipping.');
-            }
+        if ($this->runWpCliCommand('core version --extra', true) == 0) {
+            $this->writelnWhenVerbose('WordPress Core already downloaded, skipping.');
 
             return;
         }
 
         $wp_version = $this->getEnvVariableByKey('WP_VERSION', 'latest');
 
-        $this->runWpCliCommand("core download --version=$wp_version --allow-root --skip-content");
+        $this->runWpCliCommand("core download --version=$wp_version --skip-content");
     }
 
     /**
@@ -388,18 +365,14 @@ class WordlessInstall extends WordlessCommand
             return $dot_env_content;
         }
 
-        if ($this->output->isVerbose()) {
-            $this->output->write('Retrieving WP SALTS at ' . self::WORDPRESS_SALT_URL_GETTER . '... ');
-        }
+        $this->writeWhenVerbose('Retrieving WP SALTS at ' . self::WORDPRESS_SALT_URL_GETTER . '... ');
 
         $wp_salt_response = HttpClient::create()->request(
             'GET',
             self::WORDPRESS_SALT_URL_GETTER
         )->getContent();
 
-        if ($this->output->isVerbose()) {
-            $this->output->writeln('Done!');
-        }
+        $this->writelnWhenVerbose('Done!');
 
         preg_match_all(
             '/define\(\'(.+)\',.+\'(.+)\'\);/',
@@ -443,9 +416,7 @@ class WordlessInstall extends WordlessCommand
     private function installWpCore()
     {
         if ($this->runWpCliCommand('core is-installed', true) == 0) {
-            if ($this->output->isVerbose()) {
-                $this->output->writeln('WordPress Core already installed, minor updating.');
-            }
+            $this->writelnWhenVerbose('WordPress Core already installed, minor updating.');
 
             $this->switchingMaintenanceMode(true);
 
@@ -479,12 +450,10 @@ class WordlessInstall extends WordlessCommand
     private function installWpCoreLanguage(string $language)
     {
         if ($this->runWpCliCommand("language core is-installed $language", true) == 0) {
-            if ($this->output->isVerbose()) {
-                $this->output->writeln("WordPress Core Language $language already installed, updating.");
-            }
+            $this->writelnWhenVerbose("WordPress Core Language $language already installed, updating.");
 
             $this->runWpCliCommand('language core update', true);
-            $this->runWpCliCommand("language core activate $language", true);
+            $this->runWpCliCommand("site switch-language $language", true);
 
             return;
         }
@@ -517,8 +486,8 @@ class WordlessInstall extends WordlessCommand
      */
     private function installWpPluginsLanguage(string $language)
     {
-        $this->runWpCliCommand("language plugin install $language --all --allow-root", true);
-        $this->runWpCliCommand("language plugin update $language --all --allow-root", true);
+        $this->runWpCliCommand("language plugin install $language --all", true);
+        $this->runWpCliCommand("language plugin update $language --all", true);
     }
 
     /**
@@ -557,7 +526,7 @@ class WordlessInstall extends WordlessCommand
     private function performMinorUpdate()
     {
         try {
-            $this->runWpCliCommand('core update --minor --allow-root');
+            $this->runWpCliCommand('core update --minor');
         } finally {
             $this->switchingMaintenanceMode(false);
         }
@@ -618,42 +587,6 @@ class WordlessInstall extends WordlessCommand
         if ($this->getEnvVariableByKey('APP_ENV') === Environment::PRODUCTION) {
             chmod(ProjectPath::wpCore('wp-config.php'), 0660);
         }
-    }
-
-    /**
-     * @param string $command
-     * @param bool $return_script_code
-     * @return int
-     * @throws Exception
-     */
-    private function runWpCliCommand(string $command, bool $return_script_code = false): int
-    {
-        if ($this->modes[self::ALLOW_ROOT_MODE]) {
-            $command = "$command --allow-root";
-        }
-
-        if (($return_var = $this->wpCliCommand->run(new ArrayInput([
-                WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => $command,
-            ]), $this->output)) && !$return_script_code) {
-            throw new WpCliCommandReturnedNonZero($command, $return_var);
-        }
-
-        return $return_var;
-    }
-
-    private function setup(InputInterface $input, OutputInterface $output)
-    {
-        $this->questionHelper = $this->getHelper('question');
-        $this->modes = [
-            self::ALLOW_ROOT_MODE => $input->getOption(self::ALLOW_ROOT_MODE),
-            self::FORCE_MODE => $input->getOption(self::FORCE_MODE),
-            self::NO_ASK_MODE => $input->getOption(self::NO_ASK_MODE),
-            self::NO_DB_CREATION_MODE => $input->getOption(self::NO_DB_CREATION_MODE),
-        ];
-        $this->input = $input;
-        $this->output = $output;
-        $this->wpCliCommand = $this->getApplication()->find(WpCliCaller::COMMAND_NAME);
-        $this->maintenance_mode = false;
     }
 
     /**
