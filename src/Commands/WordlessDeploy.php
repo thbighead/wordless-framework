@@ -250,7 +250,7 @@ class WordlessDeploy extends WordlessCommand
     {
         $defined_version_in_env = $this->getEnvVariableByKey('WP_VERSION');
 
-        if ($this->runAndGetWpCliCommandOutput('core version') === $defined_version_in_env) {
+        if (trim($this->runAndGetWpCliCommandOutput('core version')) === $defined_version_in_env) {
             $this->output->writeln("WordPress core is already at version $defined_version_in_env.");
             return;
         }
