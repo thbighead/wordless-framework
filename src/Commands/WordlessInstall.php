@@ -55,11 +55,6 @@ class WordlessInstall extends WordlessCommand
     private array $wp_languages;
     private bool $maintenance_mode;
 
-    public function __construct(string $name = null)
-    {
-        parent::__construct($name);
-    }
-
     protected function arguments(): array
     {
         return [];
