@@ -13,7 +13,8 @@ use Wordless\Helpers\ProjectPath;
 
 class CreateInternalCache extends WordlessCommand
 {
-    protected static $defaultName = 'cache:create';
+    public const COMMAND_NAME = 'cache:create';
+    protected static $defaultName = self::COMMAND_NAME;
 
     protected function arguments(): array
     {
