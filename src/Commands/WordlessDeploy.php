@@ -201,8 +201,8 @@ class WordlessDeploy extends WordlessCommand
      */
     private function installWpPluginsLanguage(string $language)
     {
-        $this->runWpCliCommand("language plugin install $language --all --allow-root", true);
-        $this->runWpCliCommand("language plugin update $language --all --allow-root", true);
+        $this->runWpCliCommand("language plugin install $language --all", true);
+        $this->runWpCliCommand("language plugin update $language --all", true);
     }
 
     /**
