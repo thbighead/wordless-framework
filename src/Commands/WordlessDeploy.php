@@ -54,8 +54,8 @@ class WordlessDeploy extends WordlessCommand
 
         $this->overwriteWpConfigFromStub();
         $this->overwriteRobotsTxtFromStub();
-        $this->switchingMaintenanceMode(true);
         $this->performCoreVersionUpdate();
+        $this->switchingMaintenanceMode(true);
 
         try {
             $this->flushWpRewriteRules();
