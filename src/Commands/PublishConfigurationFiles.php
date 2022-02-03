@@ -21,8 +21,6 @@ class PublishConfigurationFiles extends WordlessCommand
     private const CONFIG_FILENAME_ARGUMENT_NAME = 'config_filename';
 
     private array $modes;
-    private InputInterface $input;
-    private OutputInterface $output;
 
     protected function arguments(): array
     {
@@ -51,7 +49,7 @@ class PublishConfigurationFiles extends WordlessCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->setup($input, $output);
+        parent::execute($input, $output);
 
         $config_filenames = $this->input->getArgument(self::CONFIG_FILENAME_ARGUMENT_NAME);
 
@@ -78,6 +76,15 @@ class PublishConfigurationFiles extends WordlessCommand
                 self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
                 self::OPTION_DESCRIPTION_FIELD => 'Forces configuration file publishing.',
             ],
+        ];
+    }
+
+    protected function setup(InputInterface $input, OutputInterface $output)
+    {
+        parent::setup($input, $output);
+
+        $this->modes = [
+            self::FORCE_MODE => $input->getOption(self::FORCE_MODE),
         ];
     }
 
@@ -123,15 +130,6 @@ class PublishConfigurationFiles extends WordlessCommand
         foreach (DirectoryFiles::recursiveRead(ProjectPath::src('config')) as $config_filepath_from) {
             $this->skipOrCopiedConfigFile($config_filepath_from);
         }
-    }
-
-    private function setup(InputInterface $input, OutputInterface $output)
-    {
-        $this->input = $input;
-        $this->output = $output;
-        $this->modes = [
-            self::FORCE_MODE => $input->getOption(self::FORCE_MODE),
-        ];
     }
 
     /**

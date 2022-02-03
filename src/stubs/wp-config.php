@@ -30,7 +30,7 @@ if (!defined('ROOT_PROJECT_PATH')) {
 }
 
 // Nginx TOO_MANY_REDIRECTS error resolution
-if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+if (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null) === 'https') {
     $_SERVER['HTTPS'] = 'on';
 }
 
