@@ -270,7 +270,7 @@ class WordlessInstall extends WordlessCommand
      */
     private function downloadWpCore()
     {
-        if ($this->runWpCliCommand("core version --extra", true) == 0) {
+        if ($this->runWpCliCommand('core version --extra', true) == 0) {
             if ($this->output->isVerbose()) {
                 $this->output->writeln('WordPress Core already downloaded, skipping.');
             }
@@ -280,7 +280,7 @@ class WordlessInstall extends WordlessCommand
 
         $wp_version = $this->getEnvVariableByKey('WP_VERSION', 'latest');
 
-        $this->runWpCliCommand("core download --version=$wp_version --allow-root --skip-content");
+        $this->runWpCliCommand("core download --version=$wp_version --skip-content");
     }
 
     /**
@@ -517,8 +517,8 @@ class WordlessInstall extends WordlessCommand
      */
     private function installWpPluginsLanguage(string $language)
     {
-        $this->runWpCliCommand("language plugin install $language --all --allow-root", true);
-        $this->runWpCliCommand("language plugin update $language --all --allow-root", true);
+        $this->runWpCliCommand("language plugin install $language --all", true);
+        $this->runWpCliCommand("language plugin update $language --all", true);
     }
 
     /**
@@ -557,7 +557,7 @@ class WordlessInstall extends WordlessCommand
     private function performMinorUpdate()
     {
         try {
-            $this->runWpCliCommand('core update --minor --allow-root');
+            $this->runWpCliCommand('core update --minor');
         } finally {
             $this->switchingMaintenanceMode(false);
         }
