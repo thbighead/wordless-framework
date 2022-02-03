@@ -244,6 +244,7 @@ class WordlessDeploy extends WordlessCommand
     /**
      * @return void
      * @throws WpCliCommandReturnedNonZero
+     * @throws Exception
      */
     private function performCoreVersionUpdate()
     {
