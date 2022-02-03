@@ -20,11 +20,9 @@ trait WordlessCommandRunWpCliCommand
             $command = "$command --allow-root";
         }
 
-        $this->executeWordlessCommand(WpCliCaller::COMMAND_NAME, [
+        return $this->executeWordlessCommand(WpCliCaller::COMMAND_NAME, [
             WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => $command,
-        ], $wpCliOutput = new BufferedOutput);
-
-        return $wpCliOutput->fetch();
+        ]);
     }
 
     /**
