@@ -247,11 +247,10 @@ class WordlessDeploy extends WordlessCommand
      */
     private function performCoreVersionUpdate()
     {
-        try {
-            $this->runWpCliCommand("core update --version={$this->getEnvVariableByKey('WP_VERSION')}");
-        } finally {
-            $this->switchingMaintenanceMode(false);
-        }
+        $this->runWpCliCommand(
+            "core update --version={$this->getEnvVariableByKey('WP_VERSION')}",
+            true
+        );
     }
 
     /**
