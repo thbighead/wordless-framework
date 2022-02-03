@@ -256,6 +256,7 @@ class WordlessDeploy extends WordlessCommand
         }
 
         $this->runWpCliCommand("core update --force --version=$defined_version_in_env");
+        $this->runWpCliCommand('core update-db');
     }
 
     /**
