@@ -2,10 +2,10 @@
 
 namespace Wordless\Contracts;
 
-use Wordless\Exception\WordPressFailedToCreateRole;
-use Wordless\Helpers\Str;
+use Wordless\Exception\WordPressFailedToFindRole;
 use WP_Error;
 use WP_REST_Request;
+use WP_Role;
 
 trait ControllerPermissionsChecks
 {
@@ -55,7 +55,7 @@ trait ControllerPermissionsChecks
     }
 
     /**
-     * @throws WordPressFailedToCreateRole
+     * @throws WordPressFailedToFindRole
      */
     public function registerCapabilitiesToRoles()
     {
@@ -68,13 +68,15 @@ trait ControllerPermissionsChecks
         ];
 
         foreach ($this->allowed_roles_names as $string_role) {
-            if (($role = get_role($string_role)) === null) {
-                $role = add_role($string_role, Str::titleCase($string_role), $capabilities);
+            if (($role = get_role($string_role)) instanceof WP_Role) {
+                foreach ($capabilities as $capability) {
+                    $role->add_cap($capability);
+                }
+
+                continue;
             }
 
-            if ($role === null) {
-                throw new WordPressFailedToCreateRole($string_role);
-            }
+            throw new WordPressFailedToFindRole($string_role);
         }
     }
 
