@@ -57,8 +57,8 @@ trait ControllerRouting
     {
         $this->routeBaseRegistration([
             'methods' => Request::METHOD_POST,
-            'callback' => [$this, self::METHOD_NAME_TO_REST_INDEX_ITEMS],
-            'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_INDEX_ITEMS],
+            'callback' => [$this, self::METHOD_NAME_TO_REST_STORE_ITEMS],
+            'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_STORE_ITEMS],
             'args' => $this->get_collection_params(),
         ]);
     }
