@@ -12,7 +12,7 @@ class Debugger
             header('Content-Type: text/html');
         }
 
-        dd($vars);
+        dd(...$vars);
     }
 
     public static function dump(...$vars)
@@ -21,6 +21,6 @@ class Debugger
             header('Content-Type: text/html');
         }
 
-        dump($vars);
+        dump(...$vars);
     }
 }
