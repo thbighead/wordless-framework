@@ -75,16 +75,21 @@ class Str
         return preg_replace('/(?:' . $quoted . ')+$/u', '', $string) . $finish_with;
     }
 
+    public static function slugCase(string $string): string
+    {
+        return self::snakeCase($string, '-');
+    }
+
     public static function snakeCase(string $string, string $delimiter = '_'): string
     {
         return ltrim(
             mb_strtolower(
                 preg_replace(
                     '/([A-z])([0-9])/',
-                    '$1_$2',
+                    "$1$delimiter$2",
                     preg_replace(
                         '/([A-Z])/',
-                        '_$1',
+                        "$delimiter$1",
                         preg_replace(
                             '/\W+/',
                             $delimiter,

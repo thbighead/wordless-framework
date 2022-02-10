@@ -9,7 +9,7 @@ use Wordless\Adapters\WordlessController;
 use Wordless\Exception\FailedToFindCachedKey;
 use Wordless\Exception\FailedToGetControllerPathFromCachedData;
 use Wordless\Exception\PathNotFoundException;
-use Wordless\Exception\WordPressFailedToCreateRole;
+use Wordless\Exception\WordPressFailedToFindRole;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
@@ -18,7 +18,7 @@ class BootControllers extends AbstractBootable
 {
     /**
      * @throws PathNotFoundException
-     * @throws WordPressFailedToCreateRole
+     * @throws WordPressFailedToFindRole
      */
     public static function register()
     {
@@ -36,7 +36,7 @@ class BootControllers extends AbstractBootable
             }
         } catch (FailedToFindCachedKey | FailedToGetControllerPathFromCachedData $exception) {
             foreach (
-                self::yieldBootableControllersPathAndNamespaceByReadingDirectory() as $controller_path_and_namespace
+                self::yieldBootableControllersPathAndResourceNameByReadingDirectory() as $controller_path_and_namespace
             ) {
                 self::requireAndRegisterController(
                     $controller_path_and_namespace[0],
@@ -50,7 +50,7 @@ class BootControllers extends AbstractBootable
      * @return Generator
      * @throws PathNotFoundException
      */
-    public static function yieldBootableControllersPathAndNamespaceByReadingDirectory(): Generator
+    public static function yieldBootableControllersPathAndResourceNameByReadingDirectory(): Generator
     {
         $controllers_directory_path = ProjectPath::controllers();
 
@@ -81,7 +81,7 @@ class BootControllers extends AbstractBootable
     /**
      * @param string $controller_pathing
      * @param string $controller_full_namespace
-     * @throws WordPressFailedToCreateRole
+     * @throws WordPressFailedToFindRole
      */
     private static function requireAndRegisterController(string $controller_pathing, string $controller_full_namespace)
     {

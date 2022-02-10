@@ -24,16 +24,16 @@ class ControllerCacher extends BaseCacher
         $controllers_cache_array = [];
 
         foreach (
-            BootControllers::yieldBootableControllersPathAndNamespaceByReadingDirectory()
-            as $controller_path_and_namespace
+            BootControllers::yieldBootableControllersPathAndResourceNameByReadingDirectory()
+            as $controller_path_and_resource_name
         ) {
-            require_once $controller_path_and_namespace[0];
+            require_once $controller_path_and_resource_name[0];
             /** @var WordlessController $controller */
-            $controller = new $controller_path_and_namespace[1];
+            $controller = new $controller_path_and_resource_name[1];
 
-            $controllers_cache_array[$controller_path_and_namespace[1]] = [
-                    'path' => $controller_path_and_namespace[0],
-                ] + $this->extractNamespaceAndVersionFromController($controller, $controller_path_and_namespace[1]);
+            $controllers_cache_array[$controller_path_and_resource_name[1]] = [
+                    'path' => $controller_path_and_resource_name[0],
+                ] + $this->extractResourceNameAndVersionFromController($controller, $controller_path_and_resource_name[1]);
         }
 
         return $controllers_cache_array;
@@ -42,18 +42,18 @@ class ControllerCacher extends BaseCacher
     /**
      * @throws ReflectionException
      */
-    private function extractNamespaceAndVersionFromController(
+    private function extractResourceNameAndVersionFromController(
         WordlessController $controller,
-        string             $controller_class_namespace
+        string $controller_class_resource_name
     ): array
     {
-        $controllerNamespaceMethod = new ReflectionMethod($controller_class_namespace, 'namespace');
-        $controllerVersionMethod = new ReflectionMethod($controller_class_namespace, 'version');
-        $controllerNamespaceMethod->setAccessible(true);
+        $controllerResourceNameMethod = new ReflectionMethod($controller_class_resource_name, 'resourceName');
+        $controllerVersionMethod = new ReflectionMethod($controller_class_resource_name, 'version');
+        $controllerResourceNameMethod->setAccessible(true);
         $controllerVersionMethod->setAccessible(true);
 
         return [
-            'namespace' => $controllerNamespaceMethod->invoke($controller),
+            'resource_name' => $controllerResourceNameMethod->invoke($controller),
             'version' => $controllerVersionMethod->invoke($controller),
         ];
     }
