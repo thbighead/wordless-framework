@@ -4,7 +4,7 @@ namespace Wordless\Abstractions\Guessers;
 
 use Wordless\Helpers\Str;
 
-class ControllerNamespaceGuesser extends ControllerGuesser
+class ControllerResourceNameGuesser extends ControllerGuesser
 {
     /**
      * @return string

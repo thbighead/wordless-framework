@@ -36,7 +36,7 @@ class BootControllers extends AbstractBootable
             }
         } catch (FailedToFindCachedKey | FailedToGetControllerPathFromCachedData $exception) {
             foreach (
-                self::yieldBootableControllersPathAndNamespaceByReadingDirectory() as $controller_path_and_namespace
+                self::yieldBootableControllersPathAndResourceNameByReadingDirectory() as $controller_path_and_namespace
             ) {
                 self::requireAndRegisterController(
                     $controller_path_and_namespace[0],
@@ -50,7 +50,7 @@ class BootControllers extends AbstractBootable
      * @return Generator
      * @throws PathNotFoundException
      */
-    public static function yieldBootableControllersPathAndNamespaceByReadingDirectory(): Generator
+    public static function yieldBootableControllersPathAndResourceNameByReadingDirectory(): Generator
     {
         $controllers_directory_path = ProjectPath::controllers();
 
