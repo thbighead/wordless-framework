@@ -599,6 +599,7 @@ class WordlessInstall extends WordlessCommand
 
         if ($this->maintenance_mode === $switch) {
             $this->output->writeln("Maintenance mode already {$switch_string}d. Skipping...");
+            return;
         }
 
         $this->runWpCliCommand("maintenance-mode $switch_string");
