@@ -5,6 +5,7 @@ namespace Wordless\Adapters;
 use Wordless\Contracts\ControllerErrorHandling;
 use Wordless\Contracts\ControllerPermissionsChecks;
 use Wordless\Contracts\ControllerRouting;
+use Wordless\Helpers\Str;
 use WP_REST_Controller;
 
 abstract class WordlessController extends WP_REST_Controller
@@ -43,6 +44,9 @@ abstract class WordlessController extends WP_REST_Controller
 
         if ($this->allowed_roles_names === null) {
             $this->allowed_roles_names = wp_roles()->get_names();
+            foreach ($this->allowed_roles_names as &$allowed_roles_name) {
+                $allowed_roles_name = Str::slugCase($allowed_roles_name);
+            }
         }
     }
 
