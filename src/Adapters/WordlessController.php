@@ -29,7 +29,7 @@ abstract class WordlessController extends WP_REST_Controller
     protected ?array $allowed_roles_names = null;
     private ?User $user;
 
-    abstract protected function namespace(): string;
+    abstract protected function resourceName(): string;
 
     abstract protected function version(): ?string;
 
@@ -46,9 +46,9 @@ abstract class WordlessController extends WP_REST_Controller
         }
     }
 
-    protected function resourceName(): ?string
+    protected function namespace(): string
     {
-        return null;
+        return 'wordless';
     }
 
     private function getCurrentUser(): ?User

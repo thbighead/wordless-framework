@@ -2,40 +2,42 @@
 
 namespace Wordless\Contracts;
 
-use Wordless\Abstractions\Guessers\ControllerNamespaceGuesser;
+use Wordless\Abstractions\Guessers\ControllerResourceNameGuesser;
 use Wordless\Abstractions\Guessers\ControllerVersionGuesser;
 use Wordless\Abstractions\InternalCache;
 use Wordless\Exception\FailedToFindCachedKey;
 
 trait ControllerGuesser
 {
-    private ?ControllerNamespaceGuesser $namespaceGuesser;
+    private ?ControllerResourceNameGuesser $resourceNameGuesser;
     private ?ControllerVersionGuesser $versionGuesser;
 
-    protected function namespace(): string
+    protected function resourceName(): string
     {
-        $controller_namespace_class = static::class;
+        $controller_resource_name_class = static::class;
 
         try {
-            return InternalCache::getValueOrFail("controllers.$controller_namespace_class.namespace");
+            return InternalCache::getValueOrFail(
+                "controllers.$controller_resource_name_class.resource_name"
+            );
         } catch (FailedToFindCachedKey $exception) {
-            if (!isset($this->namespaceGuesser)) {
-                $this->namespaceGuesser = new ControllerNamespaceGuesser($controller_namespace_class);
+            if (!isset($this->resourceNameGuesser)) {
+                $this->resourceNameGuesser = new ControllerResourceNameGuesser($controller_resource_name_class);
             }
 
-            return $this->namespaceGuesser->getValue();
+            return $this->resourceNameGuesser->getValue();
         }
     }
 
     protected function version(): ?string
     {
-        $controller_namespace_class = static::class;
+        $controller_resource_name_class = static::class;
 
         try {
-            return InternalCache::getValueOrFail("controllers.$controller_namespace_class.version");
+            return InternalCache::getValueOrFail("controllers.$controller_resource_name_class.version");
         } catch (FailedToFindCachedKey $exception) {
-            if (!isset($this->namespaceGuesser)) {
-                $this->versionGuesser = new ControllerVersionGuesser($controller_namespace_class);
+            if (!isset($this->resourceNameGuesser)) {
+                $this->versionGuesser = new ControllerVersionGuesser($controller_resource_name_class);
             }
 
             $version_number = $this->versionGuesser->getValue();
