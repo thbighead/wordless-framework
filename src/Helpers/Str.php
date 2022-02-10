@@ -75,6 +75,11 @@ class Str
         return preg_replace('/(?:' . $quoted . ')+$/u', '', $string) . $finish_with;
     }
 
+    public static function slugCase(string $string)
+    {
+        return self::snakeCase($string, '-');
+    }
+
     public static function snakeCase(string $string, string $delimiter = '_'): string
     {
         return ltrim(
