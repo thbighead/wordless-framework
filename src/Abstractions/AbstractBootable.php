@@ -29,7 +29,7 @@ abstract class AbstractBootable
     {
         $hook_addition_function = 'add_' . static::TYPE;
         $hook_addition_function(
-            self::HOOK,
+            static::HOOK,
             [static::class, static::FUNCTION],
             static::HOOK_PRIORITY,
             static::ACCEPTED_NUMBER_OF_ARGUMENTS
