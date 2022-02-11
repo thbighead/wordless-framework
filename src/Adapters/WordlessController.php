@@ -43,10 +43,7 @@ abstract class WordlessController extends WP_REST_Controller
         $this->user = new User;
 
         if ($this->allowed_roles_names === null) {
-            $this->allowed_roles_names = wp_roles()->get_names();
-            foreach ($this->allowed_roles_names as &$allowed_roles_name) {
-                $allowed_roles_name = Str::slugCase($allowed_roles_name);
-            }
+            $this->allowed_roles_names = array_keys(wp_roles()->get_names());
         }
     }
 
