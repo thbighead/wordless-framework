@@ -5,6 +5,10 @@ namespace Wordless\Abstractions;
 abstract class AbstractBootable
 {
     /**
+     * The function which shall be executed during hook
+     */
+    protected const FUNCTION = 'register';
+    /**
      * WordPress action|filter hook identification
      */
     protected const HOOK = 'rest_api_init';
@@ -13,11 +17,14 @@ abstract class AbstractBootable
      */
     protected const TYPE = 'action';
 
-    abstract public static function register();
-
-    public static function boot(int $hook_priority = 10)
+    public static function boot(int $hook_priority = 10, int $accepted_number_of_args = 0)
     {
         $hook_addition_function = 'add_' . static::TYPE;
-        $hook_addition_function(self::HOOK, [static::class, 'register'], $hook_priority, 0);
+        $hook_addition_function(
+            self::HOOK,
+            [static::class, static::FUNCTION],
+            $hook_priority,
+            $accepted_number_of_args
+        );
     }
 }
