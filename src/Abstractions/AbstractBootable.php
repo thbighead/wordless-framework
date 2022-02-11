@@ -5,6 +5,10 @@ namespace Wordless\Abstractions;
 abstract class AbstractBootable
 {
     /**
+     * WordPress action|filter number of arguments accepted by function
+     */
+    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 0;
+    /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'register';
@@ -13,18 +17,22 @@ abstract class AbstractBootable
      */
     protected const HOOK = 'rest_api_init';
     /**
+     * WordPress action|filter hook priority
+     */
+    protected const HOOK_PRIORITY = 10;
+    /**
      * action or filter type (defines which method will be called: add_action or add_filter)
      */
     protected const TYPE = 'action';
 
-    public static function boot(int $hook_priority = 10, int $accepted_number_of_args = 0)
+    public static function boot()
     {
         $hook_addition_function = 'add_' . static::TYPE;
         $hook_addition_function(
             self::HOOK,
             [static::class, static::FUNCTION],
-            $hook_priority,
-            $accepted_number_of_args
+            static::HOOK_PRIORITY,
+            static::ACCEPTED_NUMBER_OF_ARGUMENTS
         );
     }
 }
