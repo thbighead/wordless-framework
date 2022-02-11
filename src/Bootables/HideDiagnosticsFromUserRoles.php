@@ -9,10 +9,14 @@ use WP_User;
 
 class HideDiagnosticsFromUserRoles extends AbstractBootable
 {
-    public static function register()
-    {
-        add_action('wp_dashboard_setup', [self::class, 'hideDiagnosticsFromUserRoles']);
-    }
+    /**
+     * The function which shall be executed during hook
+     */
+    protected const FUNCTION = 'hideDiagnosticsFromUserRoles';
+    /**
+     * WordPress action|filter hook identification
+     */
+    protected const HOOK = 'wp_dashboard_setup';
 
     /**
      * @return void

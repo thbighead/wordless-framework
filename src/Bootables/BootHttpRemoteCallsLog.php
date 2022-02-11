@@ -5,18 +5,25 @@ namespace Wordless\Bootables;
 use Wordless\Abstractions\AbstractBootable;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\Str;
+use WP_HTTP_Requests_Response;
 
 class BootHttpRemoteCallsLog extends AbstractBootable
 {
-    public static function register()
+    /**
+     * The function which shall be executed during hook
+     */
+    protected const FUNCTION = 'debugWordPressRemoteRequest';
+    /**
+     * WordPress action|filter hook identification
+     */
+    protected const HOOK = 'http_api_debug';
+
+    public static function debugWordPressRemoteRequest($response, $context, $class, $request, $url)
     {
         if (WP_DEBUG) {
             add_action('http_api_debug', [self::class, 'debugWordPressRemoteRequest'], 10, 5);
         }
-    }
 
-    public static function debugWordPressRemoteRequest($response, $context, $class, $request, $url)
-    {
         if (Str::beginsWith($url, Environment::get('APP_URL'))) {
             $request_as_json = json_encode([
                 'http_method' => $request['method'] ?? null,
