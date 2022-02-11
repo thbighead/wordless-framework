@@ -10,6 +10,10 @@ use WP_HTTP_Requests_Response;
 class BootHttpRemoteCallsLog extends AbstractBootable
 {
     /**
+     * WordPress action|filter number of arguments accepted by function
+     */
+    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 5;
+    /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'debugWordPressRemoteRequest';
