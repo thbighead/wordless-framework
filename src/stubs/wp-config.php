@@ -146,6 +146,18 @@ const WP_HTTP_BLOCK_EXTERNAL = true;
 $additional_allowed_hosts = Environment::get('WP_ACCESSIBLE_HOSTS', '*.wordpress.org');
 if (!empty($additional_allowed_hosts)) define('WP_ACCESSIBLE_HOSTS', $additional_allowed_hosts);
 
+// CSP settings
+// Solving insecure cookies (https://rainastudio.com/enable-secure-cookie-setting/)
+if (Environment::get('WORDLESS_CSP', false)) {
+    @ini_set('session.cookie_httponly', true);
+    @ini_set('session.cookie_secure', true);
+    @ini_set('session.use_only_cookies', true);
+
+    if (!headers_sent()) {
+        header('X-Frame-Options: SAMEORIGIN');
+    }
+}
+
 /* That's all, stop editing! Happy publishing. */
 
 /** Absolute path to the WordPress directory. */

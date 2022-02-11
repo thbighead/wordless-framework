@@ -15,6 +15,7 @@ class Environment
         'DB_CHARSET' => 'utf8mb4',
         'DB_COLLATE' => 'utf8mb4_unicode_ci',
         'DB_TABLE_PREFIX' => 'null',
+        'WORDLESS_CSP' => 'null',
         'WP_VERSION' => 'null',
         'WP_THEME' => 'null',
         'WP_PERMALINK' => 'null',
