@@ -38,7 +38,7 @@ class HideDiagnosticsFromUserRoles extends AbstractBootable
         }
 
         foreach ($currentUser->roles as $current_user_role_slug) {
-            if ($allowed_roles_to_see_diagnostics[$current_user_role_slug]) {
+            if ($allowed_roles_to_see_diagnostics[$current_user_role_slug] ?? false) {
                 return;
             }
         }
