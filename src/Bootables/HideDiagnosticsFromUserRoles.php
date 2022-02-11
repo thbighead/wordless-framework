@@ -4,18 +4,14 @@ namespace Wordless\Bootables;
 
 use Wordless\Abstractions\AbstractBootable;
 use Wordless\Exception\PathNotFoundException;
-use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
-use Wordless\Helpers\Str;
 use WP_User;
 
 class HideDiagnosticsFromUserRoles extends AbstractBootable
 {
     public static function register()
     {
-        if (WP_DEBUG) {
-            add_action('wp_dashboard_setup', [self::class, 'hideDiagnosticsFromUserRoles']);
-        }
+        add_action('wp_dashboard_setup', [self::class, 'hideDiagnosticsFromUserRoles']);
     }
 
     /**
