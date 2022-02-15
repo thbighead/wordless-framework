@@ -1,12 +1,12 @@
 <?php
 
-namespace Wordless\Contracts;
+namespace Wordless\Contracts\Command;
 
 use Wordless\Exception\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-trait WordlessCommandWriteRobotsTxt
+trait WriteRobotsTxt
 {
     /**
      * @param string $filename

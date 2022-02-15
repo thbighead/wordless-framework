@@ -8,8 +8,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
-use Wordless\Contracts\WordlessCommandRunWpCliCommand;
-use Wordless\Contracts\WordlessCommandWriteRobotsTxt;
+use Wordless\Contracts\Command\RunWpCliCommand;
+use Wordless\Contracts\Command\WriteRobotsTxt;
 use Wordless\Exception\FailedToCopyStub;
 use Wordless\Exception\PathNotFoundException;
 use Wordless\Exception\WpCliCommandReturnedNonZero;
@@ -18,12 +18,12 @@ use Wordless\Helpers\ProjectPath;
 
 class WordlessDeploy extends WordlessCommand
 {
-    use WordlessCommandRunWpCliCommand, WordlessCommandWriteRobotsTxt;
+    use RunWpCliCommand, WriteRobotsTxt;
 
     protected static $defaultName = 'wordless:deploy';
-    private const ALLOW_ROOT_MODE = 'allow-root';
 
-    private array $modes;
+    protected const ALLOW_ROOT_MODE = 'allow-root';
+
     private array $wp_languages;
     private bool $maintenance_mode;
 
@@ -94,9 +94,6 @@ class WordlessDeploy extends WordlessCommand
     {
         parent::setup($input, $output);
 
-        $this->modes = [
-            self::ALLOW_ROOT_MODE => $input->getOption(self::ALLOW_ROOT_MODE),
-        ];
         $this->maintenance_mode = false;
     }
 
