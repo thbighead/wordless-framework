@@ -16,8 +16,9 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Wordless\Adapters\WordlessCommand;
-use Wordless\Contracts\WordlessCommandRunWpCliCommand;
-use Wordless\Contracts\WordlessCommandWriteRobotsTxt;
+use Wordless\Contracts\Command\ForceMode;
+use Wordless\Contracts\Command\RunWpCliCommand;
+use Wordless\Contracts\Command\WriteRobotsTxt;
 use Wordless\Exception\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Exception\FailedToCopyStub;
 use Wordless\Exception\FailedToDeletePath;
@@ -30,11 +31,12 @@ use Wordless\Helpers\Str;
 
 class WordlessInstall extends WordlessCommand
 {
-    use WordlessCommandRunWpCliCommand, WordlessCommandWriteRobotsTxt;
+    use ForceMode, RunWpCliCommand, WriteRobotsTxt;
 
     protected static $defaultName = 'wordless:install';
-    private const ALLOW_ROOT_MODE = 'allow-root';
-    private const FORCE_MODE = 'force';
+
+    protected const ALLOW_ROOT_MODE = 'allow-root';
+    protected const FORCE_MODE = 'force';
     private const NO_ASK_MODE = 'no-ask';
     private const NO_DB_CREATION_MODE = 'no-db-creation';
     private const WORDPRESS_SALT_FILLABLE_VALUES = [
@@ -50,7 +52,6 @@ class WordlessInstall extends WordlessCommand
     private const WORDPRESS_SALT_URL_GETTER = 'https://api.wordpress.org/secret-key/1.1/salt/';
 
     private array $fresh_new_env_content;
-    private array $modes;
     private QuestionHelper $questionHelper;
     private array $wp_languages;
     private bool $maintenance_mode;
@@ -125,7 +126,7 @@ class WordlessInstall extends WordlessCommand
                 self::OPTION_NAME_FIELD => self::FORCE_MODE,
                 self::OPTION_SHORTCUT_FIELD => 'f',
                 self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Forces a project reinstallation.',
+                self::OPTION_DESCRIPTION_FIELD => 'Forces a project installation.',
             ],
             [
                 self::OPTION_NAME_FIELD => self::NO_ASK_MODE,
@@ -145,11 +146,6 @@ class WordlessInstall extends WordlessCommand
         parent::setup($input, $output);
 
         $this->questionHelper = $this->getHelper('question');
-        $this->modes = array_merge($this->modes, [
-            self::FORCE_MODE => $input->getOption(self::FORCE_MODE),
-            self::NO_ASK_MODE => $input->getOption(self::NO_ASK_MODE),
-            self::NO_DB_CREATION_MODE => $input->getOption(self::NO_DB_CREATION_MODE),
-        ]);
         $this->maintenance_mode = false;
     }
 
@@ -220,7 +216,7 @@ class WordlessInstall extends WordlessCommand
      */
     private function createWpDatabase()
     {
-        if ($this->modes[self::NO_DB_CREATION_MODE]) {
+        if ($this->input->getOption(self::NO_DB_CREATION_MODE)) {
             $this->writelnWhenVerbose(
                 'Running with no database creation mode. Skipping database check and creation.'
             );
@@ -394,7 +390,7 @@ class WordlessInstall extends WordlessCommand
     {
         $variable_default = $_ENV[$variable_marked_as_not_filled] ?? '';
 
-        if ($this->modes[self::NO_ASK_MODE]) {
+        if ($this->input->getOption(self::NO_ASK_MODE)) {
             return $variable_default;
         }
 
@@ -567,7 +563,7 @@ class WordlessInstall extends WordlessCommand
      */
     private function resolveForceMode()
     {
-        if ($this->modes[self::FORCE_MODE]) {
+        if ($this->isForceMode()) {
             DirectoryFiles::recursiveDelete(
                 ProjectPath::wpCore(),
                 [ProjectPath::wpCore('.gitignore')],

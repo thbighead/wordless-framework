@@ -34,7 +34,7 @@ class BootControllers extends AbstractBootable
 
                 self::requireAndRegisterController($controller_cached_data['path'], $controller_full_namespace);
             }
-        } catch (FailedToFindCachedKey | FailedToGetControllerPathFromCachedData $exception) {
+        } catch (FailedToFindCachedKey|FailedToGetControllerPathFromCachedData $exception) {
             foreach (
                 self::yieldBootableControllersPathAndResourceNameByReadingDirectory() as $controller_path_and_namespace
             ) {

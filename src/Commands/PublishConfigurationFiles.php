@@ -20,8 +20,6 @@ class PublishConfigurationFiles extends WordlessCommand
     private const FORCE_MODE = 'force';
     private const CONFIG_FILENAME_ARGUMENT_NAME = 'config_filename';
 
-    private array $modes;
-
     protected function arguments(): array
     {
         return [
@@ -83,9 +81,7 @@ class PublishConfigurationFiles extends WordlessCommand
     {
         parent::setup($input, $output);
 
-        $this->modes = [
-            self::FORCE_MODE => $input->getOption(self::FORCE_MODE),
-        ];
+        $this->setMode(self::FORCE_MODE, $input->getOption(self::FORCE_MODE));
     }
 
     /**
@@ -102,7 +98,7 @@ class PublishConfigurationFiles extends WordlessCommand
 
     private function isForceMode(): bool
     {
-        return $this->modes[self::FORCE_MODE];
+        return $this->getMode(self::FORCE_MODE);
     }
 
     /**
