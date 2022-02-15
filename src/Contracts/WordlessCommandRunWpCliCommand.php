@@ -3,12 +3,24 @@
 namespace Wordless\Contracts;
 
 use Exception;
-use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Commands\WpCliCaller;
 use Wordless\Exception\WpCliCommandReturnedNonZero;
 
 trait WordlessCommandRunWpCliCommand
 {
+    private array $modes;
+
+    protected function setup(InputInterface $input, OutputInterface $output)
+    {
+        parent::setup($input, $output);
+
+        $this->modes = [
+            self::ALLOW_ROOT_MODE => $input->getOption(self::ALLOW_ROOT_MODE),
+        ];
+    }
+
     /**
      * @param string $command
      * @return string

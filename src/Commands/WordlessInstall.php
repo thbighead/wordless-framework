@@ -145,12 +145,11 @@ class WordlessInstall extends WordlessCommand
         parent::setup($input, $output);
 
         $this->questionHelper = $this->getHelper('question');
-        $this->modes = [
-            self::ALLOW_ROOT_MODE => $input->getOption(self::ALLOW_ROOT_MODE),
+        $this->modes = array_merge($this->modes, [
             self::FORCE_MODE => $input->getOption(self::FORCE_MODE),
             self::NO_ASK_MODE => $input->getOption(self::NO_ASK_MODE),
             self::NO_DB_CREATION_MODE => $input->getOption(self::NO_DB_CREATION_MODE),
-        ];
+        ]);
         $this->maintenance_mode = false;
     }
 
