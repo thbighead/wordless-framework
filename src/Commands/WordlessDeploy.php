@@ -82,11 +82,7 @@ class WordlessDeploy extends WordlessCommand
     protected function options(): array
     {
         return [
-            [
-                self::OPTION_NAME_FIELD => self::ALLOW_ROOT_MODE,
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Runs every WP-CLI using --allow-root flag',
-            ],
+            $this->mountAllowRootModeOption(),
         ];
     }
 

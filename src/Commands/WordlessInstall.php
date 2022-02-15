@@ -117,17 +117,8 @@ class WordlessInstall extends WordlessCommand
     protected function options(): array
     {
         return [
-            [
-                self::OPTION_NAME_FIELD => self::ALLOW_ROOT_MODE,
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Runs every WP-CLI using --allow-root flag',
-            ],
-            [
-                self::OPTION_NAME_FIELD => self::FORCE_MODE,
-                self::OPTION_SHORTCUT_FIELD => 'f',
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Forces a project installation.',
-            ],
+            $this->mountAllowRootModeOption(),
+            $this->mountForceModeOption('Forces a project installation.'),
             [
                 self::OPTION_NAME_FIELD => self::NO_ASK_MODE,
                 self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
