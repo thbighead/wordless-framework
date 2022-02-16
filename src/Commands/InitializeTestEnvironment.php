@@ -63,7 +63,9 @@ class InitializeTestEnvironment extends WordlessCommand
             $test_environment_directory_path = ProjectPath::root(self::TARGET_DIRECTORY_NAME);
 
             if ($this->isForceMode()) {
+                $this->output->write("Deleting $test_environment_directory_path...");
                 DirectoryFiles::recursiveDelete($test_environment_directory_path);
+                $this->output->write(' Done!');
 
                 $this->installTestEnvironmentThroughComposer();
             }
