@@ -5,9 +5,9 @@ namespace Wordless\Commands;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
+use Wordless\Contracts\Command\ForceMode;
 use Wordless\Exception\FailedToCopyConfig;
 use Wordless\Exception\PathNotFoundException;
 use Wordless\Helpers\DirectoryFiles;
@@ -16,7 +16,10 @@ use Wordless\Helpers\Str;
 
 class PublishConfigurationFiles extends WordlessCommand
 {
+    use ForceMode;
+
     protected static $defaultName = 'publish:config';
+
     private const FORCE_MODE = 'force';
     private const CONFIG_FILENAME_ARGUMENT_NAME = 'config_filename';
 
@@ -68,20 +71,8 @@ class PublishConfigurationFiles extends WordlessCommand
     protected function options(): array
     {
         return [
-            [
-                self::OPTION_NAME_FIELD => self::FORCE_MODE,
-                self::OPTION_SHORTCUT_FIELD => 'f',
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Forces configuration file publishing.',
-            ],
+            $this->mountForceModeOption('Forces configuration file publishing.'),
         ];
-    }
-
-    protected function setup(InputInterface $input, OutputInterface $output)
-    {
-        parent::setup($input, $output);
-
-        $this->setMode(self::FORCE_MODE, $input->getOption(self::FORCE_MODE));
     }
 
     /**
@@ -94,11 +85,6 @@ class PublishConfigurationFiles extends WordlessCommand
         if (!copy($from, $to)) {
             throw new FailedToCopyConfig($from, $to);
         }
-    }
-
-    private function isForceMode(): bool
-    {
-        return $this->getMode(self::FORCE_MODE);
     }
 
     /**

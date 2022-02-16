@@ -549,19 +549,22 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
-     * @throws PathNotFoundException
      * @throws FailedToDeletePath
      */
     private function resolveForceMode()
     {
         if ($this->isForceMode()) {
-            DirectoryFiles::recursiveDelete(
-                ProjectPath::wpCore(),
-                [ProjectPath::wpCore('.gitignore')],
-                false
-            );
+            try {
+                DirectoryFiles::recursiveDelete(
+                    ProjectPath::wpCore(),
+                    [ProjectPath::wpCore('.gitignore')],
+                    false
+                );
 
-            DirectoryFiles::delete(ProjectPath::publicHtml('robots.txt'));
+                DirectoryFiles::delete(ProjectPath::publicHtml('robots.txt'));
+            } catch (PathNotFoundException $exception) {
+                $this->writelnWhenVerbose("{$exception->getMessage()} Skipped from force mode.");
+            }
         }
     }
 
