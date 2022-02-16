@@ -68,7 +68,7 @@ class InitializeTestEnvironment extends WordlessCommand
                 $this->installTestEnvironmentThroughComposer();
             }
         } catch (PathNotFoundException $exception) {
-            $test_environment_directory_path = ProjectPath::root() . self::TARGET_DIRECTORY_NAME;
+            $test_environment_directory_path = ProjectPath::root() . '/' . self::TARGET_DIRECTORY_NAME;
 
             $this->writelnWhenVerbose("Creating test environment at $test_environment_directory_path.");
 
