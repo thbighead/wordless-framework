@@ -183,7 +183,7 @@ class InitializeTestEnvironment extends WordlessCommand
     {
         $command = 'composer create-project thbighead/wordless '
             . self::TARGET_DIRECTORY_NAME
-            . ' --no-install --no-scripts --no-progress';
+            . ' --no-install --no-scripts --quiet';
         $this->output->writeln("Executing '$command'");
         if ($this->executeCommand($command) !== Command::SUCCESS) {
             throw new FailedToInstallTestEnvironmentThroughComposer($command);
