@@ -43,9 +43,22 @@ class InitializeTestEnvironment extends WordlessCommand
         return 'Initialize a test environment inside of ' . self::TARGET_DIRECTORY_NAME . ' directory';
     }
 
+    protected function help(): string
+    {
+        return 'This test environment will install a wordless project using Composer command.';
+    }
+
+    protected function options(): array
+    {
+        return [
+            $this->mountAllowRootModeOption(),
+            $this->mountForceModeOption(
+                'Deletes everything inside test-environment to install from zero.'
+            )
+        ];
+    }
+
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @return int
      * @throws Exception
      * @throws FailedToCopyFile
@@ -55,17 +68,18 @@ class InitializeTestEnvironment extends WordlessCommand
      * @throws FailedToInstallTestEnvironmentThroughComposer
      * @throws PathNotFoundException
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function runIt(): int
     {
-        parent::execute($input, $output);
-
         try {
             $test_environment_directory_path = ProjectPath::root(self::TARGET_DIRECTORY_NAME);
 
             if ($this->isForceMode()) {
-                $this->output->write("Deleting $test_environment_directory_path...");
-                DirectoryFiles::recursiveDelete($test_environment_directory_path);
-                $this->output->write(' Done!');
+                $this->wrapScriptWithMessages(
+                    "Deleting $test_environment_directory_path...",
+                    function () use ($test_environment_directory_path) {
+                        DirectoryFiles::recursiveDelete($test_environment_directory_path);
+                    }
+                );
 
                 $this->installTestEnvironmentThroughComposer();
             }
@@ -86,28 +100,20 @@ class InitializeTestEnvironment extends WordlessCommand
 
         $this->executeComposerInstallInsideTestEnvironment();
 
-        $this->option_inputs = $this->extractOptionsFromOriginalInput();
-
-        $this->option_inputs = Arr::except($this->option_inputs, ['--' . self::FORCE_MODE => true]);
-        $this->executeConsoleCommandInsideTestEnvironment('wordless:install', $this->option_inputs);
-        $this->executeConsoleCommandInsideTestEnvironment('wordless:deploy', $this->option_inputs);
+        $this->executeConsoleCommandInsideTestEnvironment('wordless:install');
+        $this->executeConsoleCommandInsideTestEnvironment('wordless:deploy');
 
         return Command::SUCCESS;
     }
 
-    protected function help(): string
+    protected function setup(InputInterface $input, OutputInterface $output)
     {
-        return 'This test environment will install a wordless project using Composer command.';
-    }
+        parent::setup($input, $output);
 
-    protected function options(): array
-    {
-        return [
-            $this->mountAllowRootModeOption(),
-            $this->mountForceModeOption(
-                'Deletes everything inside test-environment to install from zero.'
-            )
-        ];
+        $this->option_inputs = Arr::except(
+            $this->extractOptionsFromOriginalInput(),
+            ['--' . self::FORCE_MODE => true]
+        );
     }
 
     /**
@@ -135,13 +141,12 @@ class InitializeTestEnvironment extends WordlessCommand
 
     /**
      * @param string $command
-     * @param array $options
      * @return void
      * @throws CliReturnedNonZero
      * @throws FailedToChangeDirectoryTo
      * @throws PathNotFoundException
      */
-    private function executeConsoleCommandInsideTestEnvironment(string $command, array $options)
+    private function executeConsoleCommandInsideTestEnvironment(string $command)
     {
         if (!chdir($test_environment_path = ProjectPath::root(self::TARGET_DIRECTORY_NAME))) {
             throw new FailedToChangeDirectoryTo($test_environment_path);
@@ -149,7 +154,7 @@ class InitializeTestEnvironment extends WordlessCommand
 
         $command = "php console $command";
 
-        foreach ($options as $option_name => $option_value) {
+        foreach ($this->option_inputs as $option_name => $option_value) {
             if ($option_value) {
                 $command = "$command $option_name";
             }

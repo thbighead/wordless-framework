@@ -6,9 +6,10 @@ class Arr
 {
     public static function except(array $array, array $except_keys): array
     {
-        $except_array = [];
+        $except_array = $except_keys;
 
         if (!self::isAssociative($except_array)) {
+            $except_array = [];
             foreach ($except_keys as $key) {
                 $except_array[$key] = $key;
             }

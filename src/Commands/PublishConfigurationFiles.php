@@ -4,8 +4,6 @@ namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Contracts\Command\ForceMode;
 use Wordless\Exception\FailedToCopyConfig;
@@ -41,28 +39,6 @@ class PublishConfigurationFiles extends WordlessCommand
         return 'Publishes configuration files from framework to project root.';
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
-     * @throws FailedToCopyConfig
-     * @throws PathNotFoundException
-     */
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        parent::execute($input, $output);
-
-        $config_filenames = $this->input->getArgument(self::CONFIG_FILENAME_ARGUMENT_NAME);
-
-        if (!empty($config_filenames)) {
-            $this->publishConfigFilesFromCommandArgument($config_filenames);
-        } else {
-            $this->publishConfigFilesFromSrcDirectory();
-        }
-
-        return Command::SUCCESS;
-    }
-
     protected function help(): string
     {
         return 'Copies all configuration files from framework to your project path if they already exists. If want to overwrite files in project root use the force mode.';
@@ -73,6 +49,24 @@ class PublishConfigurationFiles extends WordlessCommand
         return [
             $this->mountForceModeOption('Forces configuration file publishing.'),
         ];
+    }
+
+    /**
+     * @return int
+     * @throws FailedToCopyConfig
+     * @throws PathNotFoundException
+     */
+    protected function runIt(): int
+    {
+        $config_filenames = $this->input->getArgument(self::CONFIG_FILENAME_ARGUMENT_NAME);
+
+        if (!empty($config_filenames)) {
+            $this->publishConfigFilesFromCommandArgument($config_filenames);
+        } else {
+            $this->publishConfigFilesFromSrcDirectory();
+        }
+
+        return Command::SUCCESS;
     }
 
     /**
@@ -135,8 +129,11 @@ class PublishConfigurationFiles extends WordlessCommand
             $this->output->write("File destination at $config_filepath_to does not exists... ");
         }
 
-        $this->output->writeln("Let's copy file from $config_filepath_from to $config_filepath_to");
-        $this->copyConfig($config_filepath_from, $config_filepath_to);
-        $this->output->writeln('Done!');
+        $this->wrapScriptWithMessages(
+            "Let's copy file from $config_filepath_from to $config_filepath_to.",
+            function () use ($config_filepath_from, $config_filepath_to) {
+                $this->copyConfig($config_filepath_from, $config_filepath_to);
+            }
+        );
     }
 }
