@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Contracts\Command\AllowRootMode;
 use Wordless\Contracts\Command\ForceMode;
+use Wordless\Contracts\Command\RunWpCliCommand;
 use Wordless\Exception\CliReturnedNonZero;
 use Wordless\Exception\FailedToChangeDirectoryTo;
 use Wordless\Exception\FailedToCopyFile;
@@ -23,7 +24,7 @@ use Wordless\Helpers\ProjectPath;
 
 class InitializeTestEnvironment extends WordlessCommand
 {
-    use ForceMode, AllowRootMode;
+    use AllowRootMode, ForceMode, RunWpCliCommand;
 
     protected static $defaultName = 'test:environment';
 
@@ -101,6 +102,7 @@ class InitializeTestEnvironment extends WordlessCommand
         $this->executeComposerInstallInsideTestEnvironment();
 
         $this->executeConsoleCommandInsideTestEnvironment('wordless:install');
+        $this->runWpCliCommand('core update-db', true);
         $this->executeConsoleCommandInsideTestEnvironment('wordless:deploy');
 
         return Command::SUCCESS;
