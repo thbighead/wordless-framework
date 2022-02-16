@@ -43,7 +43,12 @@ class CreateInternalCache extends WordlessCommand
         include_once ProjectPath::wpCore('wp-config.php');
 
         try {
-            InternalCache::generate();
+            $this->wrapScriptWithMessages(
+                'Generating internal caches...',
+                function () {
+                    InternalCache::generate();
+                }
+            );
             return Command::SUCCESS;
         } catch (FailedToCopyStub|PathNotFoundException $exception) {
             $this->output->writeln($exception->getMessage());
