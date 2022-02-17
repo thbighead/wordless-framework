@@ -1,14 +1,14 @@
 <?php
 
-namespace Wordless\Bootables;
+namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractBootable;
+use Wordless\Abstractions\AbstractHooker;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\Str;
 use WP_Error;
 use WP_HTTP_Requests_Response;
 
-class BootHttpRemoteCallsLog extends AbstractBootable
+class BootHttpRemoteCallsLog extends AbstractHooker
 {
     /**
      * WordPress action|filter number of arguments accepted by function

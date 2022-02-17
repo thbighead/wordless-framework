@@ -1,9 +1,9 @@
 <?php
 
-namespace Wordless\Bootables;
+namespace Wordless\Hookers;
 
 use Generator;
-use Wordless\Abstractions\AbstractBootable;
+use Wordless\Abstractions\AbstractHooker;
 use Wordless\Abstractions\InternalCache;
 use Wordless\Adapters\WordlessController;
 use Wordless\Exception\FailedToFindCachedKey;
@@ -14,7 +14,7 @@ use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class BootControllers extends AbstractBootable
+class BootControllers extends AbstractHooker
 {
     /**
      * @throws PathNotFoundException
