@@ -13,6 +13,16 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
+    public static function app(string $additional_path = ''): string
+    {
+        return self::root("app/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     public static function cache(string $additional_path = ''): string
     {
         return self::root("cache/$additional_path");
@@ -30,7 +40,7 @@ class ProjectPath
         try {
             return self::src($relative_path);
         } catch (PathNotFoundException $exception) {
-            return self::root($relative_path);
+            return self::app($relative_path);
         }
     }
 
@@ -57,7 +67,7 @@ class ProjectPath
      */
     public static function controllers(string $additional_path = ''): string
     {
-        return self::root("Controllers/$additional_path");
+        return self::app("Controllers/$additional_path");
     }
 
     /**
@@ -125,6 +135,16 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
+    public static function theme(string $additional_path = ''): string
+    {
+        return self::wpThemes(Environment::get('WP_THEME', 'wordless') . "/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     public static function vendor(string $additional_path = ''): string
     {
         return self::root("vendor/$additional_path");
@@ -168,6 +188,26 @@ class ProjectPath
     public static function wpMustUsePlugins(string $additional_path = ''): string
     {
         return self::wpContent("mu-plugins/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function wpPlugins(string $additional_path = ''): string
+    {
+        return self::wpContent("plugins/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function wpThemes(string $additional_path = ''): string
+    {
+        return self::wpContent("themes/$additional_path");
     }
 
     /**

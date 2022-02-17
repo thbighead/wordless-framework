@@ -33,6 +33,8 @@ abstract class WordlessCommand extends Command
 
     abstract protected function options(): array;
 
+    abstract protected function runIt(): int;
+
     protected function configure(): void
     {
         $this->setDescription($this->description())
@@ -67,7 +69,7 @@ abstract class WordlessCommand extends Command
     {
         $this->setup($input, $output);
 
-        return Command::INVALID;
+        return $this->runIt();
     }
 
     protected function executeCommand(string $full_command): int
@@ -131,6 +133,23 @@ abstract class WordlessCommand extends Command
     {
         $this->input = $input;
         $this->output = $output;
+    }
+
+    protected function wrapScriptWithMessages(
+        string $before_script_message,
+        callable $script,
+        string $after_script_message = ' Done!',
+        bool $only_when_verbose = false
+    ) {
+        $only_when_verbose ?
+            $this->writeWhenVerbose($before_script_message) : $this->output->write($before_script_message);
+
+        $result = $script();
+
+        $only_when_verbose ?
+            $this->writelnWhenVerbose($after_script_message) : $this->output->writeln($after_script_message);
+
+        return $result;
     }
 
     protected function writelnWhenVerbose(string $message)

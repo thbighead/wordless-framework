@@ -5,7 +5,6 @@ namespace Wordless\Commands;
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Contracts\Command\RunWpCliCommand;
@@ -37,19 +36,27 @@ class WordlessDeploy extends WordlessCommand
         return 'Deploys a project.';
     }
 
+    protected function help(): string
+    {
+        return 'Deploy a project with all commands needed to update it after developing new features.';
+    }
+
+    protected function options(): array
+    {
+        return [
+            $this->mountAllowRootModeOption(),
+        ];
+    }
+
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @return int
      * @throws FailedToCopyStub
      * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      * @throws Exception
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function runIt(): int
     {
-        parent::execute($input, $output);
-
         $this->loadWpLanguages();
 
         $this->overwriteWpConfigFromStub();
@@ -72,18 +79,6 @@ class WordlessDeploy extends WordlessCommand
         $this->improveWordless();
 
         return Command::SUCCESS;
-    }
-
-    protected function help(): string
-    {
-        return 'Deploy a project with all commands needed to update it after developing new features.';
-    }
-
-    protected function options(): array
-    {
-        return [
-            $this->mountAllowRootModeOption(),
-        ];
     }
 
     protected function setup(InputInterface $input, OutputInterface $output)

@@ -4,10 +4,8 @@ namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
+use Wordless\Contracts\Command\ForceMode;
 use Wordless\Exception\FailedToCopyConfig;
 use Wordless\Exception\PathNotFoundException;
 use Wordless\Helpers\DirectoryFiles;
@@ -16,7 +14,10 @@ use Wordless\Helpers\Str;
 
 class PublishConfigurationFiles extends WordlessCommand
 {
+    use ForceMode;
+
     protected static $defaultName = 'publish:config';
+
     private const FORCE_MODE = 'force';
     private const CONFIG_FILENAME_ARGUMENT_NAME = 'config_filename';
 
@@ -38,17 +39,25 @@ class PublishConfigurationFiles extends WordlessCommand
         return 'Publishes configuration files from framework to project root.';
     }
 
+    protected function help(): string
+    {
+        return 'Copies all configuration files from framework to your project path if they already exists. If want to overwrite files in project root use the force mode.';
+    }
+
+    protected function options(): array
+    {
+        return [
+            $this->mountForceModeOption('Forces configuration file publishing.'),
+        ];
+    }
+
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @return int
      * @throws FailedToCopyConfig
      * @throws PathNotFoundException
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function runIt(): int
     {
-        parent::execute($input, $output);
-
         $config_filenames = $this->input->getArgument(self::CONFIG_FILENAME_ARGUMENT_NAME);
 
         if (!empty($config_filenames)) {
@@ -58,30 +67,6 @@ class PublishConfigurationFiles extends WordlessCommand
         }
 
         return Command::SUCCESS;
-    }
-
-    protected function help(): string
-    {
-        return 'Copies all configuration files from framework to your project path if they already exists. If want to overwrite files in project root use the force mode.';
-    }
-
-    protected function options(): array
-    {
-        return [
-            [
-                self::OPTION_NAME_FIELD => self::FORCE_MODE,
-                self::OPTION_SHORTCUT_FIELD => 'f',
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Forces configuration file publishing.',
-            ],
-        ];
-    }
-
-    protected function setup(InputInterface $input, OutputInterface $output)
-    {
-        parent::setup($input, $output);
-
-        $this->setMode(self::FORCE_MODE, $input->getOption(self::FORCE_MODE));
     }
 
     /**
@@ -94,11 +79,6 @@ class PublishConfigurationFiles extends WordlessCommand
         if (!copy($from, $to)) {
             throw new FailedToCopyConfig($from, $to);
         }
-    }
-
-    private function isForceMode(): bool
-    {
-        return $this->getMode(self::FORCE_MODE);
     }
 
     /**
@@ -149,8 +129,11 @@ class PublishConfigurationFiles extends WordlessCommand
             $this->output->write("File destination at $config_filepath_to does not exists... ");
         }
 
-        $this->output->writeln("Let's copy file from $config_filepath_from to $config_filepath_to");
-        $this->copyConfig($config_filepath_from, $config_filepath_to);
-        $this->output->writeln('Done!');
+        $this->wrapScriptWithMessages(
+            "Let's copy file from $config_filepath_from to $config_filepath_to.",
+            function () use ($config_filepath_from, $config_filepath_to) {
+                $this->copyConfig($config_filepath_from, $config_filepath_to);
+            }
+        );
     }
 }

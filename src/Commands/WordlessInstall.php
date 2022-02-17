@@ -67,8 +67,6 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @return int
      * @throws ClientExceptionInterface
      * @throws Exception
@@ -79,10 +77,8 @@ class WordlessInstall extends WordlessCommand
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function runIt(): int
     {
-        parent::execute($input, $output);
-
         $this->resolveForceMode();
 
         $this->resolveDotEnv();
@@ -351,14 +347,17 @@ class WordlessInstall extends WordlessCommand
             return $dot_env_content;
         }
 
-        $this->writeWhenVerbose('Retrieving WP SALTS at ' . self::WORDPRESS_SALT_URL_GETTER . '... ');
-
-        $wp_salt_response = HttpClient::create()->request(
-            'GET',
-            self::WORDPRESS_SALT_URL_GETTER
-        )->getContent();
-
-        $this->writelnWhenVerbose('Done!');
+        $wp_salt_response = $this->wrapScriptWithMessages(
+            'Retrieving WP SALTS at ' . self::WORDPRESS_SALT_URL_GETTER . '...',
+            function () {
+                return HttpClient::create()->request(
+                    'GET',
+                    self::WORDPRESS_SALT_URL_GETTER
+                )->getContent();
+            },
+            ' Done!',
+            true
+        );
 
         preg_match_all(
             '/define\(\'(.+)\',.+\'(.+)\'\);/',
@@ -549,19 +548,32 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
-     * @throws PathNotFoundException
      * @throws FailedToDeletePath
      */
     private function resolveForceMode()
     {
         if ($this->isForceMode()) {
-            DirectoryFiles::recursiveDelete(
-                ProjectPath::wpCore(),
-                [ProjectPath::wpCore('.gitignore')],
-                false
-            );
+            try {
+                $wp_core_path = ProjectPath::wpCore();
+                $gitignore_wp_core_filepath = ProjectPath::wpCore('.gitignore');
+                $this->wrapScriptWithMessages(
+                    "Deleting everything inside $wp_core_path but $gitignore_wp_core_filepath...",
+                    function () use ($wp_core_path, $gitignore_wp_core_filepath) {
+                        DirectoryFiles::recursiveDelete($wp_core_path, [$gitignore_wp_core_filepath], false);
+                    }
+                );
 
-            DirectoryFiles::delete(ProjectPath::publicHtml('robots.txt'));
+                $robots_txt_filepath = ProjectPath::publicHtml('robots.txt');
+
+                $this->wrapScriptWithMessages(
+                    "Deleting $robots_txt_filepath...",
+                    function () use ($robots_txt_filepath) {
+                        DirectoryFiles::delete($robots_txt_filepath);
+                    }
+                );
+            } catch (PathNotFoundException $exception) {
+                $this->writelnWhenVerbose("{$exception->getMessage()} Skipped from force mode.");
+            }
         }
     }
 

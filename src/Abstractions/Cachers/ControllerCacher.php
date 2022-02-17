@@ -5,7 +5,7 @@ namespace Wordless\Abstractions\Cachers;
 use ReflectionException;
 use ReflectionMethod;
 use Wordless\Adapters\WordlessController;
-use Wordless\Bootables\BootControllers;
+use Wordless\Hookers\BootControllers;
 use Wordless\Exception\PathNotFoundException;
 
 class ControllerCacher extends BaseCacher
