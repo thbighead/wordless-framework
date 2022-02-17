@@ -52,6 +52,10 @@ const DISALLOW_FILE_MODS = true;
 const AUTOMATIC_UPDATER_DISABLED = true;
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-wordpress-core-updates
 const WP_AUTO_UPDATE_CORE = false;
+// https://wordpress.org/support/article/editing-wp-config-php/#modify-autosave-interval
+const AUTOSAVE_INTERVAL = 60; // Seconds
+// https://wordpress.org/support/article/editing-wp-config-php/#specify-the-number-of-post-revisions
+const WP_POST_REVISIONS = 10; // Maximum number of a post revisions
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
@@ -116,7 +120,10 @@ $table_prefix = Environment::get('DB_TABLE_PREFIX', 'wp_');
 // https://wordpress.org/support/article/editing-wp-config-php/#wp_environment_type
 define('WP_ENVIRONMENT_TYPE', $environment = Environment::get('APP_ENV', Environment::LOCAL));
 
+// https://wordpress.stackexchange.com/a/340067
 const WP_DISABLE_FATAL_ERROR_HANDLER = WP_ENVIRONMENT_TYPE === Environment::LOCAL;
+// https://wordpress.org/support/article/editing-wp-config-php/#empty-trash
+const EMPTY_TRASH_DAYS = WP_ENVIRONMENT_TYPE === Environment::LOCAL ? 0 : 30;
 
 define('WP_DEBUG', $debug = Environment::get('WP_DEBUG', false));
 // https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
