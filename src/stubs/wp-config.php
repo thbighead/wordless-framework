@@ -116,10 +116,11 @@ $table_prefix = Environment::get('DB_TABLE_PREFIX', 'wp_');
 // https://wordpress.org/support/article/editing-wp-config-php/#wp_environment_type
 define('WP_ENVIRONMENT_TYPE', $environment = Environment::get('APP_ENV', Environment::LOCAL));
 
+const WP_DISABLE_FATAL_ERROR_HANDLER = WP_ENVIRONMENT_TYPE === Environment::LOCAL;
+
 define('WP_DEBUG', $debug = Environment::get('WP_DEBUG', false));
 // https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
 define('WP_DEBUG_LOG', $debug);
-define('WP_DISABLE_FATAL_ERROR_HANDLER', $debug);
 // https://wordpress.org/support/article/debugging-in-wordpress/#wp_debug_display
 // Enabled only when WP_DEBUG is on in non-production environments and WP_DEBUG_LOG is off, otherwise check debug.log file.
 define('WP_DEBUG_DISPLAY', $debug && (WP_ENVIRONMENT_TYPE !== Environment::PRODUCTION) && (WP_DEBUG_LOG === false));
@@ -144,7 +145,9 @@ define('FORCE_SSL_ADMIN', $environment === Environment::PRODUCTION);
 // https://wordpress.org/support/article/editing-wp-config-php/#block-external-url-requests
 const WP_HTTP_BLOCK_EXTERNAL = true;
 $additional_allowed_hosts = Environment::get('WP_ACCESSIBLE_HOSTS', '*.wordpress.org');
-if (!empty($additional_allowed_hosts)) define('WP_ACCESSIBLE_HOSTS', $additional_allowed_hosts);
+if (!empty($additional_allowed_hosts)) {
+    define('WP_ACCESSIBLE_HOSTS', $additional_allowed_hosts);
+}
 
 // CSP settings
 // Solving insecure cookies (https://rainastudio.com/enable-secure-cookie-setting/)
