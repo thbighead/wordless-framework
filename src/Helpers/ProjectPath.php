@@ -6,6 +6,7 @@ use Wordless\Exception\PathNotFoundException;
 
 class ProjectPath
 {
+    public const VENDOR_PACKAGE_RELATIVE_PATH = 'thbighead/wordless-framework';
     private const SLASH = '/';
 
     /**
@@ -111,7 +112,7 @@ class ProjectPath
      */
     public static function src(string $additional_path = ''): string
     {
-        return self::vendor("thbighead/wordless-framework/src/$additional_path");
+        return self::vendorPackageRoot("src/$additional_path");
     }
 
     /**
@@ -148,6 +149,16 @@ class ProjectPath
     public static function vendor(string $additional_path = ''): string
     {
         return self::root("vendor/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function vendorPackageRoot(string $additional_path = ''): string
+    {
+        return self::vendor(self::VENDOR_PACKAGE_RELATIVE_PATH . "/$additional_path");
     }
 
     /**
