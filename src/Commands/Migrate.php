@@ -20,7 +20,7 @@ class Migrate extends WordlessCommand
 
     protected static $defaultName = 'migrate';
 
-    public const MIGRATIONS_OPTION_NAME = 'wordless_migrations_already_executed';
+    public const MIGRATIONS_WP_OPTION_NAME = 'wordless_migrations_already_executed';
     protected const FORCE_MODE = 'force';
 
     private array $executed_migrations_list;
@@ -41,7 +41,7 @@ class Migrate extends WordlessCommand
     protected function help(): string
     {
         return 'Checks '
-            . self::MIGRATIONS_OPTION_NAME
+            . self::MIGRATIONS_WP_OPTION_NAME
             . ' option and run every migration script missing from it ordered by filename.';
     }
 
@@ -82,7 +82,7 @@ class Migrate extends WordlessCommand
             $migrationObject = new $missing_migration_namespaced_class;
             $migrationObject->up();
             $this->executed_migrations_list[$now][] = $missing_migration_namespaced_class;
-            update_option(self::MIGRATIONS_OPTION_NAME, serialize($this->executed_migrations_list));
+            update_option(self::MIGRATIONS_WP_OPTION_NAME, serialize($this->executed_migrations_list));
         }
     }
 
@@ -113,7 +113,7 @@ class Migrate extends WordlessCommand
 
     private function getOrderedExecutedMigrationsChunksList(): array
     {
-        return $this->executed_migrations_list = array_reverse($this->getExecutedMigrationsChunksList());
+        return array_reverse($this->getExecutedMigrationsChunksList());
     }
 
     private function getExecutedMigrationsChunksList(): array
@@ -122,7 +122,7 @@ class Migrate extends WordlessCommand
             return $this->executed_migrations_list;
         }
 
-        return $this->executed_migrations_list = get_option(self::MIGRATIONS_OPTION_NAME, []);
+        return $this->executed_migrations_list = get_option(self::MIGRATIONS_WP_OPTION_NAME, []);
     }
 
     /**
@@ -173,7 +173,7 @@ class Migrate extends WordlessCommand
                 }
             }
 
-            update_option(self::MIGRATIONS_OPTION_NAME, serialize($this->executed_migrations_list = []));
+            update_option(self::MIGRATIONS_WP_OPTION_NAME, serialize($this->executed_migrations_list = []));
         }
     }
 }
