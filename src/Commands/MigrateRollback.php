@@ -9,6 +9,8 @@ use Wordless\Adapters\WordlessCommand;
 
 class MigrateRollback extends WordlessCommand
 {
+    protected static $defaultName = 'migrate:rollback';
+
     private const NUMBER_OF_CHUNKS_OPTION = 'chunks';
 
     private int $number_of_chunks;
