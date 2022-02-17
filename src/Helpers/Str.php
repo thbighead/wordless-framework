@@ -40,6 +40,11 @@ class Str
         return substr($string, 0, strlen($substring)) === $substring;
     }
 
+    public static function camelCase(string $string): string
+    {
+        return lcfirst(self::studlyCase($string));
+    }
+
     /**
      * @param string $haystack
      * @param string|string[] $needles
@@ -109,7 +114,12 @@ class Str
         return $start_with . preg_replace('/^(?:' . $quoted . ')+/u', '', $string);
     }
 
-    public static function titleCase(string $string)
+    public static function studlyCase(string $string): string
+    {
+        return self::snakeCase(self::titleCase($string), '');
+    }
+
+    public static function titleCase(string $string): string
     {
         return mb_convert_case($string, MB_CASE_TITLE, 'UTF-8');
     }
