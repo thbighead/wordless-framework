@@ -12,6 +12,7 @@ class MigrateRollback extends WordlessCommand
     protected static $defaultName = 'migrate:rollback';
 
     private const NUMBER_OF_CHUNKS_OPTION = 'chunks';
+    private const ALL_CHUNKS_VALUE = 'all';
 
     private int $number_of_chunks;
 
@@ -37,7 +38,7 @@ class MigrateRollback extends WordlessCommand
                 self::OPTION_NAME_FIELD => self::NUMBER_OF_CHUNKS_OPTION,
                 self::OPTION_MODE_FIELD => InputOption::VALUE_OPTIONAL,
                 self::OPTION_DESCRIPTION_FIELD => 'How many chunks you want to rollback. Default is 1.',
-            ]
+            ],
         ];
     }
 
@@ -68,10 +69,13 @@ class MigrateRollback extends WordlessCommand
             return $this->number_of_chunks;
         }
 
-        return $this->number_of_chunks = max(
-            (int)$this->input->getOption(self::NUMBER_OF_CHUNKS_OPTION),
-            1
-        );
+        $chunks_input_option_value = $this->input->getOption(self::NUMBER_OF_CHUNKS_OPTION);
+
+        if (strtolower($chunks_input_option_value) === self::ALL_CHUNKS_VALUE) {
+            return PHP_INT_MAX;
+        }
+
+        return $this->number_of_chunks = max((int)$chunks_input_option_value, 1);
     }
 
     private function getOrderedExecutedMigrationsChunksList(): array

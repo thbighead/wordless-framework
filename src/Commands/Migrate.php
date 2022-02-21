@@ -71,7 +71,7 @@ class Migrate extends WordlessCommand
     private function executeMissingMigrationsScripts()
     {
         if (empty($this->migrations_missing_execution)) {
-            $this->output->writeln('No missing migrations to execute');
+            $this->output->writeln('No missing migrations to execute.');
         }
 
         sort($this->migrations_missing_execution);
