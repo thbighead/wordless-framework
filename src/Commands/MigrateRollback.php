@@ -4,6 +4,7 @@ namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
+use Wordless\Abstractions\Guessers\MigrationClassNameGuesser;
 use Wordless\Abstractions\Migrations\Script;
 use Wordless\Adapters\WordlessCommand;
 
@@ -53,7 +54,10 @@ class MigrateRollback extends WordlessCommand
         for ($i = 0; $i < $this->getNumberOfChunks(); $i++) {
             $executed_migrations_chunk = $executed_migrations_list[$i];
 
-            foreach (array_reverse($executed_migrations_chunk) as $executed_migration_namespaced_class) {
+            foreach (array_reverse($executed_migrations_chunk) as $executed_migration_filename) {
+                include_once $executed_migration_filename;
+                $executed_migration_namespaced_class = $this
+                    ->guessMigrationClassNameFromFileName($executed_migration_filename);
                 /** @var Script $migrationObject */
                 $migrationObject = new $executed_migration_namespaced_class;
                 $migrationObject->down();
@@ -85,5 +89,14 @@ class MigrateRollback extends WordlessCommand
         }
 
         return $this->executed_migrations_list = array_reverse(get_option(Migrate::MIGRATIONS_WP_OPTION_NAME, []));
+    }
+
+    /**
+     * @param string $migration_filename
+     * @return string
+     */
+    private function guessMigrationClassNameFromFileName(string $migration_filename): string
+    {
+        return (new MigrationClassNameGuesser($migration_filename))->getValue();
     }
 }

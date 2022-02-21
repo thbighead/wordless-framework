@@ -78,14 +78,17 @@ class Migrate extends WordlessCommand
 
         $this->executed_migrations_list[$now = date('Y-m-d H:i:s')] = [];
 
-        foreach ($this->migrations_missing_execution as $missing_migration_namespaced_class) {
+        foreach ($this->migrations_missing_execution as $missing_migration_filename) {
+            $missing_migration_namespaced_class = $this->guessed_migrations_class_names[$missing_migration_filename];
+
             $this->wrapScriptWithMessages(
                 "Executing $missing_migration_namespaced_class::up()...",
-                function () use ($missing_migration_namespaced_class, $now) {
+                function () use ($missing_migration_filename, $missing_migration_namespaced_class, $now) {
+                    include_once $missing_migration_filename;
                     /** @var Script $migrationObject */
                     $migrationObject = new $missing_migration_namespaced_class;
                     $migrationObject->up();
-                    $this->executed_migrations_list[$now][] = $missing_migration_namespaced_class;
+                    $this->executed_migrations_list[$now][] = $missing_migration_filename;
                     update_option(self::MIGRATIONS_WP_OPTION_NAME, serialize($this->executed_migrations_list));
                 }
             );
@@ -100,21 +103,21 @@ class Migrate extends WordlessCommand
      */
     private function filterMigrationsMissingExecution()
     {
-        $this->migrations_missing_execution = $this->getScriptsClassNames();
+        $this->migrations_missing_execution = $this->getScriptsFilesToClassNamesDictionary();
 
         foreach ($this->getExecutedMigrationsChunksList() as $executed_migrations_chunk) {
-            foreach ($executed_migrations_chunk as $executed_migration_namespaced_class) {
+            foreach ($executed_migrations_chunk as $executed_migration_filename) {
                 $migration_namespaced_class =
-                    $this->migrations_missing_execution[$executed_migration_namespaced_class] ?? null;
+                    $this->migrations_missing_execution[$executed_migration_filename] ?? null;
                 if ($migration_namespaced_class === null) {
-                    throw new FailedToFindExecutedMigrationScript($executed_migration_namespaced_class);
+                    throw new FailedToFindExecutedMigrationScript($executed_migration_filename);
                 }
 
-                unset($this->migrations_missing_execution[$executed_migration_namespaced_class]);
+                unset($this->migrations_missing_execution[$executed_migration_filename]);
             }
         }
 
-        $this->migrations_missing_execution = array_values($this->migrations_missing_execution);
+        $this->migrations_missing_execution = array_keys($this->migrations_missing_execution);
     }
 
     private function getOrderedExecutedMigrationsChunksList(): array
@@ -155,7 +158,7 @@ class Migrate extends WordlessCommand
      * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
-    private function getScriptsClassNames(): array
+    private function getScriptsFilesToClassNamesDictionary(): array
     {
         if (isset($this->guessed_migrations_class_names)) {
             return $this->guessed_migrations_class_names;
@@ -166,7 +169,7 @@ class Migrate extends WordlessCommand
 
         foreach ($this->getMigrationFiles() as $migration_filename) {
             $guessed_class_name = $migrationClassNameGuesser->setMigrationFilename($migration_filename)->getValue();
-            $this->guessed_migrations_class_names[$guessed_class_name] = $guessed_class_name;
+            $this->guessed_migrations_class_names[$migration_filename] = $guessed_class_name;
             $migrationClassNameGuesser->resetGuessedValue();
         }
 
