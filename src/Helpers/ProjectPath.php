@@ -78,7 +78,7 @@ class ProjectPath
      */
     public static function migrations(string $additional_path = ''): string
     {
-        return self::app("Migrations/$additional_path");
+        return self::root("migrations/$additional_path");
     }
 
     /**
