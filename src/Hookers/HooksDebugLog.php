@@ -21,7 +21,7 @@ class HooksDebugLog extends AbstractHooker
 
 	public static function debugLog(string $hook_name)
 	{
-        if (WP_DEBUG_LOG) {
+        if (WORDLESS_HOOK_DEBUG) {
             error_log("HOOK: $hook_name - " . date('Y-m-d H:i:s'));
         }
 	}
