@@ -7,6 +7,7 @@ use Wordless\Exception\FailedToCopyFile;
 use Wordless\Exception\FailedToCreateDirectory;
 use Wordless\Exception\FailedToDeletePath;
 use Wordless\Exception\FailedToGetDirectoryPermissions;
+use Wordless\Exception\InvalidDirectory;
 use Wordless\Exception\PathNotFoundException;
 
 class DirectoryFiles
@@ -57,6 +58,22 @@ class DirectoryFiles
     }
 
     /**
+     * @param string $directory
+     * @return array
+     * @throws InvalidDirectory
+     */
+    public static function listFromDirectory(string $directory): array
+    {
+        $raw_list = scandir($directory);
+
+        if ($raw_list === false) {
+            throw new InvalidDirectory($directory);
+        }
+
+        return array_diff($raw_list, ['.', '..']);
+    }
+
+    /**
      * @param string $from
      * @param string $to
      * @param string[] $except
@@ -75,21 +92,7 @@ class DirectoryFiles
             return;
         }
 
-        if (is_dir($from) === true) {
-            if (!file_exists($to)) {
-                self::createDirectoryAt($to);
-            }
-
-            $files = array_diff(scandir($from), ['.', '..']);
-
-            foreach ($files as $file) {
-                self::recursiveCopy("$from_real_path/$file", "$to/$file");
-            }
-
-            return;
-        }
-
-        if (is_file($from) === true) {
+        if (is_link($from) || is_file($from)) {
             if (!file_exists($directory_destination = dirname($to))) {
                 self::createDirectoryAt($directory_destination);
             }
@@ -97,6 +100,18 @@ class DirectoryFiles
             if (!copy($from, $to)) {
                 throw new FailedToCopyFile($from, $to, $secure_mode);
             }
+
+            return;
+        }
+
+        if (!file_exists($to)) {
+            self::createDirectoryAt($to);
+        }
+
+        $files = array_diff(scandir($from), ['.', '..']);
+
+        foreach ($files as $file) {
+            self::recursiveCopy("$from_real_path/$file", "$to/$file");
         }
     }
 
@@ -115,25 +130,25 @@ class DirectoryFiles
             return;
         }
 
-        if (is_dir($real_path)) {
-            $files = array_diff(scandir($real_path), ['.', '..']);
-
-            foreach ($files as $file) {
-                self::recursiveDelete("$real_path/$file", $except);
-            }
-
-            if (!$delete_root) {
-                return;
-            }
-
-            if (!rmdir($real_path)) {
+        if (is_link($real_path) || is_file($real_path)) {
+            if (!unlink($real_path)) {
                 throw new FailedToDeletePath($real_path);
             }
 
             return;
         }
 
-        if (!unlink($real_path)) {
+        $files = array_diff(scandir($real_path), ['.', '..']);
+
+        foreach ($files as $file) {
+            self::recursiveDelete("$real_path/$file", $except);
+        }
+
+        if (!$delete_root) {
+            return;
+        }
+
+        if (!rmdir($real_path)) {
             throw new FailedToDeletePath($real_path);
         }
     }
