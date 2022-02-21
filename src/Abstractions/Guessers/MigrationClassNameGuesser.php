@@ -25,7 +25,7 @@ class MigrationClassNameGuesser extends BaseGuesser
         return $this;
     }
 
-    protected function guessValue()
+    protected function guessValue(): string
     {
         $script_filename_without_date_prefix_and_extension = substr(
             $this->migration_filename,

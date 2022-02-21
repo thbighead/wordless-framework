@@ -13,6 +13,7 @@ use Wordless\Exception\InvalidDirectory;
 use Wordless\Exception\PathNotFoundException;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Str;
 
 class Migrate extends WordlessCommand
 {
@@ -78,11 +79,16 @@ class Migrate extends WordlessCommand
         $this->executed_migrations_list[$now = date('Y-m-d H:i:s')] = [];
 
         foreach ($this->migrations_missing_execution as $missing_migration_namespaced_class) {
-            /** @var Script $migrationObject */
-            $migrationObject = new $missing_migration_namespaced_class;
-            $migrationObject->up();
-            $this->executed_migrations_list[$now][] = $missing_migration_namespaced_class;
-            update_option(self::MIGRATIONS_WP_OPTION_NAME, serialize($this->executed_migrations_list));
+            $this->wrapScriptWithMessages(
+                "Executing $missing_migration_namespaced_class::up()...",
+                function () use ($missing_migration_namespaced_class, $now) {
+                    /** @var Script $migrationObject */
+                    $migrationObject = new $missing_migration_namespaced_class;
+                    $migrationObject->up();
+                    $this->executed_migrations_list[$now][] = $missing_migration_namespaced_class;
+                    update_option(self::MIGRATIONS_WP_OPTION_NAME, serialize($this->executed_migrations_list));
+                }
+            );
         }
     }
 
@@ -136,7 +142,12 @@ class Migrate extends WordlessCommand
             return $this->migration_files;
         }
 
-        return $this->migration_files = DirectoryFiles::listFromDirectory(ProjectPath::migrations());
+        return $this->migration_files = array_filter(
+            DirectoryFiles::listFromDirectory(ProjectPath::migrations()),
+            function ($supposed_migration_file) {
+                return Str::endsWith($supposed_migration_file, '.php');
+            }
+        );
     }
 
     /**
@@ -165,15 +176,31 @@ class Migrate extends WordlessCommand
     private function resolveForceMode()
     {
         if ($this->isForceMode()) {
+            $this->output->writeln(
+                'Running migration into force mode. Rolling back every executed migration.'
+            );
             foreach ($this->getOrderedExecutedMigrationsChunksList() as $executed_migrations_chunk) {
                 foreach (array_reverse($executed_migrations_chunk) as $executed_migration_namespaced_class) {
-                    /** @var Script $migrationObject */
-                    $migrationObject = new $executed_migration_namespaced_class;
-                    $migrationObject->down();
+                    $this->wrapScriptWithMessages(
+                        "Executing $executed_migration_namespaced_class::down()...",
+                        function () use ($executed_migration_namespaced_class) {
+                            /** @var Script $migrationObject */
+                            $migrationObject = new $executed_migration_namespaced_class;
+                            $migrationObject->down();
+                        }
+                    );
                 }
             }
 
-            update_option(self::MIGRATIONS_WP_OPTION_NAME, serialize($this->executed_migrations_list = []));
+            $this->wrapScriptWithMessages(
+                'Trashing ' . self::MIGRATIONS_WP_OPTION_NAME . '...',
+                function () {
+                    update_option(
+                        self::MIGRATIONS_WP_OPTION_NAME,
+                        serialize($this->executed_migrations_list = [])
+                    );
+                }
+            );
         }
     }
 }
