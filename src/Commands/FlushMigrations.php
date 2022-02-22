@@ -38,6 +38,8 @@ class FlushMigrations extends Migrate
      */
     protected function runIt(): int
     {
+        $this->getOrderedExecutedMigrationsChunksList();
+
         foreach ($this->getScriptsFilesToClassNamesDictionary() as $migration_filename => $migration_class_name) {
             try {
                 $this->executeMigrationScriptFile($migration_filename, false);
