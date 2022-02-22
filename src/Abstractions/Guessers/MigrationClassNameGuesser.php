@@ -30,7 +30,7 @@ class MigrationClassNameGuesser extends BaseGuesser
     {
         $script_filename_without_date_prefix_and_extension = substr(
             $this->migration_filename,
-            $this->calculateMigrationDateFormatPrefixCharSize() + 1,
+            $this->calculateMigrationDateFormatPrefixCharSize(),
             -4
         );
 
