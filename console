@@ -5,10 +5,12 @@ const ROOT_PROJECT_PATH = __DIR__;
 require __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
+use Wordless\Commands\FlushMigrations;
 use Wordless\Commands\InitializeTestEnvironment;
 
 $application = new Application();
 
 $application->add(new InitializeTestEnvironment);
+$application->add(new FlushMigrations);
 
 $application->run();
