@@ -11,6 +11,5 @@ use Wordless\Commands\InitializeTestEnvironment;
 $application = new Application();
 
 $application->add(new InitializeTestEnvironment);
-$application->add(new FlushMigrations);
 
 $application->run();
