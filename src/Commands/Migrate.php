@@ -136,6 +136,19 @@ class Migrate extends WordlessCommand
         return Command::SUCCESS;
     }
 
+    protected function trashMigrationsOption()
+    {
+        $this->wrapScriptWithMessages(
+            'Trashing ' . self::MIGRATIONS_WP_OPTION_NAME . '...',
+            function () {
+                update_option(
+                    self::MIGRATIONS_WP_OPTION_NAME,
+                    serialize($this->executed_migrations_list = [])
+                );
+            }
+        );
+    }
+
     private function addToExecutedMigrationsListOption(string $migration_filename)
     {
         if (!isset($this->executed_migrations_list[$this->getNow()])) {
@@ -220,9 +233,9 @@ class Migrate extends WordlessCommand
         );
     }
 
-    private function getNow()
+    private function getNow(): string
     {
-        if ($this->now) {
+        if (isset($this->now)) {
             return $this->now;
         }
 
@@ -273,15 +286,7 @@ class Migrate extends WordlessCommand
                 }
             }
 
-            $this->wrapScriptWithMessages(
-                'Trashing ' . self::MIGRATIONS_WP_OPTION_NAME . '...',
-                function () {
-                    update_option(
-                        self::MIGRATIONS_WP_OPTION_NAME,
-                        serialize($this->executed_migrations_list = [])
-                    );
-                }
-            );
+            $this->trashMigrationsOption();
         }
     }
 

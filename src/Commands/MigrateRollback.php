@@ -51,7 +51,11 @@ class MigrateRollback extends Migrate
      */
     protected function runIt(): int
     {
-        $executed_migrations_list = $this->getOrderedExecutedMigrationsChunksList();
+        $executed_migrations_list = array_values($this->getOrderedExecutedMigrationsChunksList());
+
+        if (empty($executed_migrations_list)) {
+            $this->output->writeln('Nothing to rollback.');
+        }
 
         if (($executed_migrations_list_size = count($executed_migrations_list)) < $this->getNumberOfChunks()) {
             $this->number_of_chunks = $executed_migrations_list_size;
