@@ -7,6 +7,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Wordless\Abstractions\Guessers\MigrationClassNameGuesser;
 use Wordless\Abstractions\Migrations\Script;
 use Wordless\Adapters\WordlessCommand;
+use Wordless\Exception\PathNotFoundException;
+use Wordless\Helpers\ProjectPath;
 
 class MigrateRollback extends WordlessCommand
 {
@@ -43,6 +45,10 @@ class MigrateRollback extends WordlessCommand
         ];
     }
 
+    /**
+     * @return int
+     * @throws PathNotFoundException
+     */
     protected function runIt(): int
     {
         $executed_migrations_list = $this->getOrderedExecutedMigrationsChunksList();
@@ -55,7 +61,7 @@ class MigrateRollback extends WordlessCommand
             $executed_migrations_chunk = $executed_migrations_list[$i];
 
             foreach (array_reverse($executed_migrations_chunk) as $executed_migration_filename) {
-                include_once $executed_migration_filename;
+                include_once ProjectPath::migrations($executed_migration_filename);
                 $executed_migration_namespaced_class = $this
                     ->guessMigrationClassNameFromFileName($executed_migration_filename);
                 /** @var Script $migrationObject */

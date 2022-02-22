@@ -420,7 +420,7 @@ class WordlessInstall extends WordlessCommand
         $wp_admin_user = $this->getEnvVariableByKey('WP_ADMIN_USER', 'infobase');
 
         $this->runWpCliCommand(
-            "core install --url=$app_url_with_final_slash --title=\"$app_name\" --admin_user=$wp_admin_user --admin_password=$wp_admin_password --admin_email=$wp_admin_email"
+            "core install --url=$app_url_with_final_slash --title=\"$app_name\""
         );
 
         $this->switchingMaintenanceMode(true);

@@ -87,24 +87,15 @@ class Str
 
     public static function snakeCase(string $string, string $delimiter = '_'): string
     {
-        return ltrim(
-            mb_strtolower(
-                preg_replace(
-                    '/([A-z])([0-9])/',
-                    "$1$delimiter$2",
-                    preg_replace(
-                        '/([A-Z])/',
-                        "$delimiter$1",
-                        preg_replace(
-                            '/\W+/',
-                            $delimiter,
-                            trim($string)
-                        )
-                    )
-                )
-            ),
-            $delimiter
-        );
+        if (!ctype_lower($string)) {
+            $string = strtolower(preg_replace(
+                '/(.)(?=[A-Z])/u',
+                "$1$delimiter",
+                preg_replace('/\s+/u', '', ucwords($string))
+            ));
+        }
+
+        return $string;
     }
 
     public static function startWith(string $string, string $start_with): string
@@ -116,7 +107,13 @@ class Str
 
     public static function studlyCase(string $string): string
     {
-        return self::snakeCase(self::titleCase($string), '');
+        $words = explode(' ', str_replace(['-', '_'], ' ', $string));
+
+        $studly_words = array_map(function ($word) {
+            return ucfirst($word);
+        }, $words);
+
+        return implode($studly_words);
     }
 
     public static function titleCase(string $string): string
