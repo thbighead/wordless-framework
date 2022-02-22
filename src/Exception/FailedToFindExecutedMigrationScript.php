@@ -2,17 +2,12 @@
 
 namespace Wordless\Exception;
 
-use Exception;
 use Throwable;
 
-class FailedToFindExecutedMigrationScript extends Exception
+class FailedToFindExecutedMigrationScript extends FailedToFindMigrationScript
 {
-    public function __construct(string $executed_migration_namespaced_class, Throwable $previous = null)
+    public function __construct(string $executed_migration_filename, Throwable $previous = null)
     {
-        parent::__construct(
-            "Couldn't find the following Migration script file class: $executed_migration_namespaced_class",
-            0,
-            $previous
-        );
+        parent::__construct($executed_migration_filename, $previous);
     }
 }

@@ -5,12 +5,11 @@ namespace Wordless\Commands;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Wordless\Abstractions\Guessers\MigrationClassNameGuesser;
-use Wordless\Abstractions\Migrations\Script;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Exception\FailedToFindMigrationScript;
+use Wordless\Exception\InvalidDirectory;
 use Wordless\Exception\PathNotFoundException;
-use Wordless\Helpers\ProjectPath;
 
-class MigrateRollback extends WordlessCommand
+class MigrateRollback extends Migrate
 {
     protected static $defaultName = 'migrate:rollback';
 
@@ -48,6 +47,8 @@ class MigrateRollback extends WordlessCommand
     /**
      * @return int
      * @throws PathNotFoundException
+     * @throws FailedToFindMigrationScript
+     * @throws InvalidDirectory
      */
     protected function runIt(): int
     {
@@ -60,13 +61,10 @@ class MigrateRollback extends WordlessCommand
         for ($i = 0; $i < $this->getNumberOfChunks(); $i++) {
             $executed_migrations_chunk = $executed_migrations_list[$i];
 
-            foreach (array_reverse($executed_migrations_chunk) as $executed_migration_filename) {
-                include_once ProjectPath::migrations($executed_migration_filename);
-                $executed_migration_namespaced_class = $this
-                    ->guessMigrationClassNameFromFileName($executed_migration_filename);
-                /** @var Script $migrationObject */
-                $migrationObject = new $executed_migration_namespaced_class;
-                $migrationObject->down();
+            for ($j = count($executed_migrations_chunk) - 1; $j >= 0; $j--) {
+                $executed_migration_filename = $executed_migrations_chunk[$j];
+
+                $this->executeMigrationScriptFile($executed_migration_filename, false);
             }
         }
 
@@ -86,25 +84,5 @@ class MigrateRollback extends WordlessCommand
         }
 
         return $this->number_of_chunks = max((int)$chunks_input_option_value, 1);
-    }
-
-    private function getOrderedExecutedMigrationsChunksList(): array
-    {
-        if (isset($this->executed_migrations_list)) {
-            return $this->executed_migrations_list;
-        }
-
-        return $this->executed_migrations_list = array_reverse(unserialize(
-            get_option(Migrate::MIGRATIONS_WP_OPTION_NAME, []))
-        );
-    }
-
-    /**
-     * @param string $migration_filename
-     * @return string
-     */
-    private function guessMigrationClassNameFromFileName(string $migration_filename): string
-    {
-        return (new MigrationClassNameGuesser($migration_filename))->getValue();
     }
 }
