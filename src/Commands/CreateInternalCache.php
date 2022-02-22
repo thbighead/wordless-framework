@@ -3,16 +3,16 @@
 namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Abstractions\InternalCache;
 use Wordless\Adapters\WordlessCommand;
+use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exception\FailedToCopyStub;
 use Wordless\Exception\PathNotFoundException;
-use Wordless\Helpers\ProjectPath;
 
 class CreateInternalCache extends WordlessCommand
 {
+    use LoadWpConfig;
+
     public const COMMAND_NAME = 'cache:create';
     protected static $defaultName = self::COMMAND_NAME;
 
@@ -36,18 +36,18 @@ class CreateInternalCache extends WordlessCommand
         return [];
     }
 
-    /**
-     * @throws PathNotFoundException
-     */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function runIt(): int
     {
-        include_once ProjectPath::wpCore('wp-config.php');
-
         try {
-            InternalCache::generate();
+            $this->wrapScriptWithMessages(
+                'Generating internal caches...',
+                function () {
+                    InternalCache::generate();
+                }
+            );
             return Command::SUCCESS;
-        } catch (FailedToCopyStub | PathNotFoundException $exception) {
-            $output->writeln($exception->getMessage());
+        } catch (FailedToCopyStub|PathNotFoundException $exception) {
+            $this->output->writeln($exception->getMessage());
             return Command::FAILURE;
         }
     }

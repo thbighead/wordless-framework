@@ -2,15 +2,14 @@
 
 namespace Wordless\Adapters;
 
-use Wordless\Contracts\ControllerErrorHandling;
-use Wordless\Contracts\ControllerPermissionsChecks;
-use Wordless\Contracts\ControllerRouting;
-use Wordless\Helpers\Str;
+use Wordless\Contracts\Controller\ErrorHandling;
+use Wordless\Contracts\Controller\PermissionsChecks;
+use Wordless\Contracts\Controller\Routing;
 use WP_REST_Controller;
 
 abstract class WordlessController extends WP_REST_Controller
 {
-    use ControllerErrorHandling, ControllerPermissionsChecks, ControllerRouting;
+    use ErrorHandling, PermissionsChecks, Routing;
 
     private const FORBIDDEN_CONTEXT_CODE = 'rest_forbidden_context';
     private const FULL_SCHEMA_METHOD = 'get_item_schema';

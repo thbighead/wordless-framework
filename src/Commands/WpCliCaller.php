@@ -3,8 +3,6 @@
 namespace Wordless\Commands;
 
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Exception\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
@@ -40,15 +38,11 @@ class WpCliCaller extends WordlessCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @return int
      * @throws PathNotFoundException
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function runIt(): int
     {
-        parent::execute($input, $output);
-
         $wp_cli_full_command_string = $this->input->getArgument(self::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME);
         $this->treatWpCliCommand($wp_cli_full_command_string);
         $wp_cli_filepath = $this->chooseWpCliScriptByOperationalSystem();

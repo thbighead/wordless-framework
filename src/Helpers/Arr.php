@@ -4,6 +4,20 @@ namespace Wordless\Helpers;
 
 class Arr
 {
+    public static function except(array $array, array $except_keys): array
+    {
+        $except_array = $except_keys;
+
+        if (!self::isAssociative($except_array)) {
+            $except_array = [];
+            foreach ($except_keys as $key) {
+                $except_array[$key] = $key;
+            }
+        }
+
+        return array_diff_key($array, $except_array);
+    }
+
     public static function isAssociative(array $array): bool
     {
         return array_keys($array) !== range(0, count($array) - 1);
