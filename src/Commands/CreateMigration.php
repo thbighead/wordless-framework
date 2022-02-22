@@ -67,9 +67,14 @@ class CreateMigration extends WordlessCommand
         $migration_class_name = Str::studlyCase($snake_cased_migration_class_name);
         $migration_file_name = date(Script::FILENAME_DATE_FORMAT) . "$snake_cased_migration_class_name.php";
 
-        (new MigrationStubMounter(ProjectPath::migrations() . "/$migration_file_name"))->setReplaceContentDictionary([
-            'DummyMigration' => $migration_class_name,
-        ])->mountNewFile();
+        $this->wrapScriptWithMessages(
+            "Creating $migration_file_name...",
+            function () use ($migration_class_name, $migration_file_name) {
+                (new MigrationStubMounter(ProjectPath::migrations() . "/$migration_file_name"))
+                    ->setReplaceContentDictionary(['DummyMigration' => $migration_class_name])
+                    ->mountNewFile();
+            }
+        );
 
         return Command::SUCCESS;
     }
