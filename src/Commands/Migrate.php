@@ -238,11 +238,11 @@ class Migrate extends WordlessCommand
     {
         $removed_migration = null;
 
-        foreach ($this->executed_migrations_list as $migration_chunk) {
-            foreach ($migration_chunk as $key => $executed_migration_filename) {
+        foreach ($this->executed_migrations_list as $chunk_key => $migration_chunk) {
+            foreach ($migration_chunk as $file_key => $executed_migration_filename) {
                 if ($executed_migration_filename === $migration_filename) {
-                    $removed_migration = $this->executed_migrations_list[$migration_chunk][$key];
-                    unset($this->executed_migrations_list[$migration_chunk][$key]);
+                    $removed_migration = $this->executed_migrations_list[$chunk_key][$file_key];
+                    unset($this->executed_migrations_list[$chunk_key][$file_key]);
                     break;
                 }
             }
