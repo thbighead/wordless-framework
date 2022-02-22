@@ -94,7 +94,9 @@ class MigrateRollback extends WordlessCommand
             return $this->executed_migrations_list;
         }
 
-        return $this->executed_migrations_list = array_reverse(get_option(Migrate::MIGRATIONS_WP_OPTION_NAME, []));
+        return $this->executed_migrations_list = array_reverse(unserialize(
+            get_option(Migrate::MIGRATIONS_WP_OPTION_NAME, []))
+        );
     }
 
     /**

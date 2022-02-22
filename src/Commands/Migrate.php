@@ -76,6 +76,7 @@ class Migrate extends WordlessCommand
     {
         if (empty($this->migrations_missing_execution)) {
             $this->output->writeln('No missing migrations to execute.');
+            return;
         }
 
         sort($this->migrations_missing_execution);
@@ -135,7 +136,7 @@ class Migrate extends WordlessCommand
             return $this->executed_migrations_list;
         }
 
-        return $this->executed_migrations_list = get_option(self::MIGRATIONS_WP_OPTION_NAME, []);
+        return $this->executed_migrations_list = unserialize(get_option(self::MIGRATIONS_WP_OPTION_NAME, []));
     }
 
     /**
