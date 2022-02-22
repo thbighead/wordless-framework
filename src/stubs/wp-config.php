@@ -134,7 +134,7 @@ define('WP_DEBUG_DISPLAY', $debug && (WP_ENVIRONMENT_TYPE !== Environment::PRODU
 define('WORDLESS_HOOK_DEBUG', Environment::get('WORDLESS_HOOK_DEBUG', false) && $debug);
 
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-wordpress-auto-updates
-define('COOKIE_DOMAIN', Str::after($site_url = Environment::get('APP_URL'), '://'));
+define('COOKIE_DOMAIN', $app_domain = Str::after($site_url = Environment::get('APP_URL'), '://'));
 
 // https://wordpress.org/support/article/editing-wp-config-php/#blog-address-url
 define('WP_HOME', $site_url);
@@ -150,11 +150,15 @@ define('WP_CONTENT_URL', "{$site_url}wp-content");
 // https://wordpress.org/support/article/editing-wp-config-php/#require-ssl-for-admin-and-logins
 define('FORCE_SSL_ADMIN', $environment === Environment::PRODUCTION);
 
-// https://wordpress.org/support/article/editing-wp-config-php/#block-external-url-requests
-const WP_HTTP_BLOCK_EXTERNAL = true;
-$additional_allowed_hosts = Environment::get('WP_ACCESSIBLE_HOSTS', '*.wordpress.org');
-if (!empty($additional_allowed_hosts)) {
-    define('WP_ACCESSIBLE_HOSTS', $additional_allowed_hosts);
+$allowed_hosts = Environment::get('WP_ACCESSIBLE_HOSTS', '*.wordpress.org');
+if (!empty($allowed_hosts)) {
+    $front_domain = Str::after($site_url = Environment::get('FRONT_END_URL'), '://');
+    $accessible_hosts = $front_domain !== $app_domain ?
+        "$allowed_hosts,$app_domain,*.$app_domain,$front_domain,*.$front_domain" :
+        "$allowed_hosts,$app_domain,*.$app_domain";
+    // https://wordpress.org/support/article/editing-wp-config-php/#block-external-url-requests
+    define('WP_HTTP_BLOCK_EXTERNAL', true);
+    define('WP_ACCESSIBLE_HOSTS', $accessible_hosts);
 }
 
 // CSP settings
