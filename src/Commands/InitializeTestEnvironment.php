@@ -71,8 +71,6 @@ class InitializeTestEnvironment extends WordlessCommand
      */
     protected function runIt(): int
     {
-        $this->executeWordlessCommand('migrate:flush', [], $this->output);
-
         try {
             $test_environment_directory_path = ProjectPath::root(self::TARGET_DIRECTORY_NAME);
 
