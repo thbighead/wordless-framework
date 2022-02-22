@@ -78,6 +78,7 @@ class InitializeTestEnvironment extends WordlessCommand
                 $this->wrapScriptWithMessages(
                     "Deleting $test_environment_directory_path...",
                     function () use ($test_environment_directory_path) {
+                        $this->executeWordlessCommand('migrate:flush');
                         DirectoryFiles::recursiveDelete($test_environment_directory_path);
                     }
                 );

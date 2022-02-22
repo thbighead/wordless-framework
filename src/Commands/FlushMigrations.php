@@ -3,7 +3,9 @@
 namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Wordless\Exception\FailedToFindExecutedMigrationScript;
+use Wordless\Exception\FailedToFindMigrationScript;
+use Wordless\Exception\InvalidDirectory;
+use Wordless\Exception\PathNotFoundException;
 
 class FlushMigrations extends Migrate
 {
@@ -29,12 +31,17 @@ class FlushMigrations extends Migrate
         return [];
     }
 
+    /**
+     * @return int
+     * @throws InvalidDirectory
+     * @throws PathNotFoundException
+     */
     protected function runIt(): int
     {
         foreach ($this->getScriptsFilesToClassNamesDictionary() as $migration_filename => $migration_class_name) {
             try {
                 $this->executeMigrationScriptFile($migration_filename, false);
-            } catch (FailedToFindExecutedMigrationScript $exception) {
+            } catch (FailedToFindMigrationScript $exception) {
                 $this->writelnWhenVerbose("{$exception->getMessage()} Skipping.");
             }
         }
