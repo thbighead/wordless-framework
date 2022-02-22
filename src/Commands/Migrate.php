@@ -256,6 +256,9 @@ class Migrate extends WordlessCommand
                 if ($executed_migration_filename === $migration_filename) {
                     $removed_migration = $this->executed_migrations_list[$chunk_key][$file_key];
                     unset($this->executed_migrations_list[$chunk_key][$file_key]);
+                    if (empty($this->executed_migrations_list[$chunk_key])) {
+                        unset($this->executed_migrations_list[$chunk_key]);
+                    }
                     break;
                 }
             }
