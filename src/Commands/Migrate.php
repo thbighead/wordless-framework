@@ -45,6 +45,7 @@ class Migrate extends WordlessCommand
      * @param string $migration_filename
      * @param bool $up
      * @return void
+     * @throws FailedToFindExecutedMigrationScript
      * @throws FailedToFindMigrationScript
      * @throws InvalidDirectory
      * @throws PathNotFoundException
@@ -80,6 +81,29 @@ class Migrate extends WordlessCommand
     protected function getOrderedExecutedMigrationsChunksList(): array
     {
         return array_reverse($this->getExecutedMigrationsChunksList());
+    }
+
+    /**
+     * @return array
+     * @throws InvalidDirectory
+     * @throws PathNotFoundException
+     */
+    protected function getScriptsFilesToClassNamesDictionary(): array
+    {
+        if (isset($this->guessed_migrations_class_names)) {
+            return $this->guessed_migrations_class_names;
+        }
+
+        $this->guessed_migrations_class_names = [];
+        $migrationClassNameGuesser = new MigrationClassNameGuesser;
+
+        foreach ($this->getMigrationFiles() as $migration_filename) {
+            $guessed_class_name = $migrationClassNameGuesser->setMigrationFilename($migration_filename)->getValue();
+            $this->guessed_migrations_class_names[$migration_filename] = $guessed_class_name;
+            $migrationClassNameGuesser->resetGuessedValue();
+        }
+
+        return $this->guessed_migrations_class_names;
     }
 
     protected function help(): string
@@ -203,29 +227,6 @@ class Migrate extends WordlessCommand
         }
 
         return $this->now = date('Y-m-d H:i:s');
-    }
-
-    /**
-     * @return array
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
-     */
-    private function getScriptsFilesToClassNamesDictionary(): array
-    {
-        if (isset($this->guessed_migrations_class_names)) {
-            return $this->guessed_migrations_class_names;
-        }
-
-        $this->guessed_migrations_class_names = [];
-        $migrationClassNameGuesser = new MigrationClassNameGuesser;
-
-        foreach ($this->getMigrationFiles() as $migration_filename) {
-            $guessed_class_name = $migrationClassNameGuesser->setMigrationFilename($migration_filename)->getValue();
-            $this->guessed_migrations_class_names[$migration_filename] = $guessed_class_name;
-            $migrationClassNameGuesser->resetGuessedValue();
-        }
-
-        return $this->guessed_migrations_class_names;
     }
 
     /**
