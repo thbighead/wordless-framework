@@ -102,7 +102,6 @@ class InitializeTestEnvironment extends WordlessCommand
         $this->executeComposerInstallInsideTestEnvironment();
 
         $this->executeConsoleCommandInsideTestEnvironment('wordless:install');
-        $this->executeConsoleCommandInsideTestEnvironment('wp:run "core update-db"');
         $this->executeConsoleCommandInsideTestEnvironment('wordless:deploy');
 
         return Command::SUCCESS;

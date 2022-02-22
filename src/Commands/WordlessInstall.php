@@ -96,6 +96,7 @@ class WordlessInstall extends WordlessCommand
             $this->activateWpPlugins();
             $this->installWpLanguages();
             $this->makeWpBlogPublic();
+            $this->runWpCliCommand('core update-db', true);
         } finally {
             $this->switchingMaintenanceMode(false);
         }
@@ -415,9 +416,6 @@ class WordlessInstall extends WordlessCommand
         $app_url = $this->getEnvVariableByKey('APP_URL');
         $app_url_with_final_slash = Str::finishWith($app_url, '/');
         $app_name = $this->getEnvVariableByKey('APP_NAME', 'Wordless App');
-        $wp_admin_email = $this->getEnvVariableByKey('WP_ADMIN_EMAIL', 'php-team@infobase.com.br');
-        $wp_admin_password = $this->getEnvVariableByKey('WP_ADMIN_PASSWORD', 'infobase123');
-        $wp_admin_user = $this->getEnvVariableByKey('WP_ADMIN_USER', 'infobase');
 
         $this->runWpCliCommand(
             "core install --url=$app_url_with_final_slash --title=\"$app_name\""
