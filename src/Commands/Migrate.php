@@ -143,7 +143,7 @@ class Migrate extends WordlessCommand
             function () {
                 update_option(
                     self::MIGRATIONS_WP_OPTION_NAME,
-                    serialize($this->executed_migrations_list = [])
+                    $this->executed_migrations_list = []
                 );
             }
         );
@@ -211,7 +211,7 @@ class Migrate extends WordlessCommand
             return $this->executed_migrations_list;
         }
 
-        return $this->executed_migrations_list = unserialize(get_option(self::MIGRATIONS_WP_OPTION_NAME, []));
+        return $this->executed_migrations_list = get_option(self::MIGRATIONS_WP_OPTION_NAME, []);
     }
 
     /**
@@ -295,6 +295,6 @@ class Migrate extends WordlessCommand
 
     private function updateExecutedMigrationsListOption(): bool
     {
-        return update_option(self::MIGRATIONS_WP_OPTION_NAME, serialize($this->executed_migrations_list));
+        return update_option(self::MIGRATIONS_WP_OPTION_NAME, $this->executed_migrations_list);
     }
 }
