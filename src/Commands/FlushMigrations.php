@@ -38,17 +38,15 @@ class FlushMigrations extends Migrate
      */
     protected function runIt(): int
     {
-        $this->getOrderedExecutedMigrationsChunksList();
-
-        foreach ($this->getScriptsFilesToClassNamesDictionary() as $migration_filename => $migration_class_name) {
+        foreach ($this->getOrderedExecutedMigrationsChunksList() as $migration_filename => $migration_class_name) {
             try {
                 $this->executeMigrationScriptFile($migration_filename, false);
             } catch (FailedToFindMigrationScript $exception) {
-                $this->writelnWhenVerbose("{$exception->getMessage()} Skipping.");
+                $this->output->writeln("{$exception->getMessage()} Skipping.");
             }
         }
 
-        update_option(self::MIGRATIONS_WP_OPTION_NAME, serialize([]));
+        $this->trashMigrationsOption();
 
         return Command::SUCCESS;
     }
