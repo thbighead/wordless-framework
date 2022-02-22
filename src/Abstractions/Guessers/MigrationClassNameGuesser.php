@@ -3,6 +3,7 @@
 namespace Wordless\Abstractions\Guessers;
 
 use Wordless\Abstractions\Migrations\Script;
+use Wordless\Exception\InvalidDateFormat;
 use Wordless\Helpers\Str;
 
 class MigrationClassNameGuesser extends BaseGuesser
@@ -21,6 +22,10 @@ class MigrationClassNameGuesser extends BaseGuesser
         return $this;
     }
 
+    /**
+     * @return string
+     * @throws InvalidDateFormat
+     */
     protected function guessValue(): string
     {
         $script_filename_without_date_prefix_and_extension = substr(
@@ -29,11 +34,19 @@ class MigrationClassNameGuesser extends BaseGuesser
             -4
         );
 
-        return 'App\Migrations\\' . Str::studlyCase($script_filename_without_date_prefix_and_extension);
+        return Str::studlyCase($script_filename_without_date_prefix_and_extension);
     }
 
+    /**
+     * @return int
+     * @throws InvalidDateFormat
+     */
     private function calculateMigrationDateFormatPrefixCharSize(): int
     {
-        return strlen(Script::FILENAME_DATE_FORMAT);
+        if (($date_formatted = date(Script::FILENAME_DATE_FORMAT)) === false) {
+            throw new InvalidDateFormat(Script::FILENAME_DATE_FORMAT);
+        }
+
+        return strlen($date_formatted);
     }
 }
