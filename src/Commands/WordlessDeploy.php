@@ -5,11 +5,10 @@ namespace Wordless\Commands;
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
-use Wordless\Contracts\WordlessCommandRunWpCliCommand;
-use Wordless\Contracts\WordlessCommandWriteRobotsTxt;
+use Wordless\Contracts\Command\RunWpCliCommand;
+use Wordless\Contracts\Command\WriteRobotsTxt;
 use Wordless\Exception\FailedToCopyStub;
 use Wordless\Exception\PathNotFoundException;
 use Wordless\Exception\WpCliCommandReturnedNonZero;
@@ -18,12 +17,12 @@ use Wordless\Helpers\ProjectPath;
 
 class WordlessDeploy extends WordlessCommand
 {
-    use WordlessCommandRunWpCliCommand, WordlessCommandWriteRobotsTxt;
+    use RunWpCliCommand, WriteRobotsTxt;
 
     protected static $defaultName = 'wordless:deploy';
-    private const ALLOW_ROOT_MODE = 'allow-root';
 
-    private array $modes;
+    protected const ALLOW_ROOT_MODE = 'allow-root';
+
     private array $wp_languages;
     private bool $maintenance_mode;
 
@@ -37,19 +36,27 @@ class WordlessDeploy extends WordlessCommand
         return 'Deploys a project.';
     }
 
+    protected function help(): string
+    {
+        return 'Deploy a project with all commands needed to update it after developing new features.';
+    }
+
+    protected function options(): array
+    {
+        return [
+            $this->mountAllowRootModeOption(),
+        ];
+    }
+
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @return int
      * @throws FailedToCopyStub
      * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      * @throws Exception
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function runIt(): int
     {
-        parent::execute($input, $output);
-
         $this->loadWpLanguages();
 
         $this->overwriteWpConfigFromStub();
@@ -74,29 +81,10 @@ class WordlessDeploy extends WordlessCommand
         return Command::SUCCESS;
     }
 
-    protected function help(): string
-    {
-        return 'Deploy a project with all commands needed to update it after developing new features.';
-    }
-
-    protected function options(): array
-    {
-        return [
-            [
-                self::OPTION_NAME_FIELD => self::ALLOW_ROOT_MODE,
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Runs every WP-CLI using --allow-root flag',
-            ],
-        ];
-    }
-
     protected function setup(InputInterface $input, OutputInterface $output)
     {
         parent::setup($input, $output);
 
-        $this->modes = [
-            self::ALLOW_ROOT_MODE => $input->getOption(self::ALLOW_ROOT_MODE),
-        ];
         $this->maintenance_mode = false;
     }
 

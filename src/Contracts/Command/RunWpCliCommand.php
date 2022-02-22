@@ -1,14 +1,15 @@
 <?php
 
-namespace Wordless\Contracts;
+namespace Wordless\Contracts\Command;
 
 use Exception;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Wordless\Commands\WpCliCaller;
 use Wordless\Exception\WpCliCommandReturnedNonZero;
 
-trait WordlessCommandRunWpCliCommand
+trait RunWpCliCommand
 {
+    use AllowRootMode;
+
     /**
      * @param string $command
      * @return string
@@ -16,7 +17,7 @@ trait WordlessCommandRunWpCliCommand
      */
     private function runAndGetWpCliCommandOutput(string $command): string
     {
-        if ($this->modes[self::ALLOW_ROOT_MODE]) {
+        if ($this->allowRootMode()) {
             $command = "$command --allow-root";
         }
 
@@ -34,7 +35,7 @@ trait WordlessCommandRunWpCliCommand
      */
     private function runWpCliCommand(string $command, bool $return_script_code = false): int
     {
-        if ($this->modes[self::ALLOW_ROOT_MODE]) {
+        if ($this->allowRootMode()) {
             $command = "$command --allow-root";
         }
 

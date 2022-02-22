@@ -1,11 +1,13 @@
 <?php
 
-namespace Wordless\Contracts;
+namespace Wordless\Contracts\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use WP_Error;
+use function __;
+use function rest_authorization_required_code;
 
-trait ControllerErrorHandling
+trait ErrorHandling
 {
     private function buildInvalidMethodError(string $method_name): WP_Error
     {
