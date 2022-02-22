@@ -70,6 +70,7 @@ class WordlessDeploy extends WordlessCommand
             $this->activateWpPlugins();
             $this->installWpLanguages();
             $this->makeWpBlogPublic();
+            $this->runWpCliCommand('core update-db', true);
         } finally {
             $this->switchingMaintenanceMode(false);
         }
