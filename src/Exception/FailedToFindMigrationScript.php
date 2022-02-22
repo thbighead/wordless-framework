@@ -1,0 +1,18 @@
+<?php
+
+namespace Wordless\Exception;
+
+use Exception;
+use Throwable;
+
+class FailedToFindMigrationScript extends Exception
+{
+    public function __construct(string $migration_filename, Throwable $previous = null)
+    {
+        parent::__construct(
+            "Couldn't find the following Migration script file class: $migration_filename",
+            0,
+            $previous
+        );
+    }
+}
