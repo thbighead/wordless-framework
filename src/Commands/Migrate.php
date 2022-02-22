@@ -68,6 +68,10 @@ class Migrate extends WordlessCommand
         return Command::SUCCESS;
     }
 
+    /**
+     * @return void
+     * @throws PathNotFoundException
+     */
     private function executeMissingMigrationsScripts()
     {
         if (empty($this->migrations_missing_execution)) {
@@ -84,7 +88,7 @@ class Migrate extends WordlessCommand
             $this->wrapScriptWithMessages(
                 "Executing $missing_migration_namespaced_class::up()...",
                 function () use ($missing_migration_filename, $missing_migration_namespaced_class, $now) {
-                    include_once $missing_migration_filename;
+                    include_once ProjectPath::migrations($missing_migration_filename);
                     /** @var Script $migrationObject */
                     $migrationObject = new $missing_migration_namespaced_class;
                     $migrationObject->up();
