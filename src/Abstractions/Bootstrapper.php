@@ -2,7 +2,7 @@
 
 namespace Wordless\Abstractions;
 
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 
 class Bootstrapper

@@ -9,9 +9,9 @@ use Wordless\Abstractions\StubMounters\MigrationStubMounter;
 use Wordless\Abstractions\Timezone;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Contracts\Command\LoadWpConfig;
-use Wordless\Exception\FailedToChangeTimezone;
-use Wordless\Exception\FailedToCopyStub;
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\FailedToChangeTimezone;
+use Wordless\Exceptions\FailedToCopyStub;
+use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 

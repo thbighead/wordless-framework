@@ -3,9 +3,9 @@
 namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Wordless\Exception\FailedToFindMigrationScript;
-use Wordless\Exception\InvalidDirectory;
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\FailedToFindMigrationScript;
+use Wordless\Exceptions\InvalidDirectory;
+use Wordless\Exceptions\PathNotFoundException;
 
 class FlushMigrations extends Migrate
 {

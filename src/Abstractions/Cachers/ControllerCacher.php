@@ -6,7 +6,7 @@ use ReflectionException;
 use ReflectionMethod;
 use Wordless\Adapters\WordlessController;
 use Wordless\Hookers\BootControllers;
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\PathNotFoundException;
 
 class ControllerCacher extends BaseCacher
 {

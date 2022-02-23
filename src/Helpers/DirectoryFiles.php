@@ -3,12 +3,12 @@
 namespace Wordless\Helpers;
 
 use Generator;
-use Wordless\Exception\FailedToCopyFile;
-use Wordless\Exception\FailedToCreateDirectory;
-use Wordless\Exception\FailedToDeletePath;
-use Wordless\Exception\FailedToGetDirectoryPermissions;
-use Wordless\Exception\InvalidDirectory;
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\FailedToCopyFile;
+use Wordless\Exceptions\FailedToCreateDirectory;
+use Wordless\Exceptions\FailedToDeletePath;
+use Wordless\Exceptions\FailedToGetDirectoryPermissions;
+use Wordless\Exceptions\InvalidDirectory;
+use Wordless\Exceptions\PathNotFoundException;
 
 class DirectoryFiles
 {
