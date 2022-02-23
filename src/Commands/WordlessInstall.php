@@ -35,6 +35,7 @@ class WordlessInstall extends WordlessCommand
 
     protected static $defaultName = 'wordless:install';
 
+    public const TEMP_MAIL = 'temp@mail.not.real';
     protected const ALLOW_ROOT_MODE = 'allow-root';
     protected const FORCE_MODE = 'force';
     private const NO_ASK_MODE = 'no-ask';
@@ -418,7 +419,8 @@ class WordlessInstall extends WordlessCommand
         $app_name = $this->getEnvVariableByKey('APP_NAME', 'Wordless App');
 
         $this->runWpCliCommand(
-            "core install --url=$app_url_with_final_slash --title=\"$app_name\""
+            "core install --url=$app_url_with_final_slash --title=\"$app_name\" --skip-email --admin_user=temp --admin_email="
+            . self::TEMP_MAIL
         );
 
         $this->switchingMaintenanceMode(true);
