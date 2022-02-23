@@ -8,8 +8,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
-use Wordless\Exception\DotEnvNotSetException;
-use Wordless\Exception\WpCliCommandReturnedNonZero;
+use Wordless\Exceptions\DotEnvNotSetException;
+use Wordless\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Helpers\Environment;
 
 class ReplaceBaseUrls extends WordlessCommand

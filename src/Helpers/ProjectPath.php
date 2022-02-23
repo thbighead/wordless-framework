@@ -2,7 +2,7 @@
 
 namespace Wordless\Helpers;
 
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\PathNotFoundException;
 
 class ProjectPath
 {
