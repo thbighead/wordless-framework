@@ -40,6 +40,11 @@ class Str
         return substr($string, 0, strlen($substring)) === $substring;
     }
 
+    public static function camelCase(string $string): string
+    {
+        return lcfirst(self::studlyCase($string));
+    }
+
     /**
      * @param string $haystack
      * @param string|string[] $needles
@@ -82,24 +87,15 @@ class Str
 
     public static function snakeCase(string $string, string $delimiter = '_'): string
     {
-        return ltrim(
-            mb_strtolower(
-                preg_replace(
-                    '/([A-z])([0-9])/',
-                    "$1$delimiter$2",
-                    preg_replace(
-                        '/([A-Z])/',
-                        "$delimiter$1",
-                        preg_replace(
-                            '/\W+/',
-                            $delimiter,
-                            trim($string)
-                        )
-                    )
-                )
-            ),
-            $delimiter
-        );
+        if (!ctype_lower($string)) {
+            $string = strtolower(preg_replace(
+                '/(.)(?=[A-Z])/u',
+                "$1$delimiter",
+                preg_replace('/\s+/u', '', ucwords($string))
+            ));
+        }
+
+        return $string;
     }
 
     public static function startWith(string $string, string $start_with): string
@@ -109,7 +105,18 @@ class Str
         return $start_with . preg_replace('/^(?:' . $quoted . ')+/u', '', $string);
     }
 
-    public static function titleCase(string $string)
+    public static function studlyCase(string $string): string
+    {
+        $words = explode(' ', str_replace(['-', '_'], ' ', $string));
+
+        $studly_words = array_map(function ($word) {
+            return ucfirst($word);
+        }, $words);
+
+        return implode($studly_words);
+    }
+
+    public static function titleCase(string $string): string
     {
         return mb_convert_case($string, MB_CASE_TITLE, 'UTF-8');
     }

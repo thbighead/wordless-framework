@@ -1,13 +1,14 @@
 <?php
 
-namespace Wordless\Bootables;
+namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractBootable;
+use Wordless\Abstractions\AbstractHooker;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\Str;
+use WP_Error;
 use WP_HTTP_Requests_Response;
 
-class BootHttpRemoteCallsLog extends AbstractBootable
+class BootHttpRemoteCallsLog extends AbstractHooker
 {
     /**
      * WordPress action|filter number of arguments accepted by function
@@ -35,7 +36,8 @@ class BootHttpRemoteCallsLog extends AbstractBootable
                 'body' => is_string($body = ($request['body'] ?? null)) ?
                     json_decode($request['body'], true) : $body,
             ], JSON_PRETTY_PRINT);
-            $http_response = $response['http_response'] ?? null;
+            $http_response = ($response instanceof WP_Error) ?
+                $response->get_error_code() : ($response['http_response'] ?? null);
 
             if (!($http_response instanceof WP_HTTP_Requests_Response)) {
                 $raw_response = 'INVALID RESPONSE OBJECT STRUCTURE: ' . var_export($http_response, true);

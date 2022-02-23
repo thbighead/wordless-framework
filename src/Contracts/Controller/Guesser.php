@@ -1,13 +1,13 @@
 <?php
 
-namespace Wordless\Contracts;
+namespace Wordless\Contracts\Controller;
 
 use Wordless\Abstractions\Guessers\ControllerResourceNameGuesser;
 use Wordless\Abstractions\Guessers\ControllerVersionGuesser;
 use Wordless\Abstractions\InternalCache;
 use Wordless\Exception\FailedToFindCachedKey;
 
-trait ControllerGuesser
+trait Guesser
 {
     private ?ControllerResourceNameGuesser $resourceNameGuesser;
     private ?ControllerVersionGuesser $versionGuesser;

@@ -50,16 +50,11 @@ class ReplaceBaseUrls extends WordlessCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @return int
-     * @throws DotEnvNotSetException
      * @throws WpCliCommandReturnedNonZero
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function runIt(): int
     {
-        parent::execute($input, $output);
-
         $search_urls_string_list = implode(', ', $this->base_urls_to_search);
         $this->writeWhenVerbose("Searching for $search_urls_string_list to replace by $this->app_url");
 

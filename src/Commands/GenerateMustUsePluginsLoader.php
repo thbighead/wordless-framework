@@ -3,8 +3,6 @@
 namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Abstractions\StubMounters\WpLoadMuPluginsStubMounter;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Exception\FailedToCopyStub;
@@ -34,37 +32,6 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
         return 'Generate WordPress Must Use Plugins loader from stub.';
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
-     * @throws FailedToCopyStub
-     * @throws PathNotFoundException
-     */
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $output->write('Generating MU Plugins autoloader...');
-
-        $this->mu_plugins_directory_path = ProjectPath::wpMustUsePlugins();
-        $wp_load_mu_plugins_destiny_path = Str::finishWith(
-                $this->mu_plugins_directory_path,
-                DIRECTORY_SEPARATOR
-            ) . self::WP_LOAD_MU_PLUGINS_FILENAME;
-        $include_files_script = '';
-        $this->mu_plugins_extra_rules = $this->readMuPluginsConfig();
-
-        $this->mountIncludeFilesScriptByReadingMuPluginsDirectory($include_files_script);
-        $this->mountIncludeFilesScriptByMuPluginsJsonExtraRules($include_files_script);
-
-        (new WpLoadMuPluginsStubMounter($wp_load_mu_plugins_destiny_path))->setReplaceContentDictionary([
-            '// {include plugins script}' => $include_files_script,
-        ])->mountNewFile();
-
-        $output->writeln(' Done!');
-
-        return Command::SUCCESS;
-    }
-
     protected function help(): string
     {
         return 'This is better than looping through directories everytime the project runs.';
@@ -73,6 +40,33 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
     protected function options(): array
     {
         return [];
+    }
+
+    /**
+     * @return int
+     * @throws FailedToCopyStub
+     * @throws PathNotFoundException
+     */
+    protected function runIt(): int
+    {
+        $this->wrapScriptWithMessages('Generating MU Plugins autoloader...', function () {
+            $this->mu_plugins_directory_path = ProjectPath::wpMustUsePlugins();
+            $wp_load_mu_plugins_destiny_path = Str::finishWith(
+                    $this->mu_plugins_directory_path,
+                    DIRECTORY_SEPARATOR
+                ) . self::WP_LOAD_MU_PLUGINS_FILENAME;
+            $include_files_script = '';
+            $this->mu_plugins_extra_rules = $this->readMuPluginsConfig();
+
+            $this->mountIncludeFilesScriptByReadingMuPluginsDirectory($include_files_script);
+            $this->mountIncludeFilesScriptByMuPluginsJsonExtraRules($include_files_script);
+
+            (new WpLoadMuPluginsStubMounter($wp_load_mu_plugins_destiny_path))->setReplaceContentDictionary([
+                '// {include plugins script}' => $include_files_script,
+            ])->mountNewFile();
+        });
+
+        return Command::SUCCESS;
     }
 
     private function concatPartialIncludeScript(

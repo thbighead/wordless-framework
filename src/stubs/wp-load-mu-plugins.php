@@ -10,4 +10,8 @@
  * Author URI:  https://www.soluthions.com
  */
 
+use Wordless\Abstractions\Bootstrapper;
+
+Bootstrapper::bootAll();
+
 // {include plugins script}
