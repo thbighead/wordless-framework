@@ -4,7 +4,7 @@ namespace Wordless\Commands;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Wordless\Adapters\WordlessCommand;
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 

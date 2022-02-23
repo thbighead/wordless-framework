@@ -4,8 +4,8 @@ namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Wordless\Adapters\WordlessCommand;
-use Wordless\Exception\FailedToCopyStub;
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\FailedToCopyStub;
+use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 
 class OverwriteWpConfig extends WordlessCommand

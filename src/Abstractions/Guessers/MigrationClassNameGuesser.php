@@ -3,7 +3,7 @@
 namespace Wordless\Abstractions\Guessers;
 
 use Wordless\Abstractions\Migrations\Script;
-use Wordless\Exception\InvalidDateFormat;
+use Wordless\Exceptions\InvalidDateFormat;
 use Wordless\Helpers\Str;
 
 class MigrationClassNameGuesser extends BaseGuesser
