@@ -6,7 +6,8 @@ use Wordless\Exception\PathNotFoundException;
 
 class ProjectPath
 {
-    public const VENDOR_PACKAGE_RELATIVE_PATH = 'infobaseit/wordless-framework';
+    public const VENDOR_PACKAGE_PROJECT = 'infobaseit/wordless';
+    public const VENDOR_PACKAGE_RELATIVE_PATH = self::VENDOR_PACKAGE_PROJECT . '-framework';
     private const SLASH = '/';
 
     /**
