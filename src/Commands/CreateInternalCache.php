@@ -6,8 +6,8 @@ use Symfony\Component\Console\Command\Command;
 use Wordless\Abstractions\InternalCache;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Contracts\Command\LoadWpConfig;
-use Wordless\Exception\FailedToCopyStub;
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\FailedToCopyStub;
+use Wordless\Exceptions\PathNotFoundException;
 
 class CreateInternalCache extends WordlessCommand
 {

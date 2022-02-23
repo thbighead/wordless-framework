@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Exception;
+namespace Wordless\Exceptions;
 
 use Throwable;
 
