@@ -18,7 +18,7 @@ use Wordless\Helpers\ProjectPath;
 
 class WordlessDeploy extends WordlessCommand
 {
-    use RunMigrateCommand, RunWpCliCommand, WriteRobotsTxt;
+    use RunWpCliCommand, WriteRobotsTxt;
 
     protected static $defaultName = 'wordless:deploy';
 
@@ -77,7 +77,7 @@ class WordlessDeploy extends WordlessCommand
         }
 
         $this->resolveWpConfigChmod();
-        $this->upMigrations();
+        $this->executeWordlessCommand('migrate', [], $this->output);
 
         $this->improveWordless();
 
