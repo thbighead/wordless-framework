@@ -136,11 +136,12 @@ abstract class WordlessCommand extends Command
     }
 
     protected function wrapScriptWithMessages(
-        string $before_script_message,
+        string   $before_script_message,
         callable $script,
-        string $after_script_message = ' Done!',
-        bool $only_when_verbose = false
-    ) {
+        string   $after_script_message = ' Done!',
+        bool     $only_when_verbose = false
+    )
+    {
         $only_when_verbose ?
             $this->writeWhenVerbose($before_script_message) : $this->output->write($before_script_message);
 
