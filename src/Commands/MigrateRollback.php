@@ -4,9 +4,9 @@ namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
-use Wordless\Exception\FailedToFindMigrationScript;
-use Wordless\Exception\InvalidDirectory;
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\FailedToFindMigrationScript;
+use Wordless\Exceptions\InvalidDirectory;
+use Wordless\Exceptions\PathNotFoundException;
 
 class MigrateRollback extends Migrate
 {

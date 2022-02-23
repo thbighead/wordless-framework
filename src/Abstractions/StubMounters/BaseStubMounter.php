@@ -2,8 +2,8 @@
 
 namespace Wordless\Abstractions\StubMounters;
 
-use Wordless\Exception\FailedToCopyStub;
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\FailedToCopyStub;
+use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 
 abstract class BaseStubMounter

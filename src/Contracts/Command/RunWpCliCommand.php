@@ -4,7 +4,7 @@ namespace Wordless\Contracts\Command;
 
 use Exception;
 use Wordless\Commands\WpCliCaller;
-use Wordless\Exception\WpCliCommandReturnedNonZero;
+use Wordless\Exceptions\WpCliCommandReturnedNonZero;
 
 trait RunWpCliCommand
 {

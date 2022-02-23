@@ -2,7 +2,7 @@
 
 namespace Wordless\Contracts\Command;
 
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 

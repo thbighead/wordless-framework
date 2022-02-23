@@ -2,7 +2,7 @@
 
 namespace Wordless\Contracts\Controller;
 
-use Wordless\Exception\WordPressFailedToFindRole;
+use Wordless\Exceptions\WordPressFailedToFindRole;
 use WP_Error;
 use WP_REST_Request;
 use WP_Role;
