@@ -16,8 +16,10 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Wordless\Adapters\WordlessCommand;
-use Wordless\Contracts\WordlessCommandRunWpCliCommand;
-use Wordless\Contracts\WordlessCommandWriteRobotsTxt;
+use Wordless\Contracts\Command\ForceMode;
+use Wordless\Contracts\Command\RunMigrateCommand;
+use Wordless\Contracts\Command\RunWpCliCommand;
+use Wordless\Contracts\Command\WriteRobotsTxt;
 use Wordless\Exception\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Exception\FailedToCopyStub;
 use Wordless\Exception\FailedToDeletePath;
@@ -30,11 +32,13 @@ use Wordless\Helpers\Str;
 
 class WordlessInstall extends WordlessCommand
 {
-    use WordlessCommandRunWpCliCommand, WordlessCommandWriteRobotsTxt;
+    use ForceMode, RunWpCliCommand, WriteRobotsTxt;
 
     protected static $defaultName = 'wordless:install';
-    private const ALLOW_ROOT_MODE = 'allow-root';
-    private const FORCE_MODE = 'force';
+
+    public const TEMP_MAIL = 'temp@mail.not.real';
+    protected const ALLOW_ROOT_MODE = 'allow-root';
+    protected const FORCE_MODE = 'force';
     private const NO_ASK_MODE = 'no-ask';
     private const NO_DB_CREATION_MODE = 'no-db-creation';
     private const WORDPRESS_SALT_FILLABLE_VALUES = [
@@ -50,7 +54,6 @@ class WordlessInstall extends WordlessCommand
     private const WORDPRESS_SALT_URL_GETTER = 'https://api.wordpress.org/secret-key/1.1/salt/';
 
     private array $fresh_new_env_content;
-    private array $modes;
     private QuestionHelper $questionHelper;
     private array $wp_languages;
     private bool $maintenance_mode;
@@ -66,8 +69,6 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @return int
      * @throws ClientExceptionInterface
      * @throws Exception
@@ -78,10 +79,8 @@ class WordlessInstall extends WordlessCommand
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function runIt(): int
     {
-        parent::execute($input, $output);
-
         $this->resolveForceMode();
 
         $this->resolveDotEnv();
@@ -99,11 +98,13 @@ class WordlessInstall extends WordlessCommand
             $this->activateWpPlugins();
             $this->installWpLanguages();
             $this->makeWpBlogPublic();
+            $this->runWpCliCommand('core update-db', true);
         } finally {
             $this->switchingMaintenanceMode(false);
         }
 
         $this->resolveWpConfigChmod();
+        $this->executeWordlessCommand('migrate', [], $this->output);
 
         return Command::SUCCESS;
     }
@@ -116,17 +117,8 @@ class WordlessInstall extends WordlessCommand
     protected function options(): array
     {
         return [
-            [
-                self::OPTION_NAME_FIELD => self::ALLOW_ROOT_MODE,
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Runs every WP-CLI using --allow-root flag',
-            ],
-            [
-                self::OPTION_NAME_FIELD => self::FORCE_MODE,
-                self::OPTION_SHORTCUT_FIELD => 'f',
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Forces a project reinstallation.',
-            ],
+            $this->mountAllowRootModeOption(),
+            $this->mountForceModeOption('Forces a project installation.'),
             [
                 self::OPTION_NAME_FIELD => self::NO_ASK_MODE,
                 self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
@@ -145,12 +137,6 @@ class WordlessInstall extends WordlessCommand
         parent::setup($input, $output);
 
         $this->questionHelper = $this->getHelper('question');
-        $this->modes = [
-            self::ALLOW_ROOT_MODE => $input->getOption(self::ALLOW_ROOT_MODE),
-            self::FORCE_MODE => $input->getOption(self::FORCE_MODE),
-            self::NO_ASK_MODE => $input->getOption(self::NO_ASK_MODE),
-            self::NO_DB_CREATION_MODE => $input->getOption(self::NO_DB_CREATION_MODE),
-        ];
         $this->maintenance_mode = false;
     }
 
@@ -221,7 +207,7 @@ class WordlessInstall extends WordlessCommand
      */
     private function createWpDatabase()
     {
-        if ($this->modes[self::NO_DB_CREATION_MODE]) {
+        if ($this->input->getOption(self::NO_DB_CREATION_MODE)) {
             $this->writelnWhenVerbose(
                 'Running with no database creation mode. Skipping database check and creation.'
             );
@@ -365,14 +351,17 @@ class WordlessInstall extends WordlessCommand
             return $dot_env_content;
         }
 
-        $this->writeWhenVerbose('Retrieving WP SALTS at ' . self::WORDPRESS_SALT_URL_GETTER . '... ');
-
-        $wp_salt_response = HttpClient::create()->request(
-            'GET',
-            self::WORDPRESS_SALT_URL_GETTER
-        )->getContent();
-
-        $this->writelnWhenVerbose('Done!');
+        $wp_salt_response = $this->wrapScriptWithMessages(
+            'Retrieving WP SALTS at ' . self::WORDPRESS_SALT_URL_GETTER . '...',
+            function () {
+                return HttpClient::create()->request(
+                    'GET',
+                    self::WORDPRESS_SALT_URL_GETTER
+                )->getContent();
+            },
+            ' Done!',
+            true
+        );
 
         preg_match_all(
             '/define\(\'(.+)\',.+\'(.+)\'\);/',
@@ -395,7 +384,7 @@ class WordlessInstall extends WordlessCommand
     {
         $variable_default = $_ENV[$variable_marked_as_not_filled] ?? '';
 
-        if ($this->modes[self::NO_ASK_MODE]) {
+        if ($this->input->getOption(self::NO_ASK_MODE)) {
             return $variable_default;
         }
 
@@ -430,12 +419,10 @@ class WordlessInstall extends WordlessCommand
         $app_url = $this->getEnvVariableByKey('APP_URL');
         $app_url_with_final_slash = Str::finishWith($app_url, '/');
         $app_name = $this->getEnvVariableByKey('APP_NAME', 'Wordless App');
-        $wp_admin_email = $this->getEnvVariableByKey('WP_ADMIN_EMAIL', 'php-team@infobase.com.br');
-        $wp_admin_password = $this->getEnvVariableByKey('WP_ADMIN_PASSWORD', 'infobase123');
-        $wp_admin_user = $this->getEnvVariableByKey('WP_ADMIN_USER', 'infobase');
 
         $this->runWpCliCommand(
-            "core install --url=$app_url_with_final_slash --title=\"$app_name\" --admin_user=$wp_admin_user --admin_password=$wp_admin_password --admin_email=$wp_admin_email"
+            "core install --url=$app_url_with_final_slash --title=\"$app_name\" --skip-email --admin_user=temp --admin_email="
+            . self::TEMP_MAIL
         );
 
         $this->switchingMaintenanceMode(true);
@@ -563,19 +550,32 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
-     * @throws PathNotFoundException
      * @throws FailedToDeletePath
      */
     private function resolveForceMode()
     {
-        if ($this->modes[self::FORCE_MODE]) {
-            DirectoryFiles::recursiveDelete(
-                ProjectPath::wpCore(),
-                [ProjectPath::wpCore('.gitignore')],
-                false
-            );
+        if ($this->isForceMode()) {
+            try {
+                $wp_core_path = ProjectPath::wpCore();
+                $gitignore_wp_core_filepath = ProjectPath::wpCore('.gitignore');
+                $this->wrapScriptWithMessages(
+                    "Deleting everything inside $wp_core_path but $gitignore_wp_core_filepath...",
+                    function () use ($wp_core_path, $gitignore_wp_core_filepath) {
+                        DirectoryFiles::recursiveDelete($wp_core_path, [$gitignore_wp_core_filepath], false);
+                    }
+                );
 
-            DirectoryFiles::delete(ProjectPath::publicHtml('robots.txt'));
+                $robots_txt_filepath = ProjectPath::publicHtml('robots.txt');
+
+                $this->wrapScriptWithMessages(
+                    "Deleting $robots_txt_filepath...",
+                    function () use ($robots_txt_filepath) {
+                        DirectoryFiles::delete($robots_txt_filepath);
+                    }
+                );
+            } catch (PathNotFoundException $exception) {
+                $this->writelnWhenVerbose("{$exception->getMessage()} Skipped from force mode.");
+            }
         }
     }
 

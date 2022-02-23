@@ -1,13 +1,13 @@
 <?php
 
-namespace Wordless\Bootables;
+namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractBootable;
+use Wordless\Abstractions\AbstractHooker;
 use Wordless\Exception\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 use WP_User;
 
-class HideDiagnosticsFromUserRoles extends AbstractBootable
+class HideDiagnosticsFromUserRoles extends AbstractHooker
 {
     /**
      * The function which shall be executed during hook

@@ -3,8 +3,6 @@
 namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Exception\FailedToCopyStub;
 use Wordless\Exception\PathNotFoundException;
@@ -26,13 +24,11 @@ class OverwriteWpConfig extends WordlessCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @return int
      * @throws FailedToCopyStub
      * @throws PathNotFoundException
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function runIt(): int
     {
         $core_wp_config = ProjectPath::wpCore(self::WP_CONFIG_FILENAME);
         $stub_wp_config = ProjectPath::stubs(self::WP_CONFIG_FILENAME);

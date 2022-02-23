@@ -1,9 +1,9 @@
 <?php
 
-namespace Wordless\Bootables;
+namespace Wordless\Hookers;
 
 use Generator;
-use Wordless\Abstractions\AbstractBootable;
+use Wordless\Abstractions\AbstractHooker;
 use Wordless\Abstractions\InternalCache;
 use Wordless\Adapters\WordlessController;
 use Wordless\Exception\FailedToFindCachedKey;
@@ -14,7 +14,7 @@ use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class BootControllers extends AbstractBootable
+class BootControllers extends AbstractHooker
 {
     /**
      * @throws PathNotFoundException
@@ -34,7 +34,7 @@ class BootControllers extends AbstractBootable
 
                 self::requireAndRegisterController($controller_cached_data['path'], $controller_full_namespace);
             }
-        } catch (FailedToFindCachedKey | FailedToGetControllerPathFromCachedData $exception) {
+        } catch (FailedToFindCachedKey|FailedToGetControllerPathFromCachedData $exception) {
             foreach (
                 self::yieldBootableControllersPathAndResourceNameByReadingDirectory() as $controller_path_and_namespace
             ) {
@@ -64,7 +64,7 @@ class BootControllers extends AbstractBootable
                     substr($controller_path, 0, -4), // Removes '.php'
                     $controllers_directory_path
                 ), DIRECTORY_SEPARATOR);
-                $controller_full_namespace = '\\Wordless\\Controllers';
+                $controller_full_namespace = '\\App\\Controllers';
 
                 foreach (explode(
                              DIRECTORY_SEPARATOR,
