@@ -5,8 +5,8 @@ namespace Wordless\Abstractions\Cachers;
 use ReflectionException;
 use ReflectionMethod;
 use Wordless\Adapters\WordlessController;
-use Wordless\Hookers\BootControllers;
 use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Hookers\BootControllers;
 
 class ControllerCacher extends BaseCacher
 {
@@ -44,7 +44,7 @@ class ControllerCacher extends BaseCacher
      */
     private function extractResourceNameAndVersionFromController(
         WordlessController $controller,
-        string $controller_class_resource_name
+        string             $controller_class_resource_name
     ): array
     {
         $controllerResourceNameMethod = new ReflectionMethod($controller_class_resource_name, 'resourceName');

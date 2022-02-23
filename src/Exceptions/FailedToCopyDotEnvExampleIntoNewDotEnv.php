@@ -8,8 +8,8 @@ use Throwable;
 class FailedToCopyDotEnvExampleIntoNewDotEnv extends Exception
 {
     public function __construct(
-        string $dot_env_example_filepath,
-        string $new_dot_env_filepath,
+        string    $dot_env_example_filepath,
+        string    $new_dot_env_filepath,
         Throwable $previous = null
     )
     {
