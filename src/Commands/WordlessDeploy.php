@@ -10,9 +10,9 @@ use Wordless\Adapters\WordlessCommand;
 use Wordless\Contracts\Command\RunMigrateCommand;
 use Wordless\Contracts\Command\RunWpCliCommand;
 use Wordless\Contracts\Command\WriteRobotsTxt;
-use Wordless\Exception\FailedToCopyStub;
-use Wordless\Exception\PathNotFoundException;
-use Wordless\Exception\WpCliCommandReturnedNonZero;
+use Wordless\Exceptions\FailedToCopyStub;
+use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
 

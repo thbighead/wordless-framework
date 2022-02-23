@@ -2,7 +2,7 @@
 
 namespace Wordless\Abstractions;
 
-use Wordless\Exception\FailedToChangeTimezone;
+use Wordless\Exceptions\FailedToChangeTimezone;
 use Wordless\Helpers\Environment;
 
 class Timezone

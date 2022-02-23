@@ -3,10 +3,10 @@
 namespace Wordless\Abstractions;
 
 use Wordless\Abstractions\Cachers\ControllerCacher;
-use Wordless\Exception\FailedToCopyStub;
-use Wordless\Exception\FailedToFindCachedKey;
-use Wordless\Exception\InvalidCache;
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\FailedToCopyStub;
+use Wordless\Exceptions\FailedToFindCachedKey;
+use Wordless\Exceptions\InvalidCache;
+use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
