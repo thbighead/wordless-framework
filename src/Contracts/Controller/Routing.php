@@ -1,10 +1,12 @@
 <?php
 
-namespace Wordless\Contracts;
+namespace Wordless\Contracts\Controller;
 
 use Wordless\Adapters\Request;
+use function __;
+use function register_rest_route;
 
-trait ControllerRouting
+trait Routing
 {
     protected bool $public_routes = false;
 

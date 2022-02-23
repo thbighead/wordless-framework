@@ -24,4 +24,10 @@ abstract class BaseGuesser
 
         return $this->guessed_value;
     }
+
+    public function resetGuessedValue()
+    {
+        $this->already_guessed = false;
+        unset($this->guessed_value);
+    }
 }

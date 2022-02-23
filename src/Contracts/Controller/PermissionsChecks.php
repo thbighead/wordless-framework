@@ -1,13 +1,14 @@
 <?php
 
-namespace Wordless\Contracts;
+namespace Wordless\Contracts\Controller;
 
 use Wordless\Exception\WordPressFailedToFindRole;
 use WP_Error;
 use WP_REST_Request;
 use WP_Role;
+use function get_role;
 
-trait ControllerPermissionsChecks
+trait PermissionsChecks
 {
     /**
      * @param WP_REST_Request $request

@@ -6,7 +6,18 @@ use Wordless\Exception\PathNotFoundException;
 
 class ProjectPath
 {
+    public const VENDOR_PACKAGE_RELATIVE_PATH = 'infobaseit/wordless-framework';
     private const SLASH = '/';
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function app(string $additional_path = ''): string
+    {
+        return self::root("app/$additional_path");
+    }
 
     /**
      * @param string $additional_path
@@ -30,7 +41,7 @@ class ProjectPath
         try {
             return self::src($relative_path);
         } catch (PathNotFoundException $exception) {
-            return self::root($relative_path);
+            return self::app($relative_path);
         }
     }
 
@@ -57,7 +68,17 @@ class ProjectPath
      */
     public static function controllers(string $additional_path = ''): string
     {
-        return self::root("Controllers/$additional_path");
+        return self::app("Controllers/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function migrations(string $additional_path = ''): string
+    {
+        return self::root("migrations/$additional_path");
     }
 
     /**
@@ -101,7 +122,7 @@ class ProjectPath
      */
     public static function src(string $additional_path = ''): string
     {
-        return self::vendor("infobaseit/wordless-framework/src/$additional_path");
+        return self::vendorPackageRoot("src/$additional_path");
     }
 
     /**
@@ -125,9 +146,29 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
+    public static function theme(string $additional_path = ''): string
+    {
+        return self::wpThemes(Environment::get('WP_THEME', 'wordless') . "/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     public static function vendor(string $additional_path = ''): string
     {
         return self::root("vendor/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function vendorPackageRoot(string $additional_path = ''): string
+    {
+        return self::vendor(self::VENDOR_PACKAGE_RELATIVE_PATH . "/$additional_path");
     }
 
     /**
@@ -168,6 +209,26 @@ class ProjectPath
     public static function wpMustUsePlugins(string $additional_path = ''): string
     {
         return self::wpContent("mu-plugins/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function wpPlugins(string $additional_path = ''): string
+    {
+        return self::wpContent("plugins/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function wpThemes(string $additional_path = ''): string
+    {
+        return self::wpContent("themes/$additional_path");
     }
 
     /**
