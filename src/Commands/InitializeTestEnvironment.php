@@ -190,7 +190,7 @@ class InitializeTestEnvironment extends WordlessCommand
     private function installTestEnvironmentThroughComposer()
     {
         $command = 'composer create-project --prefer-dist '
-            . ProjectPath::VENDOR_PACKAGE_RELATIVE_PATH
+            . ProjectPath::VENDOR_PACKAGE_PROJECT
             . '="@dev" '
             . self::TARGET_DIRECTORY_NAME
             . ' --no-install --no-scripts --quiet --repository="{\"type\":\"path\",\"url\":\"../infobase-wordless\",\"options\":{\"symlink\":false}}"';
