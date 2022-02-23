@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
+use Wordless\Contracts\Command\RunMigrateCommand;
 use Wordless\Contracts\Command\RunWpCliCommand;
 use Wordless\Contracts\Command\WriteRobotsTxt;
 use Wordless\Exception\FailedToCopyStub;
@@ -17,7 +18,7 @@ use Wordless\Helpers\ProjectPath;
 
 class WordlessDeploy extends WordlessCommand
 {
-    use RunWpCliCommand, WriteRobotsTxt;
+    use RunMigrateCommand, RunWpCliCommand, WriteRobotsTxt;
 
     protected static $defaultName = 'wordless:deploy';
 
@@ -76,7 +77,7 @@ class WordlessDeploy extends WordlessCommand
         }
 
         $this->resolveWpConfigChmod();
-        $this->executeWordlessCommand('migrate', [], $this->output);
+        $this->upMigrations();
 
         $this->improveWordless();
 
