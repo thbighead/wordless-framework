@@ -3,8 +3,8 @@
 namespace Wordless\Abstractions\Cachers;
 
 use Wordless\Abstractions\StubMounters\SimpleCacheStubMounter;
-use Wordless\Exception\FailedToCopyStub;
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\FailedToCopyStub;
+use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Arr;
 use Wordless\Helpers\ProjectPath;
 

@@ -4,7 +4,7 @@ namespace Wordless\Contracts\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wordless\Exception\PathNotFoundException;
+use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 
 trait LoadWpConfig
