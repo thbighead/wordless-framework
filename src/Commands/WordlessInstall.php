@@ -98,6 +98,7 @@ class WordlessInstall extends WordlessCommand
             $this->installWpLanguages();
             $this->makeWpBlogPublic();
             $this->runWpCliCommand('core update-db', true);
+            $this->executeWordlessCommand('migrate', [], $this->output);
         } finally {
             $this->switchingMaintenanceMode(false);
         }
