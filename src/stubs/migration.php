@@ -2,7 +2,7 @@
 
 use Wordless\Abstractions\Migrations\Script;
 
-class DummyMigration implements Script
+final class DummyMigration implements Script
 {
     public function up(): void
     {

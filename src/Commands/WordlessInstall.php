@@ -32,7 +32,7 @@ use Wordless\Helpers\Str;
 
 class WordlessInstall extends WordlessCommand
 {
-    use ForceMode, RunMigrateCommand, RunWpCliCommand, WriteRobotsTxt;
+    use ForceMode, RunWpCliCommand, WriteRobotsTxt;
 
     protected static $defaultName = 'wordless:install';
 
@@ -104,7 +104,7 @@ class WordlessInstall extends WordlessCommand
         }
 
         $this->resolveWpConfigChmod();
-        $this->upMigrations();
+        $this->executeWordlessCommand('migrate', [], $this->output);
 
         return Command::SUCCESS;
     }
