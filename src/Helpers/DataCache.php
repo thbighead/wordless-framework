@@ -77,7 +77,7 @@ class DataCache
      */
     private static function setTransient(string $key, $value, int $expiration, $original_expires_in)
     {
-        if (set_transient($key, $value, $expiration)) {
+        if (!set_transient($key, $value, $expiration)) {
             throw new FailedToSetTransient($key, $value, $original_expires_in ?? $expiration);
         }
     }
