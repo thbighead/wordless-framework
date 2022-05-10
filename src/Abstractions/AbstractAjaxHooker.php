@@ -37,6 +37,4 @@ abstract class AbstractAjaxHooker extends AbstractHooker
             );
         }
     }
-
-
 }
