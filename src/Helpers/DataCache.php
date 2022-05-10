@@ -6,11 +6,26 @@ use DateTime;
 use Wordless\Exceptions\FailedToSetTransient;
 use Wordless\Exceptions\InvalidTransientExpirationValue;
 use Wordless\Exceptions\TransientKeyIsTooLong;
+use Wordless\Exceptions\TransientKeyNotFound;
 
 class DataCache
 {
     // https://developer.wordpress.org/reference/functions/get_transient/#more-information
     private const MAX_TRANSIENT_KEY_SIZE = 172;
+
+    /**
+     * @param string $key
+     * @return void
+     * @throws TransientKeyNotFound
+     */
+    public static function delete(string $key)
+    {
+        $transient_result = delete_transient($key);
+
+        if ($transient_result === false) {
+            throw new TransientKeyNotFound($key);
+        }
+    }
 
     public static function get(string $key, $default = null)
     {
