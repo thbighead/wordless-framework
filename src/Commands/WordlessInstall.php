@@ -496,7 +496,7 @@ class WordlessInstall extends WordlessCommand
 
             if ($variable_value === 'null') {
                 $variable_name = substr($variable, 1); // removing '$'
-                $filler_dictionary["$variable_name=$variable"] = "#$variable_name=";
+                $filler_dictionary["$variable_name=$variable"] = Environment::DOT_ENV_COMMENT_MARK . "$variable_name=";
                 continue;
             }
 
