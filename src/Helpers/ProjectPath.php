@@ -233,6 +233,16 @@ class ProjectPath
     }
 
     /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function wpUploads(string $additional_path = ''): string
+    {
+        return self::wpContent("uploads/$additional_path");
+    }
+
+    /**
      * @param string $path
      * @return string
      * @throws PathNotFoundException
