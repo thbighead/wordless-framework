@@ -3,8 +3,10 @@
 namespace Wordless\Abstractions;
 
 use Wordless\Abstractions\Cachers\ControllerCacher;
+use Wordless\Abstractions\Cachers\EnvironmentCacher;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\FailedToFindCachedKey;
+use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\InvalidCache;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\DirectoryFiles;
@@ -23,8 +25,15 @@ class InternalCache
     public static function generate()
     {
         (new ControllerCacher)->cache();
+        (new EnvironmentCacher)->cache();
     }
 
+    /**
+     * @param string $key_pathing
+     * @param $default
+     * @return mixed|null
+     * @throws InternalCacheNotLoaded
+     */
     public static function getValue(string $key_pathing, $default = null)
     {
         try {
@@ -38,9 +47,14 @@ class InternalCache
      * @param string $key_pathing_string
      * @return mixed
      * @throws FailedToFindCachedKey
+     * @throws InternalCacheNotLoaded
      */
     public static function getValueOrFail(string $key_pathing_string)
     {
+        if (!self::isLoaded()) {
+            throw new InternalCacheNotLoaded($key_pathing_string);
+        }
+
         $key_pathing = explode('.', $key_pathing_string);
         $first_key = array_shift($key_pathing);
 
@@ -67,9 +81,14 @@ class InternalCache
      */
     public static function load()
     {
-        if (!defined(self::INTERNAL_WORDLESS_CACHE_CONSTANT_NAME)) {
+        if (!self::isLoaded()) {
             define(self::INTERNAL_WORDLESS_CACHE_CONSTANT_NAME, self::retrieveCachedValues());
         }
+    }
+
+    private static function isLoaded(): bool
+    {
+        return defined(self::INTERNAL_WORDLESS_CACHE_CONSTANT_NAME);
     }
 
     /**
