@@ -17,7 +17,7 @@ abstract class AbstractAjaxHooker extends AbstractHooker
 
     public static function boot()
     {
-        $hook_addition_function = self::hookFunctionPrefix() . static::TYPE;
+        $hook_addition_function = 'add_' . static::TYPE;
 
         if (self::AVAILABLE_TO_FRONTEND) {
             $hook_addition_function(
