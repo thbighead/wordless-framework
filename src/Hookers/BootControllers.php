@@ -8,6 +8,7 @@ use Wordless\Abstractions\InternalCache;
 use Wordless\Adapters\WordlessController;
 use Wordless\Exceptions\FailedToFindCachedKey;
 use Wordless\Exceptions\FailedToGetControllerPathFromCachedData;
+use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WordPressFailedToFindRole;
 use Wordless\Helpers\DirectoryFiles;
@@ -17,8 +18,10 @@ use Wordless\Helpers\Str;
 class BootControllers extends AbstractHooker
 {
     /**
+     * @return void
      * @throws PathNotFoundException
      * @throws WordPressFailedToFindRole
+     * @throws InternalCacheNotLoaded
      */
     public static function register()
     {
