@@ -2,6 +2,10 @@
 
 namespace Wordless\Helpers;
 
+use Wordless\Abstractions\InternalCache;
+use Wordless\Exceptions\FailedToFindCachedKey;
+use Wordless\Exceptions\InternalCacheNotLoaded;
+
 class Environment
 {
     public const COMMONLY_DOT_ENV_DEFAULT_VALUES = [
@@ -22,24 +26,38 @@ class Environment
         'WP_DEBUG' => 'true',
         'WP_LANGUAGES' => 'en_US',
     ];
+    public const DOT_ENV_COMMENT_MARK = '#';
     public const LOCAL = 'local';
     public const PRODUCTION = 'production';
     public const STAGING = 'staging';
 
     public static function get(string $key, $default = null)
     {
+        try {
+            $value = InternalCache::getValueOrFail("environment.$key");
+        } catch (FailedToFindCachedKey|InternalCacheNotLoaded $exception) {
+            $value = self::retrieveValue($key, $default);
+        }
+
+        return self::returnTypedValue($value);
+    }
+
+    private static function retrieveValue(string $key, $default = null)
+    {
         if (($value = getenv($key)) === false) {
             $value = $_ENV[$key] ?? $default;
         }
 
-        switch ($value) {
-            case 'true':
+        return $value;
+    }
+
+    private static function returnTypedValue($value)
+    {
+        switch (strtoupper($value)) {
             case 'TRUE':
                 return true;
-            case 'false':
             case 'FALSE':
                 return false;
-            case 'null':
             case 'NULL':
                 return null;
         }
