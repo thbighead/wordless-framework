@@ -6,8 +6,18 @@ use Wordless\Hookers\HideDiagnosticsFromUserRoles;
 use Wordless\Hookers\HooksDebugLog;
 
 return [
-    BootControllers::class,
-    BootHttpRemoteCallsLog::class,
-    HideDiagnosticsFromUserRoles::class,
-    HooksDebugLog::class,
+    'boot' => [
+        BootControllers::class,
+        BootHttpRemoteCallsLog::class,
+        HideDiagnosticsFromUserRoles::class,
+    ],
+    /**
+     *
+     */
+    'remove' => [
+        'action' => [
+            'after_theme_setup'
+        ],
+        'filter' => [],
+    ],
 ];

@@ -2,8 +2,6 @@
 
 namespace Wordless\Abstractions;
 
-use Wordless\Contracts\Hooker\RemoveHook;
-
 abstract class AbstractHooker
 {
     /**
@@ -29,17 +27,12 @@ abstract class AbstractHooker
 
     public static function boot()
     {
-        $hook_addition_function = self::hookFunctionPrefix() . static::TYPE;
+        $hook_addition_function = 'add_' . static::TYPE;
         $hook_addition_function(
             static::HOOK,
             [static::class, static::FUNCTION],
             static::HOOK_PRIORITY,
             static::ACCEPTED_NUMBER_OF_ARGUMENTS
         );
-    }
-
-    protected static function hookFunctionPrefix(): string
-    {
-        return is_a(static::class, RemoveHook::class) ? 'remove_' : 'add_';
     }
 }
