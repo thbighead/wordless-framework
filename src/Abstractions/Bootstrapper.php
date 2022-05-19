@@ -7,15 +7,22 @@ use Wordless\Helpers\ProjectPath;
 
 class Bootstrapper
 {
+    public const HOOKERS_BOOT_CONFIG_KEY = 'boot';
+    public const HOOKERS_REMOVE_ACTION_CONFIG_KEY = 'action';
+    public const HOOKERS_REMOVE_CONFIG_KEY = 'remove';
+    public const HOOKERS_REMOVE_FILTER_CONFIG_KEY = 'filter';
+    public const HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY = 'function';
+    public const HOOKERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY = 'priority';
+
     /**
      * @throws PathNotFoundException
      */
     public static function bootAll()
     {
         $hookers_config = include ProjectPath::config('hookers.php');
-        $removable_hooks = $hookers_config['remove'] ?? [];
+        $removable_hooks = $hookers_config[self::HOOKERS_REMOVE_CONFIG_KEY] ?? [];
 
-        self::resolveBootables($hookers_config['boots'] ?? [], $removable_hooks);
+        self::resolveBootables($hookers_config[self::HOOKERS_BOOT_CONFIG_KEY] ?? [], $removable_hooks);
 
         self::resolveRemovableHooks($removable_hooks);
     }
@@ -23,13 +30,13 @@ class Bootstrapper
     private static function resolveBootables(array $bootables, array &$removable_hooks)
     {
         foreach ($bootables as $bootable_class_namespace) {
-            if ($removable_hooks['action'][$bootable_class_namespace] ?? false) {
-                unset($removable_hooks['action'][$bootable_class_namespace]);
+            if ($removable_hooks[self::HOOKERS_REMOVE_ACTION_CONFIG_KEY][$bootable_class_namespace] ?? false) {
+                unset($removable_hooks[self::HOOKERS_REMOVE_ACTION_CONFIG_KEY][$bootable_class_namespace]);
                 continue;
             }
 
-            if ($removable_hooks['filter'][$bootable_class_namespace] ?? false) {
-                unset($removable_hooks['filter'][$bootable_class_namespace]);
+            if ($removable_hooks[self::HOOKERS_REMOVE_FILTER_CONFIG_KEY][$bootable_class_namespace] ?? false) {
+                unset($removable_hooks[self::HOOKERS_REMOVE_FILTER_CONFIG_KEY][$bootable_class_namespace]);
                 continue;
             }
 
@@ -48,8 +55,8 @@ class Bootstrapper
                 if (is_array($hook_content)) {
                     $remove_single_hook_function(
                         $hook_flag,
-                        $hook_content['function'],
-                        $hook_content['priority'] ?? 10
+                        $hook_content[self::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY],
+                        $hook_content[self::HOOKERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY] ?? 10
                     );
                     continue;
                 }
