@@ -2,7 +2,7 @@
 
 namespace Wordless\Abstractions;
 
-use Wordless\Contracts\Abstractions\ManagePlugin;
+use Wordless\Contracts\Abstraction\ManagePlugin;
 
 class Composer
 {
