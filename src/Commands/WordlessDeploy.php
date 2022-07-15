@@ -7,7 +7,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
-use Wordless\Contracts\Command\RunMigrateCommand;
 use Wordless\Contracts\Command\RunWpCliCommand;
 use Wordless\Contracts\Command\WriteRobotsTxt;
 use Wordless\Exceptions\FailedToCopyStub;
