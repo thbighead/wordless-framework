@@ -32,20 +32,15 @@ class EnvironmentCacher extends BaseCacher
         $parsed_dot_env_content = [];
         $dot_env_content = file_get_contents(ProjectPath::root('.env'));
 
-        preg_match_all('/([^=\s]+)=([^\r]*)/', $dot_env_content, $regex_parser_result);
+        preg_match_all('/^([^=]+)=.*$/m', $dot_env_content, $regex_parser_result);
 
-        foreach ($regex_parser_result[1] as $index => $env_key) {
+        foreach ($regex_parser_result[1] as $env_key) {
+            $env_key = trim($env_key);
             if (Str::beginsWith($env_key, Environment::DOT_ENV_COMMENT_MARK)) {
                 continue;
             }
 
-            $env_value = $regex_parser_result[2][$index] ?? null;
-
-            if ($env_value === null) {
-                continue;
-            }
-
-            $parsed_dot_env_content[$env_key] = $env_value;
+            $parsed_dot_env_content[$env_key] = Environment::get($env_key);
         }
 
         return $parsed_dot_env_content;
