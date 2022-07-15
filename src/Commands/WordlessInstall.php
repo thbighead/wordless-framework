@@ -292,9 +292,9 @@ class WordlessInstall extends WordlessCommand
 
     private function getDotEnvNotFilledVariables(string $dot_env_content): array
     {
-        preg_match_all('/.+=(\$[^\W]+)\W/', $dot_env_content, $not_filled_variables_regex_result);
-        // Getting Regex result (\$[^\W]+) group or leading to an empty array
-        return $not_filled_variables_regex_result[1] ?? [];
+        preg_match_all('/^(.+)=(\$\1)$/m', $dot_env_content, $not_filled_variables_regex_result);
+        // Getting Regex result (\$\1) group or leading to an empty array
+        return $not_filled_variables_regex_result[2] ?? [];
     }
 
     private function getEnvVariableByKey(string $key, $default = null)
