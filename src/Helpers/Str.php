@@ -40,6 +40,11 @@ class Str
         return substr($string, 0, strlen($substring)) === $substring;
     }
 
+    public static function between(string $string, string $prefix, string $suffix): string
+    {
+        return self::before(self::after($string, $prefix), $suffix);
+    }
+
     public static function camelCase(string $string): string
     {
         return lcfirst(self::studlyCase($string));
@@ -78,6 +83,11 @@ class Str
         $quoted = preg_quote($finish_with, '/');
 
         return preg_replace('/(?:' . $quoted . ')+$/u', '', $string) . $finish_with;
+    }
+
+    public static function isSurroundedBy(string $string, string $prefix, string $suffix): bool
+    {
+        return self::beginsWith($string, $prefix) && self::endsWith($string, $suffix);
     }
 
     public static function slugCase(string $string): string

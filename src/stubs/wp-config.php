@@ -36,15 +36,12 @@ if (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null) === 'https') {
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
-use Symfony\Component\Dotenv\Dotenv;
 use Wordless\Abstractions\InternalCache;
 use Wordless\Helpers\Environment;
-use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
+Environment::loadDotEnv();
 InternalCache::load();
-
-(new Dotenv)->load(ProjectPath::root('.env'));
 
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-plugin-and-theme-update-and-installation
 const DISALLOW_FILE_MODS = true;

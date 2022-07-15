@@ -2,9 +2,11 @@
 
 namespace Wordless\Helpers;
 
+use Symfony\Component\Dotenv\Dotenv;
 use Wordless\Abstractions\InternalCache;
 use Wordless\Exceptions\FailedToFindCachedKey;
 use Wordless\Exceptions\InternalCacheNotLoaded;
+use Wordless\Exceptions\PathNotFoundException;
 
 class Environment
 {
@@ -27,6 +29,8 @@ class Environment
         'WP_LANGUAGES' => 'en_US',
     ];
     public const DOT_ENV_COMMENT_MARK = '#';
+    public const DOT_ENV_REFERENCE_PREFIX_MARK = '${';
+    public const DOT_ENV_REFERENCE_SUFFIX_MARK = '}';
     public const LOCAL = 'local';
     public const PRODUCTION = 'production';
     public const STAGING = 'staging';
@@ -42,10 +46,31 @@ class Environment
         return self::returnTypedValue($value);
     }
 
+    /**
+     * @return void
+     * @throws PathNotFoundException
+     */
+    public static function loadDotEnv()
+    {
+        (new Dotenv)->load(ProjectPath::root('.env'));
+    }
+
     private static function retrieveValue(string $key, $default = null)
     {
         if (($value = getenv($key)) === false) {
             $value = $_ENV[$key] ?? $default;
+        }
+
+        while(is_string($value) && Str::isSurroundedBy(
+            $value,
+            self::DOT_ENV_REFERENCE_PREFIX_MARK,
+            self::DOT_ENV_REFERENCE_SUFFIX_MARK
+        )) {
+            $value = self::retrieveValue(Str::between(
+                $value,
+                self::DOT_ENV_REFERENCE_PREFIX_MARK,
+                self::DOT_ENV_REFERENCE_SUFFIX_MARK
+            ), $default);
         }
 
         return $value;
