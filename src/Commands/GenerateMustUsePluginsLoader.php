@@ -59,7 +59,7 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
             $this->mu_plugins_extra_rules = $this->readMuPluginsConfig();
 
             $this->mountIncludeFilesScriptByReadingMuPluginsDirectory($include_files_script);
-            $this->mountIncludeFilesScriptByMuPluginsJsonExtraRules($include_files_script);
+            $this->mountIncludeFilesScriptByMuPluginsConfigExtraRules($include_files_script);
 
             (new WpLoadMuPluginsStubMounter($wp_load_mu_plugins_destiny_path))->setReplaceContentDictionary([
                 '// {include plugins script}' => $include_files_script,
@@ -105,7 +105,7 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
      * @param string $include_files_script
      * @throws PathNotFoundException
      */
-    private function mountIncludeFilesScriptByMuPluginsJsonExtraRules(string &$include_files_script)
+    private function mountIncludeFilesScriptByMuPluginsConfigExtraRules(string &$include_files_script)
     {
         foreach ($this->mu_plugins_extra_rules as $plugin_directory_name => $relative_php_scripts_paths_to_load) {
             if ($relative_php_scripts_paths_to_load === '.') {
