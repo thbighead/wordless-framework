@@ -21,10 +21,10 @@ trait ManagePlugin
 
     private static function extractPackageFromEvent(PackageEvent $composerEvent): CompletePackage
     {
-        /** @var UninstallOperation $uninstallOperation */
-        $uninstallOperation = $composerEvent->getOperation();
+        /** @var UninstallOperation $operation */
+        $operation = $composerEvent->getOperation();
         /** @var CompletePackage $package */
-        $package = $uninstallOperation->getPackage();
+        $package = $operation->getPackage();
 
         return $package;
     }
