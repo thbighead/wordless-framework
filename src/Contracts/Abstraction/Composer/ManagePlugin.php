@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Contracts\Abstraction;
+namespace Wordless\Contracts\Abstraction\Composer;
 
 use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\Installer\PackageEvent;
