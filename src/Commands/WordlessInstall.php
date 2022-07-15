@@ -17,7 +17,6 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Contracts\Command\ForceMode;
-use Wordless\Contracts\Command\RunMigrateCommand;
 use Wordless\Contracts\Command\RunWpCliCommand;
 use Wordless\Contracts\Command\WriteRobotsTxt;
 use Wordless\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
@@ -293,9 +292,9 @@ class WordlessInstall extends WordlessCommand
 
     private function getDotEnvNotFilledVariables(string $dot_env_content): array
     {
-        preg_match_all('/.+=(\$[^\W]+)\W/', $dot_env_content, $not_filled_variables_regex_result);
-        // Getting Regex result (\$[^\W]+) group or leading to an empty array
-        return $not_filled_variables_regex_result[1] ?? [];
+        preg_match_all('/^(.+)=(\$\1)$/m', $dot_env_content, $not_filled_variables_regex_result);
+        // Getting Regex result (\$\1) group or leading to an empty array
+        return $not_filled_variables_regex_result[2] ?? [];
     }
 
     private function getEnvVariableByKey(string $key, $default = null)
