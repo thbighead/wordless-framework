@@ -2,6 +2,8 @@
 
 namespace Wordless\Abstractions\StubMounters;
 
+use Wordless\Helpers\Debugger;
+
 class SimpleCacheStubMounter extends BaseStubMounter
 {
     /**
@@ -11,7 +13,7 @@ class SimpleCacheStubMounter extends BaseStubMounter
     public function setReplaceContentDictionary(array $replace_content_dictionary): BaseStubMounter
     {
         $this->replace_content_dictionary = [
-            '/*simple-array*/' => var_export($replace_content_dictionary, true)
+            '/*simple-array*/' => Debugger::variableExport($replace_content_dictionary)
         ];
 
         return $this;
