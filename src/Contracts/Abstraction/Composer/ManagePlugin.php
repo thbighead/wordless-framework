@@ -2,7 +2,6 @@
 
 namespace Wordless\Contracts\Abstraction\Composer;
 
-use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\Installer\PackageEvent;
 use Composer\Package\CompletePackage;
 use Wordless\Helpers\Str;
@@ -19,16 +18,6 @@ trait ManagePlugin
         self::managePlugin($composerEvent, 'deactivate');
     }
 
-    private static function extractPackageFromEvent(PackageEvent $composerEvent): CompletePackage
-    {
-        /** @var UninstallOperation $operation */
-        $operation = $composerEvent->getOperation();
-        /** @var CompletePackage $package */
-        $package = $operation->getPackage();
-
-        return $package;
-    }
-
     private static function isWpPluginPackage(CompletePackage $package): bool
     {
         return $package->getType() === 'wordpress-plugin';
@@ -38,7 +27,7 @@ trait ManagePlugin
     {
         $package = self::extractPackageFromEvent($composerEvent);
 
-        if (!self::isWpPluginPackage($package)) {
+        if ($package === null || !self::isWpPluginPackage($package)) {
             return;
         }
 
