@@ -87,9 +87,9 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function publicHtml(string $additional_path = ''): string
+    public static function public(string $additional_path = ''): string
     {
-        return self::root("public_html/$additional_path");
+        return self::root("public/$additional_path");
     }
 
     /**
@@ -177,9 +177,9 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function wpCms(string $additional_path = ''): string
+    public static function wp(string $additional_path = ''): string
     {
-        return self::publicHtml("wp-cms/$additional_path");
+        return self::root("wp/$additional_path");
     }
 
     /**
@@ -189,7 +189,7 @@ class ProjectPath
      */
     public static function wpCore(string $additional_path = ''): string
     {
-        return self::wpCms("wp-core/$additional_path");
+        return self::wp("wp-core/$additional_path");
     }
 
     /**
@@ -199,7 +199,7 @@ class ProjectPath
      */
     public static function wpContent(string $additional_path = ''): string
     {
-        return self::wpCms("wp-content/$additional_path");
+        return self::wp("wp-content/$additional_path");
     }
 
     /**

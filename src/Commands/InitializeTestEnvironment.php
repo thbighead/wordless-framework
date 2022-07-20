@@ -193,7 +193,7 @@ class InitializeTestEnvironment extends WordlessCommand
             . ProjectPath::VENDOR_PACKAGE_PROJECT
             . '="@dev" '
             . self::TARGET_DIRECTORY_NAME
-            . ' --no-install --no-scripts --quiet --repository="{\"type\":\"path\",\"url\":\"../infobase-wordless\",\"options\":{\"symlink\":false}}"';
+            . ' --no-install --no-scripts --quiet --repository="{\"type\":\"path\",\"url\":\"../www\",\"options\":{\"symlink\":false}}"';
         $this->output->writeln("Executing '$command'");
         if ($this->executeCommand($command) !== Command::SUCCESS) {
             throw new FailedToInstallTestEnvironmentThroughComposer($command);
