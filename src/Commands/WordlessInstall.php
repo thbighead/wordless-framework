@@ -168,7 +168,7 @@ class WordlessInstall extends WordlessCommand
     private function createRobotsTxtFromStub()
     {
         $filename = 'robots.txt';
-        $new_robots_txt_filepath = ProjectPath::publicHtml() . "/$filename";
+        $new_robots_txt_filepath = ProjectPath::public() . "/$filename";
 
         if (($supposed_already_existing_robots_txt_filepath = realpath($new_robots_txt_filepath)) !== false) {
             $this->writelnWhenVerbose("$supposed_already_existing_robots_txt_filepath already exists, skipping.");
@@ -564,7 +564,7 @@ class WordlessInstall extends WordlessCommand
                     }
                 );
 
-                $robots_txt_filepath = ProjectPath::publicHtml('robots.txt');
+                $robots_txt_filepath = ProjectPath::public('robots.txt');
 
                 $this->wrapScriptWithMessages(
                     "Deleting $robots_txt_filepath...",
