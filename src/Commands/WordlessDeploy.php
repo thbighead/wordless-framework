@@ -212,7 +212,7 @@ class WordlessDeploy extends WordlessCommand
     private function overwriteRobotsTxtFromStub()
     {
         $filename = 'robots.txt';
-        $new_robots_txt_filepath = ProjectPath::publicHtml($filename);
+        $new_robots_txt_filepath = ProjectPath::public($filename);
 
         $this->mountRobotsTxtFromStub($filename, $new_robots_txt_filepath);
     }

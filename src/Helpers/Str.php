@@ -35,6 +35,17 @@ class Str
         return $result === false ? $string : $result;
     }
 
+    public static function beforeLast(string $string, string $delimiter)
+    {
+        $substring_position = strrpos($string, $delimiter);
+
+        if ($substring_position === false) {
+            return $string;
+        }
+
+        return substr($string, 0, $substring_position);
+    }
+
     public static function beginsWith(string $string, string $substring): bool
     {
         return substr($string, 0, strlen($substring)) === $substring;
