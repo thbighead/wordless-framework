@@ -27,7 +27,7 @@ trait ManagePlugin
     {
         $package = self::extractPackageFromEvent($composerEvent);
 
-        if (!self::isWpPluginPackage($package)) {
+        if ($package === null || !self::isWpPluginPackage($package)) {
             return;
         }
 

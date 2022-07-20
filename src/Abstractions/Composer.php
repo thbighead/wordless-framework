@@ -13,10 +13,14 @@ class Composer
 {
     use InfobaseWpTheme, ManagePlugin;
 
-    private static function extractPackageFromEvent(PackageEvent $composerEvent): CompletePackage
+    private static function extractPackageFromEvent(PackageEvent $composerEvent): ?CompletePackage
     {
-        /** @var InstallOperation|UninstallOperation $operation */
         $operation = $composerEvent->getOperation();
+
+        if (!($operation instanceof UninstallOperation || $operation instanceof InstallOperation)) {
+            return null;
+        }
+
         /** @var CompletePackage $package */
         $package = $operation->getPackage();
 
