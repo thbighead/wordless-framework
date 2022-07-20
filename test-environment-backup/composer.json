@@ -31,6 +31,13 @@
       }
     },
     {
+      "type": "path",
+      "url": "../../infobase-wp-theme",
+      "options": {
+        "symlink": false
+      }
+    },
+    {
       "type": "composer",
       "url": "https://wpackagist.org"
     },
@@ -44,7 +51,8 @@
   "require": {
     "php": "^7.4",
     "composer/installers": "^2.1",
-    "infobaseit/wordless-framework": "*"
+    "infobaseit/wordless-framework": "*",
+    "infobaseit/infobase-wp-theme": "*"
   },
   "require-dev": {
     "psy/psysh": "^0.10.8",
