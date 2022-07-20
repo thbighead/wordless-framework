@@ -2,7 +2,6 @@
 
 namespace Wordless\Contracts\Abstraction\Composer;
 
-use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\Installer\PackageEvent;
 use Composer\Package\CompletePackage;
 use Wordless\Helpers\Str;
@@ -17,16 +16,6 @@ trait ManagePlugin
     public static function deactivatePlugin(PackageEvent $composerEvent)
     {
         self::managePlugin($composerEvent, 'deactivate');
-    }
-
-    private static function extractPackageFromEvent(PackageEvent $composerEvent): CompletePackage
-    {
-        /** @var UninstallOperation $operation */
-        $operation = $composerEvent->getOperation();
-        /** @var CompletePackage $package */
-        $package = $operation->getPackage();
-
-        return $package;
     }
 
     private static function isWpPluginPackage(CompletePackage $package): bool
