@@ -26,7 +26,7 @@
  * @author Wordless
  */
 if (!defined('ROOT_PROJECT_PATH')) {
-    define('ROOT_PROJECT_PATH', __DIR__ . '/../../..');
+    define('ROOT_PROJECT_PATH', __DIR__ . '/../..');
 }
 
 // Nginx TOO_MANY_REDIRECTS error resolution
@@ -34,7 +34,7 @@ if (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null) === 'https') {
     $_SERVER['HTTPS'] = 'on';
 }
 
-require_once __DIR__ . '/../../../vendor/autoload.php';
+require_once ROOT_PROJECT_PATH . '/vendor/autoload.php';
 
 use Wordless\Abstractions\InternalCache;
 use Wordless\Helpers\Environment;
