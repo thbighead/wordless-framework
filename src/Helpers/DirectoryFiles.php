@@ -59,10 +59,11 @@ class DirectoryFiles
 
     /**
      * @param string $directory
+     * @param array $except
      * @return array
      * @throws InvalidDirectory
      */
-    public static function listFromDirectory(string $directory): array
+    public static function listFromDirectory(string $directory, array $except = []): array
     {
         $raw_list = scandir($directory);
 
@@ -70,7 +71,7 @@ class DirectoryFiles
             throw new InvalidDirectory($directory);
         }
 
-        return array_diff($raw_list, ['.', '..']);
+        return array_diff($raw_list, ['.', '..'] + $except);
     }
 
     /**
