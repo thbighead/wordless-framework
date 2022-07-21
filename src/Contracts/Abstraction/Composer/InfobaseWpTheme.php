@@ -30,14 +30,14 @@ trait InfobaseWpTheme
     public static function installInfobaseWpTheme(PackageEvent $composerEvent)
     {
         $composerPackage = self::extractPackageFromEvent($composerEvent);
-        self::defineProjectRootConstant(
-            dirname($composerEvent->getComposer()->getConfig()->get('vendor-dir'))
-        );
 
         if (!self::isInfobaseWpThemePackage($composerPackage)) {
             return;
         }
 
+        self::defineProjectRootConstant(
+            dirname($composerEvent->getComposer()->getConfig()->get('vendor-dir'))
+        );
         Environment::loadDotEnv();
 
         self::exportFilesToProjectRoot();
