@@ -45,6 +45,11 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
 
     /**
      * @return int
+     * @throws FailedToCreateDirectory
+     * @throws FailedToCreateSymlink
+     * @throws FailedToGetDirectoryPermissions
+     * @throws InvalidDirectory
+     * @throws PathNotFoundException
      */
     protected function runIt(): int
     {
@@ -95,7 +100,11 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
      */
     private function generateSymbolicLink(string $target, string $link_name)
     {
-        if ($this->executeCommand($command = "ln -s -r $target $link_name") !== self::SUCCESS) {
+        $command = "ln -s -r $target $link_name";
+
+        $this->writelnWhenVerbose("Creating \"$link_name\" pointing to \"$target\" with \"$command\" command.");
+
+        if ($this->executeCommand($command) !== self::SUCCESS) {
             throw new FailedToCreateSymlink($command);
         }
     }

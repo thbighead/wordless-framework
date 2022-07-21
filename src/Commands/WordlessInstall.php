@@ -104,6 +104,11 @@ class WordlessInstall extends WordlessCommand
 
         $this->resolveWpConfigChmod();
         $this->executeWordlessCommand('migrate', [], $this->output);
+        $this->executeWordlessCommand(
+            GeneratePublicWordpressSymbolicLinks::COMMAND_NAME,
+            [],
+            $this->output
+        );
 
         return Command::SUCCESS;
     }
