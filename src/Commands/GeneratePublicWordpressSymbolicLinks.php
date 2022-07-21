@@ -132,7 +132,7 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
         $link_name = empty($target) ? $link_name : "$link_name/$target";
         $link_name_relative_path = Str::beforeLast(trim($link_name, self::SLASH), self::SLASH);
 
-        DirectoryFiles::createDirectoryAt(ProjectPath::public($link_name_relative_path));
+        DirectoryFiles::createDirectoryAt(ProjectPath::public() . "/$link_name_relative_path");
 
         return $link_name;
     }
