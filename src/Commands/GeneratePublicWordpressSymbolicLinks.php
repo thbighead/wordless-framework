@@ -45,7 +45,6 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
 
     /**
      * @return int
-     * @throws FailedToCreateDirectory
      * @throws FailedToCreateSymlink
      * @throws FailedToGetDirectoryPermissions
      * @throws InvalidDirectory
@@ -70,7 +69,6 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
      * @param string $raw_link_name
      * @param string $raw_target
      * @return void
-     * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
      * @throws InvalidDirectory
      * @throws PathNotFoundException
@@ -122,7 +120,6 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
      * @param string $link_name
      * @param string $target
      * @return string
-     * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
      * @throws PathNotFoundException
      */
@@ -136,7 +133,11 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
             throw new FailedToGetDirectoryPermissions($public_path);
         }
 
-        DirectoryFiles::createDirectoryAt("$public_path/$link_name_relative_path", $permissions);
+        try {
+            DirectoryFiles::createDirectoryAt("$public_path/$link_name_relative_path", $permissions);
+        } catch (FailedToCreateDirectory $exception) {
+            $this->writelnWhenVerbose("Directory {$exception->getPath()} already created, skipping.");
+        }
 
         return $link_name;
     }
