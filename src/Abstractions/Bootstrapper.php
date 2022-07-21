@@ -3,6 +3,7 @@
 namespace Wordless\Abstractions;
 
 use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Helpers\Arr;
 use Wordless\Helpers\ProjectPath;
 
 class Bootstrapper
@@ -51,21 +52,27 @@ class Bootstrapper
             $remove_single_hook_function = "remove_$hook_type";
             $remove_all_hook_function = "remove_all_{$hook_type}s";
 
-            foreach ($removable_hook as $hook_flag => $hook_content) {
-                if (is_array($hook_content)) {
+            foreach ($removable_hook as $hook_flag => $remove_rules) {
+                if (is_a($hook_flag, AbstractHooker::class, true)) {
+                    continue;
+                }
+
+                if (!is_array($remove_rules)) {
+                    $remove_all_hook_function($remove_rules);
+                    continue;
+                }
+
+                if (Arr::isAssociative($remove_rules)) {
+                    $remove_rules = [$remove_rules];
+                }
+
+                foreach ($remove_rules as $hook_remove_rules) {
                     $remove_single_hook_function(
                         $hook_flag,
-                        $hook_content[self::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY],
-                        $hook_content[self::HOOKERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY] ?? 10
+                        $hook_remove_rules[self::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY],
+                        $hook_remove_rules[self::HOOKERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY] ?? 10
                     );
-                    continue;
                 }
-
-                if (is_a($hook_content, AbstractHooker::class, true)) {
-                    continue;
-                }
-
-                $remove_all_hook_function($hook_content);
             }
         }
     }
