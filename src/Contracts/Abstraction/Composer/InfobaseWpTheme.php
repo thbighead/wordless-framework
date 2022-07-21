@@ -4,7 +4,6 @@ namespace Wordless\Contracts\Abstraction\Composer;
 
 use Composer\Installer\PackageEvent;
 use Composer\Package\CompletePackage;
-use Symfony\Component\Dotenv\Dotenv;
 use Wordless\Exceptions\FailedToCopyFile;
 use Wordless\Exceptions\FailedToCreateDirectory;
 use Wordless\Exceptions\FailedToDeletePath;
@@ -12,8 +11,7 @@ use Wordless\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Exceptions\InvalidDirectory;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\DirectoryFiles;
-use Wordless\Helpers\Environment;
-use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Str;
 
 trait InfobaseWpTheme
 {
@@ -35,38 +33,34 @@ trait InfobaseWpTheme
             return;
         }
 
-        self::defineProjectRootConstant(
-            dirname($composerEvent->getComposer()->getConfig()->get('vendor-dir'))
+        $theme_path = self::exportFilesToProjectRoot(
+            dirname($composerEvent->getComposer()->getConfig()->get('vendor-dir')),
+            Str::after($composerPackage->getName(), '/')
         );
-        Environment::loadDotEnv();
 
-        self::exportFilesToProjectRoot();
-
-        passthru("php console theme:npm \"install\"");
-    }
-
-    private static function defineProjectRootConstant(string $path)
-    {
-        $root_project_path_const_name = 'ROOT_PROJECT_PATH';
-
-        if (!defined($root_project_path_const_name)) {
-            define($root_project_path_const_name, $path);
-        }
+        passthru("cd $theme_path && npm install");
     }
 
     /**
-     * @return void
+     * @param string $root_path
+     * @param string $theme_name
+     * @return string
      * @throws FailedToCopyFile
      * @throws FailedToCreateDirectory
+     * @throws FailedToDeletePath
      * @throws FailedToGetDirectoryPermissions
      * @throws InvalidDirectory
      * @throws PathNotFoundException
-     * @throws FailedToDeletePath
      */
-    private static function exportFilesToProjectRoot()
+    private static function exportFilesToProjectRoot(string $root_path, string $theme_name): string
     {
-        DirectoryFiles::recursiveCopy($setup_path = ProjectPath::theme('setup'), ProjectPath::root());
+        $theme_path = "$root_path/wp/wp-content/themes/$theme_name";
+        $setup_path = "$theme_path/setup";
+
+        DirectoryFiles::recursiveCopy($setup_path, $root_path);
         DirectoryFiles::recursiveDelete($setup_path);
+
+        return $theme_path;
     }
 
     private static function isInfobaseWpThemePackage(CompletePackage $package): bool
