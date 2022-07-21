@@ -532,7 +532,7 @@ class WordlessInstall extends WordlessCommand
     private function performUrlDatabaseFix(string $app_url, string $app_url_with_final_slash)
     {
         try {
-            $this->runWpCliCommand("option update siteurl {$app_url_with_final_slash}wp-cms/wp-core/");
+            $this->runWpCliCommand("option update siteurl {$app_url_with_final_slash}wp-core/");
             $this->runWpCliCommand("option update home $app_url");
         } finally {
             $this->switchingMaintenanceMode(false);
