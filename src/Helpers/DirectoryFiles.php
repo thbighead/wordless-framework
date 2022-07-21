@@ -117,7 +117,7 @@ class DirectoryFiles
         $files = self::listFromDirectory($from);
 
         foreach ($files as $file) {
-            self::recursiveCopy("$from_real_path/$file", "$to/$file");
+            self::recursiveCopy("$from_real_path/$file", "$to/$file", $except, $secure_mode);
         }
     }
 
