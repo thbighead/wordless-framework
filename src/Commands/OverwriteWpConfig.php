@@ -46,7 +46,7 @@ class OverwriteWpConfig extends WordlessCommand
 
     protected function help(): string
     {
-        return 'The file at public_html/wp-cms/wp-core/wp-config.php will be overwritten by the one from yous stubs, which maybe defined at this project root at stubs/wp-config.php or use the default one from Wordless from vendor directory. The files permissions are maintained.';
+        return 'The file at wp/wp-core/wp-config.php will be overwritten by the one from yous stubs, which maybe defined at this project root at stubs/wp-config.php or use the default one from Wordless from vendor directory. The files permissions are maintained.';
     }
 
     protected function options(): array

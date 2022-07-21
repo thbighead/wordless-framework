@@ -21,7 +21,7 @@
 /**
  * Customized wp-config.php.
  * If you change the following comment line with author definition Wordless will overwrite
- * public_html/wp-cms/wp-core/wp-config.php by stubs/wp-core.php (or directly from vendor
+ * wp/wp-core/wp-config.php by stubs/wp-core.php (or directly from vendor
  * if this path doesn't exist) on every 'php console wordless:install' command.
  * @author Wordless
  */
@@ -138,7 +138,7 @@ define('WP_HOME', $site_url);
 
 // https://wordpress.org/support/article/editing-wp-config-php/#wp_siteurl
 $site_url = Str::finishWith($site_url, '/');
-define('WP_SITEURL', "{$site_url}wp-cms/wp-core");
+define('WP_SITEURL', "{$site_url}wp-core");
 
 // https://wordpress.org/support/article/editing-wp-config-php/#moving-wp-content-folder
 define('WP_CONTENT_DIR', realpath(__DIR__ . '/../wp-content'));
