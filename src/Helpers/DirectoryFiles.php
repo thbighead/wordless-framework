@@ -22,7 +22,7 @@ class DirectoryFiles
      */
     public static function createDirectoryAt(string $path, $permissions = null, bool $recursive = true)
     {
-        $parent_path = Str::before($path, '/');
+        $parent_path = dirname($path);
 
         if (($permissions = $permissions ?? fileperms($parent_path)) === false) {
             throw new FailedToGetDirectoryPermissions($parent_path);
