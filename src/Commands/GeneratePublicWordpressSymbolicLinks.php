@@ -100,7 +100,7 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
      */
     private function generateSymbolicLink(string $target, string $link_name)
     {
-        $command = "ln -s -r $target $link_name";
+        $command = "cd public && ln -s -r $target $link_name";
 
         $this->writelnWhenVerbose("Creating \"$link_name\" pointing to \"$target\" with \"$command\" command.");
 
