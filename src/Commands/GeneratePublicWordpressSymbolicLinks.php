@@ -129,13 +129,12 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
     private function parseLinkName(string $link_name, string $target = ''): string
     {
         $link_name = trim($link_name, self::SLASH);
+        $link_name = empty($target) ? $link_name : trim("$link_name/$target", self::SLASH);
+        $link_name_relative_path = Str::beforeLast($link_name, self::SLASH);
 
-        if (empty($target)) {
+        if ($link_name_relative_path === $link_name) {
             return $link_name;
         }
-
-        $link_name = trim("$link_name/$target", self::SLASH);
-        $link_name_relative_path = Str::beforeLast($link_name, self::SLASH);
 
         if (($permissions = fileperms($public_path = ProjectPath::public())) === false) {
             throw new FailedToGetDirectoryPermissions($public_path);
