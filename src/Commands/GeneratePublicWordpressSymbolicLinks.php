@@ -45,6 +45,7 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
 
     /**
      * @return int
+     * @throws FailedToCreateDirectory
      * @throws FailedToCreateSymlink
      * @throws FailedToGetDirectoryPermissions
      * @throws InvalidDirectory
@@ -69,6 +70,7 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
      * @param string $raw_link_name
      * @param string $raw_target
      * @return void
+     * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
      * @throws InvalidDirectory
      * @throws PathNotFoundException
@@ -120,6 +122,7 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
      * @param string $link_name
      * @param string $target
      * @return string
+     * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
      * @throws PathNotFoundException
      */
@@ -133,11 +136,14 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
             throw new FailedToGetDirectoryPermissions($public_path);
         }
 
-        try {
-            DirectoryFiles::createDirectoryAt("$public_path/$link_name_relative_path", $permissions);
-        } catch (FailedToCreateDirectory $exception) {
-            $this->writelnWhenVerbose("Directory {$exception->getPath()} already created, skipping.");
+        $link_name_full_path = "$public_path/$link_name_relative_path";
+
+        if (is_dir($link_name_full_path)) {
+            $this->writelnWhenVerbose("Directory $link_name_full_path already created, skipping.");
+            return $link_name;
         }
+
+        DirectoryFiles::createDirectoryAt($link_name_full_path, $permissions);
 
         return $link_name;
     }
@@ -150,7 +156,7 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
      */
     private function parseTarget(string $target)
     {
-        if (!Str::contains(self::FILTER_RULE, $target)) {
+        if (!Str::contains($target, self::FILTER_RULE)) {
             return trim($target, self::SLASH);
         }
 
