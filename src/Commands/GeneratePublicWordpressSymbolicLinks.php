@@ -45,6 +45,11 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
 
     /**
      * @return int
+     * @throws FailedToCreateDirectory
+     * @throws FailedToCreateSymlink
+     * @throws FailedToGetDirectoryPermissions
+     * @throws InvalidDirectory
+     * @throws PathNotFoundException
      */
     protected function runIt(): int
     {
@@ -95,7 +100,11 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
      */
     private function generateSymbolicLink(string $target, string $link_name)
     {
-        if ($this->executeCommand($command = "ln -s -r $target $link_name") !== self::SUCCESS) {
+        $command = "cd public && ln -s -r $target $link_name";
+
+        $this->writelnWhenVerbose("Creating \"$link_name\" pointing to \"$target\" with \"$command\" command.");
+
+        if ($this->executeCommand($command) !== self::SUCCESS) {
             throw new FailedToCreateSymlink($command);
         }
     }
@@ -115,13 +124,30 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
      * @return string
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
+     * @throws PathNotFoundException
      */
     private function parseLinkName(string $link_name, string $target = ''): string
     {
         $link_name = trim($link_name, self::SLASH);
-        $link_name = empty($target) ? $link_name : "$link_name/$target";
-        $link_name_relative_path = Str::beforeLast(trim($link_name, self::SLASH), self::SLASH);
-        DirectoryFiles::createDirectoryAt($link_name_relative_path);
+        $link_name = empty($target) ? $link_name : trim("$link_name/$target", self::SLASH);
+        $link_name_relative_path = Str::beforeLast($link_name, self::SLASH);
+
+        if ($link_name_relative_path === $link_name) {
+            return $link_name;
+        }
+
+        if (($permissions = fileperms($public_path = ProjectPath::public())) === false) {
+            throw new FailedToGetDirectoryPermissions($public_path);
+        }
+
+        $link_name_full_path = "$public_path/$link_name_relative_path";
+
+        if (is_dir($link_name_full_path)) {
+            $this->writelnWhenVerbose("Directory $link_name_full_path already created, skipping.");
+            return $link_name;
+        }
+
+        DirectoryFiles::createDirectoryAt($link_name_full_path, $permissions);
 
         return $link_name;
     }
@@ -134,7 +160,7 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
      */
     private function parseTarget(string $target)
     {
-        if (!Str::contains(self::FILTER_RULE, $target)) {
+        if (!Str::contains($target, self::FILTER_RULE)) {
             return trim($target, self::SLASH);
         }
 

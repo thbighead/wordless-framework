@@ -71,7 +71,7 @@ class DirectoryFiles
             throw new InvalidDirectory($directory);
         }
 
-        return array_diff($raw_list, ['.', '..'] + $except);
+        return array_diff($raw_list, ['.', '..'], $except);
     }
 
     /**
