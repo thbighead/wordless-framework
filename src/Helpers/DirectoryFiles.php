@@ -84,6 +84,7 @@ class DirectoryFiles
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
      * @throws PathNotFoundException
+     * @throws InvalidDirectory
      */
     public static function recursiveCopy(string $from, string $to, array $except = [], bool $secure_mode = true)
     {
@@ -98,6 +99,10 @@ class DirectoryFiles
                 self::createDirectoryAt($directory_destination);
             }
 
+            if ($secure_mode && file_exists($to)) {
+                return;
+            }
+
             if (!copy($from, $to)) {
                 throw new FailedToCopyFile($from, $to, $secure_mode);
             }
@@ -109,7 +114,7 @@ class DirectoryFiles
             self::createDirectoryAt($to);
         }
 
-        $files = array_diff(scandir($from), ['.', '..']);
+        $files = self::listFromDirectory($from);
 
         foreach ($files as $file) {
             self::recursiveCopy("$from_real_path/$file", "$to/$file");
