@@ -44,6 +44,10 @@
     {
       "type": "composer",
       "url": "https://packagist.org"
+    },
+    {
+      "type": "vcs",
+      "url": "https://bitbucket.org/infobaseit/acf-pro.git"
     }
   ],
   "minimum-stability": "dev",
