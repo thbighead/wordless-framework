@@ -38,16 +38,16 @@
       }
     },
     {
+      "type": "vcs",
+      "url": "https://bitbucket.org/infobaseit/acf-pro.git"
+    },
+    {
       "type": "composer",
       "url": "https://wpackagist.org"
     },
     {
       "type": "composer",
       "url": "https://packagist.org"
-    },
-    {
-      "type": "vcs",
-      "url": "https://bitbucket.org/infobaseit/acf-pro.git"
     }
   ],
   "minimum-stability": "dev",
