@@ -27,7 +27,8 @@ class EnqueueableStyle extends AbstractEnqueueableElement
                 'styles.' . StyleCacher::CLASSES_KEY
             );
         } catch (FailedToFindCachedKey $exception) {
-            $style_mounters_to_queue = StyleCacher::listEnqueueableElementsClasses()[StyleCacher::CLASSES_KEY] ?? [];
+            $style_mounters_to_queue = StyleCacher::listEnqueueableElementsClasses()[StyleCacher::CLASSES_KEY] ??
+                [];
         }
 
         foreach ($style_mounters_to_queue as $style_mounter_class) {
