@@ -1,5 +1,7 @@
 <?php
 
+use App\Hookers\DeferMainScript;
+use App\Hookers\LoadThemeScripts;
 use Wordless\Abstractions\Bootstrapper;
 use Wordless\Hookers\BootControllers;
 use Wordless\Hookers\BootHttpRemoteCallsLog;
@@ -10,8 +12,10 @@ return [
     Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [
         BootControllers::class,
         BootHttpRemoteCallsLog::class,
+        DeferMainScript::class,
         HideDiagnosticsFromUserRoles::class,
         HooksDebugLog::class,
+        LoadThemeScripts::class,
     ],
 
     /**
