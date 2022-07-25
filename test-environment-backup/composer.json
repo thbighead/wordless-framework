@@ -38,6 +38,10 @@
       }
     },
     {
+      "type": "vcs",
+      "url": "https://bitbucket.org/infobaseit/acf-pro.git"
+    },
+    {
       "type": "composer",
       "url": "https://wpackagist.org"
     },
