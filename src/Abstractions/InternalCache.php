@@ -4,6 +4,8 @@ namespace Wordless\Abstractions;
 
 use Wordless\Abstractions\Cachers\ControllerCacher;
 use Wordless\Abstractions\Cachers\EnvironmentCacher;
+use Wordless\Abstractions\Cachers\ScriptCacher;
+use Wordless\Abstractions\Cachers\StyleCacher;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\FailedToFindCachedKey;
 use Wordless\Exceptions\InternalCacheNotLoaded;
@@ -26,6 +28,8 @@ class InternalCache
     {
         (new ControllerCacher)->cache();
         (new EnvironmentCacher)->cache();
+        (new ScriptCacher)->cache();
+        (new StyleCacher)->cache();
     }
 
     /**

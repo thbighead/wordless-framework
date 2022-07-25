@@ -121,6 +121,16 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
+    public static function scripts(string $additional_path = ''): string
+    {
+        return self::app("Scripts/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     public static function src(string $additional_path = ''): string
     {
         return self::vendorPackageRoot("src/$additional_path");
@@ -140,6 +150,16 @@ class ProjectPath
         } catch (PathNotFoundException $exception) {
             return self::src($relative_path);
         }
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function styles(string $additional_path = ''): string
+    {
+        return self::app("Styles/$additional_path");
     }
 
     /**

@@ -11,7 +11,12 @@
  */
 
 use Wordless\Abstractions\Bootstrapper;
+use Wordless\Abstractions\EnqueueableElements\EnqueueableScript;
+use Wordless\Abstractions\EnqueueableElements\EnqueueableStyle;
 
 Bootstrapper::bootAll();
+
+EnqueueableStyle::enqueueAll();
+EnqueueableScript::enqueueAll();
 
 // {include plugins script}
