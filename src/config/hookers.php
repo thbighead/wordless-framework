@@ -1,7 +1,7 @@
 <?php
 
-use App\Hookers\DeferMainScript;
-use App\Hookers\LoadThemeScripts;
+use Wordless\Hookers\DeferMainScript;
+use Wordless\Hookers\LoadThemeScripts;
 use Wordless\Abstractions\Bootstrapper;
 use Wordless\Hookers\BootControllers;
 use Wordless\Hookers\BootHttpRemoteCallsLog;
