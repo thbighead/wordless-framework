@@ -22,9 +22,12 @@ class EnqueueableScript extends AbstractEnqueueableElement
     public static function enqueueAll(): void
     {
         try {
-            $script_mounters_to_queue = InternalCache::getValueOrFail('scripts.' . ScriptCacher::CLASSES_KEY);
+            $script_mounters_to_queue = InternalCache::getValueOrFail(
+                'scripts.' . ScriptCacher::CLASSES_KEY
+            );
         } catch (FailedToFindCachedKey $exception) {
-            $script_mounters_to_queue = ScriptCacher::listEnqueueableElementsClasses()[ScriptCacher::CLASSES_KEY] ?? [];
+            $script_mounters_to_queue = ScriptCacher::listEnqueueableElementsClasses()[ScriptCacher::CLASSES_KEY] ??
+                [];
         }
 
         foreach ($script_mounters_to_queue as $script_mounter_class) {
