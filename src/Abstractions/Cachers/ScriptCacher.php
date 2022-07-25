@@ -7,17 +7,17 @@ use Wordless\Helpers\ProjectPath;
 
 class ScriptCacher extends EnqueueableElementCacher
 {
-    protected function cacheFilename(): string
-    {
-        return 'scripts.php';
-    }
-
     /**
      * @return string
      * @throws PathNotFoundException
      */
-    protected function mounterDirectoryPath(): string
+    protected static function mounterDirectoryPath(): string
     {
         return ProjectPath::scripts();
+    }
+
+    protected function cacheFilename(): string
+    {
+        return 'scripts.php';
     }
 }

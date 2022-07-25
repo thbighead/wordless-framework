@@ -7,17 +7,17 @@ use Wordless\Helpers\ProjectPath;
 
 class StyleCacher extends EnqueueableElementCacher
 {
-    protected function cacheFilename(): string
-    {
-        return 'styles.php';
-    }
-
     /**
      * @return string
      * @throws PathNotFoundException
      */
-    protected function mounterDirectoryPath(): string
+    protected static function mounterDirectoryPath(): string
     {
         return ProjectPath::styles();
+    }
+
+    protected function cacheFilename(): string
+    {
+        return 'styles.php';
     }
 }

@@ -6,6 +6,8 @@ use Wordless\Exceptions\DuplicatedEnqueuableId;
 
 abstract class AbstractEnqueueableElement
 {
+    abstract public static function enqueueAll(): void;
+
     abstract public function enqueue(): void;
 
     abstract protected function filepath(): string;

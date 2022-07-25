@@ -7,8 +7,4 @@ return [
 //        'advanced/something/and-that-file-next.php'
 //    ],
 //    '1st-plugin' => '.',
-    'enqueuables' => [
-        'scripts.php',
-        'styles.php',
-    ]
 ];

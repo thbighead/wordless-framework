@@ -9,20 +9,20 @@ use Wordless\Helpers\Str;
 
 abstract class EnqueueableElementCacher extends BaseCacher
 {
-    abstract protected function mounterDirectoryPath(): string;
+    abstract protected static function mounterDirectoryPath(): string;
 
-    private const CLASSES_KEY = 'classes';
+    public const CLASSES_KEY = 'classes';
 
     /**
      * @return array
      * @throws PathNotFoundException
      */
-    protected function mountCacheArray(): array
+    public static function listEnqueueableElementsClasses(): array
     {
         $enqueueable_classes_list = [self::CLASSES_KEY => []];
         $project_root_path = ProjectPath::root();
 
-        foreach (DirectoryFiles::recursiveRead($this->mounterDirectoryPath()) as $enqueuable_class_filepath) {
+        foreach (DirectoryFiles::recursiveRead(static::mounterDirectoryPath()) as $enqueuable_class_filepath) {
             if (!Str::endsWith($enqueuable_class_filepath, '.php')) {
                 continue;
             }
@@ -37,5 +37,14 @@ abstract class EnqueueableElementCacher extends BaseCacher
         }
 
         return $enqueueable_classes_list;
+    }
+
+    /**
+     * @return array
+     * @throws PathNotFoundException
+     */
+    protected function mountCacheArray(): array
+    {
+        return static::listEnqueueableElementsClasses();
     }
 }
