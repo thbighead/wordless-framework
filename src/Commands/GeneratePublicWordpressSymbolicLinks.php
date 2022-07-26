@@ -56,7 +56,7 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
     protected function runIt(): int
     {
         $this->wrapScriptWithMessages('Removing old symlinks...', function () {
-            DirectoryFiles::recursiveDelete(ProjectPath::public(), ['.gitignore' => '.gitignore'], false);
+            DirectoryFiles::recursiveRemoveSymbolicLinks(ProjectPath::public());
         });
 
         $this->wrapScriptWithMessages('Generating public symbolic links...', function () {
