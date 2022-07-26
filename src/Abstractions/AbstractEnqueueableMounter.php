@@ -4,7 +4,7 @@ namespace Wordless\Abstractions;
 
 abstract class AbstractEnqueueableMounter
 {
-    abstract protected function id(): string;
+    abstract public static function id(): string;
 
     abstract protected function mount(): AbstractEnqueueableElement;
 
