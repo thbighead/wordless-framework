@@ -22,7 +22,7 @@ abstract class Style extends AbstractEnqueueableMounter
     protected function mount(): EnqueueableStyle
     {
         return new EnqueueableStyle(
-            $this->id(),
+            static::id(),
             $this->relativeFilePath(),
             $this->dependencies(),
             $this->version(),

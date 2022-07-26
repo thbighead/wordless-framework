@@ -15,7 +15,7 @@ abstract class Script extends AbstractEnqueueableMounter
     protected function mount(): EnqueueableScript
     {
         return new EnqueueableScript(
-            $this->id(),
+            static::id(),
             $this->relativeFilePath(),
             $this->dependencies(),
             $this->version()
