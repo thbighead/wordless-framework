@@ -2,6 +2,7 @@
 
 namespace Wordless\Abstractions;
 
+use InvalidArgumentException;
 use Wordless\Exceptions\DuplicatedEnqueuableId;
 use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
@@ -74,7 +75,11 @@ abstract class AbstractEnqueueableElement
      */
     protected function setId(string $id): void
     {
-        if ($foundEnqueuableClass = static::$ids_pool[$id]) {
+        if (empty($id)) {
+            throw new InvalidArgumentException(static::class . ' must have a non-empty id');
+        }
+
+        if ($foundEnqueuableClass = static::$ids_pool[$id] ?? '') {
             throw new DuplicatedEnqueuableId(static::class, $id, $foundEnqueuableClass);
         }
 
