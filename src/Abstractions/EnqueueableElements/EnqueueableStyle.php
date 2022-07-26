@@ -3,39 +3,16 @@
 namespace Wordless\Abstractions\EnqueueableElements;
 
 use Wordless\Abstractions\AbstractEnqueueableElement;
-use Wordless\Abstractions\AbstractEnqueueableMounter;
-use Wordless\Abstractions\Cachers\StyleCacher;
-use Wordless\Abstractions\InternalCache;
 use Wordless\Exceptions\DuplicatedEnqueuableId;
-use Wordless\Exceptions\FailedToFindCachedKey;
-use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\InvalidMediaOption;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 
 class EnqueueableStyle extends AbstractEnqueueableElement
 {
-    /**
-     * @return void
-     * @throws InternalCacheNotLoaded
-     * @throws PathNotFoundException
-     */
-    public static function enqueueAll(): void
+    public static function configKey(): string
     {
-        try {
-            $style_mounters_to_queue = InternalCache::getValueOrFail(
-                'styles.' . StyleCacher::CLASSES_KEY
-            );
-        } catch (FailedToFindCachedKey $exception) {
-            $style_mounters_to_queue = StyleCacher::listEnqueueableElementsClasses()[StyleCacher::CLASSES_KEY] ??
-                [];
-        }
-
-        foreach ($style_mounters_to_queue as $style_mounter_class) {
-            /** @var AbstractEnqueueableMounter $enqueueableStyleMounter */
-            $enqueueableStyleMounter = new $style_mounter_class;
-            $enqueueableStyleMounter->mountAndEnqueue();
-        }
+        return 'styles';
     }
 
     public const MEDIA_OPTION_ALL = 'all';
