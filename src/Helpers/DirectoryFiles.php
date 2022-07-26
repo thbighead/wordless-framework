@@ -180,4 +180,33 @@ class DirectoryFiles
 
         yield $real_path;
     }
+
+    /**
+     * @param string $path
+     * @return void
+     * @throws FailedToDeletePath
+     * @throws PathNotFoundException
+     */
+    public static function recursiveRemoveSymbolicLinks(string $path)
+    {
+        $real_path = ProjectPath::realpath($path);
+
+        if (is_link($real_path)) {
+            if (!unlink($real_path)) {
+                throw new FailedToDeletePath($real_path);
+            }
+
+            return;
+        }
+
+        if (is_file($real_path)) {
+            return;
+        }
+
+        $files = array_diff(scandir($real_path), ['.', '..']);
+
+        foreach ($files as $file) {
+            self::recursiveRemoveSymbolicLinks("$real_path/$file");
+        }
+    }
 }
