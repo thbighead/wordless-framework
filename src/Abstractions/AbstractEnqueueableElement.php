@@ -3,16 +3,21 @@
 namespace Wordless\Abstractions;
 
 use Wordless\Exceptions\DuplicatedEnqueuableId;
+use Wordless\Exceptions\InternalCacheNotLoaded;
+use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Helpers\ProjectPath;
 
 abstract class AbstractEnqueueableElement
 {
-    abstract public static function enqueueAll(): void;
+    abstract public static function configKey(): string;
 
     abstract public function enqueue(): void;
 
     abstract protected function filepath(): string;
 
     private static array $ids_pool = [];
+
+    protected const CONFIG_FILENAME = 'enqueue.php';
 
     protected array $dependencies;
     protected string $id;
@@ -37,6 +42,24 @@ abstract class AbstractEnqueueableElement
         $this->relative_file_path = $relative_file_path;
         $this->dependencies = $dependencies;
         $this->version = $version;
+    }
+
+    /**
+     * @return void
+     * @throws InternalCacheNotLoaded
+     * @throws PathNotFoundException
+     */
+    public static function enqueueAll(): void
+    {
+        $style_mounters_to_queue = (
+            include ProjectPath::config(self::CONFIG_FILENAME)
+            )[static::configKey()] ?? [];
+
+        foreach ($style_mounters_to_queue as $style_mounter_class) {
+            /** @var AbstractEnqueueableMounter $enqueueableStyleMounter */
+            $enqueueableStyleMounter = new $style_mounter_class;
+            $enqueueableStyleMounter->mountAndEnqueue();
+        }
     }
 
     public function id(): string
