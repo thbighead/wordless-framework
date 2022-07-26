@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\Command;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Exceptions\FailedToCreateDirectory;
 use Wordless\Exceptions\FailedToCreateSymlink;
+use Wordless\Exceptions\FailedToDeletePath;
 use Wordless\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Exceptions\InvalidDirectory;
 use Wordless\Exceptions\PathNotFoundException;
@@ -50,9 +51,14 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
      * @throws FailedToGetDirectoryPermissions
      * @throws InvalidDirectory
      * @throws PathNotFoundException
+     * @throws FailedToDeletePath
      */
     protected function runIt(): int
     {
+        $this->wrapScriptWithMessages('Removing old symlinks...', function () {
+            DirectoryFiles::recursiveDelete(ProjectPath::public(), ['.gitignore' => '.gitignore'], false);
+        });
+
         $this->wrapScriptWithMessages('Generating public symbolic links...', function () {
             foreach ($this->getMappedSymlinks() as $raw_link_name => $raw_target) {
                 $this->parseSymlink($raw_link_name, $raw_target);
