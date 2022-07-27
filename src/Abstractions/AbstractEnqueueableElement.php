@@ -7,14 +7,13 @@ use Wordless\Exceptions\DuplicatedEnqueuableId;
 use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Str;
 
 abstract class AbstractEnqueueableElement
 {
     abstract public static function configKey(): string;
 
     abstract public function enqueue(): void;
-
-    abstract protected function filepath(): string;
 
     private static array $ids_pool = [];
 
@@ -23,6 +22,7 @@ abstract class AbstractEnqueueableElement
     protected array $dependencies;
     protected string $id;
     protected string $relative_file_path;
+    private string $file_path;
     private ?string $version;
 
     /**
@@ -43,6 +43,7 @@ abstract class AbstractEnqueueableElement
         $this->relative_file_path = $relative_file_path;
         $this->dependencies = $dependencies;
         $this->version = $version;
+        $this->setFilePath();
     }
 
     /**
@@ -66,6 +67,11 @@ abstract class AbstractEnqueueableElement
     public function id(): string
     {
         return $this->id;
+    }
+
+    protected function filepath(): string
+    {
+        return $this->file_path;
     }
 
     /**
@@ -93,5 +99,10 @@ abstract class AbstractEnqueueableElement
     protected function version()
     {
         return $this->version ?? false;
+    }
+
+    private function setFilePath()
+    {
+        $this->file_path = get_stylesheet_directory_uri() . Str::startWith('/', $this->relative_file_path);
     }
 }

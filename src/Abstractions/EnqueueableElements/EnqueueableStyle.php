@@ -56,15 +56,6 @@ class EnqueueableStyle extends AbstractEnqueueableElement
         wp_enqueue_style($this->id, $this->filepath(), $this->dependencies, $this->version(), $this->media());
     }
 
-    /**
-     * @return string
-     * @throws PathNotFoundException
-     */
-    protected function filepath(): string
-    {
-        return ProjectPath::theme($this->relative_file_path);
-    }
-
     protected function media(): string
     {
         return $this->media;

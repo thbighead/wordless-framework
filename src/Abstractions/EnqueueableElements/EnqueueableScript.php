@@ -24,15 +24,6 @@ class EnqueueableScript extends AbstractEnqueueableElement
     }
 
     /**
-     * @return string
-     * @throws PathNotFoundException
-     */
-    protected function filepath(): string
-    {
-        return ProjectPath::theme($this->relative_file_path);
-    }
-
-    /**
      * @param string $id
      * @return void
      * @throws DuplicatedEnqueuableId
