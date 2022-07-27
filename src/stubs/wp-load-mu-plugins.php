@@ -16,7 +16,4 @@ use Wordless\Abstractions\EnqueueableElements\EnqueueableStyle;
 
 Bootstrapper::bootAll();
 
-EnqueueableStyle::enqueueAll();
-EnqueueableScript::enqueueAll();
-
 // {include plugins script}
