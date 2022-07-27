@@ -6,7 +6,6 @@ use Wordless\Abstractions\AbstractEnqueueableElement;
 use Wordless\Exceptions\DuplicatedEnqueuableId;
 use Wordless\Exceptions\InvalidMediaOption;
 use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\ProjectPath;
 
 class EnqueueableStyle extends AbstractEnqueueableElement
 {
@@ -54,15 +53,6 @@ class EnqueueableStyle extends AbstractEnqueueableElement
     public function enqueue(): void
     {
         wp_enqueue_style($this->id, $this->filepath(), $this->dependencies, $this->version(), $this->media());
-    }
-
-    /**
-     * @return string
-     * @throws PathNotFoundException
-     */
-    protected function filepath(): string
-    {
-        return ProjectPath::theme($this->relative_file_path);
     }
 
     protected function media(): string
