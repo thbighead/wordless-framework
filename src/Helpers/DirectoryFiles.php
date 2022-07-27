@@ -191,9 +191,9 @@ class DirectoryFiles
     {
         $real_path = ProjectPath::realpath($path);
 
-        if (is_link($real_path)) {
-            if (!unlink($real_path)) {
-                throw new FailedToDeletePath($real_path);
+        if (is_link($path)) {
+            if (!unlink($path)) {
+                throw new FailedToDeletePath($path);
             }
 
             return;
