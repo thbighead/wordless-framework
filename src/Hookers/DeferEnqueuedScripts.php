@@ -31,6 +31,10 @@ class DeferEnqueuedScripts extends AbstractHooker
 
     public static function addReferToScriptTag(string $url): string
     {
+        if (Str::endsWith($url, '.js')) {
+            return $url;
+        }
+
         if (!Str::contains($url, self::DEFER_ATTRIBUTE)) {
             return "$url' " . self::DEFER_ATTRIBUTE;
         }
