@@ -5,7 +5,6 @@ namespace Wordless\Abstractions\EnqueueableElements;
 use Wordless\Abstractions\AbstractEnqueueableElement;
 use Wordless\Exceptions\DuplicatedEnqueuableId;
 use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\ProjectPath;
 
 class EnqueueableScript extends AbstractEnqueueableElement
 {

@@ -103,6 +103,6 @@ abstract class AbstractEnqueueableElement
 
     private function setFilePath()
     {
-        $this->file_path = get_stylesheet_directory_uri() . Str::startWith('/', $this->relative_file_path);
+        $this->file_path = get_stylesheet_directory_uri() . Str::startWith($this->relative_file_path, '/');
     }
 }
