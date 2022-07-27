@@ -6,7 +6,6 @@ use Wordless\Abstractions\AbstractEnqueueableElement;
 use Wordless\Exceptions\DuplicatedEnqueuableId;
 use Wordless\Exceptions\InvalidMediaOption;
 use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\ProjectPath;
 
 class EnqueueableStyle extends AbstractEnqueueableElement
 {
