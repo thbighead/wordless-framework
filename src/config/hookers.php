@@ -1,10 +1,10 @@
 <?php
 
-use Wordless\Hookers\DeferMainScript;
-use Wordless\Hookers\LoadThemeScripts;
+use Wordless\Hookers\DeferEnqueuedScripts;
 use Wordless\Abstractions\Bootstrapper;
 use Wordless\Hookers\BootControllers;
 use Wordless\Hookers\BootHttpRemoteCallsLog;
+use Wordless\Hookers\EnqueueThemeEnqueueables;
 use Wordless\Hookers\HideDiagnosticsFromUserRoles;
 use Wordless\Hookers\HooksDebugLog;
 
@@ -12,10 +12,10 @@ return [
     Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [
         BootControllers::class,
         BootHttpRemoteCallsLog::class,
-        DeferMainScript::class,
+        DeferEnqueuedScripts::class,
+        EnqueueThemeEnqueueables::class,
         HideDiagnosticsFromUserRoles::class,
         HooksDebugLog::class,
-        LoadThemeScripts::class,
     ],
 
     /**

@@ -3,9 +3,11 @@
 namespace Wordless\Hookers;
 
 use Wordless\Abstractions\AbstractHooker;
+use Wordless\Helpers\Str;
 
-class DeferMainScript extends AbstractHooker
+class DeferEnqueuedScripts extends AbstractHooker
 {
+    private const DEFER_ATTRIBUTE = 'defer=\'true';
     /**
      * WordPress action|filter number of arguments accepted by function
      */
@@ -27,11 +29,12 @@ class DeferMainScript extends AbstractHooker
      */
     protected const TYPE = 'filter';
 
-    public static function addReferToScriptTag($url)
+    public static function addReferToScriptTag(string $url): string
     {
-        if (strpos($url, 'main.js')) {
-            return "$url' defer='true";
+        if (!Str::contains($url, self::DEFER_ATTRIBUTE)) {
+            return "$url' " . self::DEFER_ATTRIBUTE;
         }
+
         return $url;
     }
 }
