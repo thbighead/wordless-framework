@@ -15,7 +15,7 @@ abstract class AbstractAjaxHooker extends AbstractHooker
     private const WP_AJAX_NOPRIV_PREFIX = 'wp_ajax_nopriv_';
     private const WP_AJAX_PREFIX = 'wp_ajax_';
 
-    public static function boot()
+    public static function hookIt()
     {
         $hook_addition_function = 'add_' . static::TYPE;
 
