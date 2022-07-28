@@ -11,9 +11,8 @@
  */
 
 use Wordless\Abstractions\Bootstrapper;
-use Wordless\Abstractions\EnqueueableElements\EnqueueableScript;
-use Wordless\Abstractions\EnqueueableElements\EnqueueableStyle;
 
-Bootstrapper::bootAll();
+Bootstrapper::bootMenus();
+Bootstrapper::bootHookers();
 
 // {include plugins script}
