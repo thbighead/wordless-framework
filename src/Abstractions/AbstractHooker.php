@@ -25,7 +25,7 @@ abstract class AbstractHooker
      */
     protected const TYPE = 'action';
 
-    public static function boot()
+    public static function hookIt()
     {
         $hook_addition_function = 'add_' . static::TYPE;
         $hook_addition_function(
