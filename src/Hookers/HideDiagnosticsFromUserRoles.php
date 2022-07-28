@@ -9,6 +9,7 @@ use WP_User;
 
 class HideDiagnosticsFromUserRoles extends AbstractHooker
 {
+    public const SHOW_DIAGNOSTICS_CONFIG_KEY = 'show_diagnostics_only_to';
     /**
      * The function which shall be executed during hook
      */
@@ -31,7 +32,7 @@ class HideDiagnosticsFromUserRoles extends AbstractHooker
         }
 
         $allowed_roles_to_see_diagnostics =
-            (include ProjectPath::config('admin.php'))['show_diagnostics_only_to'] ?? [];
+            (include ProjectPath::config('admin.php'))[self::SHOW_DIAGNOSTICS_CONFIG_KEY] ?? [];
 
         if (empty($allowed_roles_to_see_diagnostics)) {
             return;
