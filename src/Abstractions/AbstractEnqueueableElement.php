@@ -3,6 +3,8 @@
 namespace Wordless\Abstractions;
 
 use InvalidArgumentException;
+use Wordless\Abstractions\EnqueueableElements\EnqueueableScript;
+use Wordless\Abstractions\EnqueueableElements\EnqueueableStyle;
 use Wordless\Exceptions\DuplicatedEnqueuableId;
 use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
@@ -15,7 +17,11 @@ abstract class AbstractEnqueueableElement
 
     abstract public function enqueue(): void;
 
-    private static array $ids_pool = [];
+    private static array $ids_pool = [
+        EnqueueableStyle::class => [],
+        EnqueueableScript::class => []
+    ];
+
 
     protected const CONFIG_FILENAME = 'enqueue.php';
 
@@ -37,8 +43,7 @@ abstract class AbstractEnqueueableElement
         string  $relative_file_path,
         array   $dependencies = [],
         ?string $version = null
-    )
-    {
+    ) {
         $this->setId($id);
         $this->relative_file_path = $relative_file_path;
         $this->dependencies = $dependencies;
@@ -53,9 +58,8 @@ abstract class AbstractEnqueueableElement
      */
     public static function enqueueAll(): void
     {
-        $style_mounters_to_queue = (
-            include ProjectPath::config(self::CONFIG_FILENAME)
-            )[static::configKey()] ?? [];
+        $style_mounters_to_queue = (include ProjectPath::config(self::CONFIG_FILENAME)
+        )[static::configKey()] ?? [];
 
         foreach ($style_mounters_to_queue as $style_mounter_class) {
             /** @var AbstractEnqueueableMounter $enqueueableStyleMounter */
@@ -85,11 +89,11 @@ abstract class AbstractEnqueueableElement
             throw new InvalidArgumentException(static::class . ' must have a non-empty id');
         }
 
-        if ($foundEnqueuableClass = static::$ids_pool[$id] ?? '') {
+        if ($foundEnqueuableClass = static::$ids_pool[static::class][$id] ?? '') {
             throw new DuplicatedEnqueuableId(static::class, $id, $foundEnqueuableClass);
         }
 
-        static::$ids_pool[$id] = true;
+        static::$ids_pool[static::class][$id] = true;
         $this->id = $id;
     }
 

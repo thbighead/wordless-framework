@@ -40,8 +40,7 @@ class EnqueueableStyle extends AbstractEnqueueableElement
         array   $dependencies = [],
         ?string $version = null,
         string  $media = self::MEDIA_OPTION_ALL
-    )
-    {
+    ) {
         parent::__construct($id, $relative_file_path, $dependencies, $version);
         $this->setMedia($media);
     }
@@ -58,16 +57,6 @@ class EnqueueableStyle extends AbstractEnqueueableElement
     protected function media(): string
     {
         return $this->media;
-    }
-
-    /**
-     * @param string $id
-     * @return void
-     * @throws DuplicatedEnqueuableId
-     */
-    protected function setId(string $id): void
-    {
-        parent::setId("style-$id");
     }
 
     /**
