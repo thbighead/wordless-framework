@@ -6,10 +6,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Wordless\Abstractions\Migrations\Script;
 use Wordless\Abstractions\StubMounters\MigrationStubMounter;
-use Wordless\Abstractions\Timezone;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Contracts\Command\LoadWpConfig;
-use Wordless\Exceptions\FailedToChangeTimezone;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
@@ -54,13 +52,9 @@ class CreateMigration extends WordlessCommand
      * @return int
      * @throws FailedToCopyStub
      * @throws PathNotFoundException
-     * @throws FailedToChangeTimezone
      */
     protected function runIt(): int
     {
-        $timezone = new Timezone;
-        $timezone->setDefaultTimezone();
-
         $snake_cased_migration_class_name = strtolower(
             $this->input->getArgument(self::MIGRATION_CLASS_ARGUMENT_NAME)
         );
