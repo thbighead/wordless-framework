@@ -11,8 +11,8 @@ class User extends WP_User
         parent::__construct($wp_user ?? wp_get_current_user());
     }
 
-    public function can($capability, ...$args): bool
+    public function can(string $capability, ...$for_id): bool
     {
-        return $this->has_cap($capability, ...$args);
+        return $this->has_cap($capability, ...$for_id);
     }
 }
