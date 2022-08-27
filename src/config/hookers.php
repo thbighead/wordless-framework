@@ -1,5 +1,7 @@
 <?php
 
+use App\Hookers\AllowSvgUpload;
+use App\Hookers\ForceXmlTagToUploadedSvgFiles;
 use Wordless\Abstractions\Bootstrapper;
 use Wordless\Hookers\BootControllers;
 use Wordless\Hookers\BootHttpRemoteCallsLog;
@@ -9,9 +11,11 @@ use Wordless\Hookers\HooksDebugLog;
 
 return [
     Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [
+        AllowSvgUpload::class,
         BootControllers::class,
         BootHttpRemoteCallsLog::class,
         EnqueueThemeEnqueueables::class,
+        ForceXmlTagToUploadedSvgFiles::class,
         HideDiagnosticsFromUserRoles::class,
         HooksDebugLog::class,
     ],
