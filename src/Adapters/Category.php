@@ -69,6 +69,11 @@ class Category
         return self::$categories ?? self::$categories = new CategoriesList;
     }
 
+    public function asWpTerm(): ?WP_Term
+    {
+        return $this->wpCategory;
+    }
+
     private function loadCategoryAcfs(int $from_id)
     {
         $this->loadAcfs("category_$from_id");

@@ -45,6 +45,11 @@ class Post
         return $this->wpPost->$attribute;
     }
 
+    public function asWpPost(): WP_Post
+    {
+        return $this->wpPost;
+    }
+
     /**
      * @return Category[]
      */
