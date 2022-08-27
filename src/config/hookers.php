@@ -3,6 +3,7 @@
 use App\Hookers\AllowSvgUpload;
 use App\Hookers\ForceXmlTagToUploadedSvgFiles;
 use Wordless\Abstractions\Bootstrapper;
+use Wordless\Abstractions\WpSpeedUp;
 use Wordless\Hookers\BootControllers;
 use Wordless\Hookers\BootHttpRemoteCallsLog;
 use Wordless\Hookers\EnqueueThemeEnqueueables;
@@ -12,6 +13,7 @@ use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
 
 return [
     Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [
+        ...WpSpeedUp::addAdditionalHooks(),
         AllowSvgUpload::class,
         BootControllers::class,
         BootHttpRemoteCallsLog::class,
@@ -67,7 +69,11 @@ return [
      *      ],
      */
     Bootstrapper::HOOKERS_REMOVE_CONFIG_KEY => [
-        Bootstrapper::HOOKERS_REMOVE_ACTION_CONFIG_KEY => [],
-        Bootstrapper::HOOKERS_REMOVE_FILTER_CONFIG_KEY => [],
+        Bootstrapper::HOOKERS_REMOVE_ACTION_CONFIG_KEY => array_merge_recursive([
+            //
+        ], WpSpeedUp::removeActionsConfigToSpeedUp()),
+        Bootstrapper::HOOKERS_REMOVE_FILTER_CONFIG_KEY => array_merge_recursive([
+            //
+        ], WpSpeedUp::removeFiltersConfigToSpeedUp()),
     ],
 ];
