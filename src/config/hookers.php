@@ -6,11 +6,13 @@ use Wordless\Hookers\BootHttpRemoteCallsLog;
 use Wordless\Hookers\EnqueueThemeEnqueueables;
 use Wordless\Hookers\HideDiagnosticsFromUserRoles;
 use Wordless\Hookers\HooksDebugLog;
+use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
 
 return [
     Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [
         BootControllers::class,
         BootHttpRemoteCallsLog::class,
+        DoNotLoadWpAdminBarOutsidePanel::class,
         EnqueueThemeEnqueueables::class,
         HideDiagnosticsFromUserRoles::class,
         HooksDebugLog::class,
