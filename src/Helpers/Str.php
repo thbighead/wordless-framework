@@ -2,6 +2,9 @@
 
 namespace Wordless\Helpers;
 
+use Ramsey\Uuid\Uuid;
+use Wordless\Exceptions\InvalidUuidVersion;
+
 class Str
 {
     public static function after(string $string, string $delimiter): string
@@ -101,6 +104,15 @@ class Str
         return self::beginsWith($string, $prefix) && self::endsWith($string, $suffix);
     }
 
+    public static function limitWords(
+        string $string,
+        int    $num_words = 15,
+        string $limit_marker = '...'
+    ): string
+    {
+        return wp_trim_words($string, $num_words, $limit_marker);
+    }
+
     public static function slugCase(string $string): string
     {
         return self::snakeCase($string, '-');
@@ -140,5 +152,39 @@ class Str
     public static function titleCase(string $string): string
     {
         return mb_convert_case($string, MB_CASE_TITLE, 'UTF-8');
+    }
+
+    /**
+     * @param int $version
+     * @param bool $with_dashes
+     * @return string
+     * @throws InvalidUuidVersion
+     */
+    public static function uuid(int $version = 4, bool $with_dashes = true): string
+    {
+        switch ($version) {
+            case 1:
+                $uuid = Uuid::uuid1();
+                break;
+            case 2:
+                $uuid = Uuid::uuid2(Uuid::DCE_DOMAIN_PERSON);
+                break;
+            case 3:
+                $uuid = Uuid::uuid3(Uuid::NAMESPACE_DNS, php_uname('n'));
+                break;
+            case 4:
+                $uuid = Uuid::uuid4();
+                break;
+            case 5:
+                $uuid = Uuid::uuid5(Uuid::NAMESPACE_DNS, php_uname('n'));
+                break;
+            case 6:
+                $uuid = Uuid::uuid6();
+                break;
+            default:
+                throw new InvalidUuidVersion($version);
+        }
+
+        return $with_dashes ? $uuid->toString() : str_replace('-', '', $uuid->toString());
     }
 }
