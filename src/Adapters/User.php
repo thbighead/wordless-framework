@@ -2,23 +2,29 @@
 
 namespace Wordless\Adapters;
 
+use Wordless\Contracts\Adapter\WithAcfs;
 use WP_User;
 
-class User
+class User extends WP_User
 {
-    public ?WP_User $wp_user;
+    use WithAcfs;
 
-    public function __construct(?WP_User $wp_user = null)
+    public function __construct(?WP_User $wp_user = null, bool $with_acfs = true)
     {
-        $this->wp_user = $wp_user ?? wp_get_current_user();
+        parent::__construct($wp_user ?? wp_get_current_user());
+
+        if ($with_acfs) {
+            $this->loadUserAcfs($this->ID);
+        }
     }
 
-    public function can($capability, ...$args): bool
+    public function can(string $capability, ...$for_id): bool
     {
-        if (is_null($this->wp_user)) {
-            return false;
-        }
+        return $this->has_cap($capability, ...$for_id);
+    }
 
-        return $this->wp_user->has_cap($capability, ...$args);
+    private function loadUserAcfs(int $from_id)
+    {
+        $this->loadAcfs("user_$from_id");
     }
 }

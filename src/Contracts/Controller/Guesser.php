@@ -6,12 +6,17 @@ use Wordless\Abstractions\Guessers\ControllerResourceNameGuesser;
 use Wordless\Abstractions\Guessers\ControllerVersionGuesser;
 use Wordless\Abstractions\InternalCache;
 use Wordless\Exceptions\FailedToFindCachedKey;
+use Wordless\Exceptions\InternalCacheNotLoaded;
 
 trait Guesser
 {
     private ?ControllerResourceNameGuesser $resourceNameGuesser;
     private ?ControllerVersionGuesser $versionGuesser;
 
+    /**
+     * @return string
+     * @throws InternalCacheNotLoaded
+     */
     protected function resourceName(): string
     {
         $controller_resource_name_class = static::class;
@@ -29,6 +34,10 @@ trait Guesser
         }
     }
 
+    /**
+     * @return string|null
+     * @throws InternalCacheNotLoaded
+     */
     protected function version(): ?string
     {
         $controller_resource_name_class = static::class;
