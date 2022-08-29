@@ -72,10 +72,10 @@
       "App\\Abstractions\\Composer::installInfobaseWpTheme"
     ],
     "post-package-update": [
-      "App\\Abstractions\\Composer::activatePlugin"
+      "Wordless\\Abstractions\\Composer::activatePlugin"
     ],
     "pre-package-uninstall": [
-      "App\\Abstractions\\Composer::deactivatePlugin"
+      "Wordless\\Abstractions\\Composer::deactivatePlugin"
     ]
   },
   "extra": {

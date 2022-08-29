@@ -7,6 +7,7 @@ use Wordless\Abstractions\WpSpeedUp;
 use Wordless\Hookers\AllowSvgUpload;
 use Wordless\Hookers\BootControllers;
 use Wordless\Hookers\BootHttpRemoteCallsLog;
+use Wordless\Hookers\DeferEnqueuedScripts;
 use Wordless\Hookers\EnqueueThemeEnqueueables;
 use Wordless\Hookers\ForceXmlTagToUploadedSvgFiles;
 use Wordless\Hookers\HideDiagnosticsFromUserRoles;
