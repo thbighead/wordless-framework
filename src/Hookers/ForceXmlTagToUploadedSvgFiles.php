@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Hookers;
+namespace Wordless\Hookers;
 
-use App\Helpers\Str;
 use Wordless\Abstractions\AbstractHooker;
+use Wordless\Helpers\Str;
 
 class ForceXmlTagToUploadedSvgFiles extends AbstractHooker
 {
