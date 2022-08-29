@@ -68,8 +68,8 @@
       "@php console publish:config"
     ],
     "post-package-install": [
-      "App\\Abstractions\\Composer::activatePlugin"
-      "App\\Abstractions\\Composer::installInfobaseWpTheme"
+      "Wordless\\Abstractions\\Composer::activatePlugin",
+      "Wordless\\Abstractions\\Composer::installInfobaseWpTheme"
     ],
     "post-package-update": [
       "Wordless\\Abstractions\\Composer::activatePlugin"

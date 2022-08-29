@@ -7,11 +7,12 @@ use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\InstalledVersions;
 use Composer\Installer\PackageEvent;
 use Composer\Package\CompletePackage;
+use Wordless\Contracts\Abstraction\Composer\InfobaseWpTheme;
 use Wordless\Contracts\Abstraction\Composer\ManagePlugin;
 
 class Composer
 {
-    use ManagePlugin;
+    use InfobaseWpTheme, ManagePlugin;
 
     public static function isPackageInstalled(string $package_full_name): bool
     {
