@@ -2,7 +2,6 @@
 
 namespace Wordless\Abstractions;
 
-use Composer\InstalledVersions;
 use Wordless\Hookers\AcfAutoGeneratePhpCodeOnSave;
 use Wordless\Hookers\AcfLoadLocalGroups;
 use Wordless\Hookers\HideAcfAdminPanelAtProduction;
@@ -11,7 +10,7 @@ class AcfProvider
 {
     public static function addAdditionalHooks(): array
     {
-        if (!InstalledVersions::isInstalled('infobaseit/acf-pro')) {
+        if (!Composer::isPackageInstalled('infobaseit/acf-pro')) {
             return [];
         }
 

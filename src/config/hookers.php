@@ -1,6 +1,7 @@
 <?php
 
 use Wordless\Hookers\DeferEnqueuedScripts;
+use Wordless\Abstractions\AcfProvider;
 use Wordless\Abstractions\Bootstrapper;
 use Wordless\Abstractions\WpSpeedUp;
 use Wordless\Hookers\AllowSvgUpload;
@@ -14,6 +15,7 @@ use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
 
 return [
     Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [
+        ...AcfProvider::addAdditionalHooks(),
         ...WpSpeedUp::addAdditionalHooks(),
         AllowSvgUpload::class,
         BootControllers::class,
