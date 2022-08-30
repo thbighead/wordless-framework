@@ -1,19 +1,30 @@
 <?php
 
 use Wordless\Hookers\DeferEnqueuedScripts;
+use Wordless\Abstractions\AcfProvider;
 use Wordless\Abstractions\Bootstrapper;
+use Wordless\Abstractions\WpSpeedUp;
+use Wordless\Hookers\AllowSvgUpload;
 use Wordless\Hookers\BootControllers;
 use Wordless\Hookers\BootHttpRemoteCallsLog;
+use Wordless\Hookers\DeferEnqueuedScripts;
 use Wordless\Hookers\EnqueueThemeEnqueueables;
+use Wordless\Hookers\ForceXmlTagToUploadedSvgFiles;
 use Wordless\Hookers\HideDiagnosticsFromUserRoles;
 use Wordless\Hookers\HooksDebugLog;
+use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
 
 return [
     Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [
+        ...AcfProvider::addAdditionalHooks(),
+        ...WpSpeedUp::addAdditionalHooks(),
+        AllowSvgUpload::class,
         BootControllers::class,
         BootHttpRemoteCallsLog::class,
         DeferEnqueuedScripts::class,
+        DoNotLoadWpAdminBarOutsidePanel::class,
         EnqueueThemeEnqueueables::class,
+        ForceXmlTagToUploadedSvgFiles::class,
         HideDiagnosticsFromUserRoles::class,
         HooksDebugLog::class,
     ],
@@ -63,7 +74,11 @@ return [
      *      ],
      */
     Bootstrapper::HOOKERS_REMOVE_CONFIG_KEY => [
-        Bootstrapper::HOOKERS_REMOVE_ACTION_CONFIG_KEY => [],
-        Bootstrapper::HOOKERS_REMOVE_FILTER_CONFIG_KEY => [],
+        Bootstrapper::HOOKERS_REMOVE_ACTION_CONFIG_KEY => array_merge_recursive([
+            //
+        ], WpSpeedUp::removeActionsConfigToSpeedUp()),
+        Bootstrapper::HOOKERS_REMOVE_FILTER_CONFIG_KEY => array_merge_recursive([
+            //
+        ], WpSpeedUp::removeFiltersConfigToSpeedUp()),
     ],
 ];
