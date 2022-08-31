@@ -8,6 +8,7 @@ use Wordless\Adapters\WordlessCommand;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Arr;
+use Wordless\Helpers\Config;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
@@ -56,7 +57,7 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
                     DIRECTORY_SEPARATOR
                 ) . self::WP_LOAD_MU_PLUGINS_FILENAME;
             $include_files_script = '';
-            $this->mu_plugins_extra_rules = $this->readMuPluginsConfig();
+            $this->mu_plugins_extra_rules = Config::tryToGetOrDefault('mu-plugins', []);
 
             $this->mountIncludeFilesScriptByReadingMuPluginsDirectory($include_files_script);
             $this->mountIncludeFilesScriptByMuPluginsConfigExtraRules($include_files_script);
@@ -169,17 +170,5 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
     private function mountPartialScript(string $relative_file_path): ?string
     {
         return "include_once __DIR__ . '$relative_file_path';";
-    }
-
-    /**
-     * @return array
-     */
-    private function readMuPluginsConfig(): array
-    {
-        try {
-            return include ProjectPath::config('mu-plugins.php');
-        } catch (PathNotFoundException $exception) {
-            return [];
-        }
     }
 }
