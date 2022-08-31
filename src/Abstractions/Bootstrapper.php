@@ -3,10 +3,11 @@
 namespace Wordless\Abstractions;
 
 use Wordless\Exceptions\DuplicatedMenuId;
+use Wordless\Exceptions\InvalidConfigKey;
 use Wordless\Exceptions\InvalidMenuClass;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Arr;
-use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Config;
 
 class Bootstrapper
 {
@@ -17,6 +18,8 @@ class Bootstrapper
     public const HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY = 'function';
     public const HOOKERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY = 'priority';
     public const MENUS_CONFIG_KEY = 'menus';
+    private const ADMIN_CONFIG_FILENAME = 'admin';
+    private const HOOKERS_CONFIG_FILENAME = 'hookers';
 
     /**
      * @return void
@@ -24,10 +27,13 @@ class Bootstrapper
      */
     public static function bootHookers()
     {
-        $hookers_config = include ProjectPath::config('hookers.php');
-        $removable_hooks = $hookers_config[self::HOOKERS_REMOVE_CONFIG_KEY] ?? [];
+        $config_prefix = self::HOOKERS_CONFIG_FILENAME . '.';
+        $removable_hooks = Config::tryToGetOrDefault($config_prefix . self::HOOKERS_REMOVE_CONFIG_KEY, []);
 
-        self::resolveHookers($hookers_config[self::HOOKERS_BOOT_CONFIG_KEY] ?? [], $removable_hooks);
+        self::resolveHookers(
+            Config::tryToGetOrDefault($config_prefix . self::HOOKERS_BOOT_CONFIG_KEY, []),
+            $removable_hooks
+        );
 
         self::resolveRemovableHooks($removable_hooks);
     }
@@ -37,12 +43,11 @@ class Bootstrapper
      * @throws DuplicatedMenuId
      * @throws InvalidMenuClass
      * @throws PathNotFoundException
+     * @throws InvalidConfigKey
      */
     public static function bootMenus()
     {
-        $menus_config = (include ProjectPath::config('admin.php'))[self::MENUS_CONFIG_KEY];
-
-        self::resolveMenus($menus_config);
+        self::resolveMenus(Config::get(self::ADMIN_CONFIG_FILENAME . '.' . self::MENUS_CONFIG_KEY));
     }
 
     private static function resolveHookers(array $hookers, array &$removable_hooks)
