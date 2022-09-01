@@ -13,7 +13,30 @@ trait PackageDiscovery
         $packagesList = $event->getComposer()->getRepositoryManager()->getLocalRepository()->getPackages();
 
         foreach ($packagesList as $package) {
-            dump($package->getExtra());
+            if (!($wordless_extra_options = self::checkForWordlessExtraOptions($package->getExtra()))) {
+                continue;
+            }
+
+            self::resolveWordlessOptions($wordless_extra_options);
+
+            $event->getIO()->write("{$package->getName()} discovered as a Wordless package");
+        }
+    }
+
+    /**
+     * @param array $extra_options
+     * @return array|false
+     */
+    private static function checkForWordlessExtraOptions(array $extra_options)
+    {
+        return is_array($wordless_extra_options = $extra_options[self::WORDLESS_EXTRA_KEY] ?? false) ?
+            $wordless_extra_options : false;
+    }
+
+    private static function resolveWordlessOptions(array $wordless_extra_options)
+    {
+        foreach ($wordless_extra_options['scripts'] ?? [] as $wordless_script) {
+            $wordless_script();
         }
     }
 }
