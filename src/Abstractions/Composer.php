@@ -14,14 +14,11 @@ class Composer
 {
     use ManagePlugin, PackageDiscovery;
 
+    private const WORDLESS_EXTRA_KEY = 'wordless';
+
     public static function isPackageInstalled(string $package_full_name): bool
     {
         return InstalledVersions::isInstalled($package_full_name);
-    }
-
-    protected static function listPackages(): array
-    {
-        return InstalledVersions::getInstalledPackages();
     }
 
     private static function extractPackageFromEvent(PackageEvent $composerEvent): ?CompletePackage
