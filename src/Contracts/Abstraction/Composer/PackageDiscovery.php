@@ -8,7 +8,6 @@ trait PackageDiscovery
 {
     public static function discover(Event $event)
     {
-        dump(self::listPackages());
-        dump($event->getComposer());
+        dump($event->getComposer()->getRepositoryManager()->getLocalRepository()->getPackages());
     }
 }
