@@ -22,7 +22,11 @@ trait WithAcfs
         return $this->acfs;
     }
 
-    private function loadAcfs(int $from_id)
+    /**
+     * @param string|int $from_id
+     * @return void
+     */
+    private function loadAcfs($from_id)
     {
         if (!function_exists('get_fields')) {
             return;
