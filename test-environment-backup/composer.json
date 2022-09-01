@@ -5,7 +5,8 @@
   "license": "MIT",
   "autoload": {
     "psr-4": {
-      "App\\": "app/"
+      "App\\": "app/",
+      "Packages\\": "packages/"
     }
   },
   "authors": [
@@ -52,6 +53,7 @@
   },
   "scripts": {
     "post-autoload-dump": [
+      "Wordless\\Abstractions\\Composer::discover",
       "@php console mup:loader",
       "@php console publish:config"
     ],
