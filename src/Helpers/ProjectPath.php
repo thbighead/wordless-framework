@@ -87,6 +87,16 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
+    public static function packages(string $additional_path = ''): string
+    {
+        return self::root("packages/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     public static function public(string $additional_path = ''): string
     {
         return self::root("public/$additional_path");
