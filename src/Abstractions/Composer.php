@@ -7,6 +7,8 @@ use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\InstalledVersions;
 use Composer\Installer\PackageEvent;
 use Composer\Package\CompletePackage;
+use Composer\Package\RootPackage;
+use Composer\Script\Event;
 use Wordless\Contracts\Abstraction\Composer\ManagePlugin;
 use Wordless\Contracts\Abstraction\Composer\PackageDiscovery;
 use Wordless\Exceptions\PathNotFoundException;
@@ -30,13 +32,22 @@ class Composer
     }
 
     /**
-     * @param PackageEvent $composerEvent
+     * @param Event $composerEvent
      * @return void
      * @throws PathNotFoundException
      */
-    public static function saveInstalledVersion(PackageEvent $composerEvent)
+    public static function saveInstalledVersion(Event $composerEvent)
     {
-        $package = self::extractPackageFromEvent($composerEvent);
+        $root_project_path_constant = 'ROOT_PROJECT_PATH';
+        if (!defined($root_project_path_constant)) {
+            define(
+                $root_project_path_constant,
+                "{$composerEvent->getComposer()->getConfig()->get('vendor-dir')}/.."
+            );
+        }
+
+        /** @var RootPackage $projectPackage */
+        $projectPackage = $composerEvent->getComposer()->getPackage();
         $style_css_path = ProjectPath::wpThemes('wordless/style.css');
         $style_css_content = file_get_contents($style_css_path);
 
@@ -45,7 +56,7 @@ class Composer
                 $style_css_path,
                 str_replace(
                     '*/',
-                    PHP_EOL . "Version: {$package->getVersion()}" . PHP_EOL . '*/',
+                    PHP_EOL . "Version: {$projectPackage->getVersion()}" . PHP_EOL . '*/',
                     $style_css_content
                 )
             );

@@ -57,6 +57,9 @@
       "@php console mup:loader",
       "@php console publish:config"
     ],
+    "post-install-cmd": [
+      "Wordless\\Abstractions\\Composer::saveInstalledVersion"
+    ],
     "post-package-install": [
       "Wordless\\Abstractions\\Composer::activatePlugin"
     ],
@@ -69,8 +72,12 @@
   },
   "extra": {
     "installer-paths": {
-      "wp/wp-content/plugins/{$name}/": ["type:wordpress-plugin"],
-      "wp/wp-content/themes/{$name}/": ["type:wordpress-theme"]
+      "wp/wp-content/plugins/{$name}/": [
+        "type:wordpress-plugin"
+      ],
+      "wp/wp-content/themes/{$name}/": [
+        "type:wordpress-theme"
+      ]
     }
   }
 }
