@@ -9,12 +9,18 @@ use Composer\Installer\PackageEvent;
 use Composer\Package\CompletePackage;
 use Wordless\Contracts\Abstraction\Composer\ManagePlugin;
 use Wordless\Contracts\Abstraction\Composer\PackageDiscovery;
+use Wordless\Helpers\ProjectPath;
 
 class Composer
 {
     use ManagePlugin, PackageDiscovery;
 
     private const WORDLESS_EXTRA_KEY = 'wordless';
+
+    public static function getFrameworkInstalledVersion(): string
+    {
+        return InstalledVersions::getVersion(ProjectPath::VENDOR_PACKAGE_RELATIVE_PATH);
+    }
 
     public static function isPackageInstalled(string $package_full_name): bool
     {
