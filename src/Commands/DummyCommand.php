@@ -3,11 +3,14 @@
 namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Wordless\Abstractions\Guessers\WordlessFrameworkVersionGuesser;
+use Wordless\Adapters\Role;
 use Wordless\Adapters\WordlessCommand;
+use Wordless\Contracts\Command\LoadWpConfig;
 
 class DummyCommand extends WordlessCommand
 {
+    use LoadWpConfig;
+
     protected static $defaultName = 'foo';
 
     protected function arguments(): array
@@ -32,7 +35,7 @@ class DummyCommand extends WordlessCommand
 
     protected function runIt(): int
     {
-        dump((new WordlessFrameworkVersionGuesser)->getValue());
+        dump(Role::all(), Role::allAsArray(), Role::allNames());
 
         return Command::SUCCESS;
     }
