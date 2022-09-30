@@ -2,9 +2,9 @@
 
 namespace Wordless\Commands;
 
-use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Contracts\Command\AllowRootMode;
@@ -15,8 +15,10 @@ use Wordless\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Exceptions\FailedToCopyFile;
 use Wordless\Exceptions\FailedToCreateDirectory;
 use Wordless\Exceptions\FailedToDeletePath;
+use Wordless\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Exceptions\FailedToInstallTestEnvironmentThroughComposer;
+use Wordless\Exceptions\InvalidDirectory;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Arr;
 use Wordless\Helpers\DirectoryFiles;
@@ -26,11 +28,13 @@ class InitializeTestEnvironment extends WordlessCommand
 {
     use AllowRootMode, ForceMode, RunWpCliCommand;
 
-    protected static $defaultName = 'test:environment';
+    protected static $defaultName = self::COMMAND_NAME;
 
+    public const COMMAND_NAME = 'test:environment';
+    public const DROP_DB_MODE = 'drop-db';
+    public const FORCE_MODE = 'force';
+    public const TARGET_DIRECTORY_NAME = 'test-environment';
     private const ALLOW_ROOT_MODE = 'allow-root';
-    private const FORCE_MODE = 'force';
-    private const TARGET_DIRECTORY_NAME = 'test-environment';
 
     private array $option_inputs;
 
@@ -55,18 +59,26 @@ class InitializeTestEnvironment extends WordlessCommand
             $this->mountAllowRootModeOption(),
             $this->mountForceModeOption(
                 'Deletes everything inside test-environment to install from zero.'
-            )
+            ),
+            [
+                self::OPTION_NAME_FIELD => self::DROP_DB_MODE,
+                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
+                self::OPTION_DESCRIPTION_FIELD => 'Also drops test database when in force mode.',
+            ],
         ];
     }
 
     /**
      * @return int
-     * @throws Exception
+     * @throws CliReturnedNonZero
+     * @throws FailedToChangeDirectoryTo
      * @throws FailedToCopyFile
      * @throws FailedToCreateDirectory
      * @throws FailedToDeletePath
+     * @throws FailedToGetCurrentWorkingDirectory
      * @throws FailedToGetDirectoryPermissions
      * @throws FailedToInstallTestEnvironmentThroughComposer
+     * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
     protected function runIt(): int
@@ -75,6 +87,7 @@ class InitializeTestEnvironment extends WordlessCommand
             $test_environment_directory_path = ProjectPath::root(self::TARGET_DIRECTORY_NAME);
 
             if ($this->isForceMode()) {
+                $this->resolveDropTestDatabase();
                 $this->wrapScriptWithMessages(
                     "Deleting $test_environment_directory_path...",
                     function () use ($test_environment_directory_path) {
@@ -121,23 +134,50 @@ class InitializeTestEnvironment extends WordlessCommand
      * @return void
      * @throws CliReturnedNonZero
      * @throws FailedToChangeDirectoryTo
+     * @throws FailedToGetCurrentWorkingDirectory
+     * @throws PathNotFoundException
+     */
+    private function resolveDropTestDatabase()
+    {
+        if (!$this->input->getOption(self::DROP_DB_MODE)) {
+            return;
+        }
+
+        $this->wrapScriptWithMessages('Dropping test database...', function () {
+            DirectoryFiles::changeWorkingDirectoryDoAndGoBack(
+                ProjectPath::root(self::TARGET_DIRECTORY_NAME),
+                function () {
+                    $command = 'php console wp:run "db drop --yes --quiet"';
+
+                    if ($command_result = $this->executeCommand($command)) {
+                        throw new CliReturnedNonZero($command, $command_result);
+                    }
+                },
+                ProjectPath::root()
+            );
+        });
+    }
+
+    /**
+     * @return void
+     * @throws CliReturnedNonZero
+     * @throws FailedToChangeDirectoryTo
+     * @throws FailedToGetCurrentWorkingDirectory
      * @throws PathNotFoundException
      */
     private function executeComposerInstallInsideTestEnvironment()
     {
-        if (!chdir($test_environment_path = ProjectPath::root(self::TARGET_DIRECTORY_NAME))) {
-            throw new FailedToChangeDirectoryTo($test_environment_path);
-        }
+        DirectoryFiles::changeWorkingDirectoryDoAndGoBack(
+            ProjectPath::root(self::TARGET_DIRECTORY_NAME),
+            function () {
+                $command = 'composer install';
 
-        $command = 'composer install';
-
-        if ($command_result = $this->executeCommand($command)) {
-            throw new CliReturnedNonZero($command, $command_result);
-        }
-
-        if (!chdir($root_path = ProjectPath::root())) {
-            throw new FailedToChangeDirectoryTo($root_path);
-        }
+                if ($command_result = $this->executeCommand($command)) {
+                    throw new CliReturnedNonZero($command, $command_result);
+                }
+            },
+            ProjectPath::root()
+        );
     }
 
     /**
@@ -145,29 +185,28 @@ class InitializeTestEnvironment extends WordlessCommand
      * @return void
      * @throws CliReturnedNonZero
      * @throws FailedToChangeDirectoryTo
+     * @throws FailedToGetCurrentWorkingDirectory
      * @throws PathNotFoundException
      */
     private function executeConsoleCommandInsideTestEnvironment(string $command)
     {
-        if (!chdir($test_environment_path = ProjectPath::root(self::TARGET_DIRECTORY_NAME))) {
-            throw new FailedToChangeDirectoryTo($test_environment_path);
-        }
+        DirectoryFiles::changeWorkingDirectoryDoAndGoBack(
+            ProjectPath::root(self::TARGET_DIRECTORY_NAME),
+            function () use ($command) {
+                $command = "php console $command";
 
-        $command = "php console $command";
+                foreach ($this->option_inputs as $option_name => $option_value) {
+                    if ($option_value) {
+                        $command = "$command $option_name";
+                    }
+                }
 
-        foreach ($this->option_inputs as $option_name => $option_value) {
-            if ($option_value) {
-                $command = "$command $option_name";
-            }
-        }
-
-        if ($command_result = $this->executeCommand($command)) {
-            throw new CliReturnedNonZero($command, $command_result);
-        }
-
-        if (!chdir($root_path = ProjectPath::root())) {
-            throw new FailedToChangeDirectoryTo($root_path);
-        }
+                if ($command_result = $this->executeCommand($command)) {
+                    throw new CliReturnedNonZero($command, $command_result);
+                }
+            },
+            ProjectPath::root()
+        );
     }
 
     private function extractOptionsFromOriginalInput(): array
@@ -175,6 +214,10 @@ class InitializeTestEnvironment extends WordlessCommand
         $extracted_options = [];
 
         foreach ($this->input->getOptions() as $option_name => $is_active) {
+            if ($option_name === self::DROP_DB_MODE) {
+                continue;
+            }
+            
             $extracted_options["--$option_name"] = $is_active;
         }
 

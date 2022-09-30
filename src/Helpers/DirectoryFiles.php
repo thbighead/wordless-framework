@@ -3,15 +3,51 @@
 namespace Wordless\Helpers;
 
 use Generator;
+use Wordless\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Exceptions\FailedToCopyFile;
 use Wordless\Exceptions\FailedToCreateDirectory;
 use Wordless\Exceptions\FailedToDeletePath;
+use Wordless\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Exceptions\InvalidDirectory;
 use Wordless\Exceptions\PathNotFoundException;
 
 class DirectoryFiles
 {
+    /**
+     * @param string $to
+     * @return void
+     * @throws FailedToChangeDirectoryTo
+     */
+    public static function changeWorkingDirectory(string $to)
+    {
+        if (!chdir($to)) {
+            throw new FailedToChangeDirectoryTo($to);
+        }
+    }
+
+    /**
+     * @param string $to
+     * @param callable $do
+     * @param string|null $back_to
+     * @return mixed
+     * @throws FailedToChangeDirectoryTo
+     * @throws FailedToGetCurrentWorkingDirectory
+     * @throws PathNotFoundException
+     */
+    public static function changeWorkingDirectoryDoAndGoBack(string $to, callable $do, ?string $back_to = null)
+    {
+        $back_to = $back_to ?? self::getCurrentWorkingDirectory();
+
+        self::changeWorkingDirectory($to);
+
+        $result = $do();
+
+        self::changeWorkingDirectory($back_to);
+
+        return $result;
+    }
+
     /**
      * @param string $path
      * @param $permissions
@@ -55,6 +91,22 @@ class DirectoryFiles
         if (!unlink($path)) {
             throw new FailedToDeletePath($path);
         }
+    }
+
+    /**
+     * @return string
+     * @throws FailedToGetCurrentWorkingDirectory
+     * @throws PathNotFoundException
+     */
+    public static function getCurrentWorkingDirectory(): string
+    {
+        $current_working_directory = getcwd();
+
+        if ($current_working_directory === false) {
+            throw new FailedToGetCurrentWorkingDirectory;
+        }
+
+        return ProjectPath::realpath($current_working_directory);
     }
 
     /**

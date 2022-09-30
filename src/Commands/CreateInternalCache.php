@@ -13,8 +13,9 @@ class CreateInternalCache extends WordlessCommand
 {
     use LoadWpConfig;
 
-    public const COMMAND_NAME = 'cache:create';
     protected static $defaultName = self::COMMAND_NAME;
+
+    public const COMMAND_NAME = 'cache:create';
 
     protected function arguments(): array
     {
