@@ -3,11 +3,8 @@
 namespace Wordless\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Exception\ExceptionInterface;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Wordless\Commands\InitializeTestEnvironment;
+use Wordless\Exceptions\CliReturnedNonZero;
 use Wordless\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Exceptions\PathNotFoundException;
@@ -15,41 +12,55 @@ use Wordless\Helpers\DirectoryFiles;
 
 abstract class WordlessTestCase extends TestCase
 {
+    private static bool $environment_restarted = false;
+
     /**
      * @return void
-     * @throws ExceptionInterface
+     * @throws CliReturnedNonZero
      * @throws FailedToChangeDirectoryTo
      * @throws FailedToGetCurrentWorkingDirectory
      * @throws PathNotFoundException
-     *
      */
-    protected function setUp(): void
+    public static function setUpBeforeClass(): void
     {
-        parent::setUp();
+        self::loadComposerAutoload();
 
-        $this->restartTestEnvironment();
+        parent::setUpBeforeClass();
+
+        self::restartTestEnvironment();
 
         DirectoryFiles::changeWorkingDirectoryDoAndGoBack(
             InitializeTestEnvironment::TARGET_DIRECTORY_NAME,
             function () {
-                if (!defined('ROOT_PROJECT_PATH')) {
-                    define('ROOT_PROJECT_PATH', __DIR__ . '/../test-environment');
-                }
+                self::loadWpConfig();
             }
         );
     }
 
+    private static function loadComposerAutoload()
+    {
+        require_once __DIR__ . '/../vendor/autoload.php';
+    }
+
+    private static function loadWpConfig()
+    {
+        require_once __DIR__ . '/../test-environment/wp/wp-core/wp-config.php';
+    }
+
     /**
      * @return void
-     * @throws ExceptionInterface
+     * @throws CliReturnedNonZero
      */
-    private function restartTestEnvironment()
+    private static function restartTestEnvironment()
     {
-        $application = new Application;
-        $application->find(InitializeTestEnvironment::COMMAND_NAME)
-            ->run(new ArrayInput([
-                '--' . InitializeTestEnvironment::FORCE_MODE => true,
-                '--' . InitializeTestEnvironment::DROP_DB_MODE => true,
-            ]), new BufferedOutput);
+        if (!self::$environment_restarted) {
+            passthru($command = 'php console test:environment -f --drop-db', $result_code);
+
+            if ($result_code) {
+                throw new CliReturnedNonZero($command, $result_code);
+            }
+
+            self::$environment_restarted = true;
+        }
     }
 }
