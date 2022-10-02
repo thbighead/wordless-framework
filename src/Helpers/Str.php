@@ -154,6 +154,17 @@ class Str
         return implode($studly_words);
     }
 
+    /**
+     * @param string $string
+     * @param string|string[] $search
+     * @param string|string[] $replace
+     * @return string
+     */
+    public static function replace(string $string, $search, $replace): string
+    {
+        return str_replace($search, $replace, $string);
+    }
+
     public static function titleCase(string $string): string
     {
         return mb_convert_case($string, MB_CASE_TITLE, 'UTF-8');
