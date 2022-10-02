@@ -3,6 +3,7 @@
 namespace Wordless\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Throwable;
 use Wordless\Commands\InitializeTestEnvironment;
 use Wordless\Exceptions\CliReturnedNonZero;
 use Wordless\Exceptions\FailedToChangeDirectoryTo;
