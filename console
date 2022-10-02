@@ -6,10 +6,9 @@ require __DIR__ . '/vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 use Wordless\Commands\DummyCommand;
-use Wordless\Commands\FlushMigrations;
 use Wordless\Commands\InitializeTestEnvironment;
 
-$application = new Application();
+$application = new Application;
 
 $application->add(new InitializeTestEnvironment);
 $application->add(new DummyCommand);
