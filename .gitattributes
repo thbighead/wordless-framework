@@ -1,7 +1,6 @@
 /.git                                           export-ignore
 /.idea                                          export-ignore
 /console                                        export-ignore
-/src/Commands/DummyCommand.php                  export-ignore
 /src/Commands/InitializeTestEnvironment.php     export-ignore
 /test-environment                               export-ignore
 /test-environment-backup                        export-ignore
