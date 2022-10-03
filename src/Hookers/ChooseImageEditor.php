@@ -7,7 +7,7 @@ use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
 
-class SwitchImagickByGd extends AbstractHooker
+class ChooseImageEditor extends AbstractHooker
 {
     public const IMAGE_LIBRARY_CONFIG_KEY = 'image_library';
     public const IMAGE_LIBRARY_CONFIG_VALUE_IMAGICK = 'imagick';
