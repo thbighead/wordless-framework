@@ -2,6 +2,9 @@
 
 namespace Wordless\Helpers;
 
+use Wordless\Abstractions\InternalCache;
+use Wordless\Exceptions\FailedToFindCachedKey;
+use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\InvalidConfigKey;
 use Wordless\Exceptions\PathNotFoundException;
 
@@ -15,21 +18,27 @@ class Config
     /**
      * @param string $key
      * @return array|mixed
+     * @throws InternalCacheNotLoaded
      * @throws InvalidConfigKey
      * @throws PathNotFoundException
      */
     public static function get(string $key)
     {
-        $keys = self::mountKeys($key);
-        $config = self::retrieveConfig($keys);
+        try {
+            return InternalCache::getValueOrFail("config.$key");
+        } catch (FailedToFindCachedKey $e) {
+            $keys = self::mountKeys($key);
+            $config = self::retrieveConfig($keys);
 
-        return self::searchKeysIntoConfig($keys, $config, $key);
+            return self::searchKeysIntoConfig($keys, $config, $key);
+        }
     }
 
     /**
      * @param string $key
      * @param $default
      * @return array|mixed|null
+     * @throws InternalCacheNotLoaded
      * @throws PathNotFoundException
      */
     public static function tryToGetOrDefault(string $key, $default = null)

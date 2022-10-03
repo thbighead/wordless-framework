@@ -6,6 +6,7 @@ use Symfony\Component\Console\Command\Command;
 use Wordless\Abstractions\StubMounters\WpLoadMuPluginsStubMounter;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Exceptions\FailedToCopyStub;
+use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Arr;
 use Wordless\Helpers\Config;
@@ -47,6 +48,7 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
      * @return int
      * @throws FailedToCopyStub
      * @throws PathNotFoundException
+     * @throws InternalCacheNotLoaded
      */
     protected function runIt(): int
     {

@@ -2,6 +2,7 @@
 
 namespace Wordless\Abstractions;
 
+use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Hookers\RemoveAdditionalCssFromAdmin;
 use Wordless\Hookers\RemoveEmojiFromTinyMce;
 use Wordless\Hookers\RemoveEmojiFromWpResourceHints;
@@ -22,6 +23,7 @@ class WpSpeedUp
     /**
      * @return array
      * @throws PathNotFoundException
+     * @throws InternalCacheNotLoaded
      */
     public static function addAdditionalHooks(): array
     {
@@ -42,6 +44,7 @@ class WpSpeedUp
 
     /**
      * @return array
+     * @throws InternalCacheNotLoaded
      * @throws PathNotFoundException
      */
     public static function removeActionsConfigToSpeedUp(): array
@@ -68,6 +71,7 @@ class WpSpeedUp
 
     /**
      * @return array
+     * @throws InternalCacheNotLoaded
      * @throws PathNotFoundException
      */
     public static function removeFiltersConfigToSpeedUp(): array
