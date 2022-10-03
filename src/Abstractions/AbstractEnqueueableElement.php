@@ -4,6 +4,7 @@ namespace Wordless\Abstractions;
 
 use InvalidArgumentException;
 use Wordless\Exceptions\DuplicatedEnqueuableId;
+use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
 use Wordless\Helpers\Str;
@@ -48,6 +49,7 @@ abstract class AbstractEnqueueableElement
     /**
      * @return void
      * @throws PathNotFoundException
+     * @throws InternalCacheNotLoaded
      */
     public static function enqueueAll(): void
     {

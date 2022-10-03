@@ -3,6 +3,9 @@
 namespace Wordless\Hookers;
 
 use Wordless\Abstractions\AbstractHooker;
+use Wordless\Exceptions\InternalCacheNotLoaded;
+use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Helpers\Config;
 
 class DoNotLoadWpAdminBarOutsidePanel extends AbstractHooker
 {
@@ -17,9 +20,15 @@ class DoNotLoadWpAdminBarOutsidePanel extends AbstractHooker
      */
     protected const HOOK = 'after_setup_theme';
 
+    /**
+     * @return void
+     * @throws InternalCacheNotLoaded
+     * @throws PathNotFoundException
+     */
     public static function removeAdminBarWhenNotInAdmin()
     {
-        if (!static::SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY && !is_admin()) {
+        if (!Config::tryToGetOrDefault('admin.' . static::SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY, false)
+            && !is_admin()) {
             show_admin_bar(false);
         }
     }
