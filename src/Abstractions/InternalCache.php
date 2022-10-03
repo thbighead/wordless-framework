@@ -11,6 +11,7 @@ use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\InvalidCache;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\DirectoryFiles;
+use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
@@ -25,9 +26,9 @@ class InternalCache
      */
     public static function generate()
     {
-        (new ControllerCacher)->cache();
         (new EnvironmentCacher)->cache();
         (new ConfigCacher)->cache();
+        (new ControllerCacher)->cache();
     }
 
     /**
@@ -100,6 +101,10 @@ class InternalCache
      */
     private static function retrieveCachedValues(): array
     {
+        if (Environment::get('APP_ENV') === Environment::LOCAL) {
+            return [];
+        }
+
         $internal_wordless_cache = [];
 
         foreach (DirectoryFiles::recursiveRead(ProjectPath::cache()) as $cache_file_path) {
