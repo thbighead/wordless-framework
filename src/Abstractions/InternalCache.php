@@ -2,6 +2,7 @@
 
 namespace Wordless\Abstractions;
 
+use Wordless\Abstractions\Cachers\ConfigCacher;
 use Wordless\Abstractions\Cachers\ControllerCacher;
 use Wordless\Abstractions\Cachers\EnvironmentCacher;
 use Wordless\Exceptions\FailedToCopyStub;
@@ -26,6 +27,7 @@ class InternalCache
     {
         (new ControllerCacher)->cache();
         (new EnvironmentCacher)->cache();
+        (new ConfigCacher)->cache();
     }
 
     /**
