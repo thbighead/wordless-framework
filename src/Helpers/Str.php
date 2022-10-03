@@ -104,6 +104,11 @@ class Str
         return self::beginsWith($string, $prefix) && self::endsWith($string, $suffix);
     }
 
+    public static function isUuid(string $string): bool
+    {
+        return Uuid::isValid($string);
+    }
+
     public static function limitWords(
         string $string,
         int    $num_words = 15,
@@ -147,6 +152,17 @@ class Str
         }, $words);
 
         return implode($studly_words);
+    }
+
+    /**
+     * @param string $string
+     * @param string|string[] $search
+     * @param string|string[] $replace
+     * @return string
+     */
+    public static function replace(string $string, $search, $replace): string
+    {
+        return str_replace($search, $replace, $string);
     }
 
     public static function titleCase(string $string): string
