@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Tests\Unit\StrHelperTestContracts;
+namespace Wordless\Tests\Unit\StrHelperTest;
 
 use Wordless\Exceptions\InvalidUuidVersion;
 use Wordless\Helpers\Str;

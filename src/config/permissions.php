@@ -1,6 +1,6 @@
 <?php
 
-use Wordless\Adapters\Role;
+//use Wordless\Adapters\Role;
 
 return [
 //    'custom-admin' => [
