@@ -48,7 +48,6 @@ class GenerateMustUsePluginsLoader extends WordlessCommand
      * @return int
      * @throws FailedToCopyStub
      * @throws PathNotFoundException
-     * @throws InternalCacheNotLoaded
      */
     protected function runIt(): int
     {

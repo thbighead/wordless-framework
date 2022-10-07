@@ -11,7 +11,6 @@ class Role extends WP_Role
 {
     public const ADMIN = 'administrator';
     public const AUTHOR = 'author';
-    public const CONFIG_FILENAME = 'permissions.php';
     public const CONTRIBUTOR = 'contributor';
     public const EDITOR = 'editor';
     public const KEY = 'role';
@@ -21,7 +20,6 @@ class Role extends WP_Role
         self::AUTHOR => self::AUTHOR,
         self::CONTRIBUTOR => self::CONTRIBUTOR,
         self::EDITOR => self::EDITOR,
-        self::KEY => self::KEY,
         self::SUBSCRIBER => self::SUBSCRIBER,
     ];
 

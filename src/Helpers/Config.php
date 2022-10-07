@@ -18,7 +18,6 @@ class Config
     /**
      * @param string $key
      * @return array|mixed
-     * @throws InternalCacheNotLoaded
      * @throws InvalidConfigKey
      * @throws PathNotFoundException
      */
@@ -26,7 +25,7 @@ class Config
     {
         try {
             return InternalCache::getValueOrFail("config.$key");
-        } catch (FailedToFindCachedKey $e) {
+        } catch (InternalCacheNotLoaded|FailedToFindCachedKey $exception) {
             $keys = self::mountKeys($key);
             $config = self::retrieveConfig($keys);
 
@@ -38,7 +37,6 @@ class Config
      * @param string $key
      * @param $default
      * @return array|mixed|null
-     * @throws InternalCacheNotLoaded
      * @throws PathNotFoundException
      */
     public static function tryToGetOrDefault(string $key, $default = null)
