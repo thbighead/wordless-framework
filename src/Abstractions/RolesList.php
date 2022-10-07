@@ -4,7 +4,9 @@ namespace Wordless\Abstractions;
 
 use Wordless\Adapters\Role;
 use Wordless\Exceptions\FailedToCreateRole;
+use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Helpers\Config;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 use WP_Roles;
@@ -26,12 +28,12 @@ class RolesList extends WP_Roles
      */
     public static function sync()
     {
-        foreach (include ProjectPath::config(Role::CONFIG_FILENAME) as $role_key => $permissions) {
+        foreach (Config::tryToGetOrDefault('permissions', []) as $role_key => $permissions) {
             $role = Role::find($role_key);
 
             if ($role === null) {
                 Role::create(
-                    Str::titleCase(Str::replace($role_key, '-', ' ')),
+                    Str::titleCase(Str::replace($role_key, ['-', '_'], ' ')),
                     array_filter($permissions, function (bool $value) {
                         return $value;
                     })
