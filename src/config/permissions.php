@@ -5,7 +5,7 @@
 return [
 //    'custom-admin' => [
 //        'custom_cap_1' => true,
-//        'custom_cap_2' => true
+//        'custom_cap_2' => true,
 //    ],
 //    Role::EDITOR => [
 //        'moderate_comments' => true,
