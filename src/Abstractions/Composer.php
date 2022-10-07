@@ -38,6 +38,9 @@ class Composer
      */
     public static function saveInstalledVersion(Event $composerEvent)
     {
+        /** @var RootPackage $projectPackage */
+        $projectPackage = $composerEvent->getComposer()->getPackage();
+
         $root_project_path_constant = 'ROOT_PROJECT_PATH';
         if (!defined($root_project_path_constant)) {
             define(
@@ -46,8 +49,6 @@ class Composer
             );
         }
 
-        /** @var RootPackage $projectPackage */
-        $projectPackage = $composerEvent->getComposer()->getPackage();
         $style_css_path = ProjectPath::wpThemes('wordless/style.css');
         $style_css_content = file_get_contents($style_css_path);
 
@@ -55,8 +56,8 @@ class Composer
             file_put_contents(
                 $style_css_path,
                 str_replace(
-                    '*/',
-                    PHP_EOL . "Version: {$projectPackage->getVersion()}" . PHP_EOL . '*/',
+                    $comment_closer = '*/',
+                    "Version: {$projectPackage->getVersion()}" . PHP_EOL . $comment_closer,
                     $style_css_content
                 )
             );
