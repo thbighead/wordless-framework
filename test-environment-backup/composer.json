@@ -53,12 +53,11 @@
   },
   "scripts": {
     "post-autoload-dump": [
+      "Wordless\\Abstractions\\Composer::setHost",
       "Wordless\\Abstractions\\Composer::discover",
+      "Wordless\\Abstractions\\Composer::saveInstalledVersion",
       "@php console mup:loader",
       "@php console publish:config"
-    ],
-    "post-install-cmd": [
-      "Wordless\\Abstractions\\Composer::saveInstalledVersion"
     ],
     "post-package-install": [
       "Wordless\\Abstractions\\Composer::activatePlugin"
