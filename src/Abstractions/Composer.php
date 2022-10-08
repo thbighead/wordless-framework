@@ -11,15 +11,17 @@ use Composer\Package\RootPackage;
 use Composer\Script\Event;
 use Wordless\Contracts\Abstraction\Composer\ManagePlugin;
 use Wordless\Contracts\Abstraction\Composer\PackageDiscovery;
+use Wordless\Contracts\Abstraction\Composer\SetHostFromNginx;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
 class Composer
 {
-    use ManagePlugin, PackageDiscovery;
+    use ManagePlugin, PackageDiscovery, SetHostFromNginx;
 
     private const WORDLESS_EXTRA_KEY = 'wordless';
+    private const WORDLESS_APP_HOST_DOT_ENV_VARIABLE = 'APP_HOST';
 
     public static function getFrameworkInstalledVersion(): string
     {
@@ -38,16 +40,11 @@ class Composer
      */
     public static function saveInstalledVersion(Event $composerEvent)
     {
+        $composer = $composerEvent->getComposer();
         /** @var RootPackage $projectPackage */
-        $projectPackage = $composerEvent->getComposer()->getPackage();
+        $projectPackage = $composer->getPackage();
 
-        $root_project_path_constant = 'ROOT_PROJECT_PATH';
-        if (!defined($root_project_path_constant)) {
-            define(
-                $root_project_path_constant,
-                "{$composerEvent->getComposer()->getConfig()->get('vendor-dir')}/.."
-            );
-        }
+        self::defineProjectPath($composer);
 
         $style_css_path = ProjectPath::wpThemes('wordless/style.css');
         $style_css_content = file_get_contents($style_css_path);
@@ -60,6 +57,17 @@ class Composer
                     "Version: {$projectPackage->getVersion()}" . PHP_EOL . $comment_closer,
                     $style_css_content
                 )
+            );
+        }
+    }
+
+    private static function defineProjectPath(\Composer\Composer $composer)
+    {
+        $root_project_path_constant = 'ROOT_PROJECT_PATH';
+        if (!defined($root_project_path_constant)) {
+            define(
+                $root_project_path_constant,
+                "{$composer->getConfig()->get('vendor-dir')}/.."
             );
         }
     }

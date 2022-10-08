@@ -313,8 +313,8 @@ class WordlessInstall extends WordlessCommand
 
     private function getDotEnvNotFilledVariables(string $dot_env_content): array
     {
-        preg_match_all('/^(.+)=(\$\1)$/m', $dot_env_content, $not_filled_variables_regex_result);
-        // Getting Regex result (\$\1) group or leading to an empty array
+        preg_match_all('/^(.+)=(#\1)$/m', $dot_env_content, $not_filled_variables_regex_result);
+        // Getting Regex result (#\1) group or leading to an empty array
         return $not_filled_variables_regex_result[2] ?? [];
     }
 
@@ -344,17 +344,7 @@ class WordlessInstall extends WordlessCommand
             return ProjectPath::root('.env');
         }
 
-        if (!copy(
-            $dot_env_example_filepath = ProjectPath::root('.env.example'),
-            $new_dot_env_filepath = ProjectPath::root() . '/.env'
-        )) {
-            throw new FailedToCopyDotEnvExampleIntoNewDotEnv(
-                $dot_env_example_filepath,
-                $new_dot_env_filepath
-            );
-        }
-
-        return ProjectPath::realpath($new_dot_env_filepath);
+        return ProjectPath::realpath(Environment::createDotEnvFromExample());
     }
 
     /**
@@ -391,7 +381,7 @@ class WordlessInstall extends WordlessCommand
 
         return str_replace(
             array_map(function ($env_variable_name) {
-                return "\$$env_variable_name";
+                return "#$env_variable_name";
             }, $parse_wp_salt_response_regex_result[1] ?? []),
             array_map(function ($salt_value) {
                 return "\"$salt_value\"";
