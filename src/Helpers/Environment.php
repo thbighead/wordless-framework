@@ -41,17 +41,23 @@ class Environment
      */
     public static function createDotEnvFromExample(): string
     {
-        if (!copy(
-            $dot_env_example_filepath = ProjectPath::root('.env.example'),
-            $new_dot_env_filepath = ProjectPath::root() . '/.env'
-        )) {
-            throw new FailedToCopyDotEnvExampleIntoNewDotEnv(
-                $dot_env_example_filepath,
-                $new_dot_env_filepath
-            );
-        }
+        try {
+            return ProjectPath::root('.env');
+        } catch (PathNotFoundException $exception) {
+            $new_dot_env_filepath = $exception->getPath();
 
-        return $new_dot_env_filepath;
+            if (!copy(
+                $dot_env_example_filepath = ProjectPath::root('.env.example'),
+                $new_dot_env_filepath
+            )) {
+                throw new FailedToCopyDotEnvExampleIntoNewDotEnv(
+                    $dot_env_example_filepath,
+                    $new_dot_env_filepath
+                );
+            }
+
+            return ProjectPath::realpath($new_dot_env_filepath);
+        }
     }
 
     public static function get(string $key, $default = null)

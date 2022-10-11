@@ -64,6 +64,7 @@ class Composer
     private static function defineProjectPath(\Composer\Composer $composer)
     {
         $root_project_path_constant = 'ROOT_PROJECT_PATH';
+
         if (!defined($root_project_path_constant)) {
             define(
                 $root_project_path_constant,
