@@ -96,7 +96,7 @@ trait SetHostFromNginx
         );
 
         return preg_replace(
-            '/^(' . self::WORDLESS_APP_HOST_DOT_ENV_VARIABLE . '=)\$\{.+}$/m',
+            '/^(' . self::WORDLESS_APP_HOST_DOT_ENV_VARIABLE . '=)$/m',
             "$1$app_host_value",
             $dot_env_content
         );
