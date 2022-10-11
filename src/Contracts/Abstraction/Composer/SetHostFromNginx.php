@@ -2,6 +2,7 @@
 
 namespace Wordless\Contracts\Abstraction\Composer;
 
+use Composer\IO\IOInterface;
 use Composer\Script\Event;
 use Wordless\Exceptions\AppHostAlreadySetOnDotEnv;
 use Wordless\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
@@ -23,8 +24,9 @@ trait SetHostFromNginx
     public static function setHost(Event $composerEvent)
     {
         self::defineProjectPath($composerEvent->getComposer());
+
         try {
-            self::setAppHostValueAtDotEnv(self::getNginxServerNameConfig());
+            self::setAppHostValueAtDotEnv(self::getNginxServerNameConfig(), $composerEvent->getIO());
         } catch (AppHostAlreadySetOnDotEnv|UnavaibleNginxServerName $exception) {
             $composerEvent->getIO()->write($exception->getMessage());
         }
@@ -56,22 +58,30 @@ trait SetHostFromNginx
 
             if (!is_string($app_host)) {
                 throw new UnavaibleNginxServerName(
-                    "'server_name' not valid into $nginx_config_filepath file.$default_message"
+                    "'server_name' not valid into $nginx_config_filepath file. $default_message"
                 );
             }
 
             return $app_host;
         } catch (PathNotFoundException $exception) {
-            throw new UnavaibleNginxServerName("{$exception->getMessage()}$default_message");
+            throw new UnavaibleNginxServerName("{$exception->getMessage()} $default_message");
         }
     }
 
-    private static function replaceAppHost(string $dot_env_filepath, string $app_host_value): string
+    private static function replaceAppHost(
+        string $dot_env_filepath,
+        string $app_host_value,
+        IOInterface $composerIo
+    ): string
     {
         if (!Str::contains(
             $dot_env_content = file_get_contents($dot_env_filepath),
-            self::WORDLESS_APP_HOST_DOT_ENV_VARIABLE
+            self::WORDLESS_APP_HOST_DOT_ENV_VARIABLE . '='
         )) {
+            $composerIo->write(
+                self::WORDLESS_APP_HOST_DOT_ENV_VARIABLE . " not found in $dot_env_filepath, writing it."
+            );
+
             return preg_replace(
                 '/^(.*)$/m',
                 '$1' . PHP_EOL . self::WORDLESS_APP_HOST_DOT_ENV_VARIABLE . "=$app_host_value",
@@ -80,21 +90,27 @@ trait SetHostFromNginx
             );
         }
 
+        $composerIo->write(
+            self::WORDLESS_APP_HOST_DOT_ENV_VARIABLE
+            . " found empty in $dot_env_filepath, writing it as $app_host_value."
+        );
+
         return preg_replace(
             '/^(' . self::WORDLESS_APP_HOST_DOT_ENV_VARIABLE . '=)\$\{.+}$/m',
             "$1$app_host_value",
-            file_get_contents($dot_env_filepath)
+            $dot_env_content
         );
     }
 
     /**
      * @param string $app_host
+     * @param IOInterface $composerIo
      * @return void
      * @throws AppHostAlreadySetOnDotEnv
      * @throws FailedToRewriteDotEnvFile
      * @throws PathNotFoundException
      */
-    private static function setAppHostValueAtDotEnv(string $app_host)
+    private static function setAppHostValueAtDotEnv(string $app_host, IOInterface $composerIo)
     {
         try {
             $dot_env_filepath = Environment::createDotEnvFromExample();
@@ -110,7 +126,7 @@ trait SetHostFromNginx
 
         if (file_put_contents(
                 $dot_env_filepath,
-                $dot_env_content = self::replaceAppHost($dot_env_filepath, $app_host)
+                $dot_env_content = self::replaceAppHost($dot_env_filepath, $app_host, $composerIo)
             ) === false) {
             throw new FailedToRewriteDotEnvFile($dot_env_filepath, $dot_env_content);
         }

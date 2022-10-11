@@ -217,7 +217,7 @@ class InitializeTestEnvironment extends WordlessCommand
             if ($option_name === self::DROP_DB_MODE) {
                 continue;
             }
-            
+
             $extracted_options["--$option_name"] = $is_active;
         }
 
