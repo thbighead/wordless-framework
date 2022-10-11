@@ -2,8 +2,8 @@
 
 namespace Wordless\Adapters;
 
-use Exception;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -89,7 +89,7 @@ abstract class WordlessCommand extends Command
      * @param array $inputs
      * @param OutputInterface|null $output
      * @return int|string
-     * @throws Exception
+     * @throws ExceptionInterface
      */
     protected function executeWordlessCommand(
         string           $command_name,
@@ -112,7 +112,7 @@ abstract class WordlessCommand extends Command
      * @param array $inputs
      * @param BufferedOutput|null $output
      * @return string
-     * @throws Exception
+     * @throws ExceptionInterface
      */
     protected function executeWordlessCommandGettingOutput(
         string          $command_name,

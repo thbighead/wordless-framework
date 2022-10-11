@@ -7,6 +7,8 @@ use Throwable;
 
 class PathNotFoundException extends Exception
 {
+    private string $path;
+
     /**
      * PathNotFoundException constructor.
      *
@@ -15,6 +17,16 @@ class PathNotFoundException extends Exception
      */
     public function __construct(string $path, Throwable $previous = null)
     {
-        parent::__construct("'$path' not found.", 1, $previous);
+        $this->path = $path;
+
+        parent::__construct("'$this->path' not found.", 1, $previous);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath(): string
+    {
+        return $this->path;
     }
 }

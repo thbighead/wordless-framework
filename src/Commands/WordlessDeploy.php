@@ -2,8 +2,8 @@
 
 namespace Wordless\Commands;
 
-use Exception;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Adapters\WordlessCommand;
@@ -50,10 +50,10 @@ class WordlessDeploy extends WordlessCommand
 
     /**
      * @return int
+     * @throws ExceptionInterface
      * @throws FailedToCopyStub
      * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
-     * @throws Exception
      */
     protected function runIt(): int
     {
@@ -76,7 +76,8 @@ class WordlessDeploy extends WordlessCommand
         }
 
         $this->resolveWpConfigChmod();
-        $this->executeWordlessCommand('migrate', [], $this->output);
+        $this->executeWordlessCommand(Migrate::COMMAND_NAME, [], $this->output);
+        $this->executeWordlessCommand(SyncRoles::COMMAND_NAME, [], $this->output);
 
         $this->improveWordless();
 
@@ -93,6 +94,7 @@ class WordlessDeploy extends WordlessCommand
     /**
      * @return void
      * @throws WpCliCommandReturnedNonZero
+     * @throws ExceptionInterface
      */
     private function activateWpPlugins()
     {
@@ -101,6 +103,7 @@ class WordlessDeploy extends WordlessCommand
 
     /**
      * @return void
+     * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
     private function changeWpTheme()
@@ -112,6 +115,7 @@ class WordlessDeploy extends WordlessCommand
 
     /**
      * @return void
+     * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
     private function flushWpRewriteRules()
@@ -137,7 +141,8 @@ class WordlessDeploy extends WordlessCommand
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws ExceptionInterface
      */
     private function improveWordless()
     {
@@ -148,6 +153,7 @@ class WordlessDeploy extends WordlessCommand
     /**
      * @param string $language
      * @return void
+     * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
     private function installWpCoreLanguage(string $language)
@@ -166,6 +172,7 @@ class WordlessDeploy extends WordlessCommand
 
     /**
      * @return void
+     * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
     private function installWpLanguages()
@@ -187,6 +194,7 @@ class WordlessDeploy extends WordlessCommand
     /**
      * @param string $language
      * @return void
+     * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
     private function installWpPluginsLanguage(string $language)
@@ -197,6 +205,7 @@ class WordlessDeploy extends WordlessCommand
 
     /**
      * @return void
+     * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
     private function makeWpBlogPublic()
@@ -233,8 +242,8 @@ class WordlessDeploy extends WordlessCommand
 
     /**
      * @return void
+     * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
-     * @throws Exception
      */
     private function performCoreVersionUpdate()
     {
@@ -262,6 +271,7 @@ class WordlessDeploy extends WordlessCommand
     /**
      * @param bool $switch
      * @return void
+     * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
     private function switchingMaintenanceMode(bool $switch)

@@ -9,8 +9,10 @@ use Wordless\Exceptions\FailedToCreateDirectory;
 use Wordless\Exceptions\FailedToCreateSymlink;
 use Wordless\Exceptions\FailedToDeletePath;
 use Wordless\Exceptions\FailedToGetDirectoryPermissions;
+use Wordless\Exceptions\InvalidConfigKey;
 use Wordless\Exceptions\InvalidDirectory;
 use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Helpers\Config;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
@@ -48,10 +50,11 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
      * @return int
      * @throws FailedToCreateDirectory
      * @throws FailedToCreateSymlink
+     * @throws FailedToDeletePath
      * @throws FailedToGetDirectoryPermissions
+     * @throws InvalidConfigKey
      * @throws InvalidDirectory
      * @throws PathNotFoundException
-     * @throws FailedToDeletePath
      */
     protected function runIt(): int
     {
@@ -116,12 +119,13 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
     }
 
     /**
-     * @return mixed
+     * @return array|mixed
      * @throws PathNotFoundException
+     * @throws InvalidConfigKey
      */
     private function getMappedSymlinks()
     {
-        return include ProjectPath::config('wp-symlinks.php');
+        return Config::get('wp-symlinks');
     }
 
     /**
