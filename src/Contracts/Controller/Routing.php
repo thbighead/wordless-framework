@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpClassConstantAccessedViaChildClassInspection */
 
 namespace Wordless\Contracts\Controller;
 

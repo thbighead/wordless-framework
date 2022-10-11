@@ -15,6 +15,16 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
+    public static function acfFieldGroups(string $additional_path = ''): string
+    {
+        return self::root("wp-acfs/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     public static function app(string $additional_path = ''): string
     {
         return self::root("app/$additional_path");
