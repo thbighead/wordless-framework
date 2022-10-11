@@ -4,6 +4,7 @@ namespace Wordless\Helpers;
 
 use Symfony\Component\Dotenv\Dotenv;
 use Wordless\Abstractions\InternalCache;
+use Wordless\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Exceptions\FailedToFindCachedKey;
 use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
@@ -29,11 +30,35 @@ class Environment
         'WP_LANGUAGES' => 'en_US',
     ];
     public const DOT_ENV_COMMENT_MARK = '#';
-    public const DOT_ENV_REFERENCE_PREFIX_MARK = '${';
-    public const DOT_ENV_REFERENCE_SUFFIX_MARK = '}';
     public const LOCAL = 'local';
     public const PRODUCTION = 'production';
     public const STAGING = 'staging';
+
+    /**
+     * @return string
+     * @throws FailedToCopyDotEnvExampleIntoNewDotEnv
+     * @throws PathNotFoundException
+     */
+    public static function createDotEnvFromExample(): string
+    {
+        try {
+            return ProjectPath::root('.env');
+        } catch (PathNotFoundException $exception) {
+            $new_dot_env_filepath = $exception->getPath();
+
+            if (!copy(
+                $dot_env_example_filepath = ProjectPath::root('.env.example'),
+                $new_dot_env_filepath
+            )) {
+                throw new FailedToCopyDotEnvExampleIntoNewDotEnv(
+                    $dot_env_example_filepath,
+                    $new_dot_env_filepath
+                );
+            }
+
+            return ProjectPath::realpath($new_dot_env_filepath);
+        }
+    }
 
     public static function get(string $key, $default = null)
     {
@@ -55,25 +80,41 @@ class Environment
         (new Dotenv)->load(ProjectPath::root('.env'));
     }
 
+    private static function findReferenceInValue(string $value)
+    {
+        preg_match_all('/^\S+=[^\s"]*\$\{(.+)}[^\s"]*$/m', $value, $output_array);
+
+        return $output_array[1] ?? [];
+    }
+
+    private static function resolveReferences(string $value)
+    {
+        do {
+            $referenced_dot_env_variable_names = self::findReferenceInValue($value);
+
+            foreach ($referenced_dot_env_variable_names as $referenced_dot_env_variable_name) {
+                $value = preg_replace(
+                    '/^(\S+=[^\s"]*)\$\{.+}([^\s"]*)$/m',
+                    '$1' . self::get($referenced_dot_env_variable_name) . '$2',
+                    $value
+                );
+            }
+        } while(!empty($referenced_dot_env_variable_names));
+
+        return $value;
+    }
+
     private static function retrieveValue(string $key, $default = null)
     {
         if (($value = getenv($key)) === false) {
             $value = $_ENV[$key] ?? $default;
         }
 
-        while(is_string($value) && Str::isSurroundedBy(
-            $value,
-            self::DOT_ENV_REFERENCE_PREFIX_MARK,
-            self::DOT_ENV_REFERENCE_SUFFIX_MARK
-        )) {
-            $value = self::retrieveValue(Str::between(
-                $value,
-                self::DOT_ENV_REFERENCE_PREFIX_MARK,
-                self::DOT_ENV_REFERENCE_SUFFIX_MARK
-            ), $default);
+        if (!is_string($value)) {
+            return $value;
         }
 
-        return $value;
+        return self::resolveReferences($value);
     }
 
     private static function returnTypedValue($value)
