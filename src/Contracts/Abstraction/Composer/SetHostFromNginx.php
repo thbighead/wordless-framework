@@ -58,13 +58,13 @@ trait SetHostFromNginx
 
             if (!is_string($app_host)) {
                 throw new UnavaibleNginxServerName(
-                    "'server_name' not valid into $nginx_config_filepath file.$default_message"
+                    "'server_name' not valid into $nginx_config_filepath file. $default_message"
                 );
             }
 
             return $app_host;
         } catch (PathNotFoundException $exception) {
-            throw new UnavaibleNginxServerName("{$exception->getMessage()}$default_message");
+            throw new UnavaibleNginxServerName("{$exception->getMessage()} $default_message");
         }
     }
 
