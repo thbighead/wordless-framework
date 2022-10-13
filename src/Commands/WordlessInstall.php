@@ -4,6 +4,7 @@ namespace Wordless\Commands;
 
 use Exception;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -24,6 +25,7 @@ use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\FailedToDeletePath;
 use Wordless\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
@@ -70,13 +72,16 @@ class WordlessInstall extends WordlessCommand
     /**
      * @return int
      * @throws ClientExceptionInterface
-     * @throws Exception
+     * @throws ExceptionInterface
+     * @throws FailedToCopyDotEnvExampleIntoNewDotEnv
      * @throws FailedToCopyStub
+     * @throws FailedToDeletePath
      * @throws FailedToRewriteDotEnvFile
      * @throws PathNotFoundException
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     protected function runIt(): int
     {
@@ -103,12 +108,13 @@ class WordlessInstall extends WordlessCommand
         }
 
         $this->resolveWpConfigChmod();
-        $this->executeWordlessCommand('migrate', [], $this->output);
         $this->executeWordlessCommand(
             GeneratePublicWordpressSymbolicLinks::COMMAND_NAME,
             [],
             $this->output
         );
+        $this->executeWordlessCommand(Migrate::COMMAND_NAME, [], $this->output);
+        $this->executeWordlessCommand(SyncRoles::COMMAND_NAME, [], $this->output);
 
         return Command::SUCCESS;
     }
@@ -145,7 +151,9 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     private function activateWpTheme()
     {
@@ -155,7 +163,9 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     private function activateWpPlugins()
     {
@@ -207,7 +217,9 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     private function createWpDatabase()
     {
@@ -235,7 +247,9 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     private function downloadWpCore()
     {
@@ -286,7 +300,9 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     private function flushWpRewriteRules()
     {
@@ -297,8 +313,8 @@ class WordlessInstall extends WordlessCommand
 
     private function getDotEnvNotFilledVariables(string $dot_env_content): array
     {
-        preg_match_all('/^(.+)=(\$\1)$/m', $dot_env_content, $not_filled_variables_regex_result);
-        // Getting Regex result (\$\1) group or leading to an empty array
+        preg_match_all('/^(.+)=(#\1)$/m', $dot_env_content, $not_filled_variables_regex_result);
+        // Getting Regex result (#\1) group or leading to an empty array
         return $not_filled_variables_regex_result[2] ?? [];
     }
 
@@ -328,17 +344,7 @@ class WordlessInstall extends WordlessCommand
             return ProjectPath::root('.env');
         }
 
-        if (!copy(
-            $dot_env_example_filepath = ProjectPath::root('.env.example'),
-            $new_dot_env_filepath = ProjectPath::root() . '/.env'
-        )) {
-            throw new FailedToCopyDotEnvExampleIntoNewDotEnv(
-                $dot_env_example_filepath,
-                $new_dot_env_filepath
-            );
-        }
-
-        return ProjectPath::realpath($new_dot_env_filepath);
+        return ProjectPath::realpath(Environment::createDotEnvFromExample());
     }
 
     /**
@@ -375,7 +381,7 @@ class WordlessInstall extends WordlessCommand
 
         return str_replace(
             array_map(function ($env_variable_name) {
-                return "\$$env_variable_name";
+                return "#$env_variable_name";
             }, $parse_wp_salt_response_regex_result[1] ?? []),
             array_map(function ($salt_value) {
                 return "\"$salt_value\"";
@@ -404,7 +410,9 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     private function installWpCore()
     {
@@ -436,7 +444,9 @@ class WordlessInstall extends WordlessCommand
 
     /**
      * @param string $language
-     * @throws Exception
+     * @return void
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     private function installWpCoreLanguage(string $language)
     {
@@ -453,7 +463,9 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     private function installWpLanguages()
     {
@@ -473,7 +485,9 @@ class WordlessInstall extends WordlessCommand
 
     /**
      * @param string $language
-     * @throws Exception
+     * @return void
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     private function installWpPluginsLanguage(string $language)
     {
@@ -482,7 +496,9 @@ class WordlessInstall extends WordlessCommand
     }
 
     /**
-     * @throws Exception
+     * @return void
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     private function makeWpBlogPublic()
     {
@@ -512,7 +528,8 @@ class WordlessInstall extends WordlessCommand
 
     /**
      * @return void
-     * @throws Exception
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     private function performMinorUpdate()
     {
@@ -527,7 +544,8 @@ class WordlessInstall extends WordlessCommand
      * @param string $app_url
      * @param string $app_url_with_final_slash
      * @return void
-     * @throws Exception
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     private function performUrlDatabaseFix(string $app_url, string $app_url_with_final_slash)
     {
@@ -595,7 +613,9 @@ class WordlessInstall extends WordlessCommand
 
     /**
      * @param bool $switch
-     * @throws Exception
+     * @return void
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     private function switchingMaintenanceMode(bool $switch)
     {

@@ -39,6 +39,17 @@ abstract class BaseStubMounter
         }
     }
 
+    /**
+     * @param array $replace_content_dictionary
+     * @return $this
+     */
+    public function setReplaceContentDictionary(array $replace_content_dictionary): BaseStubMounter
+    {
+        $this->replace_content_dictionary = $replace_content_dictionary;
+
+        return $this;
+    }
+
     private function replaceUnfilledContent(): string
     {
         if (empty($this->replace_content_dictionary)) {
@@ -54,16 +65,5 @@ abstract class BaseStubMounter
         }
 
         return str_replace($search, $replace, $this->stub_unfilled_content);
-    }
-
-    /**
-     * @param array $replace_content_dictionary
-     * @return $this
-     */
-    public function setReplaceContentDictionary(array $replace_content_dictionary): BaseStubMounter
-    {
-        $this->replace_content_dictionary = $replace_content_dictionary;
-
-        return $this;
     }
 }

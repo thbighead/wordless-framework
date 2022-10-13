@@ -26,23 +26,6 @@ class Debugger
 
     public static function variableExport($variable): string
     {
-        $exported_variable = var_export($variable, true);
-
-        return is_array($variable) ? self::beautifyArrayExport($exported_variable) : $exported_variable;
-    }
-
-    private static function beautifyArrayExport(string $exported_array): string
-    {
-        do {
-            $exported_array = preg_replace(
-                '/array \((.*)\)/s',
-                '[$1]',
-                $exported_array,
-                -1,
-                $count
-            );
-        } while ($count > 0);
-
-        return $exported_array;
+        return var_export($variable, true);
     }
 }

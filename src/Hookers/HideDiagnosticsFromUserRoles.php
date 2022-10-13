@@ -3,7 +3,9 @@
 namespace Wordless\Hookers;
 
 use Wordless\Abstractions\AbstractHooker;
+use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Helpers\Config;
 use Wordless\Helpers\ProjectPath;
 use WP_User;
 
@@ -22,6 +24,7 @@ class HideDiagnosticsFromUserRoles extends AbstractHooker
     /**
      * @return void
      * @throws PathNotFoundException
+     * @throws InternalCacheNotLoaded
      */
     public static function hideDiagnosticsFromUserRoles()
     {
@@ -31,8 +34,10 @@ class HideDiagnosticsFromUserRoles extends AbstractHooker
             return;
         }
 
-        $allowed_roles_to_see_diagnostics =
-            (include ProjectPath::config('admin.php'))[self::SHOW_DIAGNOSTICS_CONFIG_KEY] ?? [];
+        $allowed_roles_to_see_diagnostics = Config::tryToGetOrDefault(
+            'admin.' . self::SHOW_DIAGNOSTICS_CONFIG_KEY,
+            []
+        );
 
         if (empty($allowed_roles_to_see_diagnostics)) {
             return;
