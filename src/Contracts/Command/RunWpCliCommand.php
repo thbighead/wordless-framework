@@ -2,7 +2,7 @@
 
 namespace Wordless\Contracts\Command;
 
-use Exception;
+use Symfony\Component\Console\Exception\ExceptionInterface;
 use Wordless\Commands\WpCliCaller;
 use Wordless\Exceptions\WpCliCommandReturnedNonZero;
 
@@ -13,7 +13,7 @@ trait RunWpCliCommand
     /**
      * @param string $command
      * @return string
-     * @throws Exception
+     * @throws ExceptionInterface
      */
     private function runAndGetWpCliCommandOutput(string $command): string
     {
@@ -30,8 +30,8 @@ trait RunWpCliCommand
      * @param string $command
      * @param bool $return_script_code
      * @return int
+     * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
-     * @throws Exception
      */
     private function runWpCliCommand(string $command, bool $return_script_code = false): int
     {

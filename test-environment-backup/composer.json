@@ -5,7 +5,8 @@
   "license": "proprietary",
   "autoload": {
     "psr-4": {
-      "App\\": "app/"
+      "App\\": "app/",
+      "Packages\\": "packages/"
     }
   },
   "authors": [
@@ -64,6 +65,9 @@
   },
   "scripts": {
     "post-autoload-dump": [
+      "Wordless\\Abstractions\\Composer::setHost",
+      "Wordless\\Abstractions\\Composer::discover",
+      "Wordless\\Abstractions\\Composer::saveInstalledVersion",
       "@php console mup:loader",
       "@php console publish:config"
     ],
@@ -80,8 +84,12 @@
   },
   "extra": {
     "installer-paths": {
-      "wp/wp-content/plugins/{$name}/": ["type:wordpress-plugin"],
-      "wp/wp-content/themes/{$name}/": ["type:wordpress-theme"]
+      "wp/wp-content/plugins/{$name}/": [
+        "type:wordpress-plugin"
+      ],
+      "wp/wp-content/themes/{$name}/": [
+        "type:wordpress-theme"
+      ]
     }
   }
 }

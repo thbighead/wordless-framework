@@ -2,38 +2,39 @@
 
 namespace Wordless\Abstractions;
 
-use App\Hookers\RemoveAdditionalCssFromAdmin;
-use App\Hookers\RemoveEmojiFromTinyMce;
-use App\Hookers\RemoveEmojiFromWpResourceHints;
-use App\Hookers\RemoveGlobalCustomInlineStyles;
+use Wordless\Exceptions\InternalCacheNotLoaded;
+use Wordless\Hookers\RemoveAdditionalCssFromAdmin;
+use Wordless\Hookers\RemoveEmojiFromTinyMce;
+use Wordless\Hookers\RemoveEmojiFromWpResourceHints;
+use Wordless\Hookers\RemoveGlobalCustomInlineStyles;
 use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Config;
 
 class WpSpeedUp
 {
     public const REMOVE_WP_EMOJIS_CONFIG_KEY = 'remove_wp_emojis';
     public const SPEED_UP_WP_CONFIG_KEY = 'speed_up_wp';
+    private const CONFIG_PREFIX = 'admin.';
     private const WP_FUNCTION_PRINT_EMOJI_DETECTION_SCRIPT = 'print_emoji_detection_script';
     private const WP_FUNCTION_PRINT_EMOJI_STYLES = 'print_emoji_styles';
     private const WP_FUNCTION_WP_STATICIZE_EMOJI = 'wp_staticize_emoji';
     private const WP_HEAD_HOOK_KEY = 'wp_head';
 
-    private static array $admin_configs;
-
     /**
      * @return array
      * @throws PathNotFoundException
+     * @throws InternalCacheNotLoaded
      */
     public static function addAdditionalHooks(): array
     {
         $additional_hooks_configs = [];
 
-        if (self::getAdminConfigs()[static::SPEED_UP_WP_CONFIG_KEY] ?? false) {
+        if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . static::SPEED_UP_WP_CONFIG_KEY, false)) {
             $additional_hooks_configs[] = RemoveAdditionalCssFromAdmin::class;
             $additional_hooks_configs[] = RemoveGlobalCustomInlineStyles::class;
         }
 
-        if (self::getAdminConfigs()[static::REMOVE_WP_EMOJIS_CONFIG_KEY] ?? false) {
+        if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . static::REMOVE_WP_EMOJIS_CONFIG_KEY, false)) {
             $additional_hooks_configs[] = RemoveEmojiFromTinyMce::class;
             $additional_hooks_configs[] = RemoveEmojiFromWpResourceHints::class;
         }
@@ -43,20 +44,21 @@ class WpSpeedUp
 
     /**
      * @return array
+     * @throws InternalCacheNotLoaded
      * @throws PathNotFoundException
      */
     public static function removeActionsConfigToSpeedUp(): array
     {
         $additional_action_hook_configs = [];
 
-        if (self::getAdminConfigs()[static::SPEED_UP_WP_CONFIG_KEY] ?? false) {
+        if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . static::SPEED_UP_WP_CONFIG_KEY, false)) {
             $additional_action_hook_configs = array_merge_recursive(
                 $additional_action_hook_configs,
                 self::removeUnnecessaryTagsActionsFromWpHeadConfig(),
             );
         }
 
-        if (self::getAdminConfigs()[static::REMOVE_WP_EMOJIS_CONFIG_KEY] ?? false) {
+        if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . static::REMOVE_WP_EMOJIS_CONFIG_KEY, false)) {
             $additional_action_hook_configs = array_merge_recursive(
                 $additional_action_hook_configs,
                 self::removeEmojisActionsConfig(),
@@ -69,13 +71,14 @@ class WpSpeedUp
 
     /**
      * @return array
+     * @throws InternalCacheNotLoaded
      * @throws PathNotFoundException
      */
     public static function removeFiltersConfigToSpeedUp(): array
     {
         $additional_filter_hook_configs = [];
 
-        if (self::getAdminConfigs()[static::REMOVE_WP_EMOJIS_CONFIG_KEY] ?? false) {
+        if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . static::REMOVE_WP_EMOJIS_CONFIG_KEY, false)) {
             $additional_filter_hook_configs = array_merge_recursive(
                 $additional_filter_hook_configs,
                 self::removeEmojisFiltersConfig(),
@@ -139,16 +142,5 @@ class WpSpeedUp
                 ],
             ],
         ];
-    }
-
-    /**
-     * @return array
-     * @throws PathNotFoundException
-     */
-    private static function getAdminConfigs(): array
-    {
-        return self::$admin_configs ?? self::$admin_configs = include_once ProjectPath::config(
-            'admin.php'
-        );
     }
 }

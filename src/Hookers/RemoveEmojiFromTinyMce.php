@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Hookers;
+namespace Wordless\Hookers;
 
 use Wordless\Abstractions\AbstractHooker;
 

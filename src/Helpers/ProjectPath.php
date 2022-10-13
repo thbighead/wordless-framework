@@ -87,9 +87,29 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
+    public static function docker(string $additional_path = ''): string
+    {
+        return self::root("docker/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     public static function migrations(string $additional_path = ''): string
     {
         return self::root("migrations/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function packages(string $additional_path = ''): string
+    {
+        return self::root("packages/$additional_path");
     }
 
     /**
@@ -109,6 +129,18 @@ class ProjectPath
      */
     public static function realpath(string $full_path): string
     {
+        if (is_link($full_path)) {
+            $real_path = self::realpath(dirname($full_path))
+                . DIRECTORY_SEPARATOR
+                . Str::afterLast($full_path, self::SLASH);
+
+            if (!is_link($real_path)) {
+                throw new PathNotFoundException($full_path);
+            }
+
+            return $real_path;
+        }
+
         if (($real_path = realpath($full_path)) === false) {
             throw new PathNotFoundException($full_path);
         }

@@ -20,8 +20,9 @@ class Migrate extends WordlessCommand
 {
     use ForceMode, LoadWpConfig;
 
-    protected static $defaultName = 'migrate';
+    protected static $defaultName = self::COMMAND_NAME;
 
+    public const COMMAND_NAME = 'migrate';
     public const MIGRATIONS_WP_OPTION_NAME = 'wordless_migrations_already_executed';
     protected const FORCE_MODE = 'force';
 
