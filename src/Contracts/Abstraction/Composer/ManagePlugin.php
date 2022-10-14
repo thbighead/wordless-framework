@@ -101,8 +101,8 @@ trait ManagePlugin
         return $plugin_path;
     }
 
-    private static function isInfobaseAcfProPlugin(CompletePackage $package): bool
+    private static function isInfobaseAcfProPlugin(?CompletePackage $package): bool
     {
-        return $package->getName() === 'infobaseit/acf-pro';
+        return  $package !== null && $package->getName() === 'infobaseit/acf-pro';
     }
 }
