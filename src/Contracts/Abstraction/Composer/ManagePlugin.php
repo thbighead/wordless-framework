@@ -95,7 +95,7 @@ trait ManagePlugin
         $plugin_path = "$root_path/wp/wp-content/plugins/$plugin_name";
         $setup_path = "$plugin_path/setup";
 
-        DirectoryFiles::recursiveCopy($setup_path, $root_path);
+        DirectoryFiles::recursiveCopy($setup_path, $root_path, [], false);
         DirectoryFiles::recursiveDelete($setup_path);
 
         return $plugin_path;
