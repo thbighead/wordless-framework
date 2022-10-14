@@ -93,7 +93,7 @@ trait ManagePlugin
     private static function exportAcfSetupFilesToProjectRoot(string $root_path, string $plugin_name): string
     {
         $plugin_path = "$root_path/wp/wp-content/plugins/$plugin_name";
-        $setup_path = "$plugin_path/Setup";
+        $setup_path = "$plugin_path/setup";
 
         DirectoryFiles::recursiveCopy($setup_path, $root_path);
         DirectoryFiles::recursiveDelete($setup_path);
