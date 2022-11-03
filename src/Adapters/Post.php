@@ -30,14 +30,25 @@ class Post
         }
     }
 
-    public function __call(string $method_name, array $arguments)
-    {
-        return $this->wpPost->$method_name(...$arguments);
-    }
-
     public static function __callStatic(string $method_name, array $arguments)
     {
         return WP_Post::$method_name(...$arguments);
+    }
+
+    /**
+     * @param WP_Post|int $post
+     * @param bool $with_acfs
+     * @return static
+     * @noinspection PhpMissingReturnTypeInspection
+     */
+    public static function get($post, bool $with_acfs = true)
+    {
+        return new static($post, $with_acfs);
+    }
+
+    public function __call(string $method_name, array $arguments)
+    {
+        return $this->wpPost->$method_name(...$arguments);
     }
 
     public function __get(string $attribute)
