@@ -28,7 +28,7 @@ class WordlessVersionOnAdmin extends AbstractHooker
      */
     protected const TYPE = 'filter';
 
-    function writeWordlessVersions(string $content): string
+    public static function writeWordlessVersions(string $content): string
     {
         $framework_version = (new WordlessFrameworkVersionGuesser)->getValue();
 

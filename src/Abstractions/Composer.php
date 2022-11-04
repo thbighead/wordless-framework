@@ -4,6 +4,7 @@ namespace Wordless\Abstractions;
 
 use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UninstallOperation;
+use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\InstalledVersions;
 use Composer\Installer\PackageEvent;
 use Composer\Package\CompletePackage;
@@ -77,12 +78,14 @@ class Composer
     {
         $operation = $composerEvent->getOperation();
 
-        if (!($operation instanceof UninstallOperation || $operation instanceof InstallOperation)) {
+        if (!($operation instanceof UninstallOperation
+            || $operation instanceof InstallOperation
+            || ($is_update_operation = $operation instanceof UpdateOperation))) {
             return null;
         }
 
         /** @var CompletePackage $package */
-        $package = $operation->getPackage();
+        $package = $is_update_operation ? $operation->getTargetPackage() : $operation->getPackage();
 
         return $package;
     }
