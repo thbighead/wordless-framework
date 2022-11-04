@@ -10,6 +10,7 @@ abstract class WordlessCustomPost extends Post
 {
     use Register;
 
+    public const POST_TYPE_KEY_MAX_LENGTH = 20;
     protected const TYPE_KEY = null;
 
     private WP_Post_Type $type;
