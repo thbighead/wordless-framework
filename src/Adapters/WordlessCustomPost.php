@@ -3,6 +3,7 @@
 namespace Wordless\Adapters;
 
 use Wordless\Contracts\Adapter\WordlessCustomPost\Register;
+use Wordless\Helpers\Str;
 use WP_Post;
 use WP_Post_Type;
 
@@ -176,7 +177,7 @@ abstract class WordlessCustomPost extends Post
             return null;
         }
 
-        return [$singular_name, $plural_name];
+        return [Str::slugCase($singular_name), Str::slugCase($plural_name)];
     }
 
     /**
