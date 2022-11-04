@@ -3,7 +3,6 @@
 namespace Wordless\Abstractions;
 
 use Wordless\Exceptions\DuplicatedMenuId;
-use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\InvalidConfigKey;
 use Wordless\Exceptions\InvalidMenuClass;
 use Wordless\Exceptions\PathNotFoundException;
@@ -25,7 +24,6 @@ class Bootstrapper
     /**
      * @return void
      * @throws PathNotFoundException
-     * @throws InternalCacheNotLoaded
      */
     public static function bootHookers()
     {
