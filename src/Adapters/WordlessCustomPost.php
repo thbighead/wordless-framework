@@ -2,6 +2,8 @@
 
 namespace Wordless\Adapters;
 
+use stdClass;
+use Wordless\Abstractions\Guessers\CustomPostTypeKeyGuesser;
 use Wordless\Contracts\Adapter\WordlessCustomPost\Register;
 use Wordless\Helpers\Str;
 use WP_Post;
@@ -13,6 +15,7 @@ abstract class WordlessCustomPost extends Post
 
     public const POST_TYPE_KEY_MAX_LENGTH = 20;
     protected const TYPE_KEY = null;
+    private static ?string $type_key = null;
 
     private WP_Post_Type $type;
 
@@ -34,6 +37,21 @@ abstract class WordlessCustomPost extends Post
     public static function description(): ?string
     {
         return null;
+    }
+
+    public static function getTypeKey()
+    {
+        if (static::$type_key !== null) {
+            return static::$type_key;
+        }
+
+        if (static::TYPE_KEY === null) {
+            $guesser = new CustomPostTypeKeyGuesser(static::class);
+
+            return static::$type_key = $guesser->getValue();
+        }
+
+        return static::$type_key = static::TYPE_KEY;
     }
 
     /**
@@ -241,7 +259,12 @@ abstract class WordlessCustomPost extends Post
      */
     protected static function shouldMapMetaCapability(): ?bool
     {
-        return null;
+        return true;
+    }
+
+    public static function getPermissions(): array
+    {
+        return (array)(get_post_type_object(self::getTypeKey())->cap ?? new stdClass);
     }
 
     /**
