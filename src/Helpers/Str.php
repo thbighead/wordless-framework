@@ -61,7 +61,7 @@ class Str
 
     public static function camelCase(string $string): string
     {
-        return lcfirst(self::studlyCase($string));
+        return lcfirst(self::pascalCase($string));
     }
 
     /**
@@ -109,6 +109,18 @@ class Str
         return Uuid::isValid($string);
     }
 
+    /**
+     * Just an alias. This is the common Case Style name, instead we call it slugCase to ease WordPress developers
+     * understanding.
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function kebabCase(string $string): string
+    {
+        return self::slugCase($string);
+    }
+
     public static function limitWords(
         string $string,
         int    $max_words = 15,
@@ -141,9 +153,11 @@ class Str
 
     public static function snakeCase(string $string, string $delimiter = '_'): string
     {
+        $string = preg_replace('/[^a-zA-Z0-9]/', $delimiter, $string);
+
         if (!ctype_lower($string)) {
             $string = strtolower(preg_replace(
-                '/(.)(?=[A-Z])/u',
+                "/([^$delimiter])(?=[A-Z\d])/u",
                 "$1$delimiter",
                 preg_replace('/\s+/u', '', ucwords($string))
             ));
@@ -159,7 +173,7 @@ class Str
         return $start_with . preg_replace('/^(?:' . $quoted . ')+/u', '', $string);
     }
 
-    public static function studlyCase(string $string): string
+    public static function pascalCase(string $string): string
     {
         $words = explode(' ', str_replace(['-', '_'], ' ', $string));
 
@@ -172,7 +186,9 @@ class Str
 
     public static function titleCase(string $string): string
     {
-        return mb_convert_case($string, MB_CASE_TITLE, 'UTF-8');
+        preg_match_all('/(\p{Lu}\p{Ll}*|\d)/u', self::pascalCase($string), $words);
+
+        return mb_convert_case(implode(' ', $words[0]), MB_CASE_TITLE, 'UTF-8');
     }
 
     public static function truncate(string $string, int $max_chars = 15): string

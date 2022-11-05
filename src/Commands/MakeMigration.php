@@ -58,7 +58,7 @@ class MakeMigration extends WordlessCommand
         $snake_cased_migration_class_name = strtolower(
             $this->input->getArgument(self::MIGRATION_CLASS_ARGUMENT_NAME)
         );
-        $migration_class_name = Str::studlyCase($snake_cased_migration_class_name);
+        $migration_class_name = Str::pascalCase($snake_cased_migration_class_name);
         $migration_file_name = date(Script::FILENAME_DATE_FORMAT) . "$snake_cased_migration_class_name.php";
 
         $this->wrapScriptWithMessages(
