@@ -14,7 +14,10 @@ trait Validation
      */
     private static function validateFormat()
     {
-        if (preg_match('/^[\w-]{1,20}$/', $type_key = static::TYPE_KEY ?? '') !== 1) {
+        if (preg_match(
+                '/^[\w-]{1,' . self::POST_TYPE_KEY_MAX_LENGTH . '}$/',
+                $type_key = static::TYPE_KEY ?? ''
+            ) !== 1) {
             throw new InvalidCustomPostTypeKey($type_key);
         }
     }

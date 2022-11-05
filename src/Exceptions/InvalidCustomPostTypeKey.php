@@ -4,6 +4,7 @@ namespace Wordless\Exceptions;
 
 use Exception;
 use Throwable;
+use Wordless\Adapters\WordlessCustomPost;
 
 class InvalidCustomPostTypeKey extends Exception
 {
@@ -30,6 +31,8 @@ class InvalidCustomPostTypeKey extends Exception
 
     protected function justification(): string
     {
-        return 'A valid key must not exceed 20 characters and may only contain lowercase alphanumeric characters, dashes, and underscores.';
+        return 'A valid key must not exceed '
+            . WordlessCustomPost::POST_TYPE_KEY_MAX_LENGTH
+            . ' characters and may only contain lowercase alphanumeric characters, dashes, and underscores.';
     }
 }

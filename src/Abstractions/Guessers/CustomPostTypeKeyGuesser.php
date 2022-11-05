@@ -2,6 +2,7 @@
 
 namespace Wordless\Abstractions\Guessers;
 
+use Wordless\Adapters\WordlessCustomPost;
 use Wordless\Helpers\Str;
 
 class CustomPostTypeKeyGuesser extends BaseGuesser
@@ -15,6 +16,9 @@ class CustomPostTypeKeyGuesser extends BaseGuesser
 
     protected function guessValue(): string
     {
-        return Str::slugCase($this->class_name);
+        return Str::truncate(
+            Str::slugCase($this->class_name),
+            WordlessCustomPost::POST_TYPE_KEY_MAX_LENGTH
+        );
     }
 }

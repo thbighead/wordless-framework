@@ -17,14 +17,14 @@ trait Register
     {
         if (static::TYPE_KEY === null) {
             $guesser = new CustomPostTypeKeyGuesser(static::class);
-            register_post_type($guesser->getValue(), self::mountArguments());
+            register_post_type(static::$type_key = $guesser->getValue(), self::mountArguments());
 
             return;
         }
 
         self::validateTypeKey();
 
-        register_post_type(static::TYPE_KEY, self::mountArguments());
+        register_post_type(static::$type_key = static::TYPE_KEY, self::mountArguments());
     }
 
     protected static function mountArguments(): array
