@@ -97,6 +97,16 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
+    public static function hookers(string $additional_path = ''): string
+    {
+        return self::app("Hookers/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     public static function migrations(string $additional_path = ''): string
     {
         return self::root("migrations/$additional_path");
