@@ -51,16 +51,6 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function appCommands(string $additional_path = ''): string
-    {
-        return self::app("Commands/$additional_path");
-    }
-
-    /**
-     * @param string $additional_path
-     * @return string
-     * @throws PathNotFoundException
-     */
     public static function config(string $additional_path = ''): string
     {
         $relative_path = "config/$additional_path";

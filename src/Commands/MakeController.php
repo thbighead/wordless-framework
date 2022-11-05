@@ -9,6 +9,7 @@ use Wordless\Adapters\WordlessCommand;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Str;
 
 class MakeController extends WordlessCommand
 {
@@ -30,12 +31,12 @@ class MakeController extends WordlessCommand
 
     protected function description(): string
     {
-        return 'Create a controller.';
+        return 'Creates a REST API controller.';
     }
 
     protected function help(): string
     {
-        return 'Creates a controller script file using its class name as base.';
+        return 'Creates an API controller file using based on its class name to control custom REST API endpoints declared in it.';
     }
 
     protected function options(): array
@@ -50,7 +51,7 @@ class MakeController extends WordlessCommand
      */
     protected function runIt(): int
     {
-        $controller_class_name = ucfirst($this->input->getArgument(self::CONTROLLER_CLASS_ARGUMENT_NAME));
+        $controller_class_name = Str::pascalCase($this->input->getArgument(self::CONTROLLER_CLASS_ARGUMENT_NAME));
 
         $this->wrapScriptWithMessages(
             "Creating $controller_class_name...",

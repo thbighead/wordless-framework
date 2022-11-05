@@ -26,7 +26,7 @@ class MakeMigration extends WordlessCommand
         return [
             [
                 self::ARGUMENT_DESCRIPTION_FIELD =>
-                    'The class name of your new migration file in snake case (using _ between words).',
+                    'The name of your new migration file in snake case (using _ between words).',
                 self::ARGUMENT_MODE_FIELD => InputArgument::REQUIRED,
                 self::ARGUMENT_NAME_FIELD => self::MIGRATION_CLASS_ARGUMENT_NAME,
             ],
@@ -35,12 +35,12 @@ class MakeMigration extends WordlessCommand
 
     protected function description(): string
     {
-        return 'Create a migration script.';
+        return 'Creates a migration script.';
     }
 
     protected function help(): string
     {
-        return 'Creates a migration script file using its class name as base.';
+        return 'Creates a migration script file using its name to guess the generated class name.';
     }
 
     protected function options(): array
@@ -55,7 +55,7 @@ class MakeMigration extends WordlessCommand
      */
     protected function runIt(): int
     {
-        $snake_cased_migration_class_name = strtolower(
+        $snake_cased_migration_class_name = Str::snakeCase(
             $this->input->getArgument(self::MIGRATION_CLASS_ARGUMENT_NAME)
         );
         $migration_class_name = Str::pascalCase($snake_cased_migration_class_name);

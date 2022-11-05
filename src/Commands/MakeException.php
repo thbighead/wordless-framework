@@ -9,6 +9,7 @@ use Wordless\Adapters\WordlessCommand;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Str;
 
 class MakeException extends WordlessCommand
 {
@@ -30,12 +31,12 @@ class MakeException extends WordlessCommand
 
     protected function description(): string
     {
-        return 'Create a exception.';
+        return 'Creates an exception class.';
     }
 
     protected function help(): string
     {
-        return 'Creates a exception script file using its class name as base.';
+        return 'Creates an exception file based on its class name.';
     }
 
     protected function options(): array
@@ -50,7 +51,7 @@ class MakeException extends WordlessCommand
      */
     protected function runIt(): int
     {
-        $exception_class_name = ucfirst($this->input->getArgument(self::EXCEPTION_CLASS_ARGUMENT_NAME));
+        $exception_class_name = Str::pascalCase($this->input->getArgument(self::EXCEPTION_CLASS_ARGUMENT_NAME));
 
         $this->wrapScriptWithMessages(
             "Creating $exception_class_name...",

@@ -9,6 +9,7 @@ use Wordless\Adapters\WordlessCommand;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Str;
 
 class MakeService extends WordlessCommand
 {
@@ -30,12 +31,12 @@ class MakeService extends WordlessCommand
 
     protected function description(): string
     {
-        return 'Create a service.';
+        return 'Creates a service.';
     }
 
     protected function help(): string
     {
-        return 'Creates a service script file using its class name as base.';
+        return 'Creates a generic service file based on its class name.';
     }
 
     protected function options(): array
@@ -50,7 +51,7 @@ class MakeService extends WordlessCommand
      */
     protected function runIt(): int
     {
-        $service_class_name = ucfirst($this->input->getArgument(self::SERVICE_CLASS_ARGUMENT_NAME));
+        $service_class_name = Str::pascalCase($this->input->getArgument(self::SERVICE_CLASS_ARGUMENT_NAME));
 
         $this->wrapScriptWithMessages(
             "Creating $service_class_name...",

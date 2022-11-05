@@ -10,6 +10,7 @@ use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Str;
 
 class MakeHooker extends WordlessCommand
 {
@@ -33,12 +34,12 @@ class MakeHooker extends WordlessCommand
 
     protected function description(): string
     {
-        return 'Create a hooker script.';
+        return 'Creates a hooker script.';
     }
 
     protected function help(): string
     {
-        return 'Creates a hooker script file using its class name as base.';
+        return 'Creates a hooker script file based on its class name.';
     }
 
     protected function options(): array
@@ -53,7 +54,7 @@ class MakeHooker extends WordlessCommand
      */
     protected function runIt(): int
     {
-        $hooker_class_name = ucfirst($this->input->getArgument(self::HOOKER_CLASS_ARGUMENT_NAME));
+        $hooker_class_name = Str::pascalCase($this->input->getArgument(self::HOOKER_CLASS_ARGUMENT_NAME));
 
         $this->wrapScriptWithMessages(
             "Creating $hooker_class_name...",

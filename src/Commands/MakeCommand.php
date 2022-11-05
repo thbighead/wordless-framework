@@ -9,6 +9,7 @@ use Wordless\Adapters\WordlessCommand;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Str;
 
 class MakeCommand extends WordlessCommand
 {
@@ -30,12 +31,12 @@ class MakeCommand extends WordlessCommand
 
     protected function description(): string
     {
-        return 'Create a command.';
+        return 'Creates a console command.';
     }
 
     protected function help(): string
     {
-        return 'Creates a command script file using its class name as base.';
+        return 'Creates a console command script file based on its class name which shall be listed into "php console" command.';
     }
 
     protected function options(): array
@@ -50,12 +51,12 @@ class MakeCommand extends WordlessCommand
      */
     protected function runIt(): int
     {
-        $command_class_name = ucfirst($this->input->getArgument(self::COMMAND_CLASS_ARGUMENT_NAME));
+        $command_class_name = Str::pascalCase($this->input->getArgument(self::COMMAND_CLASS_ARGUMENT_NAME));
 
         $this->wrapScriptWithMessages(
             "Creating $command_class_name...",
             function () use ($command_class_name) {
-                (new CommandStubMounter(ProjectPath::appCommands() . "/$command_class_name.php"))
+                (new CommandStubMounter(ProjectPath::app() . "Commands/$command_class_name.php"))
                     ->setReplaceContentDictionary(['DummyCommand' => $command_class_name])
                     ->mountNewFile();
             }
