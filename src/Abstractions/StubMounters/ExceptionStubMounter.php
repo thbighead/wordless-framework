@@ -6,6 +6,6 @@ class ExceptionStubMounter extends BaseStubMounter
 {
     protected function relativeStubFilename(): string
     {
-        return 'exception.php';
+        return 'exception';
     }
 }

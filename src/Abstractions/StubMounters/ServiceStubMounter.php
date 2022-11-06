@@ -6,6 +6,6 @@ class ServiceStubMounter extends BaseStubMounter
 {
     protected function relativeStubFilename(): string
     {
-        return 'service.php';
+        return 'service';
     }
 }

@@ -5,6 +5,7 @@ namespace Wordless\Adapters;
 use stdClass;
 use Wordless\Abstractions\Guessers\CustomPostTypeKeyGuesser;
 use Wordless\Contracts\Adapter\WordlessCustomPost\Register;
+use Wordless\Exceptions\PostTypeNotRegistered;
 use Wordless\Helpers\Str;
 use WP_Post;
 use WP_Post_Type;
@@ -17,17 +18,18 @@ abstract class WordlessCustomPost extends Post
     protected const TYPE_KEY = null;
     private static ?string $type_key = null;
 
-    private WP_Post_Type $type;
+    private PostType $type;
 
     /**
      * @param WP_Post|int $post
      * @param bool $with_acfs
+     * @throws PostTypeNotRegistered
      */
     public function __construct($post, bool $with_acfs = true)
     {
         parent::__construct($post, $with_acfs);
 
-        $this->type = get_post_type_object($this->post_type);
+        $this->type = new PostType($this->post_type);
     }
 
     /**
@@ -159,7 +161,7 @@ abstract class WordlessCustomPost extends Post
      */
     protected static function controller(): ?string
     {
-        return null;
+        return null; // automagically controlled by WP
     }
 
     /**
@@ -264,13 +266,17 @@ abstract class WordlessCustomPost extends Post
 
     public static function getPermissions(): array
     {
-        return (array)(get_post_type_object(self::getTypeKey())->cap ?? new stdClass);
+        try {
+            return (array)((new PostType(self::getTypeKey()))->cap ?? new stdClass);
+        } catch (PostTypeNotRegistered $exception) {
+            return [];
+        }
     }
 
     /**
-     * @return WP_Post_Type
+     * @return PostType
      */
-    public function getType(): WP_Post_Type
+    public function getType(): PostType
     {
         return $this->type;
     }

@@ -6,6 +6,6 @@ class CommandStubMounter extends BaseStubMounter
 {
     protected function relativeStubFilename(): string
     {
-        return 'command.php';
+        return 'command';
     }
 }

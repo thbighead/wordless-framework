@@ -6,6 +6,6 @@ class ControllerStubMounter extends BaseStubMounter
 {
     protected function relativeStubFilename(): string
     {
-        return 'controller.php';
+        return 'controller';
     }
 }

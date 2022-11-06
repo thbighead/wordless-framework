@@ -2,11 +2,17 @@
 
 namespace Wordless\Helpers;
 
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
+use Doctrine\Inflector\Language;
 use Ramsey\Uuid\Uuid;
 use Wordless\Exceptions\InvalidUuidVersion;
 
 class Str
 {
+    /** @var Inflector[] $inflectors */
+    private static array $inflectors = [];
+
     public static function after(string $string, string $delimiter): string
     {
         $substring_position = strpos($string, $delimiter);
@@ -135,6 +141,11 @@ class Str
         return mb_strtolower($string);
     }
 
+    public static function plural(string $string, string $language = Language::ENGLISH): string
+    {
+        return self::getInflector($language)->pluralize($string);
+    }
+
     /**
      * @param string $string
      * @param string|string[] $search
@@ -144,6 +155,11 @@ class Str
     public static function replace(string $string, $search, $replace): string
     {
         return str_replace($search, $replace, $string);
+    }
+
+    public static function singular(string $string, string $language = Language::ENGLISH): string
+    {
+        return self::getInflector($language)->singularize($string);
     }
 
     public static function slugCase(string $string): string
@@ -233,5 +249,12 @@ class Str
         }
 
         return $with_dashes ? $uuid->toString() : str_replace('-', '', $uuid->toString());
+    }
+
+    private static function getInflector(?string $language = null): Inflector
+    {
+        return self::$inflectors[$language] ?? self::$inflectors[$language] = $language === null ?
+            InflectorFactory::create()->build() :
+            InflectorFactory::createForLanguage($language)->build();
     }
 }

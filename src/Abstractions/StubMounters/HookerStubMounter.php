@@ -6,6 +6,6 @@ class HookerStubMounter extends BaseStubMounter
 {
     protected function relativeStubFilename(): string
     {
-        return 'hooker.php';
+        return 'hooker';
     }
 }
