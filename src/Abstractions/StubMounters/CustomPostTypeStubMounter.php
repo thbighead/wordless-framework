@@ -2,10 +2,10 @@
 
 namespace Wordless\Abstractions\StubMounters;
 
-class MigrationStubMounter extends BaseStubMounter
+class CustomPostTypeStubMounter extends BaseStubMounter
 {
     protected function relativeStubFilename(): string
     {
-        return 'migration';
+        return 'custom-post-type';
     }
 }

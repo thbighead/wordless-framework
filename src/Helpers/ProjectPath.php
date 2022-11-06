@@ -97,6 +97,26 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
+    public static function exceptions(string $additional_path = ''): string
+    {
+        return self::app("Exceptions/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function hookers(string $additional_path = ''): string
+    {
+        return self::app("Hookers/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     public static function migrations(string $additional_path = ''): string
     {
         return self::root("migrations/$additional_path");
@@ -166,6 +186,16 @@ class ProjectPath
     public static function scripts(string $additional_path = ''): string
     {
         return self::app("Scripts/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function services(string $additional_path = ''): string
+    {
+        return self::app("Services/$additional_path");
     }
 
     /**

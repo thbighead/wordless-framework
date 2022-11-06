@@ -16,6 +16,11 @@ trait Labels
         return null;
     }
 
+    /**
+     * https://developer.wordpress.org/reference/functions/get_post_type_labels/#description
+     *
+     * @return string[]
+     */
     protected static function customizeLabels(): array
     {
         return [];
