@@ -5,10 +5,8 @@ namespace Wordless\Abstractions;
 use Wordless\Adapters\PostType;
 use Wordless\Adapters\Role;
 use Wordless\Exceptions\FailedToCreateRole;
-use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
-use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 use WP_Roles;
 
