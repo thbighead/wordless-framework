@@ -29,6 +29,9 @@ class PostType
         }
     }
 
+    /**
+     * @return static[]
+     */
     public static function getAllCustom(): array
     {
         $customPostTypes = [];
@@ -60,5 +63,10 @@ class PostType
     public function asWpPostType(): WP_Post_Type
     {
         return $this->wpPostType;
+    }
+
+    public function getPermissions(): array
+    {
+        return (array)$this->cap;
     }
 }
