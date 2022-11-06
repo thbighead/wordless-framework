@@ -4,6 +4,7 @@ namespace Wordless\Adapters;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\ExceptionInterface;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -127,6 +128,16 @@ abstract class WordlessCommand extends Command
         $this->getOrSaveAndGetFromWordlessCommandsCache($command_name)->run(new ArrayInput($inputs), $output);
 
         return $output->fetch();
+    }
+
+    /**
+     * https://symfony.com/doc/current/components/console/helpers/table.html
+     *
+     * @return Table
+     */
+    protected function mountTable(): Table
+    {
+        return new Table($this->output);
     }
 
     protected function setup(InputInterface $input, OutputInterface $output)
