@@ -87,11 +87,11 @@ abstract class WordlessCommand extends Command
         return $this->runIt();
     }
 
-    protected function executeCommand(string $full_command, ?string $command_output_decoration = null): int
+    protected function executeCommand(string $full_command): int
     {
         if ($this->output instanceof BufferedOutput) {
             exec($full_command, $output, $result_code);
-            $this->writeln($output, $command_output_decoration);
+            $this->output->writeln($output);
         } else {
             passthru($full_command, $result_code);
         }
@@ -113,7 +113,7 @@ abstract class WordlessCommand extends Command
     )
     {
         if (!($output instanceof OutputInterface)) {
-            $output = new BufferedOutput;
+            $output = $this->mountBufferedOutput();
         }
 
         $return_code = $this->getOrSaveAndGetFromWordlessCommandsCache($command_name)
@@ -136,7 +136,7 @@ abstract class WordlessCommand extends Command
     ): string
     {
         if (!($output instanceof BufferedOutput)) {
-            $output = new BufferedOutput;
+            $output = $this->mountBufferedOutput();
         }
 
         $this->getOrSaveAndGetFromWordlessCommandsCache($command_name)->run(new ArrayInput($inputs), $output);
@@ -173,6 +173,7 @@ abstract class WordlessCommand extends Command
     {
         $this->input = $input;
         $this->output = $output;
+        $this->output->setDecorated(true);
     }
 
     protected function wrapScriptWithMessages(
@@ -321,5 +322,10 @@ abstract class WordlessCommand extends Command
         }
 
         return $commandObject;
+    }
+
+    private function mountBufferedOutput(): BufferedOutput
+    {
+        return new BufferedOutput($this->output->getVerbosity(), true);
     }
 }
