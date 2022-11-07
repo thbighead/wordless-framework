@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 abstract class WordlessCommand extends Command
 {
@@ -93,7 +94,11 @@ abstract class WordlessCommand extends Command
             exec($full_command, $output, $result_code);
             $this->output->writeln($output);
         } else {
-            passthru($full_command, $result_code);
+            $result_code = Process::fromShellCommandline('composer install')
+                ->setTty(true)
+                ->run(function ($type, $buffer) {
+                    echo $buffer;
+                });
         }
 
         return $result_code;
