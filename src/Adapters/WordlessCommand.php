@@ -94,7 +94,7 @@ abstract class WordlessCommand extends Command
             exec($full_command, $output, $result_code);
             $this->output->writeln($output);
         } else {
-            $result_code = Process::fromShellCommandline('composer install')
+            $result_code = Process::fromShellCommandline($full_command)
                 ->setTty(true)
                 ->run(function ($type, $buffer) {
                     echo $buffer;
