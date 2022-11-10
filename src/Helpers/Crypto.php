@@ -9,11 +9,6 @@ class Crypto
     public const JWT_SYMMETRIC_HMAC_SHA512 = 'HS512';
     public const JWT_SYMMETRIC_HMAC_BLAKE2B_HASH = 'BLAKE2B';
 
-    public const JWT_ASYMMETRIC_RSA_SSA_PKCS1_V1_5_SHA256 = 'RS256';
-    public const JWT_ASYMMETRIC_RSA_SSA_PKCS1_V1_5_SHA384 = 'RS384';
-    public const JWT_ASYMMETRIC_RSA_SSA_PKCS1_V1_5_SHA512 = 'RS512';
-    public const JWT_ASYMMETRIC_ED_DSA = 'EdDSA';
-
     public const HASH_ALGORITHM = 'sha256';
     public const HASHED_IV_LENGTH = 16;
     public const OPENSSL_CIPHER_ALGORITHM = 'AES-256-CBC';

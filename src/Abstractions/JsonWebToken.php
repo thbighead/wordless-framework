@@ -6,17 +6,15 @@ use Lcobucci\JWT\Encoding\ChainedFormatter;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Blake2b;
-use Lcobucci\JWT\Signer\Eddsa;
 use Lcobucci\JWT\Signer\Hmac\Sha256 as HmacSha256;
 use Lcobucci\JWT\Signer\Hmac\Sha384 as HmacSha384;
 use Lcobucci\JWT\Signer\Hmac\Sha512 as HmacSha512;
 use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Signer\Rsa\Sha256 as RsaSha256;
-use Lcobucci\JWT\Signer\Rsa\Sha384 as RsaSha384;
-use Lcobucci\JWT\Signer\Rsa\Sha512 as RsaSha512;
 use Lcobucci\JWT\Token\Builder;
 use Lcobucci\JWT\Token\Parser;
 use Lcobucci\JWT\Token\Plain;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\Validator;
 use Wordless\Contracts\IMultipleConstructors;
 use Wordless\Contracts\MultipleConstructors;
 use Wordless\Exceptions\InvalidConfigKey;
@@ -25,7 +23,11 @@ use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
 use Wordless\Helpers\Crypto;
 use Wordless\Helpers\GetType;
+use Wordless\Helpers\Str;
 
+/**
+ * Using https://lcobucci-jwt.readthedocs.io/en/latest/
+ */
 class JsonWebToken implements IMultipleConstructors
 {
     use MultipleConstructors;
@@ -33,6 +35,7 @@ class JsonWebToken implements IMultipleConstructors
     public const CONFIG_DEFAULT_CRYPTO = 'default_crypto';
     public const CONFIG_SIGN_KEY = 'sign_key';
     public const ENVIRONMENT_SIGN_VARIABLE = 'JWT_BASE_64_SIGN_KEY';
+    public const JWT_HEADER_ALGORITHM_KEY = 'alg';
 
     private Plain $parsedToken;
 
@@ -137,6 +140,38 @@ class JsonWebToken implements IMultipleConstructors
     }
 
     /**
+     * @return bool
+     * @throws InvalidConfigKey
+     * @throws InvalidJwtCryptoAlgorithmId
+     * @throws PathNotFoundException
+     */
+    public function isValid(): bool
+    {
+        return (new Validator)->validate($this->parsedToken, new SignedWith(
+            $this->getCryptoAlgorithm(
+                $crypto_strategy = $this->getDecodedHeader(self::JWT_HEADER_ALGORITHM_KEY, '')
+            ),
+            $this->mountSignatureKey($crypto_strategy, Config::get('jwt.' . self::CONFIG_SIGN_KEY))
+        ));
+    }
+
+    /**
+     * @return void
+     * @throws InvalidConfigKey
+     * @throws InvalidJwtCryptoAlgorithmId
+     * @throws PathNotFoundException
+     */
+    public function validateSignature()
+    {
+        (new Validator)->assert($this->parsedToken, new SignedWith(
+            $this->getCryptoAlgorithm(
+                $crypto_strategy = $this->getDecodedHeader(self::JWT_HEADER_ALGORITHM_KEY, '')
+            ),
+            $this->mountSignatureKey($crypto_strategy, Config::get('jwt.' . self::CONFIG_SIGN_KEY))
+        ));
+    }
+
+    /**
      * @param array $payload
      * @param string|null $crypto_strategy
      * @return void
@@ -147,14 +182,15 @@ class JsonWebToken implements IMultipleConstructors
     private function buildJwt(array $payload, ?string $crypto_strategy = null)
     {
         $builder = new Builder(new JoseEncoder, (new ChainedFormatter));
+        $crypto_strategy = $crypto_strategy ?? Config::get('jwt.' . self::CONFIG_DEFAULT_CRYPTO);
 
         foreach ($payload as $key => $value) {
             $builder->withClaim("$key", $value);
         }
 
         $this->parsedToken = $builder->getToken(
-            $this->getCryptoAlgorithm($crypto_strategy ?? Config::get('jwt.' . self::CONFIG_DEFAULT_CRYPTO)),
-            InMemory::base64Encoded(Config::get('jwt.' . self::CONFIG_SIGN_KEY))
+            $this->getCryptoAlgorithm($crypto_strategy),
+            $this->mountSignatureKey($crypto_strategy, Config::get('jwt.' . self::CONFIG_SIGN_KEY))
         );
     }
 
@@ -173,16 +209,36 @@ class JsonWebToken implements IMultipleConstructors
                 return new HmacSha512;
             case Crypto::JWT_SYMMETRIC_HMAC_BLAKE2B_HASH:
                 return new Blake2b;
-            case Crypto::JWT_ASYMMETRIC_RSA_SSA_PKCS1_V1_5_SHA256:
-                return new RsaSha256;
-            case Crypto::JWT_ASYMMETRIC_RSA_SSA_PKCS1_V1_5_SHA384:
-                return new RsaSha384;
-            case Crypto::JWT_ASYMMETRIC_RSA_SSA_PKCS1_V1_5_SHA512:
-                return new RsaSha512;
-            case Crypto::JWT_ASYMMETRIC_ED_DSA:
-                return new Eddsa;
             default:
                 throw new InvalidJwtCryptoAlgorithmId($crypto_key);
         }
+    }
+
+    /**
+     * @param string $crypto_key
+     * @param string $key
+     * @return InMemory
+     * @throws InvalidJwtCryptoAlgorithmId
+     */
+    private function mountSignatureKey(string $crypto_key, string $key): InMemory
+    {
+        $char_size_in_bits = 8;
+
+        switch ($crypto_key) {
+            case Crypto::JWT_SYMMETRIC_HMAC_SHA256:
+            case Crypto::JWT_SYMMETRIC_HMAC_BLAKE2B_HASH:
+                $key = Str::truncate($key, 256 / $char_size_in_bits);
+                break;
+            case Crypto::JWT_SYMMETRIC_HMAC_SHA384:
+                $key = Str::truncate($key, 384 / $char_size_in_bits);
+                break;
+            case Crypto::JWT_SYMMETRIC_HMAC_SHA512:
+                $key = Str::truncate($key, 512 / $char_size_in_bits);
+                break;
+            default:
+                throw new InvalidJwtCryptoAlgorithmId($crypto_key);
+        }
+
+        return InMemory::plainText($key);
     }
 }
