@@ -22,7 +22,7 @@ trait Routing
     public function registerDestroyRoute()
     {
         $this->routeBaseRegistration([
-            'methods' => Request::METHOD_DELETE,
+            'methods' => Request::HTTP_DELETE,
             'callback' => [$this, self::METHOD_NAME_TO_REST_DESTROY_ITEMS],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_DESTROY_ITEMS],
             'args' => [
@@ -38,7 +38,7 @@ trait Routing
     public function registerIndexRoute()
     {
         $this->routeBaseRegistration([
-            'methods' => Request::METHOD_GET,
+            'methods' => Request::HTTP_GET,
             'callback' => [$this, self::METHOD_NAME_TO_REST_INDEX_ITEMS],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_INDEX_ITEMS],
             'args' => $this->get_collection_params(),
@@ -48,7 +48,7 @@ trait Routing
     public function registerShowRoute()
     {
         $this->routeBaseRegistration([
-            'methods' => Request::METHOD_GET,
+            'methods' => Request::HTTP_GET,
             'callback' => [$this, self::METHOD_NAME_TO_REST_SHOW_ITEMS],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_SHOW_ITEMS],
             'args' => ['context' => $this->get_context_param(['default' => 'view'])],
@@ -58,7 +58,7 @@ trait Routing
     public function registerStoreRoute()
     {
         $this->routeBaseRegistration([
-            'methods' => Request::METHOD_POST,
+            'methods' => Request::HTTP_POST,
             'callback' => [$this, self::METHOD_NAME_TO_REST_STORE_ITEMS],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_STORE_ITEMS],
             'args' => $this->get_collection_params(),

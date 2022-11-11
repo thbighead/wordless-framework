@@ -24,7 +24,7 @@ class ControllerCacher extends BaseCacher
         $controllers_cache_array = [];
 
         foreach (
-            BootControllers::yieldBootableControllersPathAndResourceNameByReadingDirectory()
+            WordlessController::yieldBootableControllersPathAndResourceNameByReadingDirectory()
             as $controller_path_and_resource_name
         ) {
             require_once $controller_path_and_resource_name[0];

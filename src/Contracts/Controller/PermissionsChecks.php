@@ -2,11 +2,9 @@
 
 namespace Wordless\Contracts\Controller;
 
-use Wordless\Exceptions\WordPressFailedToFindRole;
+use Wordless\Adapters\Role;
 use WP_Error;
 use WP_REST_Request;
-use WP_Role;
-use function get_role;
 
 trait PermissionsChecks
 {
@@ -55,30 +53,25 @@ trait PermissionsChecks
         return $this->resolvePermission($this->updatePermissionName());
     }
 
-    /**
-     * @throws WordPressFailedToFindRole
-     */
-    public function registerCapabilitiesToRoles()
+    public function registerCapabilitiesToRole(Role $role)
     {
-        $capabilities = [
-            $this->deletePermissionName(),
-            $this->getItemsPermissionName(),
-            $this->getItemPermissionName(),
-            $this->createPermissionName(),
-            $this->updatePermissionName(),
-        ];
+        $role->syncCapabilities([
+            $this->deletePermissionName() => true,
+            $this->getItemsPermissionName() => true,
+            $this->getItemPermissionName() => true,
+            $this->createPermissionName() => true,
+            $this->updatePermissionName() => true,
+        ]);
+    }
 
-        foreach ($this->allowed_roles_names as $string_role) {
-            if (($role = get_role($string_role)) instanceof WP_Role) {
-                foreach ($capabilities as $capability) {
-                    $role->add_cap($capability);
-                }
-
-                continue;
-            }
-
-            throw new WordPressFailedToFindRole($string_role);
-        }
+    private function buildForbiddenContextError(string $missing_capability): WP_Error
+    {
+        return new WP_Error(
+            self::FORBIDDEN_CONTEXT_CODE,
+            __('Sorry, you are not allowed to edit posts in this post type.')
+            . sprintf(__(' Missing capability \'%s\'.'), $missing_capability),
+            ['status' => rest_authorization_required_code()]
+        );
     }
 
     private function createPermissionName(): string
@@ -112,8 +105,8 @@ trait PermissionsChecks
      */
     private function resolvePermission(string $capability)
     {
-        if (!$this->getCurrentUser()->can($capability)) {
-            return $this->buildForbiddenContextError(__METHOD__);
+        if (!$this->getAuthenticatedUser()->can($capability)) {
+            return $this->buildForbiddenContextError($capability);
         }
 
         return true;
