@@ -4,6 +4,9 @@ namespace Wordless\Helpers;
 
 class GetType
 {
+    public const ARRAY = 'array';
+    public const BOOLEAN = 'boolean';
+    public const DOUBLE = 'double';
     public const INTEGER = 'integer';
     public const STRING = 'string';
 
