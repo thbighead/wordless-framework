@@ -48,11 +48,7 @@ abstract class WordlessController extends WP_REST_Controller
             "/{$this->namespace()}" :
             "/{$this->namespace()}/{$this->version()}";
         $this->rest_base = $this->resourceName();
-        try {
-            $this->authenticatedUser = new User;
-        } catch (NoUserAuthenticated $exception) {
-            $this->authenticatedUser = null;
-        }
+        $this->setAuthenticatedUser();
     }
 
     /**
@@ -122,5 +118,14 @@ abstract class WordlessController extends WP_REST_Controller
     protected function namespace(): string
     {
         return 'wordless';
+    }
+
+    protected function setAuthenticatedUser()
+    {
+        try {
+            $this->authenticatedUser = new User;
+        } catch (NoUserAuthenticated $exception) {
+            $this->authenticatedUser = null;
+        }
     }
 }
