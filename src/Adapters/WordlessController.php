@@ -10,6 +10,7 @@ use Wordless\Contracts\Singleton;
 use Wordless\Exceptions\FailedToFindCachedKey;
 use Wordless\Exceptions\FailedToGetControllerPathFromCachedData;
 use Wordless\Exceptions\InternalCacheNotLoaded;
+use Wordless\Exceptions\NoUserAuthenticated;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
@@ -35,7 +36,7 @@ abstract class WordlessController extends WP_REST_Controller
     private const PERMISSION_METHOD_NAME_TO_REST_UPDATE_ITEMS = 'update_item_permissions_check';
     private const PUBLIC_SCHEMA_METHOD = 'get_public_item_schema';
 
-    private ?User $user;
+    private ?User $authenticatedUser;
 
     abstract protected function resourceName(): string;
 
@@ -47,7 +48,11 @@ abstract class WordlessController extends WP_REST_Controller
             "/{$this->namespace()}" :
             "/{$this->namespace()}/{$this->version()}";
         $this->rest_base = $this->resourceName();
-        $this->user = new User;
+        try {
+            $this->authenticatedUser = new User;
+        } catch (NoUserAuthenticated $exception) {
+            $this->authenticatedUser = null;
+        }
     }
 
     /**
@@ -111,7 +116,7 @@ abstract class WordlessController extends WP_REST_Controller
 
     protected function getAuthenticatedUser(): ?User
     {
-        return $this->user;
+        return $this->authenticatedUser;
     }
 
     protected function namespace(): string
