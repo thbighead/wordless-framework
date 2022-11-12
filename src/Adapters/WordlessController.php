@@ -5,6 +5,7 @@ namespace Wordless\Adapters;
 use Generator;
 use Wordless\Abstractions\InternalCache;
 use Wordless\Contracts\Controller\PermissionsChecks;
+use Wordless\Contracts\Controller\RestingWordPress;
 use Wordless\Contracts\Controller\Routing;
 use Wordless\Contracts\Singleton;
 use Wordless\Exceptions\FailedToFindCachedKey;
@@ -15,11 +16,12 @@ use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
+use Wordless\MyPersonalRequest;
 use WP_REST_Controller;
 
 abstract class WordlessController extends WP_REST_Controller
 {
-    use PermissionsChecks, Routing, Singleton;
+    use PermissionsChecks, RestingWordPress, Routing, Singleton;
 
     private const FORBIDDEN_CONTEXT_CODE = 'rest_forbidden_context';
     private const FULL_SCHEMA_METHOD = 'get_item_schema';

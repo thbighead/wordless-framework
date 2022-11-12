@@ -86,7 +86,7 @@ trait Routing
             return self::FULL_SCHEMA_METHOD;
         }
 
-        return !is_null($this->user) ? self::FULL_SCHEMA_METHOD : self::PUBLIC_SCHEMA_METHOD;
+        return !is_null($this->getAuthenticatedUser()) ? self::FULL_SCHEMA_METHOD : self::PUBLIC_SCHEMA_METHOD;
     }
 
     private function mountRouteBaseRegistrationArgs(array $route_details): array

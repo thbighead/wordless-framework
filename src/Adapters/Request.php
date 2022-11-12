@@ -18,4 +18,9 @@ class Request extends WP_REST_Request
     public const HTTP_PUT = SymfonyRequest::METHOD_PUT;
     public const HTTP_PURGE = SymfonyRequest::METHOD_PURGE;
     public const HTTP_TRACE = SymfonyRequest::METHOD_TRACE;
+
+    public static function fromWpRestRequest(WP_REST_Request $wpRestRequest): Request
+    {
+        return new static($wpRestRequest->method, $wpRestRequest->route, $wpRestRequest->attributes);
+    }
 }
