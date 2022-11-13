@@ -2,6 +2,8 @@
 
 namespace Wordless\Contracts\Controller;
 
+use Wordless\Adapters\AbstractValidatedRequest;
+use Wordless\Adapters\Response;
 use Wordless\Adapters\Role;
 use WP_Error;
 use WP_REST_Request;
@@ -14,7 +16,19 @@ trait PermissionsChecks
      */
     public function create_item_permissions_check($request)
     {
-        return $this->resolvePermission($this->createPermissionName());
+        if (($permissionResult = $this->resolvePermission($this->createPermissionName())) instanceof WP_Error) {
+            return $permissionResult;
+        }
+
+        if (!($request instanceof AbstractValidatedRequest)) {
+            return $permissionResult;
+        }
+
+        if (!$request->validate()) {
+            return $this->resolveInvalidRequest($request);
+        }
+
+        return $permissionResult;
     }
 
     /**
@@ -23,7 +37,19 @@ trait PermissionsChecks
      */
     public function delete_item_permissions_check($request)
     {
-        return $this->resolvePermission($this->deletePermissionName());
+        if (($permissionResult = $this->resolvePermission($this->deletePermissionName())) instanceof WP_Error) {
+            return $permissionResult;
+        }
+
+        if (!($request instanceof AbstractValidatedRequest)) {
+            return $permissionResult;
+        }
+
+        if (!$request->validate()) {
+            return $this->resolveInvalidRequest($request);
+        }
+
+        return $permissionResult;
     }
 
     /**
@@ -32,7 +58,19 @@ trait PermissionsChecks
      */
     public function get_item_permissions_check($request)
     {
-        return $this->resolvePermission($this->getItemPermissionName());
+        if (($permissionResult = $this->resolvePermission($this->getItemPermissionName())) instanceof WP_Error) {
+            return $permissionResult;
+        }
+
+        if (!($request instanceof AbstractValidatedRequest)) {
+            return $permissionResult;
+        }
+
+        if (!$request->validate()) {
+            return $this->resolveInvalidRequest($request);
+        }
+
+        return $permissionResult;
     }
 
     /**
@@ -41,7 +79,19 @@ trait PermissionsChecks
      */
     public function get_items_permissions_check($request)
     {
-        return $this->resolvePermission($this->getItemsPermissionName());
+        if (($permissionResult = $this->resolvePermission($this->getItemsPermissionName())) instanceof WP_Error) {
+            return $permissionResult;
+        }
+
+        if (!($request instanceof AbstractValidatedRequest)) {
+            return $permissionResult;
+        }
+
+        if (!$request->validate()) {
+            return $this->resolveInvalidRequest($request);
+        }
+
+        return $permissionResult;
     }
 
     /**
@@ -50,7 +100,19 @@ trait PermissionsChecks
      */
     public function update_item_permissions_check($request)
     {
-        return $this->resolvePermission($this->updatePermissionName());
+        if (($permissionResult = $this->resolvePermission($this->updatePermissionName())) instanceof WP_Error) {
+            return $permissionResult;
+        }
+
+        if (!($request instanceof AbstractValidatedRequest)) {
+            return $permissionResult;
+        }
+
+        if (!$request->validate()) {
+            return $this->resolveInvalidRequest($request);
+        }
+
+        return $permissionResult;
     }
 
     public function registerCapabilitiesToRole(Role $role)
@@ -94,9 +156,17 @@ trait PermissionsChecks
         return "index_{$this->resourceName()}";
     }
 
-    private function updatePermissionName(): string
+    /**
+     * @param AbstractValidatedRequest $request
+     * @return WP_Error
+     */
+    private function resolveInvalidRequest(AbstractValidatedRequest $request): WP_Error
     {
-        return "update_{$this->resourceName()}";
+        return new WP_Error(
+            Response::HTTP_422_UNPROCESSABLE_ENTITY,
+            __('The requested data has validation errors.'),
+            $request->getValidatedAsInvalidFields() // TODO recuperar mensagens de erro da ConstraintViolationList
+        );
     }
 
     /**
@@ -110,5 +180,10 @@ trait PermissionsChecks
         }
 
         return true;
+    }
+
+    private function updatePermissionName(): string
+    {
+        return "update_{$this->resourceName()}";
     }
 }
