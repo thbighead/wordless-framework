@@ -34,17 +34,13 @@ trait Guesser
         }
     }
 
-    /**
-     * @return string|null
-     * @throws InternalCacheNotLoaded
-     */
     protected function version(): ?string
     {
         $controller_resource_name_class = static::class;
 
         try {
             return InternalCache::getValueOrFail("controllers.$controller_resource_name_class.version");
-        } catch (FailedToFindCachedKey $exception) {
+        } catch (FailedToFindCachedKey|InternalCacheNotLoaded $exception) {
             if (!isset($this->resourceNameGuesser)) {
                 $this->versionGuesser = new ControllerVersionGuesser($controller_resource_name_class);
             }

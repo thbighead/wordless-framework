@@ -40,7 +40,6 @@ class RolesList extends WP_Roles
     /**
      * @return void
      * @throws FailedToCreateRole
-     * @throws InternalCacheNotLoaded
      * @throws PathNotFoundException
      * @throws WordPressFailedToFindRole
      */
@@ -86,7 +85,6 @@ class RolesList extends WP_Roles
 
     /**
      * @return void
-     * @throws InternalCacheNotLoaded
      * @throws PathNotFoundException
      * @throws WordPressFailedToFindRole
      */
@@ -99,7 +97,6 @@ class RolesList extends WP_Roles
     /**
      * @param Role $role
      * @return void
-     * @throws InternalCacheNotLoaded
      * @throws PathNotFoundException
      * @throws WordPressFailedToFindRole
      */

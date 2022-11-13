@@ -54,7 +54,6 @@ abstract class WordlessController extends WP_REST_Controller
 
     /**
      * @return Generator
-     * @throws InternalCacheNotLoaded
      * @throws PathNotFoundException
      */
     public static function all(): Generator
@@ -74,7 +73,7 @@ abstract class WordlessController extends WP_REST_Controller
                     $controller_full_namespace,
                 ];
             }
-        } catch (FailedToFindCachedKey|FailedToGetControllerPathFromCachedData $exception) {
+        } catch (FailedToFindCachedKey|FailedToGetControllerPathFromCachedData|InternalCacheNotLoaded $exception) {
             return self::yieldBootableControllersPathAndResourceNameByReadingDirectory();
         }
     }
