@@ -22,6 +22,11 @@ abstract class WordlessController extends WP_REST_Controller
 {
     use PermissionsChecks, RestingWordPress, Routing, Singleton;
 
+    protected const DESTROY_REQUEST_CLASS = Request::class;
+    protected const INDEX_REQUEST_CLASS = Request::class;
+    protected const SHOW_REQUEST_CLASS = Request::class;
+    protected const STORE_REQUEST_CLASS = Request::class;
+    protected const UPDATE_REQUEST_CLASS = Request::class;
     private const FORBIDDEN_CONTEXT_CODE = 'rest_forbidden_context';
     private const FULL_SCHEMA_METHOD = 'get_item_schema';
     private const INVALID_METHOD_CODE = 'invalid-method';

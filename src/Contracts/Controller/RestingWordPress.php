@@ -10,13 +10,17 @@ trait RestingWordPress
     /** @inheritDoc */
     public function create_item($request)
     {
-        return $this->store(Request::fromWpRestRequest($request))->respond();
+        /** @var Request $requestClass */
+        $requestClass = self::STORE_REQUEST_CLASS;
+        return $this->store($requestClass::fromWpRestRequest($request))->respond();
     }
 
     /** @inheritDoc */
     public function delete_item($request)
     {
-        return $this->destroy(Request::fromWpRestRequest($request))->respond();
+        /** @var Request $requestClass */
+        $requestClass = self::DESTROY_REQUEST_CLASS;
+        return $this->destroy($requestClass::fromWpRestRequest($request))->respond();
     }
 
     public function destroy(Request $request): Response
@@ -27,13 +31,17 @@ trait RestingWordPress
     /** @inheritDoc */
     public function get_item($request)
     {
-        return $this->show(Request::fromWpRestRequest($request))->respond();
+        /** @var Request $requestClass */
+        $requestClass = self::SHOW_REQUEST_CLASS;
+        return $this->show($requestClass::fromWpRestRequest($request))->respond();
     }
 
     /** @inheritDoc */
     public function get_items($request)
     {
-        return $this->index(Request::fromWpRestRequest($request))->respond();
+        /** @var Request $requestClass */
+        $requestClass = self::INDEX_REQUEST_CLASS;
+        return $this->index($requestClass::fromWpRestRequest($request))->respond();
     }
 
     public function index(Request $request): Response
@@ -59,7 +67,9 @@ trait RestingWordPress
     /** @inheritDoc */
     public function update_item($request)
     {
-        return $this->update(Request::fromWpRestRequest($request))->respond();
+        /** @var Request $requestClass */
+        $requestClass = self::UPDATE_REQUEST_CLASS;
+        return $this->update($requestClass::fromWpRestRequest($request))->respond();
     }
 
     private function mountNotImplementedError(Request $request): Response
