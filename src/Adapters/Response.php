@@ -140,9 +140,9 @@ class Response extends WP_REST_Response
 
     private ?WP_Error $wpError = null;
 
-    public static function error(int $http_code, string $message, array $data = [])
+    public static function error(int $http_code, string $message, array $data = []): Response
     {
-        return (new static)->setWpError();
+        return (new static)->setWpError($http_code, $message, $data);
     }
 
     public function respond()
@@ -152,7 +152,7 @@ class Response extends WP_REST_Response
 
     public function setWpError(int $http_code, string $message, array $data = []): Response
     {
-        $this->wpError = new WP_Error(self::HTTP_STATUS_TEXTS[$http_code] ?? $http_code, $data);
+        $this->wpError = new WP_Error(self::HTTP_STATUS_TEXTS[$http_code] ?? $http_code, $message, $data);
 
         return $this;
     }
