@@ -13,10 +13,6 @@ trait Guesser
     private ?ControllerResourceNameGuesser $resourceNameGuesser;
     private ?ControllerVersionGuesser $versionGuesser;
 
-    /**
-     * @return string
-     * @throws InternalCacheNotLoaded
-     */
     protected function resourceName(): string
     {
         $controller_resource_name_class = static::class;
@@ -25,7 +21,7 @@ trait Guesser
             return InternalCache::getValueOrFail(
                 "controllers.$controller_resource_name_class.resource_name"
             );
-        } catch (FailedToFindCachedKey $exception) {
+        } catch (FailedToFindCachedKey|InternalCacheNotLoaded $exception) {
             if (!isset($this->resourceNameGuesser)) {
                 $this->resourceNameGuesser = new ControllerResourceNameGuesser($controller_resource_name_class);
             }
