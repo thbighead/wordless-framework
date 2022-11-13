@@ -12,7 +12,6 @@ class BootControllers extends AbstractHooker
 {
     /**
      * @return void
-     * @throws InternalCacheNotLoaded
      * @throws PathNotFoundException
      * @throws WordPressFailedToFindRole
      */
