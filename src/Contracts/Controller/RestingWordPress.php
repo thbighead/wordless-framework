@@ -11,7 +11,8 @@ trait RestingWordPress
     public function create_item($request)
     {
         /** @var Request $requestClass */
-        $requestClass = self::STORE_REQUEST_CLASS;
+        $requestClass = static::STORE_REQUEST_CLASS;
+
         return $this->store($requestClass::fromWpRestRequest($request))->respond();
     }
 
@@ -19,7 +20,8 @@ trait RestingWordPress
     public function delete_item($request)
     {
         /** @var Request $requestClass */
-        $requestClass = self::DESTROY_REQUEST_CLASS;
+        $requestClass = static::DESTROY_REQUEST_CLASS;
+
         return $this->destroy($requestClass::fromWpRestRequest($request))->respond();
     }
 
@@ -32,7 +34,8 @@ trait RestingWordPress
     public function get_item($request)
     {
         /** @var Request $requestClass */
-        $requestClass = self::SHOW_REQUEST_CLASS;
+        $requestClass = static::SHOW_REQUEST_CLASS;
+
         return $this->show($requestClass::fromWpRestRequest($request))->respond();
     }
 
@@ -40,7 +43,8 @@ trait RestingWordPress
     public function get_items($request)
     {
         /** @var Request $requestClass */
-        $requestClass = self::INDEX_REQUEST_CLASS;
+        $requestClass = static::INDEX_REQUEST_CLASS;
+
         return $this->index($requestClass::fromWpRestRequest($request))->respond();
     }
 
@@ -68,7 +72,8 @@ trait RestingWordPress
     public function update_item($request)
     {
         /** @var Request $requestClass */
-        $requestClass = self::UPDATE_REQUEST_CLASS;
+        $requestClass = static::UPDATE_REQUEST_CLASS;
+
         return $this->update($requestClass::fromWpRestRequest($request))->respond();
     }
 

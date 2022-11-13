@@ -3,12 +3,13 @@
 namespace Wordless\Contracts\Controller;
 
 use Wordless\Adapters\AbstractValidatedRequest;
+use Wordless\Adapters\Request;
 use Wordless\Adapters\Response;
 use Wordless\Adapters\Role;
 use WP_Error;
 use WP_REST_Request;
 
-trait PermissionsChecks
+trait AuthorizationCheck
 {
     /**
      * @param WP_REST_Request $request
@@ -16,19 +17,13 @@ trait PermissionsChecks
      */
     public function create_item_permissions_check($request)
     {
-        if (($permissionResult = $this->resolvePermission($this->createPermissionName())) instanceof WP_Error) {
-            return $permissionResult;
-        }
+        /** @var Request $requestClass */
+        $requestClass = static::STORE_REQUEST_CLASS;
 
-        if (!($request instanceof AbstractValidatedRequest)) {
-            return $permissionResult;
-        }
-
-        if (!$request->validate()) {
-            return $this->resolveInvalidRequest($request);
-        }
-
-        return $permissionResult;
+        return $this->resolveAuthorization(
+            $requestClass::fromWpRestRequest($request),
+            $this->createPermissionName()
+        );
     }
 
     /**
@@ -37,19 +32,13 @@ trait PermissionsChecks
      */
     public function delete_item_permissions_check($request)
     {
-        if (($permissionResult = $this->resolvePermission($this->deletePermissionName())) instanceof WP_Error) {
-            return $permissionResult;
-        }
+        /** @var Request $requestClass */
+        $requestClass = static::DESTROY_REQUEST_CLASS;
 
-        if (!($request instanceof AbstractValidatedRequest)) {
-            return $permissionResult;
-        }
-
-        if (!$request->validate()) {
-            return $this->resolveInvalidRequest($request);
-        }
-
-        return $permissionResult;
+        return $this->resolveAuthorization(
+            $requestClass::fromWpRestRequest($request),
+            $this->deletePermissionName()
+        );
     }
 
     /**
@@ -58,19 +47,13 @@ trait PermissionsChecks
      */
     public function get_item_permissions_check($request)
     {
-        if (($permissionResult = $this->resolvePermission($this->getItemPermissionName())) instanceof WP_Error) {
-            return $permissionResult;
-        }
+        /** @var Request $requestClass */
+        $requestClass = static::SHOW_REQUEST_CLASS;
 
-        if (!($request instanceof AbstractValidatedRequest)) {
-            return $permissionResult;
-        }
-
-        if (!$request->validate()) {
-            return $this->resolveInvalidRequest($request);
-        }
-
-        return $permissionResult;
+        return $this->resolveAuthorization(
+            $requestClass::fromWpRestRequest($request),
+            $this->getItemPermissionName()
+        );
     }
 
     /**
@@ -79,19 +62,13 @@ trait PermissionsChecks
      */
     public function get_items_permissions_check($request)
     {
-        if (($permissionResult = $this->resolvePermission($this->getItemsPermissionName())) instanceof WP_Error) {
-            return $permissionResult;
-        }
+        /** @var Request $requestClass */
+        $requestClass = static::INDEX_REQUEST_CLASS;
 
-        if (!($request instanceof AbstractValidatedRequest)) {
-            return $permissionResult;
-        }
-
-        if (!$request->validate()) {
-            return $this->resolveInvalidRequest($request);
-        }
-
-        return $permissionResult;
+        return $this->resolveAuthorization(
+            $requestClass::fromWpRestRequest($request),
+            $this->getItemsPermissionName()
+        );
     }
 
     /**
@@ -100,19 +77,13 @@ trait PermissionsChecks
      */
     public function update_item_permissions_check($request)
     {
-        if (($permissionResult = $this->resolvePermission($this->updatePermissionName())) instanceof WP_Error) {
-            return $permissionResult;
-        }
+        /** @var Request $requestClass */
+        $requestClass = static::UPDATE_REQUEST_CLASS;
 
-        if (!($request instanceof AbstractValidatedRequest)) {
-            return $permissionResult;
-        }
-
-        if (!$request->validate()) {
-            return $this->resolveInvalidRequest($request);
-        }
-
-        return $permissionResult;
+        return $this->resolveAuthorization(
+            $requestClass::fromWpRestRequest($request),
+            $this->updatePermissionName()
+        );
     }
 
     public function registerCapabilitiesToRole(Role $role)
@@ -154,6 +125,28 @@ trait PermissionsChecks
     private function getItemsPermissionName(): string
     {
         return "index_{$this->resourceName()}";
+    }
+
+    /**
+     * @param Request $request
+     * @param string $permission
+     * @return bool|WP_Error
+     */
+    private function resolveAuthorization(Request $request, string $permission)
+    {
+        if (($permissionResult = $this->resolvePermission($permission)) instanceof WP_Error) {
+            return $permissionResult;
+        }
+
+        if (!($request instanceof AbstractValidatedRequest)) {
+            return $permissionResult;
+        }
+
+        if (!$request->validate()) {
+            return $this->resolveInvalidRequest($request);
+        }
+
+        return $permissionResult;
     }
 
     /**

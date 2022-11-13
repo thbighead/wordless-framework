@@ -4,7 +4,7 @@ namespace Wordless\Adapters;
 
 use Generator;
 use Wordless\Abstractions\InternalCache;
-use Wordless\Contracts\Controller\PermissionsChecks;
+use Wordless\Contracts\Controller\AuthorizationCheck;
 use Wordless\Contracts\Controller\RestingWordPress;
 use Wordless\Contracts\Controller\Routing;
 use Wordless\Contracts\Singleton;
@@ -20,7 +20,7 @@ use WP_REST_Controller;
 
 abstract class WordlessController extends WP_REST_Controller
 {
-    use PermissionsChecks, RestingWordPress, Routing, Singleton;
+    use AuthorizationCheck, RestingWordPress, Routing, Singleton;
 
     protected const DESTROY_REQUEST_CLASS = Request::class;
     protected const INDEX_REQUEST_CLASS = Request::class;
