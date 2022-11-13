@@ -16,7 +16,6 @@ use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
-use Wordless\MyPersonalRequest;
 use WP_REST_Controller;
 
 abstract class WordlessController extends WP_REST_Controller
