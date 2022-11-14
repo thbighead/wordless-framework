@@ -2,6 +2,7 @@
 
 namespace Wordless\Contracts\Controller;
 
+use Wordless\Adapters\AbstractValidatedRequest;
 use Wordless\Adapters\Request;
 use Wordless\Adapters\Response;
 
@@ -19,7 +20,11 @@ trait RestingWordPress
         return $this->destroy($this->request)->respond();
     }
 
-    public function destroy(Request $request): Response
+    /**
+     * @param Request|AbstractValidatedRequest $request
+     * @return Response
+     */
+    public function destroy($request): Response
     {
         return $this->mountNotImplementedError($request);
     }
@@ -36,22 +41,38 @@ trait RestingWordPress
         return $this->index($this->request)->respond();
     }
 
-    public function index(Request $request): Response
+    /**
+     * @param Request|AbstractValidatedRequest $request
+     * @return Response
+     */
+    public function index($request): Response
     {
         return $this->mountNotImplementedError($request);
     }
 
-    public function show(Request $request): Response
+    /**
+     * @param Request|AbstractValidatedRequest $request
+     * @return Response
+     */
+    public function show($request): Response
     {
         return $this->mountNotImplementedError($request);
     }
 
-    public function store(Request $request): Response
+    /**
+     * @param Request|AbstractValidatedRequest $request
+     * @return Response
+     */
+    public function store($request): Response
     {
         return $this->mountNotImplementedError($request);
     }
 
-    public function update(Request $request): Response
+    /**
+     * @param Request|AbstractValidatedRequest $request
+     * @return Response
+     */
+    public function update($request): Response
     {
         return $this->mountNotImplementedError($request);
     }
