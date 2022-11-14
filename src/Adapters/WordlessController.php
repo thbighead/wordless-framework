@@ -23,6 +23,7 @@ abstract class WordlessController extends WP_REST_Controller
     use AuthorizationCheck, RestingWordPress, Routing, Singleton;
 
     protected const DESTROY_REQUEST_CLASS = Request::class;
+    protected const HAS_PERMISSIONS = false;
     protected const INDEX_REQUEST_CLASS = Request::class;
     protected const SHOW_REQUEST_CLASS = Request::class;
     protected const STORE_REQUEST_CLASS = Request::class;
@@ -43,19 +44,11 @@ abstract class WordlessController extends WP_REST_Controller
     private const PUBLIC_SCHEMA_METHOD = 'get_public_item_schema';
 
     private ?User $authenticatedUser;
+    private Request $request;
 
     abstract protected function resourceName(): string;
 
     abstract protected function version(): ?string;
-
-    private function __construct()
-    {
-        $this->namespace = empty($this->version()) ?
-            "/{$this->namespace()}" :
-            "/{$this->namespace()}/{$this->version()}";
-        $this->rest_base = $this->resourceName();
-        $this->setAuthenticatedUser();
-    }
 
     /**
      * @return Generator
@@ -115,6 +108,15 @@ abstract class WordlessController extends WP_REST_Controller
                 yield [$controller_path, $controller_full_namespace];
             }
         }
+    }
+
+    private function __construct()
+    {
+        $this->namespace = empty($this->version()) ?
+            "/{$this->namespace()}" :
+            "/{$this->namespace()}/{$this->version()}";
+        $this->rest_base = $this->resourceName();
+        $this->setAuthenticatedUser();
     }
 
     protected function getAuthenticatedUser(): ?User

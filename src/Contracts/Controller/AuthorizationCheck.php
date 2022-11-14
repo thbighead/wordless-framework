@@ -6,6 +6,7 @@ use Wordless\Adapters\AbstractValidatedRequest;
 use Wordless\Adapters\Request;
 use Wordless\Adapters\Response;
 use Wordless\Adapters\Role;
+use Wordless\Helpers\Arr;
 use WP_Error;
 use WP_REST_Request;
 
@@ -86,15 +87,32 @@ trait AuthorizationCheck
         );
     }
 
-    public function registerCapabilitiesToRole(Role $role)
+    /**
+     * @param Role|Role[] $roles
+     * @return void
+     */
+    final public function registerCapabilitiesToRole($roles)
     {
-        $role->syncCapabilities([
-            $this->deletePermissionName() => true,
-            $this->getItemsPermissionName() => true,
-            $this->getItemPermissionName() => true,
-            $this->createPermissionName() => true,
-            $this->updatePermissionName() => true,
-        ]);
+        if (static::HAS_PERMISSIONS) {
+            $this->syncPermissionsTo($roles);
+        }
+    }
+
+    /**
+     * @param Role|Role[] $roles
+     * @return void
+     */
+    protected function syncPermissionsTo($roles)
+    {
+        foreach (Arr::wrap($roles) as $role) {
+            $role->syncCapabilities([
+                $this->deletePermissionName() => true,
+                $this->getItemsPermissionName() => true,
+                $this->getItemPermissionName() => true,
+                $this->createPermissionName() => true,
+                $this->updatePermissionName() => true,
+            ]);
+        }
     }
 
     private function buildForbiddenContextError(string $missing_capability): WP_Error
@@ -134,6 +152,8 @@ trait AuthorizationCheck
      */
     private function resolveAuthorization(Request $request, string $permission)
     {
+        $this->request = $request;
+
         if (($permissionResult = $this->resolvePermission($permission)) instanceof WP_Error) {
             return $permissionResult;
         }
