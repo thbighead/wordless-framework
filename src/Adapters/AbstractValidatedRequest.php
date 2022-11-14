@@ -41,7 +41,7 @@ abstract class AbstractValidatedRequest extends Request
 
     public function validate(): bool
     {
-        return $this->validateAuthorization() && $this->validateFields();
+        return $this->validateFields();
     }
 
     public function getValidatedField(string $field, $default = null)

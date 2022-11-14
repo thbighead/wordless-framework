@@ -75,6 +75,19 @@ trait Routing
         ], $this->defineCustomRestBaseWithIdRouteParameter());
     }
 
+    protected function routeBaseRegistration(
+        array   $route_details,
+        ?string $custom_rest_base = null,
+        ?string $custom_namespace = null
+    )
+    {
+        register_rest_route(
+            $custom_namespace ?? $this->namespace,
+            $custom_rest_base ?? "/$this->rest_base",
+            $this->mountRouteBaseRegistrationArgs($route_details)
+        );
+    }
+
     private function defineCustomRestBaseWithIdRouteParameter(): string
     {
         return "/$this->rest_base/(?P<id>[\d]+)";
@@ -97,18 +110,5 @@ trait Routing
             // Register our schema callback.
             'schema' => [$this, $this->defineSchemaMethod()],
         ];
-    }
-
-    private function routeBaseRegistration(
-        array   $route_details,
-        ?string $custom_rest_base = null,
-        ?string $custom_namespace = null
-    )
-    {
-        register_rest_route(
-            $custom_namespace ?? $this->namespace,
-            $custom_rest_base ?? "/$this->rest_base",
-            $this->mountRouteBaseRegistrationArgs($route_details)
-        );
     }
 }
