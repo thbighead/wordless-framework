@@ -3,10 +3,12 @@
 namespace Wordless\Adapters;
 
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Wordless\Contracts\Adapter\HeaderBag;
+use Wordless\Helpers\Str;
 use WP_Error;
 use WP_REST_Response;
 
-class Response extends WP_REST_Response
+class Response extends WP_REST_Response implements HeaderBag
 {
     public const HTTP_100_CONTINUE = SymfonyResponse::HTTP_CONTINUE;
     public const HTTP_101_SWITCHING_PROTOCOLS = SymfonyResponse::HTTP_SWITCHING_PROTOCOLS;
@@ -145,9 +147,67 @@ class Response extends WP_REST_Response
         return (new static)->setWpError($http_code, $message, $data);
     }
 
+    public function getHeader(string $key, ?string $default = null): ?string
+    {
+        return $this->headers[$this->canonicalizeHeaderName($key)] ?? $default;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+    public function hasHeader(string $key): bool
+    {
+        return $this->getHeader($key) !== null;
+    }
+
+    public function removeHeader(string $key): Response
+    {
+        if ($this->hasHeader($key)) {
+            unset($this->headers[$this->canonicalizeHeaderName($key)]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function removeHeaders(array $headers): Response
+    {
+        foreach ($headers as $header) {
+            $this->removeHeader($header);
+        }
+
+        return $this;
+    }
+
     public function respond()
     {
         return $this->wpError ?? $this;
+    }
+
+    public function setHeader(string $key, string $value, bool $override = false): Response
+    {
+        $this->header($this->canonicalizeHeaderName($key), $value, $override);
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setHeaders(array $headers, bool $override = false): Response
+    {
+        foreach ($headers as $header_key => $header_value) {
+            $this->setHeader($header_key, $header_value, $override);
+        }
+
+        return $this;
     }
 
     public function setWpError(int $http_code, string $message, array $data = []): Response
@@ -155,5 +215,10 @@ class Response extends WP_REST_Response
         $this->wpError = new WP_Error(self::HTTP_STATUS_TEXTS[$http_code] ?? $http_code, $message, $data);
 
         return $this;
+    }
+
+    private function canonicalizeHeaderName(string $key): string
+    {
+        return Str::slugCase($key);
     }
 }

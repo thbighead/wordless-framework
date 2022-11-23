@@ -84,7 +84,8 @@ trait Routing
         register_rest_route(
             $custom_namespace ?? $this->namespace,
             $custom_rest_base ?? "/$this->rest_base",
-            $this->mountRouteBaseRegistrationArgs($route_details)
+            $this->mountRouteBaseRegistrationArgs($route_details),
+            true
         );
     }
 
