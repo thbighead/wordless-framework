@@ -34,6 +34,11 @@ class Request extends WP_REST_Request implements HeaderBag
         return $this->get_header($key) ?? $default;
     }
 
+    public static function isToRestApi(): bool
+    {
+        return defined('REST_REQUEST');
+    }
+
     /**
      * @inheritdoc
      */

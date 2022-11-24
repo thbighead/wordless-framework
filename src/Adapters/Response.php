@@ -142,6 +142,11 @@ class Response extends WP_REST_Response implements HeaderBag
 
     private ?WP_Error $wpError = null;
 
+    public static function canonicalizeHeaderName(string $key): string
+    {
+        return Str::slugCase($key);
+    }
+
     public static function error(int $http_code, string $message, array $data = []): Response
     {
         return (new static)->setWpError($http_code, $message, $data);
@@ -149,7 +154,7 @@ class Response extends WP_REST_Response implements HeaderBag
 
     public function getHeader(string $key, ?string $default = null): ?string
     {
-        return $this->headers[$this->canonicalizeHeaderName($key)] ?? $default;
+        return $this->headers[self::canonicalizeHeaderName($key)] ?? $default;
     }
 
     /**
@@ -168,7 +173,7 @@ class Response extends WP_REST_Response implements HeaderBag
     public function removeHeader(string $key): Response
     {
         if ($this->hasHeader($key)) {
-            unset($this->headers[$this->canonicalizeHeaderName($key)]);
+            unset($this->headers[self::canonicalizeHeaderName($key)]);
         }
 
         return $this;
@@ -193,7 +198,7 @@ class Response extends WP_REST_Response implements HeaderBag
 
     public function setHeader(string $key, string $value, bool $override = false): Response
     {
-        $this->header($this->canonicalizeHeaderName($key), $value, $override);
+        $this->header(self::canonicalizeHeaderName($key), $value, $override);
 
         return $this;
     }
@@ -215,10 +220,5 @@ class Response extends WP_REST_Response implements HeaderBag
         $this->wpError = new WP_Error(self::HTTP_STATUS_TEXTS[$http_code] ?? $http_code, $message, $data);
 
         return $this;
-    }
-
-    private function canonicalizeHeaderName(string $key): string
-    {
-        return Str::slugCase($key);
     }
 }
