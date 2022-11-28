@@ -2,9 +2,6 @@
 
 namespace Wordless\Contracts\Controller;
 
-use Wordless\Adapters\AbstractValidatedRequest;
-use Wordless\Adapters\Request;
-use Wordless\Adapters\Response;
 use Wordless\Adapters\Role;
 use Wordless\Helpers\Arr;
 use WP_Error;
@@ -18,13 +15,7 @@ trait AuthorizationCheck
      */
     public function create_item_permissions_check($request)
     {
-        /** @var Request $requestClass */
-        $requestClass = static::STORE_REQUEST_CLASS;
-
-        return $this->resolveAuthorization(
-            $requestClass::fromWpRestRequest($request),
-            $this->createPermissionName()
-        );
+        return $this->resolvePermission($this->createPermissionName());
     }
 
     /**
@@ -33,13 +24,7 @@ trait AuthorizationCheck
      */
     public function delete_item_permissions_check($request)
     {
-        /** @var Request $requestClass */
-        $requestClass = static::DESTROY_REQUEST_CLASS;
-
-        return $this->resolveAuthorization(
-            $requestClass::fromWpRestRequest($request),
-            $this->deletePermissionName()
-        );
+        return $this->resolvePermission($this->deletePermissionName());
     }
 
     /**
@@ -48,13 +33,7 @@ trait AuthorizationCheck
      */
     public function get_item_permissions_check($request)
     {
-        /** @var Request $requestClass */
-        $requestClass = static::SHOW_REQUEST_CLASS;
-
-        return $this->resolveAuthorization(
-            $requestClass::fromWpRestRequest($request),
-            $this->getItemPermissionName()
-        );
+        return $this->resolvePermission($this->getItemPermissionName());
     }
 
     /**
@@ -63,13 +42,7 @@ trait AuthorizationCheck
      */
     public function get_items_permissions_check($request)
     {
-        /** @var Request $requestClass */
-        $requestClass = static::INDEX_REQUEST_CLASS;
-
-        return $this->resolveAuthorization(
-            $requestClass::fromWpRestRequest($request),
-            $this->getItemsPermissionName()
-        );
+        return $this->resolvePermission($this->getItemsPermissionName());
     }
 
     /**
@@ -78,13 +51,7 @@ trait AuthorizationCheck
      */
     public function update_item_permissions_check($request)
     {
-        /** @var Request $requestClass */
-        $requestClass = static::UPDATE_REQUEST_CLASS;
-
-        return $this->resolveAuthorization(
-            $requestClass::fromWpRestRequest($request),
-            $this->updatePermissionName()
-        );
+        return $this->resolvePermission($this->updatePermissionName());
     }
 
     /**
@@ -146,49 +113,12 @@ trait AuthorizationCheck
     }
 
     /**
-     * @param Request $request
-     * @param string $permission
-     * @return bool|WP_Error
-     */
-    private function resolveAuthorization(Request $request, string $permission)
-    {
-        $this->request = $request;
-
-        if (($permissionResult = $this->resolvePermission($permission)) instanceof WP_Error) {
-            return $permissionResult;
-        }
-
-        if (!($request instanceof AbstractValidatedRequest)) {
-            return $permissionResult;
-        }
-
-        if (!$request->validate()) {
-            return $this->resolveInvalidRequest($request);
-        }
-
-        return $permissionResult;
-    }
-
-    /**
-     * @param AbstractValidatedRequest $request
-     * @return WP_Error
-     */
-    private function resolveInvalidRequest(AbstractValidatedRequest $request): WP_Error
-    {
-        return new WP_Error(
-            Response::HTTP_422_UNPROCESSABLE_ENTITY,
-            __('The requested data has validation errors.'),
-            $request->getValidatedAsInvalidFields() // TODO recuperar mensagens de erro da ConstraintViolationList
-        );
-    }
-
-    /**
      * @param string $capability
      * @return bool|WP_Error
      */
     private function resolvePermission(string $capability)
     {
-        if (!$this->getAuthenticatedUser()->can($capability)) {
+        if ($this->getAuthenticatedUser() === null || !$this->getAuthenticatedUser()->can($capability)) {
             return $this->buildForbiddenContextError($capability);
         }
 

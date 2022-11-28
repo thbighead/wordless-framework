@@ -5,6 +5,7 @@ namespace Wordless\Adapters;
 use Generator;
 use Wordless\Abstractions\InternalCache;
 use Wordless\Contracts\Controller\AuthorizationCheck;
+use Wordless\Contracts\Controller\ResourceValidation;
 use Wordless\Contracts\Controller\RestingWordPress;
 use Wordless\Contracts\Controller\Routing;
 use Wordless\Contracts\Singleton;
@@ -20,31 +21,23 @@ use WP_REST_Controller;
 
 abstract class WordlessController extends WP_REST_Controller
 {
-    use AuthorizationCheck, RestingWordPress, Routing, Singleton;
+    use AuthorizationCheck, ResourceValidation, RestingWordPress, Routing, Singleton;
 
-    protected const DESTROY_REQUEST_CLASS = Request::class;
     protected const HAS_PERMISSIONS = false;
-    protected const INDEX_REQUEST_CLASS = Request::class;
-    protected const SHOW_REQUEST_CLASS = Request::class;
-    protected const STORE_REQUEST_CLASS = Request::class;
-    protected const UPDATE_REQUEST_CLASS = Request::class;
     private const FORBIDDEN_CONTEXT_CODE = 'rest_forbidden_context';
-    private const FULL_SCHEMA_METHOD = 'get_item_schema';
     private const INVALID_METHOD_CODE = 'invalid-method';
     private const METHOD_NAME_TO_REST_DESTROY_ITEMS = 'delete_item';
     private const METHOD_NAME_TO_REST_INDEX_ITEMS = 'get_items';
     private const METHOD_NAME_TO_REST_SHOW_ITEMS = 'get_item';
     private const METHOD_NAME_TO_REST_STORE_ITEMS = 'create_item';
     private const METHOD_NAME_TO_REST_UPDATE_ITEMS = 'update_item';
-    private const PERMISSION_METHOD_NAME_TO_REST_DESTROY_ITEMS = 'delete_item_permissions_check';
+    private const PERMISSION_METHOD_NAME_TO_REST_DESTROY_ITEM = 'delete_item_permissions_check';
     private const PERMISSION_METHOD_NAME_TO_REST_INDEX_ITEMS = 'get_items_permissions_check';
-    private const PERMISSION_METHOD_NAME_TO_REST_SHOW_ITEMS = 'get_item_permissions_check';
-    private const PERMISSION_METHOD_NAME_TO_REST_STORE_ITEMS = 'create_item_permissions_check';
-    private const PERMISSION_METHOD_NAME_TO_REST_UPDATE_ITEMS = 'update_item_permissions_check';
-    private const PUBLIC_SCHEMA_METHOD = 'get_public_item_schema';
+    private const PERMISSION_METHOD_NAME_TO_REST_SHOW_ITEM = 'get_item_permissions_check';
+    private const PERMISSION_METHOD_NAME_TO_REST_STORE_ITEM = 'create_item_permissions_check';
+    private const PERMISSION_METHOD_NAME_TO_REST_UPDATE_ITEM = 'update_item_permissions_check';
 
     private ?User $authenticatedUser;
-    private Request $request;
 
     abstract protected function resourceName(): string;
 

@@ -2,7 +2,6 @@
 
 namespace Wordless\Contracts\Controller;
 
-use Wordless\Adapters\AbstractValidatedRequest;
 use Wordless\Adapters\Request;
 use Wordless\Adapters\Response;
 
@@ -11,20 +10,20 @@ trait RestingWordPress
     /** @inheritDoc */
     public function create_item($request)
     {
-        return $this->store($this->request)->respond();
+        return $this->store(Request::fromWpRestRequest($request))->respond();
     }
 
     /** @inheritDoc */
     public function delete_item($request)
     {
-        return $this->destroy($this->request)->respond();
+        return $this->destroy(Request::fromWpRestRequest($request))->respond();
     }
 
     /**
-     * @param Request|AbstractValidatedRequest $request
+     * @param Request $request
      * @return Response
      */
-    public function destroy($request): Response
+    public function destroy(Request $request): Response
     {
         return $this->mountNotImplementedError($request);
     }
@@ -32,47 +31,47 @@ trait RestingWordPress
     /** @inheritDoc */
     public function get_item($request)
     {
-        return $this->show($this->request)->respond();
+        return $this->show(Request::fromWpRestRequest($request))->respond();
     }
 
     /** @inheritDoc */
     public function get_items($request)
     {
-        return $this->index($this->request)->respond();
+        return $this->index(Request::fromWpRestRequest($request))->respond();
     }
 
     /**
-     * @param Request|AbstractValidatedRequest $request
+     * @param Request $request
      * @return Response
      */
-    public function index($request): Response
+    public function index(Request $request): Response
     {
         return $this->mountNotImplementedError($request);
     }
 
     /**
-     * @param Request|AbstractValidatedRequest $request
+     * @param Request $request
      * @return Response
      */
-    public function show($request): Response
+    public function show(Request $request): Response
     {
         return $this->mountNotImplementedError($request);
     }
 
     /**
-     * @param Request|AbstractValidatedRequest $request
+     * @param Request $request
      * @return Response
      */
-    public function store($request): Response
+    public function store(Request $request): Response
     {
         return $this->mountNotImplementedError($request);
     }
 
     /**
-     * @param Request|AbstractValidatedRequest $request
+     * @param Request $request
      * @return Response
      */
-    public function update($request): Response
+    public function update(Request $request): Response
     {
         return $this->mountNotImplementedError($request);
     }
@@ -80,7 +79,7 @@ trait RestingWordPress
     /** @inheritDoc */
     public function update_item($request)
     {
-        return $this->update($this->request)->respond();
+        return $this->update(Request::fromWpRestRequest($request))->respond();
     }
 
     private function mountNotImplementedError(Request $request): Response
