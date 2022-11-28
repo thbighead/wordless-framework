@@ -132,9 +132,9 @@ trait AuthorizationCheck
         return "index_{$this->resourceName()}";
     }
 
-    private function isRouteMethodPublic(string $route_method): bool
+    private function isRouteMethodProtectedByAuthentication(string $route_method): bool
     {
-        return static::PUBLIC_METHOD_ROUTES[$route_method] ?? false;
+        return static::AUTHENTICATION_PROTECTED_METHOD_ROUTES[$route_method] ?? false;
     }
 
     /**
@@ -144,7 +144,7 @@ trait AuthorizationCheck
      */
     private function resolvePermission(string $capability, string $route_method)
     {
-        if (!$this->isRouteMethodPublic($route_method) && $this->getAuthenticatedUser() === null) {
+        if ($this->isRouteMethodProtectedByAuthentication($route_method) && $this->getAuthenticatedUser() === null) {
             return $this->buildForbiddenContextError();
         }
 
