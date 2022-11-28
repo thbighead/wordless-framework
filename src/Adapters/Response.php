@@ -217,7 +217,11 @@ class Response extends WP_REST_Response implements HeaderBag
 
     public function setWpError(int $http_code, string $message, array $data = []): Response
     {
-        $this->wpError = new WP_Error(self::HTTP_STATUS_TEXTS[$http_code] ?? $http_code, $message, $data);
+        $this->wpError = new WP_Error(
+            self::HTTP_STATUS_TEXTS[$http_code] ?? $http_code,
+            $message,
+            ['status' => $http_code] + $data
+        );
 
         return $this;
     }
