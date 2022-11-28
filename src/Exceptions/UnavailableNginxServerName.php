@@ -5,7 +5,7 @@ namespace Wordless\Exceptions;
 use Exception;
 use Throwable;
 
-class UnavaibleNginxServerName extends Exception
+class UnavailableNginxServerName extends Exception
 {
      public function __construct(string $message, Throwable $previous = null)
      {

@@ -7,7 +7,6 @@ use Wordless\Abstractions\RolesList;
 use Wordless\Adapters\WordlessCommand;
 use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exceptions\FailedToCreateRole;
-use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WordPressFailedToFindRole;
 

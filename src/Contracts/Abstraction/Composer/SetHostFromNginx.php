@@ -8,7 +8,7 @@ use Wordless\Exceptions\AppHostAlreadySetOnDotEnv;
 use Wordless\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Exceptions\UnavaibleNginxServerName;
+use Wordless\Exceptions\UnavailableNginxServerName;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
@@ -27,7 +27,7 @@ trait SetHostFromNginx
 
         try {
             self::setAppHostValueAtDotEnv(self::getNginxServerNameConfig(), $composerEvent->getIO());
-        } catch (AppHostAlreadySetOnDotEnv|UnavaibleNginxServerName $exception) {
+        } catch (AppHostAlreadySetOnDotEnv|UnavailableNginxServerName $exception) {
             $composerEvent->getIO()->write($exception->getMessage());
         }
     }
@@ -45,7 +45,7 @@ trait SetHostFromNginx
 
     /**
      * @return string
-     * @throws UnavaibleNginxServerName
+     * @throws UnavailableNginxServerName
      */
     private static function getNginxServerNameConfig(): string
     {
@@ -57,14 +57,14 @@ trait SetHostFromNginx
             );
 
             if (!is_string($app_host)) {
-                throw new UnavaibleNginxServerName(
+                throw new UnavailableNginxServerName(
                     "'server_name' not valid into $nginx_config_filepath file. $default_message"
                 );
             }
 
             return $app_host;
         } catch (PathNotFoundException $exception) {
-            throw new UnavaibleNginxServerName("{$exception->getMessage()} $default_message");
+            throw new UnavailableNginxServerName("{$exception->getMessage()} $default_message");
         }
     }
 

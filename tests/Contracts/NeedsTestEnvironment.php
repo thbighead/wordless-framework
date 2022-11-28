@@ -24,6 +24,7 @@ trait NeedsTestEnvironment
     {
         self::loadComposerAutoload();
 
+        /** @noinspection PhpMultipleClassDeclarationsInspection */
         parent::setUpBeforeClass();
 
         self::restartTestEnvironment();
@@ -38,11 +39,13 @@ trait NeedsTestEnvironment
 
     private static function loadComposerAutoload()
     {
+        /** @noinspection PhpIncludeInspection */
         require_once __DIR__ . '/../vendor/autoload.php';
     }
 
     private static function loadWpConfig()
     {
+        /** @noinspection PhpIncludeInspection */
         require_once __DIR__ . '/../test-environment/wp/wp-core/wp-config.php';
     }
 

@@ -36,6 +36,7 @@ interface IMultipleConstructors
      * ]
      *
      * @return string[]
+     * @noinspection SpellCheckingInspection
      */
     public static function constructorsDictionary(): array;
 }

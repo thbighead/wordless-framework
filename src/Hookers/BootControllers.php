@@ -4,7 +4,6 @@ namespace Wordless\Hookers;
 
 use Wordless\Abstractions\AbstractHooker;
 use Wordless\Adapters\WordlessController;
-use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WordPressFailedToFindRole;
 

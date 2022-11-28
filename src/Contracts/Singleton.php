@@ -24,6 +24,7 @@ trait Singleton
     /**
      * @return mixed
      * @throws TryingToUnserializeSingleton
+     * @noinspection PhpUnusedPrivateMethodInspection
      */
     private function __wakeup()
     {
