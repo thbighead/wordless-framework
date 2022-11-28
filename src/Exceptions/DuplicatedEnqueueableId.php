@@ -12,14 +12,14 @@ class DuplicatedEnqueuableId extends Exception
     private string $id;
 
     public function __construct(
-        string    $enqueuableClass,
+        string    $enqueueableClass,
         string    $id,
         string    $enqueueableClassFound,
         Throwable $previous = null
     )
     {
         $this->id = $id;
-        $this->enqueuableClass = $enqueuableClass;
+        $this->enqueuableClass = $enqueueableClass;
         $this->enqueueableClassFound = $enqueueableClassFound;
 
         parent::__construct(
@@ -32,7 +32,7 @@ class DuplicatedEnqueuableId extends Exception
     /**
      * @return string
      */
-    public function getEnqueuableClass(): string
+    public function getEnqueueableClass(): string
     {
         return $this->enqueuableClass;
     }

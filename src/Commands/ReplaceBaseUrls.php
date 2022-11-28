@@ -2,8 +2,8 @@
 
 namespace Wordless\Commands;
 
-use Exception;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,6 +51,7 @@ class ReplaceBaseUrls extends WordlessCommand
 
     /**
      * @return int
+     * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
     protected function runIt(): int
@@ -96,6 +97,7 @@ class ReplaceBaseUrls extends WordlessCommand
 
     /**
      * @return void
+     * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
     private function runDatabaseSearchReplace()
@@ -109,7 +111,7 @@ class ReplaceBaseUrls extends WordlessCommand
      * @param string $command
      * @return void
      * @throws WpCliCommandReturnedNonZero
-     * @throws Exception
+     * @throws ExceptionInterface
      */
     private function runWpCliCommand(string $command): void
     {

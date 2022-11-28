@@ -3,8 +3,7 @@
 namespace Wordless\Abstractions;
 
 use InvalidArgumentException;
-use Wordless\Exceptions\DuplicatedEnqueuableId;
-use Wordless\Exceptions\InternalCacheNotLoaded;
+use Wordless\Exceptions\DuplicatedEnqueueableId;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
 use Wordless\Helpers\Str;
@@ -30,7 +29,7 @@ abstract class AbstractEnqueueableElement
      * @param string $relative_file_path
      * @param array $dependencies
      * @param string|null $version
-     * @throws DuplicatedEnqueuableId
+     * @throws DuplicatedEnqueueableId
      */
     public function __construct(
         string  $id,
@@ -49,7 +48,6 @@ abstract class AbstractEnqueueableElement
     /**
      * @return void
      * @throws PathNotFoundException
-     * @throws InternalCacheNotLoaded
      */
     public static function enqueueAll(): void
     {
@@ -78,7 +76,7 @@ abstract class AbstractEnqueueableElement
     /**
      * @param string $id
      * @return void
-     * @throws DuplicatedEnqueuableId
+     * @throws DuplicatedEnqueueableId
      */
     protected function setId(string $id): void
     {
@@ -86,8 +84,8 @@ abstract class AbstractEnqueueableElement
             throw new InvalidArgumentException(static::class . ' must have a non-empty id');
         }
 
-        if ($foundEnqueuableClass = static::$ids_pool[$id] ?? '') {
-            throw new DuplicatedEnqueuableId(static::class, $id, $foundEnqueuableClass);
+        if ($foundEnqueueableClass = static::$ids_pool[$id] ?? '') {
+            throw new DuplicatedEnqueueableId(static::class, $id, $foundEnqueueableClass);
         }
 
         static::$ids_pool[$id] = true;

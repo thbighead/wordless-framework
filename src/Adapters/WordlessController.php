@@ -126,7 +126,7 @@ abstract class WordlessController extends WP_REST_Controller
     {
         try {
             $this->authenticatedUser = new User;
-        } catch (NoUserAuthenticated $exception) {
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (NoUserAuthenticated $exception) {
             $this->authenticatedUser = null;
         }
     }
