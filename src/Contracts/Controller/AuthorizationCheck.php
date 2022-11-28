@@ -17,7 +17,7 @@ trait AuthorizationCheck
     {
         return $this->resolvePermission(
             $this->createPermissionName(),
-            static::METHOD_NAME_TO_REST_STORE_ITEM
+            self::METHOD_NAME_TO_REST_STORE_ITEM
         );
     }
 
@@ -29,7 +29,7 @@ trait AuthorizationCheck
     {
         return $this->resolvePermission(
             $this->deletePermissionName(),
-            static::METHOD_NAME_TO_REST_DESTROY_ITEM
+            self::METHOD_NAME_TO_REST_DESTROY_ITEM
         );
     }
 
@@ -41,7 +41,7 @@ trait AuthorizationCheck
     {
         return $this->resolvePermission(
             $this->getItemPermissionName(),
-            static::METHOD_NAME_TO_REST_SHOW_ITEM
+            self::METHOD_NAME_TO_REST_SHOW_ITEM
         );
     }
 
@@ -53,7 +53,7 @@ trait AuthorizationCheck
     {
         return $this->resolvePermission(
             $this->getItemsPermissionName(),
-            static::METHOD_NAME_TO_REST_INDEX_ITEMS
+            self::METHOD_NAME_TO_REST_INDEX_ITEMS
         );
     }
 
@@ -65,7 +65,7 @@ trait AuthorizationCheck
     {
         return $this->resolvePermission(
             $this->updatePermissionName(),
-            static::METHOD_NAME_TO_REST_UPDATE_ITEM
+            self::METHOD_NAME_TO_REST_UPDATE_ITEM
         );
     }
 

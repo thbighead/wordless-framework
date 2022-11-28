@@ -4,6 +4,7 @@ namespace Wordless\Contracts\Controller;
 
 use Wordless\Adapters\Request;
 use Wordless\Adapters\Response;
+use Wordless\Helpers\Debugger;
 
 trait RestingWordPress
 {
@@ -85,8 +86,11 @@ trait RestingWordPress
     private function mountNotImplementedError(Request $request): Response
     {
         return Response::error(
-            Response::HTTP_405_METHOD_NOT_ALLOWED,
-            sprintf(__('Method \'%s\' not implemented. Must be overridden in subclass.'), __METHOD__),
+            Response::HTTP_404_NOT_FOUND,
+            sprintf(
+                __('Method \'%s\' not implemented. Must be overridden in subclass.'),
+                Debugger::calledFrom()
+            ),
             $request->get_params()
         );
     }

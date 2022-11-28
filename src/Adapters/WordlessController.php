@@ -23,7 +23,6 @@ abstract class WordlessController extends WP_REST_Controller
 {
     use AuthorizationCheck, ResourceValidation, RestingWordPress, Routing, Singleton;
 
-    protected const HAS_PERMISSIONS = false;
     /** @var bool[] */
     protected const AUTHENTICATION_PROTECTED_METHOD_ROUTES = [
         self::METHOD_NAME_TO_REST_DESTROY_ITEM => true,
@@ -31,7 +30,13 @@ abstract class WordlessController extends WP_REST_Controller
         self::METHOD_NAME_TO_REST_SHOW_ITEM => true,
         self::METHOD_NAME_TO_REST_STORE_ITEM => true,
         self::METHOD_NAME_TO_REST_UPDATE_ITEM => true,
+        'destroy' => true,
+        'index' => true,
+        'show' => true,
+        'store' => true,
+        'update' => true,
     ];
+    protected const HAS_PERMISSIONS = false;
     private const FORBIDDEN_CONTEXT_CODE = 'rest_forbidden_context';
     private const INVALID_METHOD_CODE = 'invalid-method';
     private const METHOD_NAME_TO_REST_DESTROY_ITEM = 'delete_item';
