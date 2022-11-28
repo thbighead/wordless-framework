@@ -15,7 +15,10 @@ trait AuthorizationCheck
      */
     public function create_item_permissions_check($request)
     {
-        return $this->resolvePermission($this->createPermissionName());
+        return $this->resolvePermission(
+            $this->createPermissionName(),
+            static::METHOD_NAME_TO_REST_STORE_ITEM
+        );
     }
 
     /**
@@ -24,7 +27,10 @@ trait AuthorizationCheck
      */
     public function delete_item_permissions_check($request)
     {
-        return $this->resolvePermission($this->deletePermissionName());
+        return $this->resolvePermission(
+            $this->deletePermissionName(),
+            static::METHOD_NAME_TO_REST_DESTROY_ITEM
+        );
     }
 
     /**
@@ -33,7 +39,10 @@ trait AuthorizationCheck
      */
     public function get_item_permissions_check($request)
     {
-        return $this->resolvePermission($this->getItemPermissionName());
+        return $this->resolvePermission(
+            $this->getItemPermissionName(),
+            static::METHOD_NAME_TO_REST_SHOW_ITEM
+        );
     }
 
     /**
@@ -42,7 +51,10 @@ trait AuthorizationCheck
      */
     public function get_items_permissions_check($request)
     {
-        return $this->resolvePermission($this->getItemsPermissionName());
+        return $this->resolvePermission(
+            $this->getItemsPermissionName(),
+            static::METHOD_NAME_TO_REST_INDEX_ITEMS
+        );
     }
 
     /**
@@ -51,7 +63,10 @@ trait AuthorizationCheck
      */
     public function update_item_permissions_check($request)
     {
-        return $this->resolvePermission($this->updatePermissionName());
+        return $this->resolvePermission(
+            $this->updatePermissionName(),
+            static::METHOD_NAME_TO_REST_UPDATE_ITEM
+        );
     }
 
     /**
@@ -82,12 +97,17 @@ trait AuthorizationCheck
         }
     }
 
-    private function buildForbiddenContextError(string $missing_capability): WP_Error
+    private function buildForbiddenContextError(?string $missing_capability = null): WP_Error
     {
+        $message = __('Sorry, you are not allowed to edit posts in this post type.');
+
+        if (!empty($missing_capability)) {
+            $message .= sprintf(__(' Missing capability \'%s\'.'), $missing_capability);
+        }
+
         return new WP_Error(
             self::FORBIDDEN_CONTEXT_CODE,
-            __('Sorry, you are not allowed to edit posts in this post type.')
-            . sprintf(__(' Missing capability \'%s\'.'), $missing_capability),
+            $message,
             ['status' => rest_authorization_required_code()]
         );
     }
@@ -112,13 +132,23 @@ trait AuthorizationCheck
         return "index_{$this->resourceName()}";
     }
 
+    private function isRouteMethodPublic(string $route_method): bool
+    {
+        return static::PUBLIC_METHOD_ROUTES[$route_method] ?? false;
+    }
+
     /**
      * @param string $capability
+     * @param string $route_method
      * @return bool|WP_Error
      */
-    private function resolvePermission(string $capability)
+    private function resolvePermission(string $capability, string $route_method)
     {
-        if ($this->getAuthenticatedUser() === null || !$this->getAuthenticatedUser()->can($capability)) {
+        if (!$this->isRouteMethodPublic($route_method) && $this->getAuthenticatedUser() === null) {
+            return $this->buildForbiddenContextError();
+        }
+
+        if (static::HAS_PERMISSIONS && !$this->getAuthenticatedUser()->can($capability)) {
             return $this->buildForbiddenContextError($capability);
         }
 

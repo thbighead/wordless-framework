@@ -19,7 +19,7 @@ trait Routing
     {
         $this->routeBaseRegistration([
             'methods' => Request::HTTP_DELETE,
-            'callback' => [$this, self::METHOD_NAME_TO_REST_DESTROY_ITEMS],
+            'callback' => [$this, self::METHOD_NAME_TO_REST_DESTROY_ITEM],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_DESTROY_ITEM],
             'args' => [
                 'force' => [
@@ -46,7 +46,7 @@ trait Routing
     {
         $this->routeBaseRegistration([
             'methods' => Request::HTTP_GET,
-            'callback' => [$this, self::METHOD_NAME_TO_REST_SHOW_ITEMS],
+            'callback' => [$this, self::METHOD_NAME_TO_REST_SHOW_ITEM],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_SHOW_ITEM],
             'args' => [
                     'context' => $this->get_context_param(['default' => 'view']),
@@ -58,7 +58,7 @@ trait Routing
     {
         $this->routeBaseRegistration([
             'methods' => Request::HTTP_POST,
-            'callback' => [$this, self::METHOD_NAME_TO_REST_STORE_ITEMS],
+            'callback' => [$this, self::METHOD_NAME_TO_REST_STORE_ITEM],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_STORE_ITEM],
             'args' => $this->get_collection_params()
                 + $this->mountRequestArgumentValidationArray($this->validateResourceStore()),
@@ -69,7 +69,7 @@ trait Routing
     {
         $this->routeBaseRegistration([
             'methods' => Request::EDITABLE,
-            'callback' => [$this, self::METHOD_NAME_TO_REST_UPDATE_ITEMS],
+            'callback' => [$this, self::METHOD_NAME_TO_REST_UPDATE_ITEM],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_UPDATE_ITEM],
             'args' => $this->get_endpoint_args_for_item_schema(Request::EDITABLE)
                 + $this->mountRequestArgumentValidationArray($this->validateResourceUpdate()),
@@ -85,8 +85,7 @@ trait Routing
         register_rest_route(
             $custom_namespace ?? $this->namespace,
             $custom_rest_base ?? "/$this->rest_base",
-            $route_details,
-            true
+            $route_details
         );
     }
 

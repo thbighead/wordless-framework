@@ -24,13 +24,14 @@ abstract class WordlessController extends WP_REST_Controller
     use AuthorizationCheck, ResourceValidation, RestingWordPress, Routing, Singleton;
 
     protected const HAS_PERMISSIONS = false;
+    protected const PUBLIC_METHOD_ROUTES = [];
     private const FORBIDDEN_CONTEXT_CODE = 'rest_forbidden_context';
     private const INVALID_METHOD_CODE = 'invalid-method';
-    private const METHOD_NAME_TO_REST_DESTROY_ITEMS = 'delete_item';
+    private const METHOD_NAME_TO_REST_DESTROY_ITEM = 'delete_item';
     private const METHOD_NAME_TO_REST_INDEX_ITEMS = 'get_items';
-    private const METHOD_NAME_TO_REST_SHOW_ITEMS = 'get_item';
-    private const METHOD_NAME_TO_REST_STORE_ITEMS = 'create_item';
-    private const METHOD_NAME_TO_REST_UPDATE_ITEMS = 'update_item';
+    private const METHOD_NAME_TO_REST_SHOW_ITEM = 'get_item';
+    private const METHOD_NAME_TO_REST_STORE_ITEM = 'create_item';
+    private const METHOD_NAME_TO_REST_UPDATE_ITEM = 'update_item';
     private const PERMISSION_METHOD_NAME_TO_REST_DESTROY_ITEM = 'delete_item_permissions_check';
     private const PERMISSION_METHOD_NAME_TO_REST_INDEX_ITEMS = 'get_items_permissions_check';
     private const PERMISSION_METHOD_NAME_TO_REST_SHOW_ITEM = 'get_item_permissions_check';
