@@ -76,10 +76,10 @@ class Bootstrapper
      */
     private static function resolveMenus(array $menus_config)
     {
-        $registerable_nav_menus = [];
+        $registrable_nav_menus = [];
 
         foreach ($menus_config as $menuClass) {
-            if ($menuFound = ($registerable_nav_menus[$menuClass::id()] ?? false)) {
+            if ($menuFound = ($registrable_nav_menus[$menuClass::id()] ?? false)) {
                 throw new DuplicatedMenuId($menuClass, $menuClass::id(), $menuFound);
             }
 
@@ -87,10 +87,10 @@ class Bootstrapper
                 throw new InvalidMenuClass($menuClass);
             }
 
-            $registerable_nav_menus[$menuClass::id()] = esc_html__($menuClass::name());
+            $registrable_nav_menus[$menuClass::id()] = esc_html__($menuClass::name());
         }
 
-        register_nav_menus($registerable_nav_menus);
+        register_nav_menus($registrable_nav_menus);
     }
 
     private static function resolveRemovableHooks(array $removable_hooks)

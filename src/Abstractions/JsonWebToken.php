@@ -90,7 +90,7 @@ class JsonWebToken implements IMultipleConstructors
     /**
      * @param string|null $key
      * @param $default
-     * @return mixed|array|null
+     * @return int|string|bool|array|null
      */
     public function getDecodedHeader(?string $key = null, $default = null)
     {
@@ -106,7 +106,7 @@ class JsonWebToken implements IMultipleConstructors
     /**
      * @param string|null $key
      * @param $default
-     * @return mixed|array|null
+     * @return int|string|bool|array|null
      */
     public function getDecodedPayload(?string $key = null, $default = null)
     {
@@ -179,7 +179,7 @@ class JsonWebToken implements IMultipleConstructors
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws PathNotFoundException
      */
-    private function buildJwt(array $payload, ?string $crypto_strategy = null)
+    protected function buildJwt(array $payload, ?string $crypto_strategy = null)
     {
         $builder = new Builder(new JoseEncoder, (new ChainedFormatter));
         $crypto_strategy = $crypto_strategy ?? Config::get('jwt.' . self::CONFIG_DEFAULT_CRYPTO);

@@ -3,9 +3,8 @@
 namespace Wordless\Abstractions\EnqueueableElements;
 
 use Wordless\Abstractions\AbstractEnqueueableElement;
-use Wordless\Exceptions\DuplicatedEnqueuableId;
+use Wordless\Exceptions\DuplicatedEnqueueableId;
 use Wordless\Exceptions\InvalidMediaOption;
-use Wordless\Exceptions\PathNotFoundException;
 
 class EnqueueableStyle extends AbstractEnqueueableElement
 {
@@ -31,7 +30,7 @@ class EnqueueableStyle extends AbstractEnqueueableElement
      * @param array $dependencies
      * @param string|null $version
      * @param string $media
-     * @throws DuplicatedEnqueuableId
+     * @throws DuplicatedEnqueueableId
      * @throws InvalidMediaOption
      */
     public function __construct(
@@ -46,10 +45,6 @@ class EnqueueableStyle extends AbstractEnqueueableElement
         $this->setMedia($media);
     }
 
-    /**
-     * @return void
-     * @throws PathNotFoundException
-     */
     public function enqueue(): void
     {
         wp_enqueue_style($this->id, $this->filepath(), $this->dependencies, $this->version(), $this->media());
@@ -63,7 +58,7 @@ class EnqueueableStyle extends AbstractEnqueueableElement
     /**
      * @param string $id
      * @return void
-     * @throws DuplicatedEnqueuableId
+     * @throws DuplicatedEnqueueableId
      */
     protected function setId(string $id): void
     {

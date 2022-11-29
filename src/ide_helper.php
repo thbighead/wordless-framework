@@ -9,7 +9,8 @@ use Wordless\Contracts\MultipleConstructors;
 
 const INTERNAL_WORDLESS_CACHE = [];
 
-class MarkMultipleConstructorsWithNecessaryConstantsToSuppressLintError implements IMultipleConstructors {
+class MarkMultipleConstructorsWithNecessaryConstantsToSuppressLintError implements IMultipleConstructors
+{
     use MultipleConstructors;
 
     public static function constructorsDictionary(): array

@@ -5,25 +5,25 @@ namespace Wordless\Exceptions;
 use Exception;
 use Throwable;
 
-class DuplicatedEnqueuableId extends Exception
+class DuplicatedEnqueueableId extends Exception
 {
-    private string $enqueuableClass;
+    private string $enqueueableClass;
     private string $enqueueableClassFound;
     private string $id;
 
     public function __construct(
-        string    $enqueuableClass,
+        string    $enqueueableClass,
         string    $id,
         string    $enqueueableClassFound,
         Throwable $previous = null
     )
     {
         $this->id = $id;
-        $this->enqueuableClass = $enqueuableClass;
+        $this->enqueueableClass = $enqueueableClass;
         $this->enqueueableClassFound = $enqueueableClassFound;
 
         parent::__construct(
-            "Class $this->enqueuableClass duplicates id $this->id of $this->enqueueableClassFound.",
+            "Class $this->enqueueableClass duplicates id $this->id of $this->enqueueableClassFound.",
             0,
             $previous
         );
@@ -32,9 +32,9 @@ class DuplicatedEnqueuableId extends Exception
     /**
      * @return string
      */
-    public function getEnqueuableClass(): string
+    public function getEnqueueableClass(): string
     {
-        return $this->enqueuableClass;
+        return $this->enqueueableClass;
     }
 
     /**

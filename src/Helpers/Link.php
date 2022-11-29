@@ -3,7 +3,6 @@
 namespace Wordless\Helpers;
 
 use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\Environment;
 
 class Link
 {

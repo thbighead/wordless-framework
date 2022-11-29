@@ -33,6 +33,17 @@ class User extends WP_User
         return $this->has_cap($capability, ...$for_id);
     }
 
+    public function toArray(): array
+    {
+        $user_as_array = $this->to_array();
+
+        if (!empty($this->getAcfs())) {
+            $user_as_array['acfs'] = $this->getAcfs();
+        }
+
+        return $user_as_array;
+    }
+
     private function loadUserAcfs(int $from_id)
     {
         $this->loadAcfs("user_$from_id");
