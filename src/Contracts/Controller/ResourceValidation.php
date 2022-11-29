@@ -64,7 +64,7 @@ trait ResourceValidation
 
         foreach ($argumentsValidations as $argumentValidations) {
             $arguments_validations[$argumentValidations->getArgumentName()] =
-                $argumentValidations->getArrayForm($this->validator);
+                $argumentValidations->getArrayForm($this->getValidator());
         }
 
         return $arguments_validations;

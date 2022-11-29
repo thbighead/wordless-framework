@@ -19,6 +19,11 @@ class ArgumentValidation
     ];
     private array $validationRules;
 
+    public static function mount(string $argument_name, array $validationRules): self
+    {
+        return new static($argument_name, $validationRules);
+    }
+
     /**
      * @param string $argument_name
      * @param Constraint[] $validationRules
