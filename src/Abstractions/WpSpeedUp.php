@@ -2,12 +2,12 @@
 
 namespace Wordless\Abstractions;
 
+use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Helpers\Config;
 use Wordless\Hookers\RemoveAdditionalCssFromAdmin;
 use Wordless\Hookers\RemoveEmojiFromTinyMce;
 use Wordless\Hookers\RemoveEmojiFromWpResourceHints;
 use Wordless\Hookers\RemoveGlobalCustomInlineStyles;
-use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\Config;
 
 class WpSpeedUp
 {

@@ -6,13 +6,13 @@ use Wordless\Hookers\AllowSvgUpload;
 use Wordless\Hookers\BootControllers;
 use Wordless\Hookers\BootCustomPostTypes;
 use Wordless\Hookers\BootHttpRemoteCallsLog;
+use Wordless\Hookers\ChooseImageEditor;
 use Wordless\Hookers\DeferEnqueuedScripts;
+use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Hookers\EnqueueThemeEnqueueables;
 use Wordless\Hookers\ForceXmlTagToUploadedSvgFiles;
 use Wordless\Hookers\HideDiagnosticsFromUserRoles;
 use Wordless\Hookers\HooksDebugLog;
-use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
-use Wordless\Hookers\ChooseImageEditor;
 use Wordless\Hookers\WordlessVersionOnAdmin;
 
 return [

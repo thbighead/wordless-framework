@@ -4,20 +4,43 @@ namespace Wordless\Contracts\Controller;
 
 use Wordless\Adapters\Request;
 use Wordless\Adapters\Response;
+use Wordless\Exceptions\ValidationError;
 use Wordless\Helpers\Debugger;
+use WP_Error;
+use WP_REST_Request;
 
 trait RestingWordPress
 {
-    /** @inheritDoc */
+    /**
+     * @param WP_REST_Request $request
+     * @return Response|WP_Error
+     */
     public function create_item($request)
     {
-        return $this->store(Request::fromWpRestRequest($request))->respond();
+        try {
+            return $this->store(Request::fromWpRestRequest(
+                $request,
+                $this->validateArguments($this->validateResourceStore(), $request->get_params())
+            ))->respond();
+        } catch (ValidationError $exception) {
+            return $exception->getResponse()->respond();
+        }
     }
 
-    /** @inheritDoc */
+    /**
+     * @param WP_REST_Request $request
+     * @return Response|WP_Error
+     */
     public function delete_item($request)
     {
-        return $this->destroy(Request::fromWpRestRequest($request))->respond();
+        try {
+            return $this->destroy(Request::fromWpRestRequest(
+                $request,
+                $this->validateArguments($this->validateResourceDestroy(), $request->get_params())
+            ))->respond();
+        } catch (ValidationError $exception) {
+            return $exception->getResponse()->respond();
+        }
     }
 
     /**
@@ -29,16 +52,36 @@ trait RestingWordPress
         return $this->mountNotImplementedError($request);
     }
 
-    /** @inheritDoc */
+    /**
+     * @param WP_REST_Request $request
+     * @return Response|WP_Error
+     */
     public function get_item($request)
     {
-        return $this->show(Request::fromWpRestRequest($request))->respond();
+        try {
+            return $this->show(Request::fromWpRestRequest(
+                $request,
+                $this->validateArguments($this->validateResourceShow(), $request->get_params())
+            ))->respond();
+        } catch (ValidationError $exception) {
+            return $exception->getResponse()->respond();
+        }
     }
 
-    /** @inheritDoc */
+    /**
+     * @param WP_REST_Request $request
+     * @return Response|WP_Error
+     */
     public function get_items($request)
     {
-        return $this->index(Request::fromWpRestRequest($request))->respond();
+        try {
+            return $this->index(Request::fromWpRestRequest(
+                $request,
+                $this->validateArguments($this->validateResourceIndex(), $request->get_params())
+            ))->respond();
+        } catch (ValidationError $exception) {
+            return $exception->getResponse()->respond();
+        }
     }
 
     /**
@@ -77,10 +120,20 @@ trait RestingWordPress
         return $this->mountNotImplementedError($request);
     }
 
-    /** @inheritDoc */
+    /**
+     * @param WP_REST_Request $request
+     * @return Response|WP_Error
+     */
     public function update_item($request)
     {
-        return $this->update(Request::fromWpRestRequest($request))->respond();
+        try {
+            return $this->update(Request::fromWpRestRequest(
+                $request,
+                $this->validateArguments($this->validateResourceUpdate(), $request->get_params())
+            ))->respond();
+        } catch (ValidationError $exception) {
+            return $exception->getResponse()->respond();
+        }
     }
 
     private function mountNotImplementedError(Request $request): Response

@@ -20,13 +20,33 @@ class Request extends WP_REST_Request implements HeaderBag
     public const HTTP_PURGE = SymfonyRequest::METHOD_PURGE;
     public const HTTP_TRACE = SymfonyRequest::METHOD_TRACE;
 
+    /** @var array<string, mixed> $validated_fields */
+    protected array $validated_fields;
+
     /**
      * @param WP_REST_Request $wpRestRequest
-     * @return static
+     * @param array<string, mixed> $validated_fields
+     * @return Request
      */
-    public static function fromWpRestRequest(WP_REST_Request $wpRestRequest): Request
+    public static function fromWpRestRequest(WP_REST_Request $wpRestRequest, array $validated_fields): Request
     {
-        return new static($wpRestRequest->method, $wpRestRequest->route, $wpRestRequest->attributes);
+        return new static(
+            $validated_fields,
+            $wpRestRequest->method,
+            $wpRestRequest->route,
+            $wpRestRequest->attributes
+        );
+    }
+
+    public function __construct(
+        array  $validated_fields,
+        string $method = '',
+        string $route = '',
+        array  $attributes = []
+    )
+    {
+        parent::__construct($method, $route, $attributes);
+        $this->validated_fields = $validated_fields;
     }
 
     public function getHeader(string $key, ?string $default = null): ?string
@@ -45,6 +65,15 @@ class Request extends WP_REST_Request implements HeaderBag
     public function getHeaders(): array
     {
         return $this->get_headers();
+    }
+
+    public function getValidParam(?string $param = null, $default = null)
+    {
+        if ($param === null) {
+            return $this->validated_fields;
+        }
+
+        return $this->validated_fields[$param] ?? $default;
     }
 
     public function hasHeader(string $key): bool

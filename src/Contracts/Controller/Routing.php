@@ -23,10 +23,10 @@ trait Routing
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_DESTROY_ITEM],
             'args' => [
                 'force' => [
-                        'type' => 'boolean',
-                        'default' => false,
-                        'description' => __('Whether to bypass Trash and force deletion.'),
-                    ] + $this->mountRequestArgumentValidationArray($this->validateResourceDestroy()),
+                    'type' => 'boolean',
+                    'default' => false,
+                    'description' => __('Whether to bypass Trash and force deletion.'),
+                ],
             ],
         ], $this->defineCustomRestBaseWithIdRouteParameter());
     }
@@ -37,8 +37,7 @@ trait Routing
             'methods' => Request::HTTP_GET,
             'callback' => [$this, self::METHOD_NAME_TO_REST_INDEX_ITEMS],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_INDEX_ITEMS],
-            'args' => $this->get_collection_params()
-                + $this->mountRequestArgumentValidationArray($this->validateResourceIndex()),
+            'args' => $this->get_collection_params(),
         ]);
     }
 
@@ -49,8 +48,8 @@ trait Routing
             'callback' => [$this, self::METHOD_NAME_TO_REST_SHOW_ITEM],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_SHOW_ITEM],
             'args' => [
-                    'context' => $this->get_context_param(['default' => 'view']),
-                ] + $this->mountRequestArgumentValidationArray($this->validateResourceShow()),
+                'context' => $this->get_context_param(['default' => 'view']),
+            ],
         ], $this->defineCustomRestBaseWithIdRouteParameter());
     }
 
@@ -60,8 +59,7 @@ trait Routing
             'methods' => Request::HTTP_POST,
             'callback' => [$this, self::METHOD_NAME_TO_REST_STORE_ITEM],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_STORE_ITEM],
-            'args' => $this->get_collection_params()
-                + $this->mountRequestArgumentValidationArray($this->validateResourceStore()),
+            'args' => $this->get_collection_params(),
         ]);
     }
 
@@ -71,8 +69,7 @@ trait Routing
             'methods' => Request::EDITABLE,
             'callback' => [$this, self::METHOD_NAME_TO_REST_UPDATE_ITEM],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_UPDATE_ITEM],
-            'args' => $this->get_endpoint_args_for_item_schema(Request::EDITABLE)
-                + $this->mountRequestArgumentValidationArray($this->validateResourceUpdate()),
+            'args' => $this->get_endpoint_args_for_item_schema(Request::EDITABLE),
         ], $this->defineCustomRestBaseWithIdRouteParameter());
     }
 

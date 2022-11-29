@@ -69,8 +69,8 @@ trait SetHostFromNginx
     }
 
     private static function replaceAppHost(
-        string $dot_env_filepath,
-        string $app_host_value,
+        string      $dot_env_filepath,
+        string      $app_host_value,
         IOInterface $composerIo
     ): string
     {

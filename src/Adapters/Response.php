@@ -139,6 +139,7 @@ class Response extends WP_REST_Response implements HeaderBag
         self::HTTP_510_NOT_EXTENDED => 'Not Extended', // RFC2774
         self::HTTP_511_NETWORK_AUTHENTICATION_REQUIRED => 'Network Authentication Required', // RFC6585
     ];
+    private const DATA_KEY_STATUS = 'status';
 
     private ?WP_Error $wpError = null;
 
@@ -217,10 +218,15 @@ class Response extends WP_REST_Response implements HeaderBag
 
     public function setWpError(int $http_code, string $message, array $data = []): Response
     {
+        if (isset($data[self::DATA_KEY_STATUS])) {
+            $data['resource_' . self::DATA_KEY_STATUS] = $data[self::DATA_KEY_STATUS];
+            unset($data[self::DATA_KEY_STATUS]);
+        }
+
         $this->wpError = new WP_Error(
             self::HTTP_STATUS_TEXTS[$http_code] ?? $http_code,
             $message,
-            ['status' => $http_code] + $data
+            [self::DATA_KEY_STATUS => $http_code] + $data
         );
 
         return $this;

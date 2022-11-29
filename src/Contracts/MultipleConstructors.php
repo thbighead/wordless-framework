@@ -31,11 +31,13 @@ trait MultipleConstructors
 
     private static function guessConstructor(array $parsed_arguments): string
     {
-        return Str::startWith(static::constructorsDictionary()[
-            $parsed_arguments[self::PARSED_ARGUMENTS_NUMBER_OF_ARGUMENTS_KEY]
-        ][
-            $parsed_arguments[self::PARSED_ARGUMENTS_ARGUMENTS_TYPES_KEY]
-        ] ?? $parsed_arguments[self::PARSED_ARGUMENTS_NUMBER_OF_ARGUMENTS_KEY], '__construct');
+        $number_of_arguments = $parsed_arguments[self::PARSED_ARGUMENTS_NUMBER_OF_ARGUMENTS_KEY];
+        $arguments_types = $parsed_arguments[self::PARSED_ARGUMENTS_ARGUMENTS_TYPES_KEY];
+
+        return Str::startWith(
+            static::constructorsDictionary()[$number_of_arguments][$arguments_types] ?? $number_of_arguments,
+            '__construct'
+        );
     }
 
     private static function parseArguments(array $arguments): array

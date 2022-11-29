@@ -2,8 +2,9 @@
 
 namespace Wordless\Contracts\Controller;
 
-use Wordless\Abstractions\DTO\ArgumentValidation;
+use Symfony\Component\Validator\Constraint;
 use Wordless\Adapters\Validator;
+use Wordless\Exceptions\ValidationError;
 
 trait ResourceValidation
 {
@@ -15,7 +16,7 @@ trait ResourceValidation
     }
 
     /**
-     * @return ArgumentValidation[]
+     * @return array<string, Constraint[]>
      */
     protected function validateResourceDestroy(): array
     {
@@ -23,7 +24,7 @@ trait ResourceValidation
     }
 
     /**
-     * @return ArgumentValidation[]
+     * @return array<string, Constraint[]>
      */
     protected function validateResourceIndex(): array
     {
@@ -31,7 +32,7 @@ trait ResourceValidation
     }
 
     /**
-     * @return ArgumentValidation[]
+     * @return array<string, Constraint[]>
      */
     protected function validateResourceShow(): array
     {
@@ -39,7 +40,7 @@ trait ResourceValidation
     }
 
     /**
-     * @return ArgumentValidation[]
+     * @return array<string, Constraint[]>
      */
     protected function validateResourceStore(): array
     {
@@ -47,7 +48,7 @@ trait ResourceValidation
     }
 
     /**
-     * @return ArgumentValidation[]
+     * @return array<string, Constraint[]>
      */
     protected function validateResourceUpdate(): array
     {
@@ -55,18 +56,25 @@ trait ResourceValidation
     }
 
     /**
-     * @param ArgumentValidation[] $argumentsValidations
-     * @return array
+     * @param array<string, Constraint[]> $validationRules
+     * @param array<string, mixed> $arguments
+     * @return array<string, mixed>
+     * @throws ValidationError
      */
-    final protected function mountRequestArgumentValidationArray(array $argumentsValidations): array
+    final protected function validateArguments(array $validationRules, array $arguments): array
     {
-        $arguments_validations = [];
+        $validated = [];
 
-        foreach ($argumentsValidations as $argumentValidations) {
-            $arguments_validations[$argumentValidations->getArgumentName()] =
-                $argumentValidations->getArrayForm($this->getValidator());
+        foreach ($validationRules as $field => $rules) {
+            $this->getValidator()->validateField($field, $field_value = $arguments[$field] ?? null, $rules);
+
+            $validated[$field] = $field_value;
         }
 
-        return $arguments_validations;
+        if ($this->getValidator()->hasErrors()) {
+            throw new ValidationError($this->getValidator()->mountViolationsMessagesByField());
+        }
+
+        return $validated;
     }
 }
