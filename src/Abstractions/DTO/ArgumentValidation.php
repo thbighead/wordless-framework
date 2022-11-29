@@ -3,7 +3,9 @@
 namespace Wordless\Abstractions\DTO;
 
 use Symfony\Component\Validator\Constraint;
+use Wordless\Adapters\Response;
 use Wordless\Adapters\Validator;
+use Wordless\Helpers\Debugger;
 use WP_REST_Request;
 
 class ArgumentValidation
@@ -80,12 +82,22 @@ class ArgumentValidation
             $argument_value,
             WP_REST_Request $request,
             string $argument_name
-        ) use ($validator): bool {
-            return $validator->validateField(
-                    $argument_name,
-                    $argument_value,
-                    $this->validationRules
-                )->count() === 0;
+        ) use ($validator) {
+            $validationErrors = $validator->validateField(
+                $argument_name,
+                $argument_value,
+                $this->validationRules
+            );
+
+            if ($validationErrors->count() > 0) {
+                return Response::error(
+                    $status_code = Response::HTTP_422_UNPROCESSABLE_ENTITY,
+                    Response::HTTP_STATUS_TEXTS[$status_code],
+                    (array)$validationErrors
+                )->respond();
+            }
+
+            return true;
         };
 
         return $this;
