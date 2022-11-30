@@ -2,13 +2,20 @@
 
 namespace Wordless\Adapters;
 
+use Wordless\Contracts\Adapter\RelatedMetaData;
 use Wordless\Contracts\Adapter\WithAcfs;
+use Wordless\Contracts\Adapter\WithMetaData;
 use Wordless\Exceptions\NoUserAuthenticated;
 use WP_User;
 
-class User extends WP_User
+class User extends WP_User implements RelatedMetaData
 {
-    use WithAcfs;
+    use WithAcfs, WithMetaData;
+
+    public static function objectType(): string
+    {
+        return 'user';
+    }
 
     /**
      * @param WP_User|null $wp_user

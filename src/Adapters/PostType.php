@@ -13,23 +13,6 @@ class PostType
     private WP_Post_Type $wpPostType;
 
     /**
-     * @param WP_Post_Type|string $post_type
-     * @throws PostTypeNotRegistered
-     */
-    public function __construct($post_type)
-    {
-        if ($post_type instanceof WP_Post_Type) {
-            $this->wpPostType = $post_type;
-
-            return;
-        }
-
-        if (($this->wpPostType = get_post_type_object($post_type)) === null) {
-            throw new PostTypeNotRegistered($post_type);
-        }
-    }
-
-    /**
      * @return static[]
      */
     public static function getAllCustom(): array
@@ -45,6 +28,23 @@ class PostType
         }
 
         return $customPostTypes;
+    }
+
+    /**
+     * @param WP_Post_Type|string $post_type
+     * @throws PostTypeNotRegistered
+     */
+    public function __construct($post_type)
+    {
+        if ($post_type instanceof WP_Post_Type) {
+            $this->wpPostType = $post_type;
+
+            return;
+        }
+
+        if (($this->wpPostType = get_post_type_object($post_type)) === null) {
+            throw new PostTypeNotRegistered($post_type);
+        }
     }
 
     public function __call(string $method_name, array $arguments)
