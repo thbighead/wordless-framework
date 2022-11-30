@@ -61,7 +61,7 @@ class MakeCustomPostType extends WordlessCommand
             ],
             [
                 self::OPTION_NAME_FIELD => self::NO_PERMISSIONS_MODE,
-                self::OPTION_SHORTCUT_FIELD => 'np',
+                self::OPTION_SHORTCUT_FIELD => 'N',
                 self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
                 self::OPTION_DESCRIPTION_FIELD => 'Don\'t auto register CPT permissions into admin role.',
             ],
