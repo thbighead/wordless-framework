@@ -2,6 +2,7 @@
 
 namespace Wordless\Abstractions;
 
+use Wordless\Adapters\PostType;
 use Wordless\Adapters\Role;
 use Wordless\Exceptions\FailedToCreateRole;
 use Wordless\Exceptions\InternalCacheNotLoaded;
@@ -28,6 +29,15 @@ class RolesList extends WP_Roles
      */
     public static function sync()
     {
+        $adminRole = Role::find(Role::ADMIN);
+
+        foreach (PostType::getAllCustom() as $customPostType) {
+            $adminRole->syncCapabilities(array_combine(
+                $permissions = array_values($customPostType->getPermissions()),
+                array_fill(0, count($permissions), true)
+            ));
+        }
+
         foreach (Config::tryToGetOrDefault('permissions', []) as $role_key => $permissions) {
             $role = Role::find($role_key);
 

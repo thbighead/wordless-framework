@@ -2,10 +2,10 @@
 
 namespace Wordless\Abstractions\StubMounters;
 
-class MigrationStubMounter extends BaseStubMounter
+class ExceptionStubMounter extends BaseStubMounter
 {
     protected function relativeStubFilename(): string
     {
-        return 'migration';
+        return 'exception';
     }
 }

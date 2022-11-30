@@ -2,11 +2,17 @@
 
 namespace Wordless\Helpers;
 
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
+use Doctrine\Inflector\Language;
 use Ramsey\Uuid\Uuid;
 use Wordless\Exceptions\InvalidUuidVersion;
 
 class Str
 {
+    /** @var Inflector[] $inflectors */
+    private static array $inflectors = [];
+
     public static function after(string $string, string $delimiter): string
     {
         $substring_position = strpos($string, $delimiter);
@@ -61,7 +67,7 @@ class Str
 
     public static function camelCase(string $string): string
     {
-        return lcfirst(self::studlyCase($string));
+        return lcfirst(self::pascalCase($string));
     }
 
     /**
@@ -109,6 +115,18 @@ class Str
         return Uuid::isValid($string);
     }
 
+    /**
+     * Just an alias. This is the common Case Style name, instead we call it slugCase to ease WordPress developers
+     * understanding.
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function kebabCase(string $string): string
+    {
+        return self::slugCase($string);
+    }
+
     public static function limitWords(
         string $string,
         int    $max_words = 15,
@@ -123,6 +141,11 @@ class Str
         return mb_strtolower($string);
     }
 
+    public static function plural(string $string, string $language = Language::ENGLISH): string
+    {
+        return self::getInflector($language)->pluralize($string);
+    }
+
     /**
      * @param string $string
      * @param string|string[] $search
@@ -134,6 +157,11 @@ class Str
         return str_replace($search, $replace, $string);
     }
 
+    public static function singular(string $string, string $language = Language::ENGLISH): string
+    {
+        return self::getInflector($language)->singularize($string);
+    }
+
     public static function slugCase(string $string): string
     {
         return self::snakeCase($string, '-');
@@ -141,9 +169,11 @@ class Str
 
     public static function snakeCase(string $string, string $delimiter = '_'): string
     {
+        $string = preg_replace('/[^a-zA-Z0-9]/', $delimiter, $string);
+
         if (!ctype_lower($string)) {
             $string = strtolower(preg_replace(
-                '/(.)(?=[A-Z])/u',
+                "/([^$delimiter])(?=[A-Z\d])/u",
                 "$1$delimiter",
                 preg_replace('/\s+/u', '', ucwords($string))
             ));
@@ -159,7 +189,7 @@ class Str
         return $start_with . preg_replace('/^(?:' . $quoted . ')+/u', '', $string);
     }
 
-    public static function studlyCase(string $string): string
+    public static function pascalCase(string $string): string
     {
         $words = explode(' ', str_replace(['-', '_'], ' ', $string));
 
@@ -172,7 +202,9 @@ class Str
 
     public static function titleCase(string $string): string
     {
-        return mb_convert_case($string, MB_CASE_TITLE, 'UTF-8');
+        preg_match_all('/(\p{Lu}\p{Ll}*|\d)/u', self::pascalCase($string), $words);
+
+        return mb_convert_case(implode(' ', $words[0]), MB_CASE_TITLE, 'UTF-8');
     }
 
     public static function truncate(string $string, int $max_chars = 15): string
@@ -217,5 +249,12 @@ class Str
         }
 
         return $with_dashes ? $uuid->toString() : str_replace('-', '', $uuid->toString());
+    }
+
+    private static function getInflector(?string $language = null): Inflector
+    {
+        return self::$inflectors[$language] ?? self::$inflectors[$language] = $language === null ?
+            InflectorFactory::create()->build() :
+            InflectorFactory::createForLanguage($language)->build();
     }
 }
