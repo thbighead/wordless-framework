@@ -6,7 +6,6 @@ use ReflectionException;
 use ReflectionMethod;
 use Wordless\Adapters\WordlessController;
 use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Hookers\BootControllers;
 
 class ControllerCacher extends BaseCacher
 {
@@ -24,12 +23,14 @@ class ControllerCacher extends BaseCacher
         $controllers_cache_array = [];
 
         foreach (
-            BootControllers::yieldBootableControllersPathAndResourceNameByReadingDirectory()
+            WordlessController::yieldBootableControllersPathAndResourceNameByReadingDirectory()
             as $controller_path_and_resource_name
         ) {
             require_once $controller_path_and_resource_name[0];
-            /** @var WordlessController $controller */
-            $controller = new $controller_path_and_resource_name[1];
+
+            /** @var WordlessController $controller_namespaced_class */
+            $controller_namespaced_class = $controller_path_and_resource_name[1];
+            $controller = $controller_namespaced_class::getInstance();
 
             $controllers_cache_array[$controller_path_and_resource_name[1]] = [
                     'path' => $controller_path_and_resource_name[0],

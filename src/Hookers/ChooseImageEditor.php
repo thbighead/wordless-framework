@@ -3,7 +3,6 @@
 namespace Wordless\Hookers;
 
 use Wordless\Abstractions\AbstractHooker;
-use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
 
@@ -36,7 +35,6 @@ class ChooseImageEditor extends AbstractHooker
      *
      * @param array $image_editors
      * @return string[]
-     * @throws InternalCacheNotLoaded
      * @throws PathNotFoundException
      */
     public static function useGdInsteadImagick(array $image_editors): array

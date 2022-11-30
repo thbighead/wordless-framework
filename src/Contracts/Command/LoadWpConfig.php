@@ -17,6 +17,7 @@ trait LoadWpConfig
      */
     protected function setup(InputInterface $input, OutputInterface $output)
     {
+        /** @noinspection PhpMultipleClassDeclarationsInspection */
         parent::setup($input, $output);
 
         include_once ProjectPath::wpCore('wp-config.php');

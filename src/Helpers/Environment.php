@@ -99,7 +99,7 @@ class Environment
                     $value
                 );
             }
-        } while(!empty($referenced_dot_env_variable_names));
+        } while (!empty($referenced_dot_env_variable_names));
 
         return $value;
     }
