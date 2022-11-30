@@ -4,6 +4,7 @@ namespace Wordless\Adapters;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\ExceptionInterface;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,9 +15,12 @@ use Symfony\Component\Process\Process;
 abstract class WordlessCommand extends Command
 {
     public const DECORATION_COMMENT = 'comment';
+    public const DECORATION_DANGER = 'danger';
     public const DECORATION_ERROR = 'error';
     public const DECORATION_INFO = 'info';
     public const DECORATION_QUESTION = 'question';
+    public const DECORATION_SUCCESS = 'success';
+    public const DECORATION_WARNING = 'warning';
 
     protected const ARGUMENT_DEFAULT_FIELD = 'default';
     protected const ARGUMENT_DESCRIPTION_FIELD = 'description';
@@ -174,10 +178,37 @@ abstract class WordlessCommand extends Command
         return new Table($this->output);
     }
 
+    protected function setOutputStyles()
+    {
+        $this->output->getFormatter()->setStyle(
+            self::DECORATION_COMMENT,
+            new OutputFormatterStyle('gray')
+        );
+        $this->output->getFormatter()->setStyle(
+            self::DECORATION_DANGER,
+            new OutputFormatterStyle('red')
+        );
+        $this->output->getFormatter()->setStyle(
+            self::DECORATION_INFO,
+            new OutputFormatterStyle('cyan')
+        );
+        $this->output->getFormatter()->setStyle(
+            self::DECORATION_SUCCESS,
+            new OutputFormatterStyle('bright-green')
+        );
+        $this->output->getFormatter()->setStyle(
+            self::DECORATION_WARNING,
+            new OutputFormatterStyle('yellow')
+        );
+    }
+
     protected function setup(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
         $this->output = $output;
+
+        $this->setOutputStyles();
+
         $this->output->setDecorated(true);
     }
 
@@ -228,6 +259,16 @@ abstract class WordlessCommand extends Command
         $this->writeWhenVerbose($message, self::DECORATION_COMMENT);
     }
 
+    protected function writeDanger(string $message)
+    {
+        $this->write($message, self::DECORATION_DANGER);
+    }
+
+    protected function writeDangerWhenVerbose(string $message)
+    {
+        $this->writeWhenVerbose($message, self::DECORATION_DANGER);
+    }
+
     protected function writeError(string $message)
     {
         $this->write($message, self::DECORATION_ERROR);
@@ -263,6 +304,16 @@ abstract class WordlessCommand extends Command
         $this->writelnWhenVerbose($message, self::DECORATION_COMMENT);
     }
 
+    protected function writelnDanger(string $message)
+    {
+        $this->writeln($message, self::DECORATION_DANGER);
+    }
+
+    protected function writelnDangerWhenVerbose(string $message)
+    {
+        $this->writelnWhenVerbose($message, self::DECORATION_DANGER);
+    }
+
     protected function writelnError(string $message)
     {
         $this->writeln($message, self::DECORATION_ERROR);
@@ -293,6 +344,26 @@ abstract class WordlessCommand extends Command
         $this->writelnWhenVerbose($message, self::DECORATION_QUESTION);
     }
 
+    protected function writelnSuccess(string $message)
+    {
+        $this->writeln($message, self::DECORATION_SUCCESS);
+    }
+
+    protected function writelnSuccessWhenVerbose(string $message)
+    {
+        $this->writelnWhenVerbose($message, self::DECORATION_SUCCESS);
+    }
+
+    protected function writelnWarning(string $message)
+    {
+        $this->writeln($message, self::DECORATION_WARNING);
+    }
+
+    protected function writelnWarningWhenVerbose(string $message)
+    {
+        $this->writelnWhenVerbose($message, self::DECORATION_WARNING);
+    }
+
     protected function writelnWhenVerbose(string $message, ?string $decoration = null)
     {
         if ($this->isV()) {
@@ -308,6 +379,26 @@ abstract class WordlessCommand extends Command
     protected function writeQuestionWhenVerbose(string $message)
     {
         $this->writeWhenVerbose($message, self::DECORATION_QUESTION);
+    }
+
+    protected function writeSuccess(string $message)
+    {
+        $this->write($message, self::DECORATION_SUCCESS);
+    }
+
+    protected function writeSuccessWhenVerbose(string $message)
+    {
+        $this->writeWhenVerbose($message, self::DECORATION_SUCCESS);
+    }
+
+    protected function writeWarning(string $message)
+    {
+        $this->write($message, self::DECORATION_WARNING);
+    }
+
+    protected function writeWarningWhenVerbose(string $message)
+    {
+        $this->writeWhenVerbose($message, self::DECORATION_WARNING);
     }
 
     protected function writeWhenVerbose(string $message, ?string $decoration = null)
