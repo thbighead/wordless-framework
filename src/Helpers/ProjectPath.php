@@ -193,16 +193,6 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function services(string $additional_path = ''): string
-    {
-        return self::app("Services/$additional_path");
-    }
-
-    /**
-     * @param string $additional_path
-     * @return string
-     * @throws PathNotFoundException
-     */
     public static function src(string $additional_path = ''): string
     {
         return self::vendorPackageRoot("src/$additional_path");
