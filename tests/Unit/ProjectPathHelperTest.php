@@ -6,10 +6,13 @@ use Wordless\Exceptions\InvalidUuidVersion;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
+use Wordless\Tests\Contracts\NeedsTestEnvironment;
 use Wordless\Tests\WordlessTestCase;
 
 class ProjectPathHelperTest extends WordlessTestCase
 {
+    use NeedsTestEnvironment;
+
     /**
      * @return void
      * @throws PathNotFoundException

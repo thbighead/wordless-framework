@@ -35,7 +35,7 @@ class MigrationClassNameGuesser extends BaseGuesser
             -strlen('.php')
         );
 
-        return Str::studlyCase($script_filename_without_date_prefix_and_extension);
+        return Str::pascalCase($script_filename_without_date_prefix_and_extension);
     }
 
     /**

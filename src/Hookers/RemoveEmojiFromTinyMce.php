@@ -26,6 +26,7 @@ class RemoveEmojiFromTinyMce extends AbstractHooker
     public static function removeEmojis($plugins): array
     {
         if (is_array($plugins)) {
+            /** @noinspection SpellCheckingInspection */
             return array_diff($plugins, ['wpemoji']);
         }
 

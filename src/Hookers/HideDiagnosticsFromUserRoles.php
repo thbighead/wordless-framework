@@ -3,10 +3,8 @@
 namespace Wordless\Hookers;
 
 use Wordless\Abstractions\AbstractHooker;
-use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
-use Wordless\Helpers\ProjectPath;
 use WP_User;
 
 class HideDiagnosticsFromUserRoles extends AbstractHooker
@@ -24,7 +22,6 @@ class HideDiagnosticsFromUserRoles extends AbstractHooker
     /**
      * @return void
      * @throws PathNotFoundException
-     * @throws InternalCacheNotLoaded
      */
     public static function hideDiagnosticsFromUserRoles()
     {

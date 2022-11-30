@@ -23,6 +23,7 @@ class BootHttpRemoteCallsLog extends AbstractHooker
      */
     protected const HOOK = 'http_api_debug';
 
+    /** @noinspection PhpUnusedParameterInspection */
     public static function debugWordPressRemoteRequest($response, $context, $class, $request, $url)
     {
         if (WP_DEBUG && Str::beginsWith($url, Environment::get('APP_URL'))) {

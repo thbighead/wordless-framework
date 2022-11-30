@@ -83,9 +83,9 @@ class Config
      * @throws InvalidConfigKey
      */
     private static function resolveWildcard(
-        int $key_index,
-        $key_pointer,
-        array $keys,
+        int    $key_index,
+               $key_pointer,
+        array  $keys,
         string $original_keys_as_string
     ): array
     {
