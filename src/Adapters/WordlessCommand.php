@@ -9,9 +9,15 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 abstract class WordlessCommand extends Command
 {
+    public const DECORATION_COMMENT = 'comment';
+    public const DECORATION_ERROR = 'error';
+    public const DECORATION_INFO = 'info';
+    public const DECORATION_QUESTION = 'question';
+
     protected const ARGUMENT_DEFAULT_FIELD = 'default';
     protected const ARGUMENT_DESCRIPTION_FIELD = 'description';
     protected const ARGUMENT_MODE_FIELD = 'mode';
@@ -61,6 +67,15 @@ abstract class WordlessCommand extends Command
         }
     }
 
+    protected function decorateText(string $text, ?string $decoration = null): string
+    {
+        if ($decoration !== null) {
+            return "<$decoration>$text</>";
+        }
+
+        return $text;
+    }
+
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
@@ -79,7 +94,11 @@ abstract class WordlessCommand extends Command
             exec($full_command, $output, $result_code);
             $this->output->writeln($output);
         } else {
-            passthru($full_command, $result_code);
+            $result_code = Process::fromShellCommandline($full_command)
+                ->setTty(true)
+                ->run(function ($type, $buffer) {
+                    echo $buffer;
+                });
         }
 
         return $result_code;
@@ -99,7 +118,7 @@ abstract class WordlessCommand extends Command
     )
     {
         if (!($output instanceof OutputInterface)) {
-            $output = new BufferedOutput;
+            $output = $this->mountBufferedOutput();
         }
 
         $return_code = $this->getOrSaveAndGetFromWordlessCommandsCache($command_name)
@@ -122,12 +141,27 @@ abstract class WordlessCommand extends Command
     ): string
     {
         if (!($output instanceof BufferedOutput)) {
-            $output = new BufferedOutput;
+            $output = $this->mountBufferedOutput();
         }
 
         $this->getOrSaveAndGetFromWordlessCommandsCache($command_name)->run(new ArrayInput($inputs), $output);
 
         return $output->fetch();
+    }
+
+    protected function isV(): bool
+    {
+        return $this->output->isVerbose();
+    }
+
+    protected function isVV(): bool
+    {
+        return $this->output->isVeryVerbose();
+    }
+
+    protected function isVVV(): bool
+    {
+        return $this->output->isDebug();
     }
 
     /**
@@ -144,6 +178,7 @@ abstract class WordlessCommand extends Command
     {
         $this->input = $input;
         $this->output = $output;
+        $this->output->setDecorated(true);
     }
 
     protected function wrapScriptWithMessages(
@@ -154,32 +189,131 @@ abstract class WordlessCommand extends Command
     )
     {
         $only_when_verbose ?
-            $this->writeWhenVerbose($before_script_message) : $this->output->write($before_script_message);
+            $this->writeWhenVerbose($before_script_message) : $this->write($before_script_message);
 
         $result = $script();
 
         $only_when_verbose ?
-            $this->writelnWhenVerbose($after_script_message) : $this->output->writeln($after_script_message);
+            $this->writelnWhenVerbose($after_script_message) : $this->writeln($after_script_message);
 
         return $result;
     }
 
-    protected function wrapScriptWithMessagesWhenVerbose(string $before_script_message, callable $script)
+    protected function wrapScriptWithMessagesWhenVerbose(
+        string   $before_script_message,
+        callable $script,
+        string   $after_script_message = ' Done!'
+    )
     {
-        $this->wrapScriptWithMessages($before_script_message, $script, ' Done!', true);
+        $this->wrapScriptWithMessages(
+            $before_script_message,
+            $script,
+            $after_script_message,
+            true
+        );
     }
 
-    protected function writelnWhenVerbose(string $message)
+    protected function write(string $message, ?string $decoration = null)
     {
-        if ($this->output->isVerbose()) {
-            $this->output->writeln($message);
+        $this->output->write($this->decorateText($message, $decoration));
+    }
+
+    protected function writeComment(string $message)
+    {
+        $this->write($message, self::DECORATION_COMMENT);
+    }
+
+    protected function writeCommentWhenVerbose(string $message)
+    {
+        $this->writeWhenVerbose($message, self::DECORATION_COMMENT);
+    }
+
+    protected function writeError(string $message)
+    {
+        $this->write($message, self::DECORATION_ERROR);
+    }
+
+    protected function writeErrorWhenVerbose(string $message)
+    {
+        $this->writeWhenVerbose($message, self::DECORATION_ERROR);
+    }
+
+    protected function writeInfo(string $message)
+    {
+        $this->write($message, self::DECORATION_INFO);
+    }
+
+    protected function writeInfoWhenVerbose(string $message)
+    {
+        $this->writeWhenVerbose($message, self::DECORATION_INFO);
+    }
+
+    protected function writeln(string $message, ?string $decoration = null)
+    {
+        $this->output->writeln($this->decorateText($message, $decoration));
+    }
+
+    protected function writelnComment(string $message)
+    {
+        $this->writeln($message, self::DECORATION_COMMENT);
+    }
+
+    protected function writelnCommentWhenVerbose(string $message)
+    {
+        $this->writelnWhenVerbose($message, self::DECORATION_COMMENT);
+    }
+
+    protected function writelnError(string $message)
+    {
+        $this->writeln($message, self::DECORATION_ERROR);
+    }
+
+    protected function writelnErrorWhenVerbose(string $message)
+    {
+        $this->writelnWhenVerbose($message, self::DECORATION_ERROR);
+    }
+
+    protected function writelnInfo(string $message)
+    {
+        $this->writeln($message, self::DECORATION_INFO);
+    }
+
+    protected function writelnInfoWhenVerbose(string $message)
+    {
+        $this->writelnWhenVerbose($message, self::DECORATION_INFO);
+    }
+
+    protected function writelnQuestion(string $message)
+    {
+        $this->writeln($message, self::DECORATION_QUESTION);
+    }
+
+    protected function writelnQuestionWhenVerbose(string $message)
+    {
+        $this->writelnWhenVerbose($message, self::DECORATION_QUESTION);
+    }
+
+    protected function writelnWhenVerbose(string $message, ?string $decoration = null)
+    {
+        if ($this->isV()) {
+            $this->writeln($message, $decoration);
         }
     }
 
-    protected function writeWhenVerbose(string $message)
+    protected function writeQuestion(string $message)
     {
-        if ($this->output->isVerbose()) {
-            $this->output->write($message);
+        $this->write($message, self::DECORATION_QUESTION);
+    }
+
+    protected function writeQuestionWhenVerbose(string $message)
+    {
+        $this->writeWhenVerbose($message, self::DECORATION_QUESTION);
+    }
+
+    protected function writeWhenVerbose(string $message, ?string $decoration = null)
+    {
+        if ($this->isV()) {
+            $this->write($message, $decoration);
         }
     }
 
@@ -193,5 +327,10 @@ abstract class WordlessCommand extends Command
         }
 
         return $commandObject;
+    }
+
+    private function mountBufferedOutput(): BufferedOutput
+    {
+        return new BufferedOutput($this->output->getVerbosity(), true);
     }
 }
