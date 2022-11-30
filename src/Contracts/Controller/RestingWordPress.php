@@ -15,7 +15,7 @@ trait RestingWordPress
      * @param WP_REST_Request $request
      * @return Response|WP_Error
      */
-    public function create_item($request)
+    final public function create_item($request)
     {
         try {
             return $this->store(Request::fromWpRestRequest(
@@ -31,7 +31,7 @@ trait RestingWordPress
      * @param WP_REST_Request $request
      * @return Response|WP_Error
      */
-    public function delete_item($request)
+    final public function delete_item($request)
     {
         try {
             return $this->destroy(Request::fromWpRestRequest(
@@ -56,7 +56,7 @@ trait RestingWordPress
      * @param WP_REST_Request $request
      * @return Response|WP_Error
      */
-    public function get_item($request)
+    final public function get_item($request)
     {
         try {
             return $this->show(Request::fromWpRestRequest(
@@ -72,7 +72,7 @@ trait RestingWordPress
      * @param WP_REST_Request $request
      * @return Response|WP_Error
      */
-    public function get_items($request)
+    final public function get_items($request)
     {
         try {
             return $this->index(Request::fromWpRestRequest(
@@ -124,7 +124,7 @@ trait RestingWordPress
      * @param WP_REST_Request $request
      * @return Response|WP_Error
      */
-    public function update_item($request)
+    final public function update_item($request)
     {
         try {
             return $this->update(Request::fromWpRestRequest(
