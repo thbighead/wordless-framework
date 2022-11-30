@@ -93,6 +93,11 @@ class Str
         return $contains;
     }
 
+    public static function countSubstring(string $string, string $substring): int
+    {
+        return substr_count($string, $substring);
+    }
+
     public static function endsWith(string $string, string $substring): bool
     {
         return substr($string, -strlen($substring)) === $substring;
