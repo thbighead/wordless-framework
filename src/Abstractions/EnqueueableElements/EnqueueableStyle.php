@@ -56,16 +56,6 @@ class EnqueueableStyle extends AbstractEnqueueableElement
     }
 
     /**
-     * @param string $id
-     * @return void
-     * @throws DuplicatedEnqueueableId
-     */
-    protected function setId(string $id): void
-    {
-        parent::setId("style-$id");
-    }
-
-    /**
      * @param string $media
      * @return void
      * @throws InvalidMediaOption

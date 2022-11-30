@@ -3,6 +3,8 @@
 namespace Wordless\Abstractions;
 
 use InvalidArgumentException;
+use Wordless\Abstractions\EnqueueableElements\EnqueueableScript;
+use Wordless\Abstractions\EnqueueableElements\EnqueueableStyle;
 use Wordless\Exceptions\DuplicatedEnqueueableId;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
@@ -14,7 +16,10 @@ abstract class AbstractEnqueueableElement
 
     abstract public function enqueue(): void;
 
-    private static array $ids_pool = [];
+    private static array $ids_pool = [
+        EnqueueableStyle::class => [],
+        EnqueueableScript::class => []
+    ];
 
     protected const CONFIG_FILENAME = 'enqueue';
 
@@ -36,8 +41,7 @@ abstract class AbstractEnqueueableElement
         string  $relative_file_path,
         array   $dependencies = [],
         ?string $version = null
-    )
-    {
+    ) {
         $this->setId($id);
         $this->relative_file_path = $relative_file_path;
         $this->dependencies = $dependencies;
@@ -84,11 +88,11 @@ abstract class AbstractEnqueueableElement
             throw new InvalidArgumentException(static::class . ' must have a non-empty id');
         }
 
-        if ($foundEnqueueableClass = static::$ids_pool[$id] ?? '') {
+        if ($foundEnqueueableClass = static::$ids_pool[static::class][$id] ?? '') {
             throw new DuplicatedEnqueueableId(static::class, $id, $foundEnqueueableClass);
         }
 
-        static::$ids_pool[$id] = true;
+        static::$ids_pool[static::class][$id] = true;
         $this->id = $id;
     }
 
