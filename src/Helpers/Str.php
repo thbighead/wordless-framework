@@ -111,11 +111,27 @@ class Str
 
     public static function limitWords(
         string $string,
-        int    $num_words = 15,
+        int    $max_words = 15,
         string $limit_marker = '...'
     ): string
     {
-        return wp_trim_words($string, $num_words, $limit_marker);
+        return wp_trim_words($string, $max_words, $limit_marker);
+    }
+
+    public static function lower(string $string): string
+    {
+        return mb_strtolower($string);
+    }
+
+    /**
+     * @param string $string
+     * @param string|string[] $search
+     * @param string|string[] $replace
+     * @return string
+     */
+    public static function replace(string $string, $search, $replace): string
+    {
+        return str_replace($search, $replace, $string);
     }
 
     public static function slugCase(string $string): string
@@ -154,20 +170,19 @@ class Str
         return implode($studly_words);
     }
 
-    /**
-     * @param string $string
-     * @param string|string[] $search
-     * @param string|string[] $replace
-     * @return string
-     */
-    public static function replace(string $string, $search, $replace): string
-    {
-        return str_replace($search, $replace, $string);
-    }
-
     public static function titleCase(string $string): string
     {
         return mb_convert_case($string, MB_CASE_TITLE, 'UTF-8');
+    }
+
+    public static function truncate(string $string, int $max_chars = 15): string
+    {
+        return substr($string, 0, $max_chars);
+    }
+
+    public static function upper(string $string): string
+    {
+        return mb_strtoupper($string);
     }
 
     /**
