@@ -3,8 +3,7 @@
 namespace Wordless\Abstractions\EnqueueableElements;
 
 use Wordless\Abstractions\AbstractEnqueueableElement;
-use Wordless\Exceptions\DuplicatedEnqueuableId;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Exceptions\DuplicatedEnqueueableId;
 
 class EnqueueableScript extends AbstractEnqueueableElement
 {
@@ -15,10 +14,10 @@ class EnqueueableScript extends AbstractEnqueueableElement
 
     /**
      * @return void
-     * @throws PathNotFoundException
      */
     public function enqueue(): void
     {
+        /** @noinspection PhpRedundantOptionalArgumentInspection */
         wp_enqueue_script($this->id, $this->filepath(), $this->dependencies, $this->version(), false);
     }
 }

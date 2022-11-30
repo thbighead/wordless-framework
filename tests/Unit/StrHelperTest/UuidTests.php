@@ -60,6 +60,7 @@ trait UuidTests
      */
     public function testVersion4()
     {
+        /** @noinspection PhpRedundantOptionalArgumentInspection */
         $this->assertTrue(Str::isUuid(Str::uuid(4)));
     }
 

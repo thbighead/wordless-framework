@@ -4,13 +4,13 @@ namespace Wordless\Abstractions\EnqueueableMounters;
 
 use Wordless\Abstractions\AbstractEnqueueableMounter;
 use Wordless\Abstractions\EnqueueableElements\EnqueueableScript;
-use Wordless\Exceptions\DuplicatedEnqueuableId;
+use Wordless\Exceptions\DuplicatedEnqueueableId;
 
 abstract class Script extends AbstractEnqueueableMounter
 {
     /**
      * @return EnqueueableScript
-     * @throws DuplicatedEnqueuableId
+     * @throws DuplicatedEnqueueableId
      */
     protected function mount(): EnqueueableScript
     {
