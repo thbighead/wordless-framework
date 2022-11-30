@@ -228,7 +228,7 @@ abstract class WordlessCustomPost extends Post
 
     /**
      * https://developer.wordpress.org/reference/functions/register_post_type/#supports
-     * Use CustomPostTypeMenuField constants to set it easily.
+     * Use CustomPostTypeField constants to set it easily.
      * @return null
      */
     protected static function postFields()
