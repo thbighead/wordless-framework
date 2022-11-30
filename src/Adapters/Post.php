@@ -2,33 +2,22 @@
 
 namespace Wordless\Adapters;
 
+use Wordless\Contracts\Adapter\RelatedMetaData;
 use Wordless\Contracts\Adapter\WithAcfs;
+use Wordless\Contracts\Adapter\WithMetaData;
 use Wordless\Helpers\Arr;
 use WP_Post;
 
 /**
  * @mixin WP_Post
  */
-class Post
+class Post implements RelatedMetaData
 {
-    use WithAcfs;
+    use WithAcfs, WithMetaData;
 
     /** @var Category[] $categories */
     private array $categories;
     private WP_Post $wpPost;
-
-    /**
-     * @param WP_Post|int $post
-     * @param bool $with_acfs
-     */
-    public function __construct($post, bool $with_acfs = true)
-    {
-        $this->wpPost = $post instanceof WP_Post ? $post : get_post($post);
-
-        if ($with_acfs) {
-            $this->loadAcfs($this->wpPost->ID);
-        }
-    }
 
     public static function __callStatic(string $method_name, array $arguments)
     {
@@ -44,6 +33,24 @@ class Post
     public static function get($post, bool $with_acfs = true)
     {
         return new static($post, $with_acfs);
+    }
+
+    public static function objectType(): string
+    {
+        return 'post';
+    }
+
+    /**
+     * @param WP_Post|int $post
+     * @param bool $with_acfs
+     */
+    public function __construct($post, bool $with_acfs = true)
+    {
+        $this->wpPost = $post instanceof WP_Post ? $post : get_post($post);
+
+        if ($with_acfs) {
+            $this->loadAcfs($this->wpPost->ID);
+        }
     }
 
     public function __call(string $method_name, array $arguments)
