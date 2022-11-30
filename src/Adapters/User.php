@@ -3,15 +3,25 @@
 namespace Wordless\Adapters;
 
 use Wordless\Contracts\Adapter\WithAcfs;
+use Wordless\Exceptions\NoUserAuthenticated;
 use WP_User;
 
 class User extends WP_User
 {
     use WithAcfs;
 
+    /**
+     * @param WP_User|null $wp_user
+     * @param bool $with_acfs
+     * @throws NoUserAuthenticated
+     */
     public function __construct(?WP_User $wp_user = null, bool $with_acfs = true)
     {
-        parent::__construct($wp_user ?? wp_get_current_user());
+        if (($wp_user = $wp_user ?? wp_get_current_user()) === null) {
+            throw new NoUserAuthenticated;
+        }
+
+        parent::__construct($wp_user);
 
         if ($with_acfs) {
             $this->loadUserAcfs($this->ID);
