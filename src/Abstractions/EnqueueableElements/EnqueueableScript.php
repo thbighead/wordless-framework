@@ -20,14 +20,4 @@ class EnqueueableScript extends AbstractEnqueueableElement
         /** @noinspection PhpRedundantOptionalArgumentInspection */
         wp_enqueue_script($this->id, $this->filepath(), $this->dependencies, $this->version(), false);
     }
-
-    /**
-     * @param string $id
-     * @return void
-     * @throws DuplicatedEnqueueableId
-     */
-    protected function setId(string $id): void
-    {
-        parent::setId("script-$id");
-    }
 }
