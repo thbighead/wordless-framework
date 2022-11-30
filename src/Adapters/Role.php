@@ -4,6 +4,7 @@ namespace Wordless\Adapters;
 
 use Wordless\Abstractions\RolesList;
 use Wordless\Exceptions\FailedToCreateRole;
+use Wordless\Exceptions\WordPressFailedToFindRole;
 use Wordless\Helpers\Str;
 use WP_Role;
 
@@ -83,13 +84,18 @@ class Role extends WP_Role
         self::getRepository()->remove_role(Str::slugCase($role));
     }
 
+    /**
+     * @param string $role
+     * @return Role|null
+     * @throws WordPressFailedToFindRole
+     */
     public static function find(string $role): ?Role
     {
-        if ($roleObject = self::getRepository()->get_role(Str::slugCase($role))) {
+        if ($roleObject = self::getRepository()->get_role($role = Str::slugCase($role))) {
             return new static($roleObject);
         }
 
-        return null;
+        throw new WordPressFailedToFindRole($role);
     }
 
     public static function isDefaultByName(string $role): bool

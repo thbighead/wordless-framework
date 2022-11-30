@@ -6,10 +6,7 @@ use Wordless\Helpers\Str;
 
 class ControllerResourceNameGuesser extends ControllerGuesser
 {
-    /**
-     * @return string
-     */
-    protected function guessValue()
+    protected function guessValue(): string
     {
         return Str::snakeCase(
             Str::before(

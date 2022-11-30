@@ -8,6 +8,7 @@ use Wordless\Adapters\WordlessCommand;
 use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exceptions\FailedToCreateRole;
 use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Exceptions\WordPressFailedToFindRole;
 
 class SyncRoles extends WordlessCommand
 {
@@ -41,6 +42,7 @@ class SyncRoles extends WordlessCommand
      * @return int
      * @throws FailedToCreateRole
      * @throws PathNotFoundException
+     * @throws WordPressFailedToFindRole
      */
     protected function runIt(): int
     {

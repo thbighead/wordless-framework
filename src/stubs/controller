@@ -4,7 +4,8 @@ namespace App\Controllers;
 
 use Wordless\Adapters\WordlessController;
 
-class DummyController extends WordlessController {
+class DummyController extends WordlessController
+{
     protected function resourceName(): string
     {
         // TODO: Implement resourceName() method.

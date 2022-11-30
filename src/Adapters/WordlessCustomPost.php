@@ -8,7 +8,6 @@ use Wordless\Contracts\Adapter\WordlessCustomPost\Register;
 use Wordless\Exceptions\PostTypeNotRegistered;
 use Wordless\Helpers\Str;
 use WP_Post;
-use WP_Post_Type;
 
 abstract class WordlessCustomPost extends Post
 {
@@ -112,18 +111,18 @@ abstract class WordlessCustomPost extends Post
 
     /**
      * https://developer.wordpress.org/reference/functions/register_post_type/#show_in_menu
-     * @return bool|string
+     * @return bool
      */
-    public static function isListedInAdminPanelMenu()
+    public static function isListedInAdminPanelMenu(): bool
     {
         return static::isShownInAdminPanel();
     }
 
     /**
      * https://developer.wordpress.org/reference/functions/register_post_type/#show_in_admin_bar
-     * @return bool|string
+     * @return bool
      */
-    public static function isVisibleInAdminPanelMenuBar()
+    public static function isVisibleInAdminPanelMenuBar(): bool
     {
         return static::isShownInAdminPanel();
     }
@@ -186,9 +185,9 @@ abstract class WordlessCustomPost extends Post
 
     /**
      * https://developer.wordpress.org/reference/functions/register_post_type/#capability_type
-     * @return string|string[]|null
+     * @return string[]|null
      */
-    protected static function getCapabilityType()
+    protected static function getCapabilityType(): ?array
     {
         if (($singular_name = static::singularName()) === null) {
             return null;
