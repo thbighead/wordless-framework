@@ -5,11 +5,15 @@ namespace Wordless\Commands;
 use Symfony\Component\Console\Command\Command;
 use Wordless\Abstractions\RolesList;
 use Wordless\Adapters\WordlessCommand;
+use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exceptions\FailedToCreateRole;
 use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Exceptions\WordPressFailedToFindRole;
 
 class SyncRoles extends WordlessCommand
 {
+    use LoadWpConfig;
+
     protected static $defaultName = self::COMMAND_NAME;
 
     public const COMMAND_NAME = 'roles:sync';
@@ -38,6 +42,7 @@ class SyncRoles extends WordlessCommand
      * @return int
      * @throws FailedToCreateRole
      * @throws PathNotFoundException
+     * @throws WordPressFailedToFindRole
      */
     protected function runIt(): int
     {

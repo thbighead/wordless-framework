@@ -6,10 +6,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Wordless\Exceptions\HttpRequestFailed;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\Http;
+use Wordless\Tests\Contracts\NeedsTestEnvironment;
 use Wordless\Tests\WordlessTestCase;
 
 class HomeRedirectTest extends WordlessTestCase
 {
+    use NeedsTestEnvironment;
+
     /**
      * @return void
      * @throws HttpRequestFailed

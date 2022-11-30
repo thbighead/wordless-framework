@@ -29,11 +29,14 @@
     "php": "^7.4",
     "ext-json": "*",
     "ext-openssl": "*",
+    "doctrine/inflector": "^2.0",
+    "lcobucci/jwt": "^4.2",
     "ramsey/uuid": "^4.2",
     "symfony/console": "^5.3",
     "symfony/dotenv": "^5.3",
     "symfony/http-client": "^5.3",
     "symfony/http-foundation": "^5.3",
+    "symfony/validator": "^5.4",
     "wp-cli/wp-cli-bundle": "^2.5"
   },
   "require-dev": {

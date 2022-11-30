@@ -32,6 +32,7 @@ trait WithAcfs
             return;
         }
 
+        /** @noinspection PhpUndefinedFunctionInspection */
         if (($acfs = get_fields($from_id)) !== false) {
             $this->acfs = $acfs;
         }

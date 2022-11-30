@@ -3,7 +3,6 @@
 namespace Wordless\Hookers;
 
 use Wordless\Abstractions\AbstractHooker;
-use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
 
@@ -22,7 +21,6 @@ class DoNotLoadWpAdminBarOutsidePanel extends AbstractHooker
 
     /**
      * @return void
-     * @throws InternalCacheNotLoaded
      * @throws PathNotFoundException
      */
     public static function removeAdminBarWhenNotInAdmin()

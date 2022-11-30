@@ -3,9 +3,9 @@
 use Wordless\Abstractions\Bootstrapper;
 use Wordless\Abstractions\WpSpeedUp;
 use Wordless\Adapters\Role;
-use Wordless\Hookers\HideDiagnosticsFromUserRoles;
-use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Hookers\ChooseImageEditor;
+use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
+use Wordless\Hookers\HideDiagnosticsFromUserRoles;
 
 return [
     WpSpeedUp::REMOVE_WP_EMOJIS_CONFIG_KEY => false,
