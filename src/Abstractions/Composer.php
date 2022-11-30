@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace Wordless\Abstractions;
 
@@ -81,12 +81,13 @@ class Composer
 
         if (!($operation instanceof UninstallOperation
             || $operation instanceof InstallOperation
-            || ($is_update_operation = $operation instanceof UpdateOperation))) {
+            || $operation instanceof UpdateOperation)) {
             return null;
         }
 
         /** @var CompletePackage $package */
-        $package = $is_update_operation ? $operation->getTargetPackage() : $operation->getPackage();
+        $package = $operation instanceof UpdateOperation ?
+            $operation->getTargetPackage() : $operation->getPackage();
 
         return $package;
     }

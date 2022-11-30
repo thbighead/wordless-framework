@@ -3,12 +3,14 @@
 namespace Wordless\Adapters;
 
 use Wordless\Abstractions\CategoriesList;
+use Wordless\Contracts\Adapter\RelatedMetaData;
 use Wordless\Contracts\Adapter\WithAcfs;
+use Wordless\Contracts\Adapter\WithMetaData;
 use WP_Term;
 
-class Category
+class Category implements RelatedMetaData
 {
-    use WithAcfs;
+    use WithAcfs, WithMetaData;
 
     private static CategoriesList $categories;
 
@@ -16,16 +18,11 @@ class Category
     private WP_Term $wpCategory;
 
     /**
-     * @param WP_Term|int|string $category
-     * @param bool $with_acfs
+     * @return WP_Term[]
      */
-    public function __construct($category, bool $with_acfs = true)
+    public static function all(): array
     {
-        $this->wpCategory = $category instanceof WP_Term ? $category : static::find($category);
-
-        if ($with_acfs) {
-            $this->loadCategoryAcfs($this->wpCategory->term_id);
-        }
+        return self::getCategoriesList()->all();
     }
 
     /**
@@ -39,14 +36,6 @@ class Category
         }
 
         return static::getBySlug($category) ?? static::getByName($category);
-    }
-
-    /**
-     * @return WP_Term[]
-     */
-    public static function all(): array
-    {
-        return self::getCategoriesList()->all();
     }
 
     public static function getById(int $id): ?WP_Term
@@ -67,6 +56,24 @@ class Category
     private static function getCategoriesList(): CategoriesList
     {
         return self::$categories ?? self::$categories = new CategoriesList;
+    }
+
+    public static function objectType(): string
+    {
+        return 'term';
+    }
+
+    /**
+     * @param WP_Term|int|string $category
+     * @param bool $with_acfs
+     */
+    public function __construct($category, bool $with_acfs = true)
+    {
+        $this->wpCategory = $category instanceof WP_Term ? $category : static::find($category);
+
+        if ($with_acfs) {
+            $this->loadCategoryAcfs($this->wpCategory->term_id);
+        }
     }
 
     public function asWpTerm(): ?WP_Term

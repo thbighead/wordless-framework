@@ -4,7 +4,7 @@ namespace Wordless\Abstractions\EnqueueableMounters;
 
 use Wordless\Abstractions\AbstractEnqueueableMounter;
 use Wordless\Abstractions\EnqueueableElements\EnqueueableStyle;
-use Wordless\Exceptions\DuplicatedEnqueuableId;
+use Wordless\Exceptions\DuplicatedEnqueueableId;
 use Wordless\Exceptions\InvalidMediaOption;
 
 abstract class Style extends AbstractEnqueueableMounter
@@ -16,7 +16,7 @@ abstract class Style extends AbstractEnqueueableMounter
 
     /**
      * @return EnqueueableStyle
-     * @throws DuplicatedEnqueuableId
+     * @throws DuplicatedEnqueueableId
      * @throws InvalidMediaOption
      */
     protected function mount(): EnqueueableStyle

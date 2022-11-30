@@ -84,7 +84,7 @@ class InternalCache
      */
     public static function load()
     {
-        if (!self::isLoaded()) {
+        if (Environment::get('APP_ENV') !== Environment::LOCAL && !self::isLoaded()) {
             define(self::INTERNAL_WORDLESS_CACHE_CONSTANT_NAME, self::retrieveCachedValues());
         }
     }
@@ -101,10 +101,6 @@ class InternalCache
      */
     private static function retrieveCachedValues(): array
     {
-        if (Environment::get('APP_ENV') === Environment::LOCAL) {
-            return [];
-        }
-
         $internal_wordless_cache = [];
 
         foreach (DirectoryFiles::recursiveRead(ProjectPath::cache()) as $cache_file_path) {

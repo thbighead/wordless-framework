@@ -21,6 +21,6 @@ class SimpleCacheStubMounter extends BaseStubMounter
 
     protected function relativeStubFilename(): string
     {
-        return 'simple-return-simple-array-script.php';
+        return 'simple-return-simple-array-script';
     }
 }
