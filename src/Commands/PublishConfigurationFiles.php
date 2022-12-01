@@ -119,14 +119,16 @@ class PublishConfigurationFiles extends WordlessCommand
 
         try {
             $config_filepath_to = ProjectPath::root($config_relative_filepath);
-            $this->output->write("File destination at $config_filepath_to already exists... ");
+            $this->writeWarning("File destination at $config_filepath_to already exists... ");
+
             if (!$this->isForceMode()) {
-                $this->output->writeln('We are not in force mode, so let\'s skip this copy.');
+                $this->writelnComment('We are not in force mode, so let\'s skip this copy.');
+
                 return;
             }
         } catch (PathNotFoundException $exception) {
             $config_filepath_to = ProjectPath::root() . DIRECTORY_SEPARATOR . $config_relative_filepath;
-            $this->output->write("File destination at $config_filepath_to does not exists... ");
+            $this->writeComment("File destination at $config_filepath_to does not exists... ");
         }
 
         $this->wrapScriptWithMessages(

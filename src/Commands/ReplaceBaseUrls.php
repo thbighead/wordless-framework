@@ -57,7 +57,7 @@ class ReplaceBaseUrls extends WordlessCommand
     protected function runIt(): int
     {
         $search_urls_string_list = implode(', ', $this->base_urls_to_search);
-        $this->writeWhenVerbose("Searching for $search_urls_string_list to replace by $this->app_url");
+        $this->writeInfoWhenVerbose("Searching for $search_urls_string_list to replace by $this->app_url");
 
         $this->runDatabaseSearchReplace();
 
