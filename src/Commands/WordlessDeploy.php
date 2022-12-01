@@ -159,7 +159,7 @@ class WordlessDeploy extends WordlessCommand
     private function installWpCoreLanguage(string $language)
     {
         if ($this->runWpCliCommand("language core is-installed $language", true) == 0) {
-            $this->writelnWhenVerbose("WordPress Core Language $language already installed, updating.");
+            $this->writelnInfoWhenVerbose("WordPress Core Language $language already installed, updating.");
 
             $this->runWpCliCommand('language core update', true);
             $this->runWpCliCommand("site switch-language $language", true);
@@ -178,7 +178,7 @@ class WordlessDeploy extends WordlessCommand
     private function installWpLanguages()
     {
         if (empty($wp_languages = $this->getWpLanguages())) {
-            $this->output->writeln(
+            $this->writelnWarning(
                 'Environment variable WP_LANGUAGES has no value. Skipping language install.'
             );
             return;
@@ -250,7 +250,8 @@ class WordlessDeploy extends WordlessCommand
         $defined_version_in_env = $this->getEnvVariableByKey('WP_VERSION');
 
         if (trim($this->runAndGetWpCliCommandOutput('core version')) === $defined_version_in_env) {
-            $this->output->writeln("WordPress core is already at version $defined_version_in_env.");
+            $this->writelnInfo("WordPress core is already at version $defined_version_in_env.");
+
             return;
         }
 
@@ -279,7 +280,7 @@ class WordlessDeploy extends WordlessCommand
         $switch_string = $switch ? 'activate' : 'deactivate';
 
         if ($this->maintenance_mode === $switch) {
-            $this->output->writeln("Maintenance mode already {$switch_string}d. Skipping...");
+            $this->writelnWarning("Maintenance mode already {$switch_string}d. Skipping...");
         }
 
         $this->runWpCliCommand("maintenance-mode $switch_string");

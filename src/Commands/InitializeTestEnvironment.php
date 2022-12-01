@@ -228,7 +228,6 @@ class InitializeTestEnvironment extends WordlessCommand
      * @return void
      * @throws FailedToDeletePath
      * @throws FailedToInstallTestEnvironmentThroughComposer
-     * @throws PathNotFoundException
      */
     private function installTestEnvironmentThroughComposer()
     {
@@ -237,11 +236,16 @@ class InitializeTestEnvironment extends WordlessCommand
             . '="@dev" '
             . self::TARGET_DIRECTORY_NAME
             . ' --no-install --no-scripts --quiet --repository="{\"type\":\"path\",\"url\":\"../www\",\"options\":{\"symlink\":false}}"';
-        $this->output->writeln("Executing '$command'");
+        $this->writeln("Executing '$command'");
+
         if ($this->executeCommand($command) !== Command::SUCCESS) {
             throw new FailedToInstallTestEnvironmentThroughComposer($command);
         }
 
-        DirectoryFiles::delete(ProjectPath::root(self::TARGET_DIRECTORY_NAME . '/composer.lock'));
+        try {
+            DirectoryFiles::delete(ProjectPath::root(self::TARGET_DIRECTORY_NAME . '/composer.lock'));
+        } catch (PathNotFoundException $exception) {
+            $this->writelnCommentWhenVerbose("{$exception->getMessage()} Skipping deletion.");
+        }
     }
 }

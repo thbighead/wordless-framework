@@ -48,7 +48,7 @@ class CreateInternalCache extends WordlessCommand
             );
             return Command::SUCCESS;
         } catch (FailedToCopyStub|PathNotFoundException $exception) {
-            $this->output->writeln($exception->getMessage());
+            $this->writelnError($exception->getMessage());
             return Command::FAILURE;
         }
     }

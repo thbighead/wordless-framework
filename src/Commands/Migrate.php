@@ -170,7 +170,7 @@ class Migrate extends WordlessCommand
     private function executeMissingMigrationsScripts()
     {
         if (empty($this->migrations_missing_execution)) {
-            $this->output->writeln('No missing migrations to execute.');
+            $this->writelnInfo('No missing migrations to execute.');
             return;
         }
 
@@ -281,7 +281,7 @@ class Migrate extends WordlessCommand
     private function resolveForceMode()
     {
         if ($this->isForceMode()) {
-            $this->output->writeln(
+            $this->writelnWarning(
                 'Running migration into force mode. Rolling back every executed migration.'
             );
             foreach ($this->getOrderedExecutedMigrationsChunksList() as $executed_migrations_chunk) {
