@@ -4,7 +4,7 @@ namespace Wordless\Abstractions;
 
 use Wordless\Adapters\PostType;
 use Wordless\Adapters\Role;
-use Wordless\Adapters\WordlessController;
+use Wordless\Adapters\ApiController;
 use Wordless\Exceptions\FailedToCreateRole;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WordPressFailedToFindRole;
@@ -101,7 +101,7 @@ class RolesList extends WP_Roles
      */
     public static function syncRestResourcesPermissionsToRole(Role $role)
     {
-        foreach (WordlessController::all() as $controller_path_and_namespace) {
+        foreach (ApiController::all() as $controller_path_and_namespace) {
             self::requireAndRegisterControllersPermissions(
                 $controller_path_and_namespace[0],
                 $controller_path_and_namespace[1],
@@ -130,9 +130,9 @@ class RolesList extends WP_Roles
      */
     private static function requireAndRegisterControllersPermissions(string $controller_pathing, string $controller_full_namespace, Role $role)
     {
-        /** @var WordlessController $controller_full_namespace */
+        /** @var ApiController $controller_full_namespace */
         require_once $controller_pathing;
-        /** @var WordlessController $controller */
+        /** @var ApiController $controller */
         $controller = $controller_full_namespace::getInstance();
 
         $controller->registerCapabilitiesToRole($role);

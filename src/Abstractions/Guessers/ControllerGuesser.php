@@ -2,7 +2,7 @@
 
 namespace Wordless\Abstractions\Guessers;
 
-abstract class ControllerGuesser extends BaseGuesser
+abstract class ControllerGuesser extends Guesser
 {
     protected string $controller_namespace_class;
 

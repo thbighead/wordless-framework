@@ -2,9 +2,9 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
+use Wordless\Abstractions\Hooker;
 
-class RemoveEmojiFromTinyMce extends AbstractHooker
+class RemoveEmojiFromTinyMce extends Hooker
 {
     /**
      * WordPress action|filter number of arguments accepted by function

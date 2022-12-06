@@ -63,7 +63,7 @@ class Bootstrapper
                 continue;
             }
 
-            /** @var AbstractHooker $hooker_class_namespace */
+            /** @var Hooker $hooker_class_namespace */
             $hooker_class_namespace::hookIt();
         }
     }
@@ -83,7 +83,7 @@ class Bootstrapper
                 throw new DuplicatedMenuId($menuClass, $menuClass::id(), $menuFound);
             }
 
-            if (!is_a($menuClass, AbstractMenu::class, true)) {
+            if (!is_a($menuClass, Menu::class, true)) {
                 throw new InvalidMenuClass($menuClass);
             }
 
@@ -100,7 +100,7 @@ class Bootstrapper
             $remove_all_hook_function = "remove_all_{$hook_type}s";
 
             foreach ($removable_hook as $hook_flag => $remove_rules) {
-                if (is_a($hook_flag, AbstractHooker::class, true)) {
+                if (is_a($hook_flag, Hooker::class, true)) {
                     continue;
                 }
 

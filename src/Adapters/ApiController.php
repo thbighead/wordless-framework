@@ -19,7 +19,7 @@ use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 use WP_REST_Controller;
 
-abstract class WordlessController extends WP_REST_Controller
+abstract class ApiController extends WP_REST_Controller
 {
     use AuthorizationCheck, ResourceValidation, RestingWordPress, Routing, Singleton;
 

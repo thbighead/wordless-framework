@@ -2,11 +2,11 @@
 
 namespace Wordless\Abstractions;
 
-abstract class AbstractEnqueueableMounter
+abstract class EnqueueableMounter
 {
     abstract public static function id(): string;
 
-    abstract protected function mount(): AbstractEnqueueableElement;
+    abstract protected function mount(): EnqueueableElement;
 
     abstract protected function relativeFilePath(): string;
 

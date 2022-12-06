@@ -3,7 +3,7 @@
 use Wordless\Abstractions\Bootstrapper;
 use Wordless\Abstractions\WpSpeedUp;
 use Wordless\Hookers\AllowSvgUpload;
-use Wordless\Hookers\BootControllers;
+use Wordless\Hookers\BootApiControllers;
 use Wordless\Hookers\BootCustomPostTypes;
 use Wordless\Hookers\BootHttpRemoteCallsLog;
 use Wordless\Hookers\ChooseImageEditor;
@@ -19,7 +19,7 @@ return [
     Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [
         ...WpSpeedUp::addAdditionalHooks(),
         AllowSvgUpload::class,
-        BootControllers::class,
+        BootApiControllers::class,
         BootCustomPostTypes::class,
         BootHttpRemoteCallsLog::class,
         ChooseImageEditor::class,
@@ -70,7 +70,7 @@ return [
      * with any value. When doing it, Wordless is going to avoid the class initialization
      * instead of removing it through any WordPress function:
      *      Bootstrapper::HOOKERS_REMOVE_ACTION_CONFIG_KEY => [
-     *          BootControllers::class => 'anything',
+     *          BootApiControllers::class => 'anything',
      *          HideDiagnosticsFromUserRoles::class => false,
      *          BootHttpRemoteCallsLog::class => null,
      *          HooksDebugLog::class => 16523,

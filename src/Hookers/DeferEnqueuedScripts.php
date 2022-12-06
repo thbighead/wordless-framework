@@ -2,10 +2,10 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
+use Wordless\Abstractions\Hooker;
 use Wordless\Helpers\Str;
 
-class DeferEnqueuedScripts extends AbstractHooker
+class DeferEnqueuedScripts extends Hooker
 {
     private const DEFER_ATTRIBUTE = 'defer=\'true';
     /**

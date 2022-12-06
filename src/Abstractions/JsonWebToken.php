@@ -15,8 +15,8 @@ use Lcobucci\JWT\Token\Parser;
 use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Validator;
-use Wordless\Contracts\IMultipleConstructors;
 use Wordless\Contracts\MultipleConstructors;
+use Wordless\Contracts\MultipleConstructorsGuesser;
 use Wordless\Exceptions\InvalidConfigKey;
 use Wordless\Exceptions\InvalidJwtCryptoAlgorithmId;
 use Wordless\Exceptions\PathNotFoundException;
@@ -28,9 +28,9 @@ use Wordless\Helpers\Str;
 /**
  * Using https://lcobucci-jwt.readthedocs.io/en/latest/
  */
-class JsonWebToken implements IMultipleConstructors
+class JsonWebToken implements MultipleConstructors
 {
-    use MultipleConstructors;
+    use MultipleConstructorsGuesser;
 
     public const CONFIG_DEFAULT_CRYPTO = 'default_crypto';
     public const CONFIG_SIGN_KEY = 'sign_key';

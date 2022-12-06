@@ -6,7 +6,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\RunWpCliCommand;
 use Wordless\Contracts\Command\WriteRobotsTxt;
 use Wordless\Exceptions\FailedToCopyStub;
@@ -15,7 +15,7 @@ use Wordless\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
 
-class WordlessDeploy extends WordlessCommand
+class ConsoleDeploy extends ConsoleCommand
 {
     use RunWpCliCommand, WriteRobotsTxt;
 

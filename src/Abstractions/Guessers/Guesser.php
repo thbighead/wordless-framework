@@ -2,7 +2,7 @@
 
 namespace Wordless\Abstractions\Guessers;
 
-abstract class BaseGuesser
+abstract class Guesser
 {
     private bool $already_guessed = false;
     /** @var mixed $guessed_value */

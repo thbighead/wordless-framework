@@ -4,7 +4,7 @@ namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Wordless\Abstractions\StubMounters\WpLoadMuPluginsStubMounter;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Arr;
@@ -13,7 +13,7 @@ use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class GenerateMustUsePluginsLoader extends WordlessCommand
+class GenerateMustUsePluginsLoader extends ConsoleCommand
 {
     public const COMMAND_NAME = 'mup:loader';
     private const SLASH = '/';

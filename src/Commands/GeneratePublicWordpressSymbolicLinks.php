@@ -4,7 +4,7 @@ namespace Wordless\Commands;
 
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Exceptions\FailedToCreateDirectory;
 use Wordless\Exceptions\FailedToCreateSymlink;
 use Wordless\Exceptions\FailedToDeletePath;
@@ -17,7 +17,7 @@ use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
+class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
 {
     public const COMMAND_NAME = 'wordless:symlinks';
     private const FILTER_RULE = '!';

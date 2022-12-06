@@ -2,11 +2,11 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
+use Wordless\Abstractions\Hooker;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
 
-class DoNotLoadWpAdminBarOutsidePanel extends AbstractHooker
+class DoNotLoadWpAdminBarOutsidePanel extends Hooker
 {
     public const SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY = 'show_wp_admin_bar_outside_panel';
 

@@ -4,7 +4,7 @@ namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\ForceMode;
 use Wordless\Exceptions\FailedToCopyConfig;
 use Wordless\Exceptions\PathNotFoundException;
@@ -12,7 +12,7 @@ use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class PublishConfigurationFiles extends WordlessCommand
+class PublishConfigurationFiles extends ConsoleCommand
 {
     use ForceMode;
 

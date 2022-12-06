@@ -6,7 +6,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\AllowRootMode;
 use Wordless\Contracts\Command\ForceMode;
 use Wordless\Contracts\Command\RunWpCliCommand;
@@ -24,7 +24,7 @@ use Wordless\Helpers\Arr;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 
-class InitializeTestEnvironment extends WordlessCommand
+class InitializeTestEnvironment extends ConsoleCommand
 {
     use AllowRootMode, ForceMode, RunWpCliCommand;
 

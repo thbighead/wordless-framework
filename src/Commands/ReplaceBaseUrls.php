@@ -7,12 +7,12 @@ use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Exceptions\DotEnvNotSetException;
 use Wordless\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Helpers\Environment;
 
-class ReplaceBaseUrls extends WordlessCommand
+class ReplaceBaseUrls extends ConsoleCommand
 {
     private const BASE_URLS_TO_SEARCH_FOR_REPLACING = 'base_urls';
 
