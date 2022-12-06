@@ -2,10 +2,10 @@
 
 namespace Wordless\Abstractions\Guessers;
 
-use Wordless\Adapters\WordlessCustomPost;
+use Wordless\Adapters\CustomPost;
 use Wordless\Helpers\Str;
 
-class CustomPostTypeKeyGuesser extends BaseGuesser
+class CustomPostTypeKeyGuesser extends Guesser
 {
     private string $class_name;
 
@@ -18,7 +18,7 @@ class CustomPostTypeKeyGuesser extends BaseGuesser
     {
         return Str::truncate(
             Str::slugCase($this->class_name),
-            WordlessCustomPost::POST_TYPE_KEY_MAX_LENGTH
+            CustomPost::POST_TYPE_KEY_MAX_LENGTH
         );
     }
 }

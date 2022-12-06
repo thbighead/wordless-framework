@@ -2,56 +2,41 @@
 
 namespace Wordless\Contracts;
 
-use Wordless\Exceptions\ClassDoesNotImplementsMultipleConstructors;
-use Wordless\Exceptions\ConstructorNotImplemented;
-use Wordless\Helpers\GetType;
-use Wordless\Helpers\Str;
-
-trait MultipleConstructors
+interface MultipleConstructors
 {
+    const PARSED_ARGUMENTS_ARGUMENTS_VALUES_KEY = 'arguments_values';
+    const PARSED_ARGUMENTS_ARGUMENTS_TYPES_KEY = 'arguments_types';
+    const PARSED_ARGUMENTS_NUMBER_OF_ARGUMENTS_KEY = 'number_of_arguments';
+
     /**
-     * @throws ClassDoesNotImplementsMultipleConstructors
-     * @throws ConstructorNotImplemented
+     * Must have the following structure:
+     * [
+     *      number_of_arguments => [
+     *          concatenated_arguments_types => ConstructorNameInPascalCase,
+     *          ...
+     *      ],
+     *      ...
+     * ]
+     * Example:
+     * [
+     *      3 => [
+     *          'stringdoubleboolean' => '__constructStringFloatBool',
+     *          'integerintegerinteger' => '__constructOnlyInts',
+     *      ],
+     *      1 => [
+     *          'Wordless\\Adapters\\WordlessCommand' => '__constructForWordlessCommand',
+     *          'array' => 'ForArray',
+     *          'integer' => 'ForInteger',
+     *      ],
+     *      // To avoid any kind of errors use Wordless\Helpers\GetType constants
+     *      2 => [
+     *          Wordless\Helpers\GetType::INTEGER . Wordless\Helpers\GetType::BOOLEAN => 'WhenNumberAndBool',
+     *          Wordless\Helpers\GetType::BOOLEAN . Wordless\Helpers\GetType::BOOLEAN => 'WhenBoolBeforeNumber',
+     *      ],
+     * ]
+     *
+     * @return string[]
+     * @noinspection SpellCheckingInspection
      */
-    public function __construct()
-    {
-        /** @noinspection PhpInstanceofIsAlwaysTrueInspection */
-        if (!($this instanceof IMultipleConstructors)) {
-            throw new ClassDoesNotImplementsMultipleConstructors(static::class);
-        }
-
-        $constructor_method = self::guessConstructor(self::parseArguments($arguments = func_get_args()));
-
-        if (!method_exists($this, $constructor_method)) {
-            throw new ConstructorNotImplemented(static::class, $constructor_method);
-        }
-
-        call_user_func_array([$this, $constructor_method], $arguments);
-    }
-
-    private static function guessConstructor(array $parsed_arguments): string
-    {
-        $number_of_arguments = $parsed_arguments[self::PARSED_ARGUMENTS_NUMBER_OF_ARGUMENTS_KEY];
-        $arguments_types = $parsed_arguments[self::PARSED_ARGUMENTS_ARGUMENTS_TYPES_KEY];
-
-        return Str::startWith(
-            static::constructorsDictionary()[$number_of_arguments][$arguments_types] ?? $number_of_arguments,
-            '__construct'
-        );
-    }
-
-    private static function parseArguments(array $arguments): array
-    {
-        $parsed_arguments = [
-            self::PARSED_ARGUMENTS_NUMBER_OF_ARGUMENTS_KEY => count($arguments),
-            self::PARSED_ARGUMENTS_ARGUMENTS_VALUES_KEY => $arguments,
-            self::PARSED_ARGUMENTS_ARGUMENTS_TYPES_KEY => '',
-        ];
-
-        foreach ($arguments as $argument) {
-            $parsed_arguments[self::PARSED_ARGUMENTS_ARGUMENTS_TYPES_KEY] .= GetType::of($argument);
-        }
-
-        return $parsed_arguments;
-    }
+    public static function constructorsDictionary(): array;
 }

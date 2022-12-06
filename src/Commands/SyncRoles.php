@@ -4,13 +4,13 @@ namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Wordless\Abstractions\RolesList;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exceptions\FailedToCreateRole;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WordPressFailedToFindRole;
 
-class SyncRoles extends WordlessCommand
+class SyncRoles extends ConsoleCommand
 {
     use LoadWpConfig;
 

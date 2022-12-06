@@ -2,10 +2,10 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
+use Wordless\Abstractions\Hooker;
 use WP_Customize_Manager;
 
-class RemoveAdditionalCssFromAdmin extends AbstractHooker
+class RemoveAdditionalCssFromAdmin extends Hooker
 {
     /**
      * WordPress action|filter number of arguments accepted by function

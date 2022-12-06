@@ -4,7 +4,7 @@ namespace Wordless\Abstractions\Guessers;
 
 use Wordless\Abstractions\Composer;
 
-class WordlessFrameworkVersionGuesser extends BaseGuesser
+class WordlessFrameworkVersionGuesser extends Guesser
 {
     /**
      * @inheritDoc

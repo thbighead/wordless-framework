@@ -5,7 +5,7 @@ namespace Wordless\Commands;
 use Symfony\Component\Console\Command\Command;
 use Wordless\Abstractions\Guessers\MigrationClassNameGuesser;
 use Wordless\Abstractions\Migrations\Script;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\ForceMode;
 use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exceptions\FailedToFindExecutedMigrationScript;
@@ -16,7 +16,7 @@ use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class Migrate extends WordlessCommand
+class Migrate extends ConsoleCommand
 {
     use ForceMode, LoadWpConfig;
 

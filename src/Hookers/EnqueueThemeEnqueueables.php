@@ -2,12 +2,12 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
+use Wordless\Abstractions\Hooker;
 use Wordless\Abstractions\EnqueueableElements\EnqueueableScript;
 use Wordless\Abstractions\EnqueueableElements\EnqueueableStyle;
 use Wordless\Exceptions\PathNotFoundException;
 
-class EnqueueThemeEnqueueables extends AbstractHooker
+class EnqueueThemeEnqueueables extends Hooker
 {
     /**
      * The function which shall be executed during hook

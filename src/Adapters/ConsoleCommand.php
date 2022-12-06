@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
-abstract class WordlessCommand extends Command
+abstract class ConsoleCommand extends Command
 {
     public const DECORATION_COMMENT = 'comment';
     public const DECORATION_DANGER = 'danger';
