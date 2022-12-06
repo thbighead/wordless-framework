@@ -96,7 +96,7 @@ abstract class WordlessCommand extends Command
     {
         if ($this->output instanceof BufferedOutput) {
             exec($full_command, $output, $result_code);
-            $this->writeln($output);
+            $this->output->writeln($output);
         } else {
             $result_code = Process::fromShellCommandline($full_command)
                 ->setTty(true)
