@@ -2,12 +2,12 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
+use Wordless\Abstractions\Hooker;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
 use WP_User;
 
-class HideDiagnosticsFromUserRoles extends AbstractHooker
+class HideDiagnosticsFromUserRoles extends Hooker
 {
     public const SHOW_DIAGNOSTICS_CONFIG_KEY = 'show_diagnostics_only_to';
     /**

@@ -2,9 +2,9 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
+use Wordless\Abstractions\Hooker;
 
-class HooksDebugLog extends AbstractHooker
+class HooksDebugLog extends Hooker
 {
     /**
      * WordPress action|filter number of arguments accepted by function

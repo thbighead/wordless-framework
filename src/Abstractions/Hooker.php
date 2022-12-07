@@ -2,7 +2,7 @@
 
 namespace Wordless\Abstractions;
 
-abstract class AbstractHooker
+abstract class Hooker
 {
     /**
      * WordPress action|filter number of arguments accepted by function

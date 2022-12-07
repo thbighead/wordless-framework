@@ -5,7 +5,7 @@ namespace Wordless\Commands;
 use Symfony\Component\Console\Command\Command;
 use Wordless\Abstractions\Guessers\MigrationClassNameGuesser;
 use Wordless\Abstractions\Migrations\Script;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\ForceMode;
 use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exceptions\FailedToFindExecutedMigrationScript;
@@ -16,7 +16,7 @@ use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class Migrate extends WordlessCommand
+class Migrate extends ConsoleCommand
 {
     use ForceMode, LoadWpConfig;
 
@@ -170,7 +170,7 @@ class Migrate extends WordlessCommand
     private function executeMissingMigrationsScripts()
     {
         if (empty($this->migrations_missing_execution)) {
-            $this->output->writeln('No missing migrations to execute.');
+            $this->writelnInfo('No missing migrations to execute.');
             return;
         }
 
@@ -281,7 +281,7 @@ class Migrate extends WordlessCommand
     private function resolveForceMode()
     {
         if ($this->isForceMode()) {
-            $this->output->writeln(
+            $this->writelnWarning(
                 'Running migration into force mode. Rolling back every executed migration.'
             );
             foreach ($this->getOrderedExecutedMigrationsChunksList() as $executed_migrations_chunk) {

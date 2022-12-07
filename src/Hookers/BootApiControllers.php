@@ -2,12 +2,12 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
-use Wordless\Adapters\WordlessController;
+use Wordless\Abstractions\Hooker;
+use Wordless\Adapters\ApiController;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WordPressFailedToFindRole;
 
-class BootControllers extends AbstractHooker
+class BootApiControllers extends Hooker
 {
     /**
      * @return void
@@ -16,7 +16,7 @@ class BootControllers extends AbstractHooker
      */
     public static function register()
     {
-        foreach (WordlessController::all() as $controller_path_and_namespace) {
+        foreach (ApiController::all() as $controller_path_and_namespace) {
             self::requireAndRegisterController(
                 $controller_path_and_namespace[0],
                 $controller_path_and_namespace[1]
@@ -31,9 +31,9 @@ class BootControllers extends AbstractHooker
      */
     private static function requireAndRegisterController(string $controller_pathing, string $controller_full_namespace)
     {
-        /** @var WordlessController $controller_full_namespace */
+        /** @var ApiController $controller_full_namespace */
         require_once $controller_pathing;
-        /** @var WordlessController $controller */
+        /** @var ApiController $controller */
         $controller = $controller_full_namespace::getInstance();
 
         $controller->register_routes();
