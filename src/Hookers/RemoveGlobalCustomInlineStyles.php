@@ -2,9 +2,9 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
+use Wordless\Abstractions\Hooker;
 
-class RemoveGlobalCustomInlineStyles extends AbstractHooker
+class RemoveGlobalCustomInlineStyles extends Hooker
 {
     /**
      * The function which shall be executed during hook

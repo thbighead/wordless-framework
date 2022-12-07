@@ -3,12 +3,12 @@
 namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 
-class OverwriteWpConfig extends WordlessCommand
+class OverwriteWpConfig extends ConsoleCommand
 {
     protected static $defaultName = 'wp-config:overwrite';
     private const WP_CONFIG_FILENAME = 'wp-config.php';

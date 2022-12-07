@@ -4,7 +4,7 @@ namespace Wordless\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Contracts\MultipleConstructors;
+use Wordless\Contracts\MultipleConstructorsGuesser;
 
 class ConstructorNotImplemented extends Exception
 {
@@ -18,7 +18,7 @@ class ConstructorNotImplemented extends Exception
 
         parent::__construct(
             "The class $this->namespaced_class tried to construct an object using $this->constructor_method construction method calculated by "
-            . MultipleConstructors::class
+            . MultipleConstructorsGuesser::class
             . ' but it\'s not implemented.',
             0,
             $previous

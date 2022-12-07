@@ -13,60 +13,45 @@ trait AuthorizationCheck
      * @param WP_REST_Request $request
      * @return bool|WP_Error
      */
-    public function create_item_permissions_check($request)
+    final public function create_item_permissions_check($request)
     {
-        return $this->resolvePermission(
-            $this->createPermissionName(),
-            self::METHOD_NAME_TO_REST_STORE_ITEM
-        );
+        return $this->storeAuthorizationCheck();
     }
 
     /**
      * @param WP_REST_Request $request
      * @return bool|WP_Error
      */
-    public function delete_item_permissions_check($request)
+    final public function delete_item_permissions_check($request)
     {
-        return $this->resolvePermission(
-            $this->deletePermissionName(),
-            self::METHOD_NAME_TO_REST_DESTROY_ITEM
-        );
+        return $this->destroyAuthorizationCheck();
     }
 
     /**
      * @param WP_REST_Request $request
      * @return bool|WP_Error
      */
-    public function get_item_permissions_check($request)
+    final public function get_item_permissions_check($request)
     {
-        return $this->resolvePermission(
-            $this->getItemPermissionName(),
-            self::METHOD_NAME_TO_REST_SHOW_ITEM
-        );
+        return $this->showAuthorizationCheck();
     }
 
     /**
      * @param WP_REST_Request $request
      * @return bool|WP_Error
      */
-    public function get_items_permissions_check($request)
+    final public function get_items_permissions_check($request)
     {
-        return $this->resolvePermission(
-            $this->getItemsPermissionName(),
-            self::METHOD_NAME_TO_REST_INDEX_ITEMS
-        );
+        return $this->indexAuthorizationCheck();
     }
 
     /**
      * @param WP_REST_Request $request
      * @return bool|WP_Error
      */
-    public function update_item_permissions_check($request)
+    final public function update_item_permissions_check($request)
     {
-        return $this->resolvePermission(
-            $this->updatePermissionName(),
-            self::METHOD_NAME_TO_REST_UPDATE_ITEM
-        );
+        return $this->updateAuthorizationCheck();
     }
 
     /**
@@ -78,6 +63,65 @@ trait AuthorizationCheck
         if (static::HAS_PERMISSIONS) {
             $this->syncPermissionsTo($roles);
         }
+    }
+
+    protected function buildForbiddenContextError(?string $missing_capability = null): WP_Error
+    {
+        $message = __('Sorry, you are not allowed to edit posts in this post type.');
+
+        if (!empty($missing_capability)) {
+            $message .= sprintf(__(' Missing capability \'%s\'.'), $missing_capability);
+        }
+
+        return new WP_Error(
+            self::FORBIDDEN_CONTEXT_CODE,
+            $message,
+            ['status' => rest_authorization_required_code()]
+        );
+    }
+
+    /**
+     * @return bool|WP_Error
+     */
+    protected function destroyAuthorizationCheck()
+    {
+        return $this->resolvePermission(
+            $this->deletePermissionName(),
+            self::METHOD_NAME_TO_REST_DESTROY_ITEM
+        );
+    }
+
+    /**
+     * @return bool|WP_Error
+     */
+    protected function indexAuthorizationCheck()
+    {
+        return $this->resolvePermission(
+            $this->getItemsPermissionName(),
+            self::METHOD_NAME_TO_REST_INDEX_ITEMS
+        );
+    }
+
+    /**
+     * @return bool|WP_Error
+     */
+    protected function showAuthorizationCheck()
+    {
+        return $this->resolvePermission(
+            $this->getItemPermissionName(),
+            self::METHOD_NAME_TO_REST_SHOW_ITEM
+        );
+    }
+
+    /**
+     * @return bool|WP_Error
+     */
+    protected function storeAuthorizationCheck()
+    {
+        return $this->resolvePermission(
+            $this->createPermissionName(),
+            self::METHOD_NAME_TO_REST_STORE_ITEM
+        );
     }
 
     /**
@@ -97,18 +141,14 @@ trait AuthorizationCheck
         }
     }
 
-    private function buildForbiddenContextError(?string $missing_capability = null): WP_Error
+    /**
+     * @return bool|WP_Error
+     */
+    protected function updateAuthorizationCheck()
     {
-        $message = __('Sorry, you are not allowed to edit posts in this post type.');
-
-        if (!empty($missing_capability)) {
-            $message .= sprintf(__(' Missing capability \'%s\'.'), $missing_capability);
-        }
-
-        return new WP_Error(
-            self::FORBIDDEN_CONTEXT_CODE,
-            $message,
-            ['status' => rest_authorization_required_code()]
+        return $this->resolvePermission(
+            $this->updatePermissionName(),
+            self::METHOD_NAME_TO_REST_UPDATE_ITEM
         );
     }
 

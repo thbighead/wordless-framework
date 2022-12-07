@@ -2,13 +2,13 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
-use Wordless\Adapters\WordlessCustomPost;
+use Wordless\Abstractions\Hooker;
+use Wordless\Adapters\CustomPost;
 use Wordless\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
 
-class BootCustomPostTypes extends AbstractHooker
+class BootCustomPostTypes extends Hooker
 {
     /**
      * WordPress action|filter hook identification
@@ -23,7 +23,7 @@ class BootCustomPostTypes extends AbstractHooker
     public static function register()
     {
         foreach (Config::tryToGetOrDefault('custom-post-types', []) as $customPostTypeClassNamespace) {
-            /** @var WordlessCustomPost $customPostTypeClassNamespace */
+            /** @var CustomPost $customPostTypeClassNamespace */
             $customPostTypeClassNamespace::register();
         }
     }

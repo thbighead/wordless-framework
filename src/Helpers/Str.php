@@ -100,7 +100,7 @@ class Str
 
     public static function endsWith(string $string, string $substring): bool
     {
-        return substr($string, -strlen($substring)) === $substring;
+        return str_ends_with($string, $substring);
     }
 
     public static function finishWith(string $string, string $finish_with): string
@@ -149,6 +149,11 @@ class Str
     public static function plural(string $string, string $language = Language::ENGLISH): string
     {
         return self::getInflector($language)->pluralize($string);
+    }
+
+    public static function removeSuffix(string $string, string $suffix): string
+    {
+        return !self::endsWith($string, $suffix) ? $string : substr($string, 0, -strlen($suffix));
     }
 
     /**

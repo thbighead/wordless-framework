@@ -3,12 +3,12 @@
 namespace Wordless\Commands;
 
 use Symfony\Component\Console\Input\InputArgument;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class WpCliCaller extends WordlessCommand
+class WpCliCaller extends ConsoleCommand
 {
     public const COMMAND_NAME = 'wp:run';
     public const WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME = 'wp_cli_full_command_string';

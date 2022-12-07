@@ -6,14 +6,14 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Wordless\Abstractions\Migrations\Script;
 use Wordless\Abstractions\StubMounters\MigrationStubMounter;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class MakeMigration extends WordlessCommand
+class MakeMigration extends ConsoleCommand
 {
     use LoadWpConfig;
 

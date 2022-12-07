@@ -4,7 +4,7 @@ namespace Wordless\Commands;
 
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Exceptions\FailedToCreateDirectory;
 use Wordless\Exceptions\FailedToCreateSymlink;
 use Wordless\Exceptions\FailedToDeletePath;
@@ -17,7 +17,7 @@ use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
+class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
 {
     public const COMMAND_NAME = 'wordless:symlinks';
     private const FILTER_RULE = '!';
@@ -111,7 +111,7 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
     {
         $command = "cd public && ln -s -r $target $link_name";
 
-        $this->writelnWhenVerbose("Creating \"$link_name\" pointing to \"$target\" with \"$command\" command.");
+        $this->writelnInfoWhenVerbose("Creating \"$link_name\" pointing to \"$target\" with \"$command\" command.");
 
         if ($this->executeCommand($command) !== self::SUCCESS) {
             throw new FailedToCreateSymlink($command);
@@ -153,7 +153,8 @@ class GeneratePublicWordpressSymbolicLinks extends WordlessCommand
         $link_name_full_path = "$public_path/$link_name_relative_path";
 
         if (is_dir($link_name_full_path)) {
-            $this->writelnWhenVerbose("Directory $link_name_full_path already created, skipping.");
+            $this->writelnCommentWhenVerbose("Directory $link_name_full_path already created, skipping.");
+
             return $link_name;
         }
 

@@ -2,11 +2,11 @@
 
 namespace Wordless\Abstractions\EnqueueableMounters;
 
-use Wordless\Abstractions\AbstractEnqueueableMounter;
+use Wordless\Abstractions\EnqueueableMounter;
 use Wordless\Abstractions\EnqueueableElements\EnqueueableScript;
 use Wordless\Exceptions\DuplicatedEnqueueableId;
 
-abstract class Script extends AbstractEnqueueableMounter
+abstract class Script extends EnqueueableMounter
 {
     /**
      * @return EnqueueableScript
