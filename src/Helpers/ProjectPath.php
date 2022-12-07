@@ -2,6 +2,7 @@
 
 namespace Wordless\Helpers;
 
+use Wordless\Exceptions\InvalidDirectory;
 use Wordless\Exceptions\PathNotFoundException;
 
 class ProjectPath
@@ -116,10 +117,25 @@ class ProjectPath
      * @param string $additional_path
      * @return string
      * @throws PathNotFoundException
+     * @throws InvalidDirectory
      */
     public static function migrations(string $additional_path = ''): string
     {
-        return self::root("migrations/$additional_path");
+        try {
+            return self::root($relative_path = "migrations/$additional_path");
+        } catch (PathNotFoundException $exception) {
+            foreach (DirectoryFiles::listFromDirectory(self::packages()) as $package_folder) {
+                try {
+                    return self::packages("$package_folder/$relative_path");
+                } catch (PathNotFoundException $exception) {
+                    continue;
+                }
+            }
+
+            throw new PathNotFoundException(
+                self::root() . "/$relative_path' or '" . self::packages() . "/*/$relative_path"
+            );
+        }
     }
 
     /**
