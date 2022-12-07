@@ -42,7 +42,7 @@ class FlushMigrations extends Migrate
             try {
                 $this->executeMigrationScriptFile($migration_filename, false);
             } catch (FailedToFindMigrationScript $exception) {
-                $this->output->writeln("{$exception->getMessage()} Skipping.");
+                $this->writelnComment("{$exception->getMessage()} Skipping.");
             }
         }
 

@@ -10,7 +10,7 @@ use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
 use Wordless\Helpers\Str;
 
-abstract class AbstractEnqueueableElement
+abstract class EnqueueableElement
 {
     abstract public static function configKey(): string;
 
@@ -61,7 +61,7 @@ abstract class AbstractEnqueueableElement
         );
 
         foreach ($style_mounters_to_queue as $style_mounter_class) {
-            /** @var AbstractEnqueueableMounter $enqueueableStyleMounter */
+            /** @var EnqueueableMounter $enqueueableStyleMounter */
             $enqueueableStyleMounter = new $style_mounter_class;
             $enqueueableStyleMounter->mountAndEnqueue();
         }

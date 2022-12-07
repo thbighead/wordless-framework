@@ -5,10 +5,10 @@ namespace Wordless\Commands;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\LoadWpConfig;
 
-class MigrationList extends WordlessCommand
+class MigrationList extends ConsoleCommand
 {
     use LoadWpConfig;
 

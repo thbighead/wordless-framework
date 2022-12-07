@@ -15,7 +15,7 @@ use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\ForceMode;
 use Wordless\Contracts\Command\RunWpCliCommand;
 use Wordless\Contracts\Command\WriteRobotsTxt;
@@ -30,7 +30,7 @@ use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class WordlessInstall extends WordlessCommand
+class ConsoleInstall extends ConsoleCommand
 {
     use ForceMode, RunWpCliCommand, WriteRobotsTxt;
 
@@ -185,7 +185,10 @@ class WordlessInstall extends WordlessCommand
         $new_robots_txt_filepath = ProjectPath::public() . "/$filename";
 
         if (($supposed_already_existing_robots_txt_filepath = realpath($new_robots_txt_filepath)) !== false) {
-            $this->writelnWhenVerbose("$supposed_already_existing_robots_txt_filepath already exists, skipping.");
+            $this->writelnInfoWhenVerbose(
+                "$supposed_already_existing_robots_txt_filepath already exists, skipping."
+            );
+
             return;
         }
 
@@ -203,8 +206,8 @@ class WordlessInstall extends WordlessCommand
 
         if ((($supposed_already_existing_wp_config_filepath = realpath($new_wp_config_filepath)) !== false)
             && str_contains(file_get_contents($new_wp_config_filepath), '@author Wordless')) {
-            $this->writelnWhenVerbose(
-                "Wordless seems to already have created a config file at $supposed_already_existing_wp_config_filepath, skipping."
+            $this->writelnCommentWhenVerbose(
+                "A config file at $supposed_already_existing_wp_config_filepath already exists, skipping."
             );
 
             return;
@@ -223,7 +226,7 @@ class WordlessInstall extends WordlessCommand
     private function createWpDatabase()
     {
         if ($this->input->getOption(self::NO_DB_CREATION_MODE)) {
-            $this->writelnWhenVerbose(
+            $this->writelnInfoWhenVerbose(
                 'Running with no database creation mode. Skipping database check and creation.'
             );
 
@@ -237,7 +240,7 @@ class WordlessInstall extends WordlessCommand
                 "db check --dbuser=$database_username --dbpass=$database_password",
                 true
             ) == 0) {
-            $this->writelnWhenVerbose('WordPress Database already created, skipping.');
+            $this->writelnCommentWhenVerbose('WordPress Database already created, skipping.');
 
             return;
         }
@@ -253,7 +256,7 @@ class WordlessInstall extends WordlessCommand
     private function downloadWpCore()
     {
         if ($this->runWpCliCommand('core version --extra', true) == 0) {
-            $this->writelnWhenVerbose('WordPress Core already downloaded, skipping.');
+            $this->writelnCommentWhenVerbose('WordPress Core already downloaded, skipping.');
 
             return;
         }
@@ -279,9 +282,7 @@ class WordlessInstall extends WordlessCommand
             return;
         }
 
-        $this->output->writeln(
-            "We'll need to fill up $dot_env_filepath: ('null' values to comment line)"
-        );
+        $this->writeln("We'll need to fill up $dot_env_filepath: ('null' values to comment line)");
 
         $filler_dictionary = $this->mountDotEnvFillerDictionary($not_filled_variables);
         $dot_env_content = str_replace(
@@ -416,7 +417,7 @@ class WordlessInstall extends WordlessCommand
     private function installWpCore()
     {
         if ($this->runWpCliCommand('core is-installed', true) == 0) {
-            $this->writelnWhenVerbose('WordPress Core already installed, minor updating.');
+            $this->writelnInfoWhenVerbose('WordPress Core already installed, minor updating.');
 
             $this->switchingMaintenanceMode(true);
 
@@ -450,7 +451,7 @@ class WordlessInstall extends WordlessCommand
     private function installWpCoreLanguage(string $language)
     {
         if ($this->runWpCliCommand("language core is-installed $language", true) == 0) {
-            $this->writelnWhenVerbose("WordPress Core Language $language already installed, updating.");
+            $this->writelnInfoWhenVerbose("WordPress Core Language $language already installed, updating.");
 
             $this->runWpCliCommand('language core update', true);
             $this->runWpCliCommand("site switch-language $language", true);
@@ -469,9 +470,8 @@ class WordlessInstall extends WordlessCommand
     private function installWpLanguages()
     {
         if (empty($wp_languages = $this->getWpLanguages())) {
-            $this->output->writeln(
-                'Environment variable WP_LANGUAGES has no value. Skipping language install.'
-            );
+            $this->writelnWarning('Environment variable WP_LANGUAGES has no value. Skipping language install.');
+
             return;
         }
 
@@ -595,7 +595,7 @@ class WordlessInstall extends WordlessCommand
                     }
                 );
             } catch (PathNotFoundException $exception) {
-                $this->writelnWhenVerbose("{$exception->getMessage()} Skipped from force mode.");
+                $this->writelnCommentWhenVerbose("{$exception->getMessage()} Skipped from force mode.");
             }
         }
     }
@@ -621,7 +621,8 @@ class WordlessInstall extends WordlessCommand
         $switch_string = $switch ? 'activate' : 'deactivate';
 
         if ($this->maintenance_mode === $switch) {
-            $this->output->writeln("Maintenance mode already {$switch_string}d. Skipping...");
+            $this->writelnComment("Maintenance mode already {$switch_string}d. Skipping...");
+
             return;
         }
 
