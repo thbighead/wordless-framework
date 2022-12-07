@@ -6,7 +6,7 @@ use Wordless\Abstractions\Migrations\Script;
 use Wordless\Exceptions\InvalidDateFormat;
 use Wordless\Helpers\Str;
 
-class MigrationClassNameGuesser extends BaseGuesser
+class MigrationClassNameGuesser extends Guesser
 {
     private string $migration_filename;
     private int $migration_date_format_prefix_char_size;

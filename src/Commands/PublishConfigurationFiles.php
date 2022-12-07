@@ -4,7 +4,7 @@ namespace Wordless\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\ForceMode;
 use Wordless\Exceptions\FailedToCopyConfig;
 use Wordless\Exceptions\PathNotFoundException;
@@ -12,7 +12,7 @@ use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class PublishConfigurationFiles extends WordlessCommand
+class PublishConfigurationFiles extends ConsoleCommand
 {
     use ForceMode;
 
@@ -119,14 +119,16 @@ class PublishConfigurationFiles extends WordlessCommand
 
         try {
             $config_filepath_to = ProjectPath::root($config_relative_filepath);
-            $this->output->write("File destination at $config_filepath_to already exists... ");
+            $this->writeWarning("File destination at $config_filepath_to already exists... ");
+
             if (!$this->isForceMode()) {
-                $this->output->writeln('We are not in force mode, so let\'s skip this copy.');
+                $this->writelnComment('We are not in force mode, so let\'s skip this copy.');
+
                 return;
             }
         } catch (PathNotFoundException $exception) {
             $config_filepath_to = ProjectPath::root() . DIRECTORY_SEPARATOR . $config_relative_filepath;
-            $this->output->write("File destination at $config_filepath_to does not exists... ");
+            $this->writeComment("File destination at $config_filepath_to does not exists... ");
         }
 
         $this->wrapScriptWithMessages(

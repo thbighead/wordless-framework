@@ -5,14 +5,14 @@ namespace Wordless\Commands;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Wordless\Abstractions\StubMounters\HookerStubMounter;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class MakeHooker extends WordlessCommand
+class MakeHooker extends ConsoleCommand
 {
     use LoadWpConfig;
 

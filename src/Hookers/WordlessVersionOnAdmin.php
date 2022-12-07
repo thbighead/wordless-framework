@@ -2,10 +2,10 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
+use Wordless\Abstractions\Hooker;
 use Wordless\Abstractions\Guessers\WordlessFrameworkVersionGuesser;
 
-class WordlessVersionOnAdmin extends AbstractHooker
+class WordlessVersionOnAdmin extends Hooker
 {
     /**
      * WordPress action|filter number of arguments accepted by function

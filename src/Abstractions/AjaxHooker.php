@@ -2,7 +2,7 @@
 
 namespace Wordless\Abstractions;
 
-abstract class AbstractAjaxHooker extends AbstractHooker
+abstract class AjaxHooker extends Hooker
 {
     /**
      * Define wp_ajax_ prefixed hook to let AJAX be called from admin panel (only logged in)

@@ -7,8 +7,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Wordless\Abstractions\RolesList;
 use Wordless\Abstractions\StubMounters\CustomPostTypeStubMounter;
-use Wordless\Adapters\WordlessCommand;
-use Wordless\Adapters\WordlessCustomPost;
+use Wordless\Adapters\ConsoleCommand;
+use Wordless\Adapters\CustomPost;
 use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\FailedToCreateRole;
@@ -18,7 +18,7 @@ use Wordless\Exceptions\WordPressFailedToFindRole;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class MakeCustomPostType extends WordlessCommand
+class MakeCustomPostType extends ConsoleCommand
 {
     use LoadWpConfig;
 
@@ -149,7 +149,7 @@ class MakeCustomPostType extends WordlessCommand
         $this->wrapScriptWithMessages(
             "Registering $custom_post_type_class_name permissions to admin role...",
             function () use ($custom_post_type_class_name) {
-                /** @var WordlessCustomPost $custom_post_type_class_guessed_namespace */
+                /** @var CustomPost $custom_post_type_class_guessed_namespace */
                 $custom_post_type_class_guessed_namespace = "App\\CustomPostTypes\\$custom_post_type_class_name";
                 $custom_post_type_class_guessed_namespace::register();
                 RolesList::sync();

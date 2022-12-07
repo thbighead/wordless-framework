@@ -4,8 +4,8 @@ namespace Wordless\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Contracts\IMultipleConstructors;
 use Wordless\Contracts\MultipleConstructors;
+use Wordless\Contracts\MultipleConstructorsGuesser;
 
 class ClassDoesNotImplementsMultipleConstructors extends Exception
 {
@@ -13,9 +13,9 @@ class ClassDoesNotImplementsMultipleConstructors extends Exception
     {
         parent::__construct(
             "The class $namespaced_class does not implements "
-            . IMultipleConstructors::class
+            . MultipleConstructors::class
             . ' but is using '
-            . MultipleConstructors::class,
+            . MultipleConstructorsGuesser::class,
             0,
             $previous
         );

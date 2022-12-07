@@ -2,9 +2,9 @@
 
 namespace App\CustomPostTypes;
 
-use Wordless\Adapters\WordlessCustomPost;
+use Wordless\Adapters\CustomPost;
 
-class DummyCustomPostTypeClass extends WordlessCustomPost
+class DummyCustomPostTypeClass extends CustomPost
 {
     protected const TYPE_KEY = 'snake_cased_cpt_key';
 
