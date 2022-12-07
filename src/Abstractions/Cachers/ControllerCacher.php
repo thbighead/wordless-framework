@@ -4,7 +4,7 @@ namespace Wordless\Abstractions\Cachers;
 
 use ReflectionException;
 use ReflectionMethod;
-use Wordless\Adapters\WordlessController;
+use Wordless\Adapters\ApiController;
 use Wordless\Exceptions\PathNotFoundException;
 
 class ControllerCacher extends BaseCacher
@@ -23,12 +23,12 @@ class ControllerCacher extends BaseCacher
         $controllers_cache_array = [];
 
         foreach (
-            WordlessController::yieldBootableControllersPathAndResourceNameByReadingDirectory()
+            ApiController::yieldBootableControllersPathAndResourceNameByReadingDirectory()
             as $controller_path_and_resource_name
         ) {
             require_once $controller_path_and_resource_name[0];
 
-            /** @var WordlessController $controller_namespaced_class */
+            /** @var ApiController $controller_namespaced_class */
             $controller_namespaced_class = $controller_path_and_resource_name[1];
             $controller = $controller_namespaced_class::getInstance();
 
@@ -44,8 +44,8 @@ class ControllerCacher extends BaseCacher
      * @throws ReflectionException
      */
     private function extractResourceNameAndVersionFromController(
-        WordlessController $controller,
-        string             $controller_class_resource_name
+        ApiController $controller,
+        string        $controller_class_resource_name
     ): array
     {
         $controllerResourceNameMethod = new ReflectionMethod($controller_class_resource_name, 'resourceName');

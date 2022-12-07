@@ -5,13 +5,13 @@ namespace Wordless\Commands;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Wordless\Abstractions\StubMounters\ExceptionStubMounter;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class MakeException extends WordlessCommand
+class MakeException extends ConsoleCommand
 {
     protected static $defaultName = 'make:exception';
 

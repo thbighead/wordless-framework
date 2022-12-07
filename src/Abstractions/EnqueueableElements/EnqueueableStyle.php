@@ -2,11 +2,11 @@
 
 namespace Wordless\Abstractions\EnqueueableElements;
 
-use Wordless\Abstractions\AbstractEnqueueableElement;
+use Wordless\Abstractions\EnqueueableElement;
 use Wordless\Exceptions\DuplicatedEnqueueableId;
 use Wordless\Exceptions\InvalidMediaOption;
 
-class EnqueueableStyle extends AbstractEnqueueableElement
+class EnqueueableStyle extends EnqueueableElement
 {
     public static function configKey(): string
     {

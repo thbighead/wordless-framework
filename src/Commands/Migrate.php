@@ -5,7 +5,7 @@ namespace Wordless\Commands;
 use Symfony\Component\Console\Command\Command;
 use Wordless\Abstractions\Guessers\MigrationClassNameGuesser;
 use Wordless\Abstractions\Migrations\Script;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\ForceMode;
 use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exceptions\FailedToFindExecutedMigrationScript;
@@ -16,7 +16,7 @@ use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class Migrate extends WordlessCommand
+class Migrate extends ConsoleCommand
 {
     use ForceMode, LoadWpConfig;
 
@@ -170,7 +170,7 @@ class Migrate extends WordlessCommand
     private function executeMissingMigrationsScripts()
     {
         if (empty($this->migrations_missing_execution)) {
-            $this->output->writeln('No missing migrations to execute.');
+            $this->writelnInfo('No missing migrations to execute.');
             return;
         }
 
@@ -208,11 +208,8 @@ class Migrate extends WordlessCommand
 
     private function getExecutedMigrationsChunksList(): array
     {
-        if (isset($this->executed_migrations_list)) {
-            return $this->executed_migrations_list;
-        }
-
-        return $this->executed_migrations_list = get_option(self::MIGRATIONS_WP_OPTION_NAME, []);
+        return $this->executed_migrations_list ??
+            $this->executed_migrations_list = get_option(self::MIGRATIONS_WP_OPTION_NAME, []);
     }
 
     /**
@@ -222,12 +219,30 @@ class Migrate extends WordlessCommand
      */
     private function getMigrationFiles(): array
     {
-        if (isset($this->migration_files)) {
-            return $this->migration_files;
+        return $this->migration_files ?? $this->migration_files = $this->listMigrationFiles();
+    }
+
+    /**
+     * @return array
+     * @throws InvalidDirectory
+     * @throws PathNotFoundException
+     */
+    private function listMigrationFiles(): array
+    {
+        $files_list = DirectoryFiles::listFromDirectory(ProjectPath::migrations());
+
+        foreach (DirectoryFiles::listFromDirectory(ProjectPath::packages()) as $package_folder) {
+            try {
+                $files_list = array_merge($files_list, DirectoryFiles::listFromDirectory(
+                    ProjectPath::packages("$package_folder/migrations")
+                ));
+            } catch (PathNotFoundException|InvalidDirectory $exception) {
+                continue;
+            }
         }
 
-        return $this->migration_files = array_filter(
-            DirectoryFiles::listFromDirectory(ProjectPath::migrations()),
+        return array_filter(
+            array_unique($files_list),
             function ($supposed_migration_file) {
                 return Str::endsWith($supposed_migration_file, '.php');
             }
@@ -236,11 +251,7 @@ class Migrate extends WordlessCommand
 
     private function getNow(): string
     {
-        if (isset($this->now)) {
-            return $this->now;
-        }
-
-        return $this->now = date('Y-m-d H:i:s');
+        return $this->now ?? $this->now = date('Y-m-d H:i:s');
     }
 
     /**
@@ -281,7 +292,7 @@ class Migrate extends WordlessCommand
     private function resolveForceMode()
     {
         if ($this->isForceMode()) {
-            $this->output->writeln(
+            $this->writelnWarning(
                 'Running migration into force mode. Rolling back every executed migration.'
             );
             foreach ($this->getOrderedExecutedMigrationsChunksList() as $executed_migrations_chunk) {

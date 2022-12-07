@@ -7,15 +7,15 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Wordless\Abstractions\StubMounters\ControllerStubMounter;
 use Wordless\Adapters\Role;
-use Wordless\Adapters\WordlessCommand;
-use Wordless\Adapters\WordlessController;
+use Wordless\Adapters\ConsoleCommand;
+use Wordless\Adapters\ApiController;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WordPressFailedToFindRole;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class MakeController extends WordlessCommand
+class MakeController extends ConsoleCommand
 {
     protected static $defaultName = 'make:controller';
 
@@ -99,7 +99,7 @@ class MakeController extends WordlessCommand
         $this->wrapScriptWithMessages(
             "Registering $controller_class_name permissions to admin role...",
             function () use ($controller_class_name) {
-                /** @var WordlessController $controller_class_guessed_namespace */
+                /** @var ApiController $controller_class_guessed_namespace */
                 $controller_class_guessed_namespace = "App\\Controllers\\$controller_class_name";
                 $controller_class_guessed_namespace::getInstance()
                     ->registerCapabilitiesToRole(Role::find(Role::ADMIN));

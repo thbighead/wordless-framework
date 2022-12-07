@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
-abstract class WordlessCommand extends Command
+abstract class ConsoleCommand extends Command
 {
     public const DECORATION_COMMENT = 'comment';
     public const DECORATION_DANGER = 'danger';
@@ -225,7 +225,7 @@ abstract class WordlessCommand extends Command
         $result = $script();
 
         $only_when_verbose ?
-            $this->writelnWhenVerbose($after_script_message) : $this->writeln($after_script_message);
+            $this->writelnSuccessWhenVerbose($after_script_message) : $this->writelnSuccess($after_script_message);
 
         return $result;
     }

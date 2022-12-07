@@ -2,13 +2,13 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
+use Wordless\Abstractions\Hooker;
 use Wordless\Adapters\Request;
 use Wordless\Adapters\Response;
 use Wordless\Helpers\Http;
 use WP_HTTP_Response;
 
-class ManageRestResponseContentTypeHeader extends AbstractHooker
+class ManageRestResponseContentTypeHeader extends Hooker
 {
     /**
      * WordPress action|filter number of arguments accepted by function

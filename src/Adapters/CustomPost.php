@@ -9,7 +9,7 @@ use Wordless\Exceptions\PostTypeNotRegistered;
 use Wordless\Helpers\Str;
 use WP_Post;
 
-abstract class WordlessCustomPost extends Post
+abstract class CustomPost extends Post
 {
     use Register;
 

@@ -2,11 +2,11 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
+use Wordless\Abstractions\Hooker;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
 
-class ChooseImageEditor extends AbstractHooker
+class ChooseImageEditor extends Hooker
 {
     public const IMAGE_LIBRARY_CONFIG_KEY = 'image_library';
     public const IMAGE_LIBRARY_CONFIG_VALUE_IMAGICK = 'imagick';

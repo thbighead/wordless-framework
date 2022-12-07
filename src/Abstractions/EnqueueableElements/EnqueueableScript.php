@@ -2,10 +2,10 @@
 
 namespace Wordless\Abstractions\EnqueueableElements;
 
-use Wordless\Abstractions\AbstractEnqueueableElement;
+use Wordless\Abstractions\EnqueueableElement;
 use Wordless\Exceptions\DuplicatedEnqueueableId;
 
-class EnqueueableScript extends AbstractEnqueueableElement
+class EnqueueableScript extends EnqueueableElement
 {
     public static function configKey(): string
     {

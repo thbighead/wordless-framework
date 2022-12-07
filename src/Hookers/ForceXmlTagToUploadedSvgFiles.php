@@ -2,10 +2,10 @@
 
 namespace Wordless\Hookers;
 
-use Wordless\Abstractions\AbstractHooker;
+use Wordless\Abstractions\Hooker;
 use Wordless\Helpers\Str;
 
-class ForceXmlTagToUploadedSvgFiles extends AbstractHooker
+class ForceXmlTagToUploadedSvgFiles extends Hooker
 {
     private const UPLOAD_TEMP_PATH_KEY = 'tmp_name';
 

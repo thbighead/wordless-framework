@@ -2,7 +2,7 @@
 
 namespace Wordless\Abstractions;
 
-abstract class AbstractMenu
+abstract class Menu
 {
     abstract public static function id(): string;
 
