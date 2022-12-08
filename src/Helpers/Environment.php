@@ -80,7 +80,7 @@ class Environment
         (new Dotenv)->load(ProjectPath::root('.env'));
     }
 
-    private static function findReferenceInValue(string $value)
+    private static function findReferenceInValue(string $value): array
     {
         preg_match_all('/^\S+=[^\s"]*\$\{(.+)}[^\s"]*$/m', $value, $output_array);
 
