@@ -30,7 +30,7 @@ use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
 
-class ConsoleInstall extends ConsoleCommand
+class WordlessInstall extends ConsoleCommand
 {
     use ForceMode, RunWpCliCommand, WriteRobotsTxt;
 

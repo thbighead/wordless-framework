@@ -15,7 +15,7 @@ use Wordless\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
 
-class ConsoleDeploy extends ConsoleCommand
+class WordlessDeploy extends ConsoleCommand
 {
     use RunWpCliCommand, WriteRobotsTxt;
 
