@@ -11,4 +11,5 @@ $application = new Application;
 
 $application->add(new InitializeTestEnvironment);
 
+/** @noinspection PhpUnhandledExceptionInspection */
 $application->run();

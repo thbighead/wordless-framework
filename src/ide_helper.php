@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpIllegalPsrClassPathInspection */
 
 /**
  * Used just to help IDE to know those constants should be correctly loaded dynamically.

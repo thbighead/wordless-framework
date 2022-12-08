@@ -3,12 +3,11 @@
 namespace Wordless\Commands;
 
 use Symfony\Component\Console\Input\InputArgument;
-use Wordless\Adapters\WordlessCommand;
+use Wordless\Adapters\ConsoleCommand;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
-use Wordless\Helpers\Str;
 
-class ThemeNpmCaller extends WordlessCommand
+class ThemeNpmCaller extends ConsoleCommand
 {
     public const COMMAND_NAME = 'theme:npm';
     public const NPM_FULL_COMMAND_STRING_ARGUMENT_NAME = 'npm_full_command_string';
