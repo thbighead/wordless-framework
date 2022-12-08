@@ -2,7 +2,7 @@
 
 namespace Wordless\Contracts\Command;
 
-use Exception;
+use Symfony\Component\Console\Exception\ExceptionInterface;
 use Wordless\Commands\ThemeNpmCaller;
 use Wordless\Helpers\Environment;
 
@@ -10,7 +10,7 @@ trait ProjectAdditionalCommands
 {
     /**
      * @return void
-     * @throws Exception
+     * @throws ExceptionInterface
      */
     private function runNpmCommands()
     {
@@ -26,7 +26,7 @@ trait ProjectAdditionalCommands
 
     /**
      * @return void
-     * @throws Exception
+     * @throws ExceptionInterface
      */
     private function synchronizeAcfs()
     {
