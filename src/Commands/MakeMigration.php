@@ -9,6 +9,7 @@ use Wordless\Abstractions\StubMounters\MigrationStubMounter;
 use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exceptions\FailedToCopyStub;
+use Wordless\Exceptions\InvalidDirectory;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
@@ -52,6 +53,7 @@ class MakeMigration extends ConsoleCommand
      * @return int
      * @throws FailedToCopyStub
      * @throws PathNotFoundException
+     * @throws InvalidDirectory
      */
     protected function runIt(): int
     {
