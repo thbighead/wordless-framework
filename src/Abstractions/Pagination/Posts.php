@@ -63,7 +63,7 @@ class Posts
      */
     public function goToPage(int $page): Posts
     {
-        if (($page = max($page, self::FIRST_PAGE)) === $this->getCurrentPageNumber()) {
+        if (($page = $this->calculatePageInsideRange($page)) === $this->getCurrentPageNumber()) {
             return $this;
         }
 
@@ -95,5 +95,14 @@ class Posts
     public function retrieveNextPageItems(): array
     {
         return $this->nextPage()->getCurrentPageItems();
+    }
+
+    /**
+     * @param int $page
+     * @return int
+     */
+    private function calculatePageInsideRange(int $page): int
+    {
+        return min(max($page, self::FIRST_PAGE), $this->getNumberOfPages());
     }
 }

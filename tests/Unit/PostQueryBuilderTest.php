@@ -2,6 +2,8 @@
 
 namespace Wordless\Tests\Unit;
 
+use Wordless\Abstractions\Pagination\Posts;
+use Wordless\Adapters\Post;
 use Wordless\Adapters\PostType;
 use Wordless\Adapters\QueryBuilder\PostQueryBuilder;
 use Wordless\Adapters\QueryBuilder\QueryBuilder;
@@ -25,9 +27,53 @@ class PostQueryBuilderTest extends WordlessTestCase
         $this->assertInstanceOf(PostQueryBuilder::class, get_class($query4));
     }
 
-    public function testPaginatedQueryResult()
+    public function testPaginatedQueryResult(): Posts
     {
-        $query = new PostQueryBuilder;
-        $query->paginate();
+        $this->assertInstanceOf(Posts::class, $result = (new PostQueryBuilder)->paginate());
+
+        return $result;
+    }
+
+    /**
+     * @param Posts $result
+     * @depends testPaginatedQueryResult
+     */
+    public function testPaginationFirstPage(Posts $result)
+    {
+        $this->assertEquals(Posts::FIRST_PAGE, $result->getCurrentPageNumber());
+    }
+
+    /**
+     * @param Posts $result
+     * @depends testPaginatedQueryResult
+     */
+    public function testPaginationPostsKeyedById(Posts $result)
+    {
+        foreach ($result->getCurrentPageItems() as $post_id => $post) {
+            $this->assertInstanceOf(Post::class, $post);
+            $this->assertEquals($post_id, $post->ID ?? null);
+        }
+    }
+
+    /**
+     * @param Posts $result
+     * @depends testPaginatedQueryResult
+     */
+    public function testNextPage(Posts $result)
+    {
+        $current_page = $result->getCurrentPageNumber();
+        $pageOne = $result->getCurrentPageItems();
+
+        $result->nextPage();
+
+        if ($result->getNumberOfPages() > 1) {
+            $this->assertEquals(++$current_page, $result->getCurrentPageNumber());
+            $this->assertNotEquals($pageOne, $result->getCurrentPageItems());
+
+            return;
+        }
+
+        $this->assertEquals(1, $result->getCurrentPageNumber());
+        $this->assertEquals($pageOne, $result->getCurrentPageNumber());
     }
 }
