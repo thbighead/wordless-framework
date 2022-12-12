@@ -15,6 +15,7 @@ class PostType
     public const NAVIGATION_MENU_ITEM = 'nav_menu_item';
     public const PAGE = 'page';
     public const POST = 'post';
+    public const QUERY_TYPE_KEY = 'post_type';
     public const REVISION = 'revision';
 
     private WP_Post_Type $wpPostType;

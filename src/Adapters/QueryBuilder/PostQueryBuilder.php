@@ -3,16 +3,21 @@
 namespace Wordless\Adapters\QueryBuilder;
 
 use Wordless\Abstractions\Enums\WpQueryFields;
+use Wordless\Abstractions\Enums\WpQueryStatus;
 use Wordless\Abstractions\Pagination\Posts;
 use Wordless\Adapters\Post;
 use Wordless\Adapters\PostType;
 use Wordless\Exceptions\QueryAlreadySet;
+use Wordless\Helpers\Arr;
 use Wordless\Helpers\Log;
 use WP_Post;
 use WP_Query;
 
 class PostQueryBuilder extends QueryBuilder
 {
+    public const KEY_AUTHOR = 'author';
+    public const KEY_CATEGORY = 'cat';
+    public const KEY_HAS_PASSWORD = 'has_password';
     private bool $load_acfs = false;
 
     public function __construct(string $post_type = PostType::POST)
@@ -83,6 +88,30 @@ class PostQueryBuilder extends QueryBuilder
         return $this->getQuery()->max_num_pages;
     }
 
+    /**
+     * @return $this
+     */
+    public function onlyWithPassword(?string $password): PostQueryBuilder
+    {
+        $this->arguments[self::KEY_HAS_PASSWORD] = true;
+
+        if ($password !== null) {
+            $this->arguments['post_password'] = $password;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function onlyWithoutPassword(): PostQueryBuilder
+    {
+        $this->arguments[self::KEY_HAS_PASSWORD] = false;
+
+        return $this;
+    }
+
     public function paginate(
         int  $page = Posts::FIRST_PAGE,
         int  $posts_per_page = Posts::DEFAULT_POSTS_PER_PAGE,
@@ -123,12 +152,161 @@ class PostQueryBuilder extends QueryBuilder
     }
 
     /**
+     * @param int|int[] $ids
+     * @return PostQueryBuilder
+     */
+    public function whereAuthorId($ids): PostQueryBuilder
+    {
+        if (is_array($ids)) {
+            $ids = implode(',', $ids);
+        }
+
+        $this->arguments[self::KEY_AUTHOR] = $ids;
+
+        return $this;
+    }
+
+    /**
+     * @param string $author_nice_name
+     * @return $this
+     */
+    public function whereAuthorNiceName(string $author_nice_name): PostQueryBuilder
+    {
+        $this->arguments['author_name'] = $author_nice_name;
+
+        return $this;
+    }
+
+    /**
+     * @param int|int[] $ids
+     * @param bool $and
+     * @return $this
+     */
+    public function whereCategoryId($ids, bool $and = false): PostQueryBuilder
+    {
+        if (is_array($ids)) {
+            $this->arguments[$and ? 'category__and' : 'category__in'] = $ids;
+
+            return $this;
+        }
+
+        $this->arguments[self::KEY_CATEGORY] = $ids;
+
+        return $this;
+    }
+
+    /**
+     * @param string|string[] $names
+     * @param bool $and
+     * @return $this
+     */
+    public function whereCategoryName($names, bool $and = false): PostQueryBuilder
+    {
+        $this->arguments['category_name'] = is_array($names) ?
+            implode($and ? '+' : ',', $names) : $names;
+
+        return $this;
+    }
+
+    /**
+     * @param int|int[] $ids
+     * @return PostQueryBuilder
+     */
+    public function whereNotAuthorId($ids): PostQueryBuilder
+    {
+        if (is_array($ids)) {
+            $this->arguments['author__not_in'] = $ids;
+
+            return $this;
+        }
+
+        $this->arguments[self::KEY_AUTHOR] = -$ids;
+
+        return $this;
+    }
+
+    /**
+     * @param int|int[] $ids
+     * @return $this
+     */
+    public function whereNotCategoryId($ids): PostQueryBuilder
+    {
+        if (is_array($ids)) {
+            $this->arguments['category__not_in'] = $ids;
+
+            return $this;
+        }
+
+        $this->arguments[self::KEY_CATEGORY] = -$ids;
+
+        return $this;
+    }
+
+    /**
+     * @param int[] $ids
+     * @return $this
+     */
+    public function whereNotTagId(array $ids): PostQueryBuilder
+    {
+        $this->arguments['tag__not_in'] = $ids;
+
+        return $this;
+    }
+
+    public function whereStatus(string $status): PostQueryBuilder
+    {
+        if ($this->isForTypeAttachment($this->arguments[PostType::QUERY_TYPE_KEY]) &&
+            !($status === WpQueryStatus::ANY || $status === WpQueryStatus::INHERIT)) {
+            $status = WpQueryStatus::INHERIT;
+        }
+
+        $this->arguments[WpQueryStatus::POST_STATUS_KEY] = $status;
+
+        return $this;
+    }
+
+    /**
+     * @param int|int[] $ids
+     * @param bool $and
+     * @return $this
+     */
+    public function whereTagId($ids, bool $and = false): PostQueryBuilder
+    {
+        if (is_array($ids)) {
+            $this->arguments[$and ? 'tag__and' : 'tag__in'] = $ids;
+
+            return $this;
+        }
+
+        $this->arguments['tag_id'] = $ids;
+
+        return $this;
+    }
+
+    /**
+     * @param string|string[] $names
+     * @param bool $and
+     * @return $this
+     */
+    public function whereTagName($names, bool $and = false): PostQueryBuilder
+    {
+        $this->arguments['tag'] = is_array($names) ?
+            implode($and ? '+' : ',', $names) : $names;
+
+        return $this;
+    }
+
+    /**
      * @param string|string[] $types
      * @return $this
      */
     public function whereType($types): PostQueryBuilder
     {
-        $this->arguments['post_type'] = $types;
+        if ($this->isForTypeAttachment($types) && !$this->isForStatusAny()) {
+            $this->arguments[WpQueryStatus::POST_STATUS_KEY] = WpQueryStatus::INHERIT;
+        }
+
+        $this->arguments[PostType::QUERY_TYPE_KEY] = $types;
 
         return $this;
     }
@@ -144,6 +322,21 @@ class PostQueryBuilder extends QueryBuilder
     private function arePostsAlreadyLoaded(): bool
     {
         return isset($this->getQuery()->posts);
+    }
+
+    private function isForStatusAny(): bool
+    {
+        return ($this->arguments[WpQueryStatus::POST_STATUS_KEY] ?? null) === WpQueryStatus::ANY;
+    }
+
+    /**
+     * @param string|string[] $types
+     * @return bool
+     */
+    private function isForTypeAttachment($types): bool
+    {
+        return is_array($types) ?
+            Arr::searchValue($types, PostType::ATTACHMENT) : $types === PostType::ATTACHMENT;
     }
 
     private function setPaged(int $page)

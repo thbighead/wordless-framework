@@ -23,6 +23,17 @@ class Arr
         return array_keys($array) !== range(0, count($array) - 1);
     }
 
+    public static function searchValue(array $array, $value)
+    {
+        foreach ($array as $key => $item) {
+            if ($item === $value) {
+                return $key;
+            }
+        }
+
+        return null;
+    }
+
     public static function recursiveJoin(array ...$arrays): array
     {
         $joined_array = [];
