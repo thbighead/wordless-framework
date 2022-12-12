@@ -116,6 +116,7 @@ class InitializeTestEnvironment extends ConsoleCommand
 
         $this->executeConsoleCommandInsideTestEnvironment('wordless:install');
         $this->executeConsoleCommandInsideTestEnvironment('wordless:deploy');
+        $this->executeConsoleCommandInsideTestEnvironment('wp:run "post generate"');
 
         return Command::SUCCESS;
     }

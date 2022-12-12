@@ -8,6 +8,7 @@ use Wordless\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\DirectoryFiles;
+use Wordless\Helpers\ProjectPath;
 
 trait NeedsTestEnvironment
 {
@@ -37,30 +38,60 @@ trait NeedsTestEnvironment
         );
     }
 
+    private static function checkForFlagFile(): bool
+    {
+        try {
+            ProjectPath::realpath(
+                __DIR__
+                . '/../../'
+                . InitializeTestEnvironment::TARGET_DIRECTORY_NAME
+                . '/'
+                . self::erasableFlagFilename()
+            );
+
+            return true;
+        } catch (PathNotFoundException $exception) {
+            return false;
+        }
+    }
+
+    private static function erasableFlagFilename(): string
+    {
+        return 'erase_me_to_force_phpunit_to_restart_test_environment';
+    }
+
     private static function loadComposerAutoload()
     {
-        /** @noinspection PhpIncludeInspection */
-        require_once __DIR__ . '/../vendor/autoload.php';
+        require_once __DIR__ . '/../../vendor/autoload.php';
     }
 
     private static function loadWpConfig()
     {
-        /** @noinspection PhpIncludeInspection */
-        require_once __DIR__ . '/../test-environment/wp/wp-core/wp-config.php';
+        require_once __DIR__ . '/../../test-environment/wp/wp-core/wp-config.php';
     }
 
     /**
      * @return void
      * @throws CliReturnedNonZero
+     * @throws FailedToChangeDirectoryTo
+     * @throws FailedToGetCurrentWorkingDirectory
+     * @throws PathNotFoundException
      */
     private static function restartTestEnvironment()
     {
-        if (!self::$environment_restarted) {
+        if (!self::checkForFlagFile() && !self::$environment_restarted) {
             passthru($command = 'php console test:environment -f --drop-db', $result_code);
 
             if ($result_code) {
                 throw new CliReturnedNonZero($command, $result_code);
             }
+
+            DirectoryFiles::changeWorkingDirectoryDoAndGoBack(
+                InitializeTestEnvironment::TARGET_DIRECTORY_NAME,
+                function () {
+                    touch(self::erasableFlagFilename());
+                }
+            );
 
             self::$environment_restarted = true;
         }

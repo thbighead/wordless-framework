@@ -10,6 +10,13 @@ use WP_Post_Type;
  */
 class PostType
 {
+    public const ANY = 'any';
+    public const ATTACHMENT = 'attachment';
+    public const NAVIGATION_MENU_ITEM = 'nav_menu_item';
+    public const PAGE = 'page';
+    public const POST = 'post';
+    public const REVISION = 'revision';
+
     private WP_Post_Type $wpPostType;
 
     /**
