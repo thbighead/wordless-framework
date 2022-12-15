@@ -24,12 +24,20 @@ abstract class QueryBuilder
 
     public function get()
     {
-        return $this->getQuery()->query($this->arguments);
+        return $this->getQuery()->query($this->buildArguments());
     }
 
     public function resetQuery()
     {
         $this->query = new $this->queryClass;
+    }
+
+    /**
+     * @return array<string, string|int|bool|array>
+     */
+    protected function buildArguments(): array
+    {
+        return $this->arguments;
     }
 
     protected function getQuery()

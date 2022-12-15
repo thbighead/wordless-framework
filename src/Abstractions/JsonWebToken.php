@@ -54,7 +54,10 @@ class JsonWebToken implements MultipleConstructors
 
     public function __constructParsingToken(string $full_token)
     {
-        $this->parsedToken = (new Parser(new JoseEncoder))->parse($full_token);
+        /** @var Plain $parsedToken */
+        $parsedToken = (new Parser(new JoseEncoder))->parse($full_token);
+
+        $this->parsedToken = $parsedToken;
     }
 
     /**

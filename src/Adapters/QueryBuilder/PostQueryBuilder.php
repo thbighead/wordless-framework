@@ -4,9 +4,11 @@ namespace Wordless\Adapters\QueryBuilder;
 
 use Wordless\Abstractions\Enums\WpQueryFields;
 use Wordless\Abstractions\Enums\WpQueryStatus;
+use Wordless\Abstractions\Enums\WpQueryTaxonomy;
 use Wordless\Abstractions\Pagination\Posts;
 use Wordless\Adapters\Post;
 use Wordless\Adapters\PostType;
+use Wordless\Adapters\QueryBuilder\PostQueryBuilder\EmptyTaxonomySubQueryBuilder;
 use Wordless\Exceptions\QueryAlreadySet;
 use Wordless\Helpers\Arr;
 use Wordless\Helpers\Log;
@@ -309,6 +311,21 @@ class PostQueryBuilder extends QueryBuilder
         $this->arguments[PostType::QUERY_TYPE_KEY] = $types;
 
         return $this;
+    }
+
+    /**
+     * @return array<string, string|int|bool|array>
+     */
+    protected function buildArguments(): array
+    {
+        $arguments = $this->arguments;
+        $taxonomySubQueryBuilder = $this->arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] ?? null;
+
+        if ($taxonomySubQueryBuilder instanceof EmptyTaxonomySubQueryBuilder) {
+            $arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] = $taxonomySubQueryBuilder->build();
+        }
+
+        return $arguments;
     }
 
     /**
