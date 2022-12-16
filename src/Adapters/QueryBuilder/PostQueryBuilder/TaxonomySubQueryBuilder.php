@@ -2,6 +2,7 @@
 
 namespace Wordless\Adapters\QueryBuilder\PostQueryBuilder;
 
+use Closure;
 use Wordless\Abstractions\Enums\WpQueryTaxonomy;
 use Wordless\Exceptions\UnexpectedTaxonomySubQueryClosureReturn;
 

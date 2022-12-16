@@ -8,7 +8,7 @@ use Wordless\Abstractions\Enums\WpQueryTaxonomy;
 use Wordless\Abstractions\Pagination\Posts;
 use Wordless\Adapters\Post;
 use Wordless\Adapters\PostType;
-use Wordless\Adapters\QueryBuilder\PostQueryBuilder\EmptyTaxonomySubQueryBuilder;
+use Wordless\Adapters\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
 use Wordless\Exceptions\QueryAlreadySet;
 use Wordless\Helpers\Arr;
 use Wordless\Helpers\Log;
@@ -298,6 +298,13 @@ class PostQueryBuilder extends QueryBuilder
         return $this;
     }
 
+    public function whereTaxonomy(TaxonomySubQueryBuilder $subQuery): PostQueryBuilder
+    {
+        $this->arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] = $subQuery;
+
+        return $this;
+    }
+
     /**
      * @param string|string[] $types
      * @return $this
@@ -321,7 +328,7 @@ class PostQueryBuilder extends QueryBuilder
         $arguments = $this->arguments;
         $taxonomySubQueryBuilder = $this->arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] ?? null;
 
-        if ($taxonomySubQueryBuilder instanceof EmptyTaxonomySubQueryBuilder) {
+        if ($taxonomySubQueryBuilder instanceof TaxonomySubQueryBuilder) {
             $arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] = $taxonomySubQueryBuilder->build();
         }
 

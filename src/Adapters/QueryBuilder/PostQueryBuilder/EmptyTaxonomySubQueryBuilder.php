@@ -2,6 +2,7 @@
 
 namespace Wordless\Adapters\QueryBuilder\PostQueryBuilder;
 
+use Closure;
 use Wordless\Abstractions\Enums\WpQueryTaxonomy;
 use Wordless\Exceptions\TryingToBuildEmptySubQuery;
 
@@ -16,31 +17,32 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
         throw new TryingToBuildEmptySubQuery;
     }
 
+    public function whereTaxonomy(Closure $nestedSubQuery): InitializedTaxonomySubQueryBuilder
+    {
+        $this->taxonomy_sub_query_arguments[] = $this->resolveClosure($nestedSubQuery);
+
+        return new InitializedTaxonomySubQueryBuilder($this->taxonomy_sub_query_arguments);
+    }
+
     /**
-     * @param string|callable $taxonomy
-     * @param string|null $column
-     * @param int|string|int[]|string[]|null $values
+     * @param string $taxonomy
+     * @param string $column
+     * @param int|string|int[]|string[] $values
      * @param bool $include_children
      * @return InitializedTaxonomySubQueryBuilder
      */
     public function whereTaxonomyExists(
-        $taxonomy,
-        ?string $column = null,
-        $values = null,
+        string $taxonomy,
+        string $column,
+        $values,
         bool $include_children = true
     ): InitializedTaxonomySubQueryBuilder
     {
-        if (is_callable($taxonomy)) {
-            $this->taxonomy_sub_query_arguments[] = $this->resolveClosure($taxonomy);
-
-            return new InitializedTaxonomySubQueryBuilder($this->taxonomy_sub_query_arguments);
-        }
-
         $this->setConditionToSubQuery($this->mountCondition(
             $taxonomy,
-            $values,
-            WpQueryTaxonomy::OPERATOR_EXISTS,
             $column,
+            WpQueryTaxonomy::OPERATOR_EXISTS,
+            $values,
             $include_children,
         ));
 
@@ -48,30 +50,24 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
     }
 
     /**
-     * @param string|callable $taxonomy
-     * @param string|null $column
-     * @param int|string|int[]|string[]|null $values
+     * @param string $taxonomy
+     * @param string $column
+     * @param int|string|int[]|string[] $values
      * @param bool $include_children
      * @return InitializedTaxonomySubQueryBuilder
      */
     public function whereTaxonomyIn(
-        $taxonomy,
-        ?string $column = null,
-        $values = null,
+        string $taxonomy,
+        string $column,
+        $values,
         bool $include_children = true
     ): InitializedTaxonomySubQueryBuilder
     {
-        if (is_callable($taxonomy)) {
-            $this->taxonomy_sub_query_arguments[] = $this->resolveClosure($taxonomy);
-
-            return new InitializedTaxonomySubQueryBuilder($this->taxonomy_sub_query_arguments);
-        }
-
         $this->setConditionToSubQuery($this->mountCondition(
             $taxonomy,
-            $values,
-            WpQueryTaxonomy::OPERATOR_IN,
             $column,
+            WpQueryTaxonomy::OPERATOR_IN,
+            $values,
             $include_children,
         ));
 
@@ -79,30 +75,24 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
     }
 
     /**
-     * @param string|callable $taxonomy
-     * @param string|null $column
-     * @param int|string|int[]|string[]|null $values
+     * @param string $taxonomy
+     * @param string $column
+     * @param int|string|int[]|string[] $values
      * @param bool $include_children
      * @return InitializedTaxonomySubQueryBuilder
      */
     public function whereTaxonomyIs(
-        $taxonomy,
-        ?string $column = null,
-        $values = null,
+        string $taxonomy,
+        string $column,
+        $values,
         bool $include_children = true
     ): InitializedTaxonomySubQueryBuilder
     {
-        if (is_callable($taxonomy)) {
-            $this->taxonomy_sub_query_arguments[] = $this->resolveClosure($taxonomy);
-
-            return new InitializedTaxonomySubQueryBuilder($this->taxonomy_sub_query_arguments);
-        }
-
         $this->setConditionToSubQuery($this->mountCondition(
             $taxonomy,
-            $values,
-            WpQueryTaxonomy::OPERATOR_AND,
             $column,
+            WpQueryTaxonomy::OPERATOR_AND,
+            $values,
             $include_children,
         ));
 
@@ -110,30 +100,24 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
     }
 
     /**
-     * @param string|callable $taxonomy
-     * @param string|null $column
-     * @param int|string|int[]|string[]|null $values
+     * @param string $taxonomy
+     * @param string $column
+     * @param int|string|int[]|string[] $values
      * @param bool $include_children
      * @return InitializedTaxonomySubQueryBuilder
      */
     public function whereTaxonomyNotExists(
-        $taxonomy,
-        ?string $column = null,
-        $values = null,
+        string $taxonomy,
+        string $column,
+        $values,
         bool $include_children = true
     ): InitializedTaxonomySubQueryBuilder
     {
-        if (is_callable($taxonomy)) {
-            $this->taxonomy_sub_query_arguments[] = $this->resolveClosure($taxonomy);
-
-            return new InitializedTaxonomySubQueryBuilder($this->taxonomy_sub_query_arguments);
-        }
-
         $this->setConditionToSubQuery($this->mountCondition(
             $taxonomy,
-            $values,
-            WpQueryTaxonomy::OPERATOR_NOT_EXISTS,
             $column,
+            WpQueryTaxonomy::OPERATOR_NOT_EXISTS,
+            $values,
             $include_children,
         ));
 
@@ -141,30 +125,24 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
     }
 
     /**
-     * @param string|callable $taxonomy
-     * @param string|null $column
-     * @param int|string|int[]|string[]|null $values
+     * @param string $taxonomy
+     * @param string $column
+     * @param int|string|int[]|string[] $values
      * @param bool $include_children
      * @return InitializedTaxonomySubQueryBuilder
      */
     public function whereTaxonomyNotIn(
-        $taxonomy,
-        ?string $column = null,
-        $values = null,
+        string $taxonomy,
+        string $column,
+        $values,
         bool $include_children = true
     ): InitializedTaxonomySubQueryBuilder
     {
-        if (is_callable($taxonomy)) {
-            $this->taxonomy_sub_query_arguments[] = $this->resolveClosure($taxonomy);
-
-            return new InitializedTaxonomySubQueryBuilder($this->taxonomy_sub_query_arguments);
-        }
-
         $this->setConditionToSubQuery($this->mountCondition(
             $taxonomy,
-            $values,
-            WpQueryTaxonomy::OPERATOR_NOT_IN,
             $column,
+            WpQueryTaxonomy::OPERATOR_NOT_IN,
+            $values,
             $include_children,
         ));
 
