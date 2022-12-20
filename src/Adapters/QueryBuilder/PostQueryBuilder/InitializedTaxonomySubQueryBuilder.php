@@ -277,15 +277,4 @@ class InitializedTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
 
         return new NestedOr($this->taxonomy_sub_query_arguments);
     }
-
-    public function build(): array
-    {
-        $arguments = parent::build();
-
-        while (isset($arguments[0]) && count($arguments) === 1) {
-            $arguments = $arguments[0];
-        }
-
-        return $arguments;
-    }
 }

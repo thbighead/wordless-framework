@@ -2,7 +2,6 @@
 
 namespace Wordless\Adapters\QueryBuilder\PostQueryBuilder;
 
-use Closure;
 use Wordless\Abstractions\Enums\WpQueryTaxonomy;
 use Wordless\Exceptions\UnexpectedTaxonomySubQueryClosureReturn;
 
@@ -15,12 +14,25 @@ abstract class TaxonomySubQueryBuilder
         return $this->taxonomy_sub_query_arguments;
     }
 
+    protected function buildClosureResult(TaxonomySubQueryBuilder $result): array
+    {
+        $arguments = $result->build();
+
+        if ($result instanceof InitializedTaxonomySubQueryBuilder) {
+            while (isset($arguments[0]) && count($arguments) === 1) {
+                $arguments = $arguments[0];
+            }
+        }
+
+        return $arguments;
+    }
+
     protected function resolveClosure(callable $closure): array
     {
         $result = $closure(new EmptyTaxonomySubQueryBuilder);
 
         if ($result instanceof TaxonomySubQueryBuilder) {
-            $result = $result->build();
+            $result = $result->buildClosureResult($result);
         }
 
         if (!is_array($result)) {

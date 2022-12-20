@@ -85,71 +85,194 @@ class PostQueryBuilderTest extends WordlessTestCase
         $taxonomySubQuery = new EmptyTaxonomySubQueryBuilder;
 
         $taxonomySubQuery = $taxonomySubQuery->whereTaxonomyIs(
-            'testing',
+            $taxonomy_testing = 'testing',
             WpQueryTaxonomy::COLUMN_TERM_ID,
-            [1, 2, 5, 48]
+            $taxonomy_testing_term_ids = [1, 2, 5, 48]
         );
 
-        dump('test:', $taxonomySubQuery->build());
+        $this->assertEquals($arguments = [[
+            WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_testing,
+            WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_TERM_ID,
+            WpQueryTaxonomy::KEY_TERMS => $taxonomy_testing_term_ids,
+            WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_AND,
+            WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
+        ]], $taxonomySubQuery->build());
 
-        $taxonomySubQuery = $taxonomySubQuery->orWhereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subQuery) {
-            return $subQuery->whereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subSubQuery) {
+        $taxonomy_chemical_element = 'chemical_element';
+        $taxonomy_chemical_element_slugs = ['ag', 'o', 'pb'];
+        $taxonomySubQuery = $taxonomySubQuery->orWhereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subQuery) use (
+            $taxonomy_chemical_element,
+            $taxonomy_chemical_element_slugs
+        ) {
+            return $subQuery->whereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subSubQuery) use (
+                $taxonomy_chemical_element,
+                $taxonomy_chemical_element_slugs
+            ) {
                 return $subSubQuery->whereTaxonomyIn(
-                    'chemical_element',
+                    $taxonomy_chemical_element,
                     WpQueryTaxonomy::COLUMN_SLUG,
-                    ['ag', 'o', 'pb'],
+                    $taxonomy_chemical_element_slugs,
                     false
                 );
             });
         });
 
-        dump('test:', $taxonomySubQuery->build());
+        $arguments[WpQueryTaxonomy::KEY_RELATION] = WpQueryTaxonomy::RELATION_OR;
+        $arguments[] = [
+            WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_chemical_element,
+            WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_SLUG,
+            WpQueryTaxonomy::KEY_TERMS => $taxonomy_chemical_element_slugs,
+            WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_IN,
+            WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => false,
+        ];
 
-        $taxonomySubQuery = $taxonomySubQuery->orWhereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subQuery) {
-            return $subQuery->whereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subSubQuery) {
+        $this->assertEquals($arguments, $taxonomySubQuery->build());
+
+        $taxonomy_pokemon = 'pokemon';
+        $taxonomy_pokemon_term_taxonomy_id = 374;
+        $taxonomy_chemical_element_term_id = 5;
+        $taxonomy_testing_names = ['A/B Test', 'Math Test'];
+        $taxonomy_book = 'book';
+        $taxonomy_book_slug = 'harry-potter';
+        $taxonomySubQuery = $taxonomySubQuery->orWhereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subQuery) use (
+            $taxonomy_chemical_element,
+            $taxonomy_chemical_element_term_id,
+            $taxonomy_pokemon,
+            $taxonomy_pokemon_term_taxonomy_id,
+            $taxonomy_testing,
+            $taxonomy_testing_names,
+            $taxonomy_book,
+            $taxonomy_book_slug
+        ) {
+            return $subQuery->whereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subSubQuery) use (
+                $taxonomy_chemical_element,
+                $taxonomy_chemical_element_term_id,
+                $taxonomy_pokemon,
+                $taxonomy_pokemon_term_taxonomy_id,
+                $taxonomy_testing,
+                $taxonomy_testing_names,
+                $taxonomy_book,
+                $taxonomy_book_slug
+            ) {
                 return $subSubQuery->whereTaxonomyNotExists(
-                    'chemical_element',
+                    $taxonomy_chemical_element,
                     WpQueryTaxonomy::COLUMN_TERM_ID,
-                    5
-                )->andWhereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subSubSubQuery) {
+                    $taxonomy_chemical_element_term_id
+                )->andWhereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subSubSubQuery) use (
+                    $taxonomy_pokemon,
+                    $taxonomy_pokemon_term_taxonomy_id,
+                    $taxonomy_testing,
+                    $taxonomy_testing_names,
+                    $taxonomy_book,
+                    $taxonomy_book_slug
+                ) {
                     return $subSubSubQuery->whereTaxonomyNotIn(
-                        'pokemon',
+                        $taxonomy_pokemon,
                         WpQueryTaxonomy::COLUMN_TERM_TAXONOMY_ID,
-                        374
+                        $taxonomy_pokemon_term_taxonomy_id
                     )->orWhereTaxonomyIn(
-                        'testing',
+                        $taxonomy_testing,
                         WpQueryTaxonomy::COLUMN_NAME,
-                        ['A/B Test', 'Math Test']
-                    )->orWhereTaxonomyIs('book', WpQueryTaxonomy::COLUMN_SLUG, 'harry-potter');
+                        $taxonomy_testing_names
+                    )->orWhereTaxonomyIs($taxonomy_book, WpQueryTaxonomy::COLUMN_SLUG, $taxonomy_book_slug);
                 });
             });
         });
 
-        dump('test:', $taxonomySubQuery->build());
+        $arguments[] = [
+            WpQueryTaxonomy::KEY_RELATION => WpQueryTaxonomy::RELATION_AND,
+            [
+                WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_chemical_element,
+                WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_TERM_ID,
+                WpQueryTaxonomy::KEY_TERMS => $taxonomy_chemical_element_term_id,
+                WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_NOT_EXISTS,
+                WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
+            ],
+            [
+                WpQueryTaxonomy::KEY_RELATION => WpQueryTaxonomy::RELATION_OR,
+                [
+                    WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_pokemon,
+                    WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_TERM_TAXONOMY_ID,
+                    WpQueryTaxonomy::KEY_TERMS => $taxonomy_pokemon_term_taxonomy_id,
+                    WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_NOT_IN,
+                    WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
+                ],
+                [
+                    WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_testing,
+                    WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_NAME,
+                    WpQueryTaxonomy::KEY_TERMS => $taxonomy_testing_names,
+                    WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_IN,
+                    WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
+                ],
+                [
+                    WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_book,
+                    WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_SLUG,
+                    WpQueryTaxonomy::KEY_TERMS => $taxonomy_book_slug,
+                    WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_AND,
+                    WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
+                ],
+            ],
+        ];
 
+        $this->assertEquals($arguments, $taxonomySubQuery->build());
+
+        $taxonomy_chemical_element_slug = 'cl';
         $taxonomySubQuery = $taxonomySubQuery->orWhereTaxonomyIs(
-            'chemical_element',
+            $taxonomy_chemical_element,
             WpQueryTaxonomy::COLUMN_SLUG,
-            'cl'
+            $taxonomy_chemical_element_slug
         );
 
-        dump('test:', $taxonomySubQuery->build());
+        $arguments[] = [
+            WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_chemical_element,
+            WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_SLUG,
+            WpQueryTaxonomy::KEY_TERMS => $taxonomy_chemical_element_slug,
+            WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_AND,
+            WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
+        ];
 
-        $taxonomySubQuery = $taxonomySubQuery->orWhereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subQuery) {
+        $this->assertEquals($arguments, $taxonomySubQuery->build());
+
+        $taxonomy_pokemon_name = 'Bulbasaur';
+        $taxonomy_pokemon_type = 'pokemon_type';
+        $taxonomy_pokemon_type_term_taxonomy_ids = [19, 65, 103];
+        $taxonomySubQuery = $taxonomySubQuery->orWhereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subQuery) use (
+            $taxonomy_pokemon,
+            $taxonomy_pokemon_name,
+            $taxonomy_pokemon_type,
+            $taxonomy_pokemon_type_term_taxonomy_ids
+        ) {
             return $subQuery->whereTaxonomyExists(
-                'pokemon',
+                $taxonomy_pokemon,
                 WpQueryTaxonomy::COLUMN_NAME,
-                'Bulbasaur'
+                $taxonomy_pokemon_name
             )->andWhereTaxonomyNotIn(
-                'pokemon_type',
+                $taxonomy_pokemon_type,
                 WpQueryTaxonomy::COLUMN_TERM_TAXONOMY_ID,
-                [19, 65, 103]
+                $taxonomy_pokemon_type_term_taxonomy_ids
             );
         });
 
-        dump('test:', $taxonomySubQuery->build());
+        $arguments[] = [
+            WpQueryTaxonomy::KEY_RELATION => WpQueryTaxonomy::RELATION_AND,
+            [
+                WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_pokemon,
+                WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_NAME,
+                WpQueryTaxonomy::KEY_TERMS => $taxonomy_pokemon_name,
+                WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_EXISTS,
+                WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
+            ],
+            [
+                WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_pokemon_type,
+                WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_TERM_TAXONOMY_ID,
+                WpQueryTaxonomy::KEY_TERMS => $taxonomy_pokemon_type_term_taxonomy_ids,
+                WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_NOT_IN,
+                WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
+            ],
+        ];
+
+        $this->assertEquals($arguments, $taxonomySubQuery->build());
 
         $query->whereTaxonomy($taxonomySubQuery);
-
     }
 }

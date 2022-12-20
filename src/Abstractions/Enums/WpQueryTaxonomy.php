@@ -11,7 +11,7 @@ class WpQueryTaxonomy
     public const KEY_COLUMN = 'field';
     public const KEY_INCLUDE_CHILDREN = 'include_children';
     public const KEY_NEST_LOGICAL_OPERATION = 'relation';
-    public const KEY_OPERATOR = 'relation';
+    public const KEY_OPERATOR = 'operator';
     public const KEY_RELATION = 'relation';
     public const KEY_TAXONOMY_QUERY = 'tax_query';
     public const KEY_TAXONOMY = 'taxonomy';
