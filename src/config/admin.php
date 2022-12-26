@@ -1,6 +1,7 @@
 <?php
 
 use Wordless\Abstractions\Bootstrapper;
+use Wordless\Abstractions\Enums\StartOfWeek;
 use Wordless\Abstractions\WpSpeedUp;
 use Wordless\Adapters\Role;
 use Wordless\Hookers\ChooseImageEditor;
@@ -17,4 +18,10 @@ return [
         Role::AUTHOR => false,
     ],
     Bootstrapper::MENUS_CONFIG_KEY => [],
+    StartOfWeek::KEY => StartOfWeek::SUNDAY,
+    'datetime' => [
+        'timezone' => 'UTC+0',
+        'date_format' => 'F j, Y',
+        'time_format' => 'H:i',
+    ]
 ];
