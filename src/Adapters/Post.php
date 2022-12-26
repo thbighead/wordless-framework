@@ -40,6 +40,11 @@ class Post implements RelatedMetaData
         return 'post';
     }
 
+    public function __call(string $method_name, array $arguments)
+    {
+        return $this->wpPost->$method_name(...$arguments);
+    }
+
     /**
      * @param WP_Post|int $post
      * @param bool $with_acfs
@@ -51,11 +56,6 @@ class Post implements RelatedMetaData
         if ($with_acfs) {
             $this->loadAcfs($this->wpPost->ID);
         }
-    }
-
-    public function __call(string $method_name, array $arguments)
-    {
-        return $this->wpPost->$method_name(...$arguments);
     }
 
     public function __get(string $attribute)
