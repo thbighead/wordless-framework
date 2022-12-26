@@ -31,6 +31,11 @@ class Environment
     ];
     public const DOT_ENV_COMMENT_MARK = '#';
     public const LOCAL = 'local';
+    public const PACKAGES_MARKER = <<<STRING
+###########################################################
+##################### Packages Setup ######################
+###########################################################
+STRING;
     public const PRODUCTION = 'production';
     public const STAGING = 'staging';
 
