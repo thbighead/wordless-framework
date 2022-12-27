@@ -3,6 +3,7 @@
 namespace Wordless\Adapters;
 
 use Wordless\Contracts\Adapter\WithAcfs;
+use Wordless\Exceptions\TaxonomyNotRegistered;
 use WP_Taxonomy;
 
 /**
@@ -14,19 +15,19 @@ class Taxonomy
 
     private WP_Taxonomy $wpTaxonomy;
 
-    public static function getAllCustom()
+    public static function getAllCustom(): array
     {
-        $customPostTypes = [];
+        $customTaxonomies = [];
 
-        foreach (get_post_types(['_builtin' => false]) as $custom_post_type_key) {
+        foreach (get_taxonomies(['_builtin' => false]) as $custom_taxonomy_key) {
             try {
-                $customPostTypes[] = new static($custom_post_type_key);
-            } catch (PostTypeNotRegistered $exception) {
+                $customTaxonomies[] = new static($custom_taxonomy_key);
+            } catch (TaxonomyNotRegistered $exception) {
                 continue;
             }
         }
 
-        return $customPostTypes;
+        return $customTaxonomies;
     }
 
     public function __call(string $method_name, array $arguments)
@@ -35,15 +36,15 @@ class Taxonomy
     }
 
     /**
-     * @param WP_Taxonomy|int $taxonomy
+     * @param WP_Taxonomy|string $taxonomy
      * @param bool $with_acfs
      */
     public function __construct($taxonomy, bool $with_acfs = true)
     {
-        $this->wpTaxonomy = $taxonomy instanceof WP_Taxonomy ? $taxonomy : get_post($taxonomy);
+        $this->wpTaxonomy = $taxonomy instanceof WP_Taxonomy ? $taxonomy : get_taxonomy($taxonomy);
 
         if ($with_acfs) {
-            $this->loadAcfs($this->wpTaxonomy->ID);
+            $this->loadAcfs($this->wpTaxonomy->);
         }
     }
 
