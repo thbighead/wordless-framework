@@ -18,7 +18,7 @@ trait ManagePlugin
         self::managePlugin($composerEvent, 'deactivate');
     }
 
-    private static function isWpPluginPackage(CompletePackage $package): bool
+    final protected static function isWpPluginPackage(CompletePackage $package): bool
     {
         return $package->getType() === 'wordpress-plugin';
     }
