@@ -4,7 +4,7 @@ namespace Wordless\Adapters;
 
 use stdClass;
 use Wordless\Abstractions\Guessers\CustomPostTypeKeyGuesser;
-use Wordless\Contracts\Adapter\WordlessCustomPost\Register;
+use Wordless\Contracts\Adapter\CustomPost\Register;
 use Wordless\Exceptions\PostTypeNotRegistered;
 use Wordless\Helpers\Str;
 use WP_Post;

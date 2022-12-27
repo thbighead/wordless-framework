@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Contracts\Adapter\WordlessCustomPost;
+namespace Wordless\Contracts\Adapter\CustomPost;
 
 use Wordless\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Exceptions\ReservedCustomPostTypeKey;

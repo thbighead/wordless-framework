@@ -2,7 +2,7 @@
 
 namespace Wordless\Abstractions\StubMounters;
 
-class MigrationStubMounter extends BaseStubMounter
+class MigrationStubMounter extends StubMounter
 {
     protected function relativeStubFilename(): string
     {

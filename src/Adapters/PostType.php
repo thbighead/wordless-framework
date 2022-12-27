@@ -30,6 +30,11 @@ class PostType
         return $customPostTypes;
     }
 
+    public function __call(string $method_name, array $arguments)
+    {
+        return $this->wpPostType->$method_name(...$arguments);
+    }
+
     /**
      * @param WP_Post_Type|string $post_type
      * @throws PostTypeNotRegistered
@@ -45,11 +50,6 @@ class PostType
         if (($this->wpPostType = get_post_type_object($post_type)) === null) {
             throw new PostTypeNotRegistered($post_type);
         }
-    }
-
-    public function __call(string $method_name, array $arguments)
-    {
-        return $this->wpPostType->$method_name(...$arguments);
     }
 
     public function __get(string $attribute)

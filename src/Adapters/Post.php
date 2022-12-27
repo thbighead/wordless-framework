@@ -2,6 +2,7 @@
 
 namespace Wordless\Adapters;
 
+use Wordless\Abstractions\Enums\MetaType;
 use Wordless\Contracts\Adapter\RelatedMetaData;
 use Wordless\Contracts\Adapter\WithAcfs;
 use Wordless\Contracts\Adapter\WithMetaData;
@@ -37,7 +38,7 @@ class Post implements RelatedMetaData
 
     public static function objectType(): string
     {
-        return 'post';
+        return MetaType::POST;
     }
 
     public function __call(string $method_name, array $arguments)

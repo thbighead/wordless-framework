@@ -2,7 +2,7 @@
 
 namespace Wordless\Abstractions\StubMounters;
 
-class HookerStubMounter extends BaseStubMounter
+class HookerStubMounter extends StubMounter
 {
     protected function relativeStubFilename(): string
     {

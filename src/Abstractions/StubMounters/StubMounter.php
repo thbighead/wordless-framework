@@ -6,7 +6,7 @@ use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\ProjectPath;
 
-abstract class BaseStubMounter
+abstract class StubMounter
 {
     protected array $replace_content_dictionary;
     private string $new_file_path;
@@ -43,7 +43,7 @@ abstract class BaseStubMounter
      * @param array $replace_content_dictionary
      * @return $this
      */
-    public function setReplaceContentDictionary(array $replace_content_dictionary): BaseStubMounter
+    public function setReplaceContentDictionary(array $replace_content_dictionary): StubMounter
     {
         $this->replace_content_dictionary = $replace_content_dictionary;
 

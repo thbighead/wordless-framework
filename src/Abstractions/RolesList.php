@@ -5,7 +5,7 @@ namespace Wordless\Abstractions;
 use Wordless\Adapters\PostType;
 use Wordless\Adapters\Role;
 use Wordless\Adapters\ApiController;
-use Wordless\Adapters\Taxonomy;
+use Wordless\Adapters\CustomTaxonomyTerm;
 use Wordless\Exceptions\FailedToCreateRole;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WordPressFailedToFindRole;
@@ -85,7 +85,7 @@ class RolesList extends WP_Roles
 
     public static function syncCustomTaxonomiesPermissionsToRole(Role $role)
     {
-        foreach (Taxonomy::getAllCustom() as $customPostType) {
+        foreach (CustomTaxonomyTerm::getAllCustom() as $customPostType) {
             $role->syncCapabilities(array_combine(
                 $permissions = array_values($customPostType->getPermissions()),
                 array_fill(0, count($permissions), true)
