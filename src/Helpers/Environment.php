@@ -7,6 +7,7 @@ use Wordless\Abstractions\InternalCache;
 use Wordless\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Exceptions\FailedToFindCachedKey;
 use Wordless\Exceptions\FailedToFindPackagesMarkerInsideEnvFile;
+use Wordless\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Exceptions\FailedToWriteInFile;
 use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
@@ -94,13 +95,13 @@ STRING;
      * @param bool $to_env_example
      * @return void
      * @throws FailedToFindPackagesMarkerInsideEnvFile
-     * @throws FailedToWriteInFile
+     * @throws FailedToRewriteDotEnvFile
      * @throws PathNotFoundException
      */
     public static function writeNewPackageVariables(
         string $package_name,
-        array $variables,
-        bool $to_env_example = true
+        array  $variables,
+        bool   $to_env_example = true
     )
     {
         if (empty($package_variables_content = self::mountPackageVariablesContentToDotEnv($variables))) {
@@ -117,7 +118,7 @@ STRING;
         $dot_env_content = Str::replace($dot_env_content, self::PACKAGES_MARKER, $package_variables_content);
 
         if (file_put_contents($dot_env_filepath, $dot_env_content) === false) {
-            throw new FailedToWriteInFile($dot_env_filepath);
+            throw new FailedToRewriteDotEnvFile($dot_env_filepath, $dot_env_filepath);
         }
     }
 
