@@ -21,7 +21,8 @@ class Composer
 {
     use ManagePlugin, PackageDiscovery, SetHostFromNginx;
 
-    private const WORDLESS_EXTRA_KEY = 'wordless';
+    /** @var string WORDLESS_EXTRA_KEY final */
+    protected const WORDLESS_EXTRA_KEY = 'wordless';
     private const WORDLESS_APP_HOST_DOT_ENV_VARIABLE = 'APP_HOST';
 
     public static function getFrameworkInstalledVersion(): string
@@ -62,7 +63,7 @@ class Composer
         }
     }
 
-    private static function defineProjectPath(\Composer\Composer $composer)
+    final protected static function defineProjectPath(\Composer\Composer $composer)
     {
         $root_project_path_constant = 'ROOT_PROJECT_PATH';
 
@@ -74,7 +75,7 @@ class Composer
         }
     }
 
-    private static function extractPackageFromEvent(PackageEvent $composerEvent): ?CompletePackage
+    final protected static function extractPackageFromEvent(PackageEvent $composerEvent): ?CompletePackage
     {
         $operation = $composerEvent->getOperation();
 
