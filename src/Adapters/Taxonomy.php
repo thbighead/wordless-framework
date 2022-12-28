@@ -3,6 +3,7 @@
 namespace Wordless\Adapters;
 
 use Wordless\Abstractions\TaxonomyTermsList;
+use Wordless\Contracts\Adapter\CustomTaxonomy\Register;
 use Wordless\Exceptions\TaxonomyNotRegistered;
 use WP_Taxonomy;
 use WP_Term;
@@ -12,11 +13,14 @@ use WP_Term;
  */
 abstract class Taxonomy
 {
+    use Register;
+
     /** @var self[] $taxonomies */
     private static array $taxonomies = [];
     /** @var TaxonomyTermsList[] $taxonomyTerms */
     private static array $taxonomyTerms = [];
 
+    public const TAXONOMY_NAME_MAX_LENGTH = 32;
     protected const NAME = null;
 
     private WP_Taxonomy $wpTaxonomy;
