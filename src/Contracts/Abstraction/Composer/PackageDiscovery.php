@@ -9,6 +9,7 @@ trait PackageDiscovery
 {
     public static function discover(Event $event)
     {
+        static::initializeIo($event);
         /** @var CompletePackage[] $packagesList */
         $packagesList = $event->getComposer()->getRepositoryManager()->getLocalRepository()->getPackages();
 
@@ -19,7 +20,7 @@ trait PackageDiscovery
 
             self::resolveWordlessOptions($wordless_extra_options);
 
-            $event->getIO()->write("{$package->getName()} discovered as a Wordless package");
+            static::getIo()->write("{$package->getName()} discovered as a Wordless package");
         }
     }
 
