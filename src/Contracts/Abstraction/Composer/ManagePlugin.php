@@ -25,13 +25,16 @@ trait ManagePlugin
 
     private static function managePlugin(PackageEvent $composerEvent, string $plugin_command)
     {
+        static::initializeIo($composerEvent);
         $package = self::extractPackageFromEvent($composerEvent);
 
         if ($package === null || !self::isWpPluginPackage($package)) {
+            static::getIo()->write('Not a Wordpress Plugin. Skipping.');
             return;
         }
 
         $plugin_name = Str::after($package->getName(), '/');
+        static::getIo()->write("Activating plugin '$plugin_name'.");
         $vendor_path = $composerEvent->getComposer()->getConfig()->get('vendor-dir');
 
         if (is_file("$vendor_path/autoload.php")) {

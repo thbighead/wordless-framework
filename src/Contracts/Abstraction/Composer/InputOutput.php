@@ -28,8 +28,8 @@ trait InputOutput
         }
     }
 
-    protected static function getIo(): ?IOInterface
+    protected static function getIo(): IOInterface
     {
-        return static::$composerIo ?? null;
+        return static::$composerIo;
     }
 }
