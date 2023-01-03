@@ -25,3 +25,30 @@ The [Wordless](https://github.com/thbighead/Wordless) project framework.
 |>console (Wordless CLI file)
 |>wp-cli.yml (WP-CLI config file)
 ```
+
+## Test environment
+
+To begin a completely new test environment, so you can test a full Wordless installation, use the following command:
+
+```shell
+php console test:environment
+```
+
+This should create a folder named `test-environment` with a fresh Wordless installation based on your local `wordless`
+and `wordless-framework` projects. **Note that this command is only available at this project for test purposes,
+Wordless fresh installations (even the one created by this command) can't use it.**
+
+> **IMPORTANT:** If you want to run a composer command inside `test-environment` directory, use `vendor/bin/composer`
+> instead of only `composer`. Using only the `composer` command may reference to `/var/www/vendor/bin/composer` making
+> your Composer script changes to not be applied.
+
+If you already have installed a test environment you may restart it by using `--force` (or `-f`) flag:
+
+```shell
+php console test:environment -f
+```
+
+> When using `--force` (or `-f`) flag you may also use `--drop-db` flag to also restarts the test database:
+> ```shell
+> php console test:environment -f --drop-db
+> ```
