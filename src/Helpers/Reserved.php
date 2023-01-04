@@ -34,9 +34,9 @@ class Reserved
     /**
      * @return array<string, bool>
      */
-    public static function getForbiddenTaxonomyNames(): array
+    public static function getReservedTaxonomyNames(): array
     {
-        return self::$forbidden_taxonomy_names ?? self::$forbidden_taxonomy_names = self::mountReservedPostTypeKeys();
+        return self::$forbidden_taxonomy_names ?? self::$forbidden_taxonomy_names = self::mountReservedTaxonomyNames();
     }
 
     /**
@@ -58,7 +58,7 @@ class Reserved
      */
     public static function isTaxonomyReservedByWordPress(string $post_type): bool
     {
-        return isset(self::getForbiddenTaxonomyNames()[$post_type]);
+        return isset(self::getReservedTaxonomyNames()[$post_type]);
     }
 
     private static function getWordPress(): WP
@@ -69,7 +69,7 @@ class Reserved
     /**
      * @return array<string, bool>
      */
-    private static function mountReservedPostTypeKeys(): array
+    private static function mountReservedTaxonomyNames(): array
     {
         $also_forbidden = [
             'category' => true,

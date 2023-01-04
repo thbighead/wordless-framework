@@ -4,10 +4,108 @@ namespace Wordless\Contracts\Adapter\CustomPost;
 
 use Wordless\Abstractions\Guessers\CustomPostTypeKeyGuesser;
 use Wordless\Exceptions\InvalidCustomPostTypeKey;
+use Wordless\Helpers\Str;
 
 trait Register
 {
     use Labels, Rewrite, Validation;
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#description-2
+     * @return string|null
+     */
+    public static function description(): ?string
+    {
+        return null;
+    }
+
+    public static function getTypeKey(): string
+    {
+        return self::$type_keys[static::class] ??
+            self::$type_keys[static::class] = static::TYPE_KEY ??
+                (new CustomPostTypeKeyGuesser(static::class))->getValue();
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#has_archive
+     * @return bool
+     */
+    public static function hasArchive(): bool
+    {
+        return false;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#exclude_from_search
+     * @return bool
+     */
+    public static function isExcludedFromSearch(): bool
+    {
+        return !static::isPublic();
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#hierarchical
+     * @return bool
+     */
+    public static function isHierarchical(): bool
+    {
+        return false;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#public
+     * @return bool
+     */
+    public static function isPublic(): bool
+    {
+        return false;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#publicly_queryable
+     * @return bool
+     */
+    public static function isPubliclyUrlQueryable(): bool
+    {
+        return static::isPublic();
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#show_ui
+     * @return bool
+     */
+    public static function isShownInAdminPanel(): bool
+    {
+        return static::isPublic();
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#show_in_menu
+     * @return bool
+     */
+    public static function isListedInAdminPanelMenu(): bool
+    {
+        return static::isShownInAdminPanel();
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#show_in_admin_bar
+     * @return bool
+     */
+    public static function isVisibleInAdminPanelMenuBar(): bool
+    {
+        return static::isShownInAdminPanel();
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#show_in_nav_menus
+     * @return bool
+     */
+    public static function isVisibleInAdminPanelNavigationMenuSelection(): bool
+    {
+        return static::isShownInAdminPanel();
+    }
 
     /**
      * @return void
@@ -15,16 +113,90 @@ trait Register
      */
     public static function register()
     {
-        if (static::TYPE_KEY === null) {
-            $guesser = new CustomPostTypeKeyGuesser(static::class);
-            register_post_type(static::$type_key = $guesser->getValue(), self::mountArguments());
-
-            return;
-        }
-
         self::validateTypeKey();
 
-        register_post_type(static::$type_key = static::TYPE_KEY, self::mountArguments());
+        register_post_type(static::getTypeKey(), self::mountArguments());
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#permalink_epmask
+     * @return string|null
+     */
+    protected static function apiPermalink(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#can_export
+     * @return bool|null
+     */
+    protected static function canBeExported(): ?bool
+    {
+        return null;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#rest_controller_class
+     * @return string|null
+     */
+    protected static function controller(): ?string
+    {
+        return null; // automagically controlled by WP
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#menu_icon
+     * Use DashIcon helper to set it easily with default WordPress admin dashicons
+     * @return string|null
+     */
+    protected static function getAdminMenuIcon(): ?string
+    {
+        return null; // posts icon
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#menu_position
+     * Use CustomPostTypeMenuPosition constants to set it easily.
+     * @return int|null
+     */
+    protected static function getAdminMenuPosition(): ?int
+    {
+        return null; // bellow Comments
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#capability_type
+     * @return string[]|null
+     */
+    protected static function getCapabilityType(): ?array
+    {
+        if (($singular_name = static::singularName()) === null) {
+            return null;
+        }
+        if (($plural_name = static::pluralName()) === null) {
+            return null;
+        }
+
+        return [Str::slugCase($singular_name), Str::slugCase($plural_name)];
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#rest_base
+     * @return string|null
+     */
+    protected static function getRestApiBaseUrl(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#query_var
+     * @return bool|string|null
+     */
+    protected static function getUrlQueryParameterName()
+    {
+        return null;
     }
 
     protected static function mountArguments(): array
@@ -73,26 +245,72 @@ trait Register
             $arguments['taxonomies'] = $taxonomies;
         }
 
-        if (!($permalink_epmask = static::apiPermalink()) !== null) {
+        if (($permalink_epmask = static::apiPermalink()) !== null) {
             $arguments['permalink_epmask'] = $permalink_epmask;
         }
 
-        if (!($query_var = static::getUrlQueryParameterName()) !== null) {
+        if (($query_var = static::getUrlQueryParameterName()) !== null) {
             $arguments['query_var'] = $query_var;
         }
 
-        if (!($can_export = static::canBeExported()) !== null) {
+        if (($can_export = static::canBeExported()) !== null) {
             $arguments['can_export'] = $can_export;
         }
 
-        if (!($rest_base = static::getRestApiBaseUrl()) !== null) {
+        if (($rest_base = static::getRestApiBaseUrl()) !== null) {
             $arguments['rest_base'] = $rest_base;
         }
 
-        if (!($rest_controller_class = static::controller()) !== null) {
+        if (($rest_controller_class = static::controller()) !== null) {
             $arguments['rest_controller_class'] = $rest_controller_class;
         }
 
         return $arguments;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#supports
+     * Use CustomPostTypeField constants to set it easily.
+     * @return null
+     */
+    protected static function postFields()
+    {
+        return null;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#taxonomies-2
+     * @return string[]
+     */
+    protected static function postTaxonomies(): array
+    {
+        return [];
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#delete_with_user
+     * @return bool|null
+     */
+    protected static function shouldDeletePostWhenAuthorIsDeleted(): ?bool
+    {
+        return null;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#map_meta_cap
+     * @return bool|null
+     */
+    protected static function shouldMapMetaCapability(): ?bool
+    {
+        return true;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#show_in_rest
+     * @return bool
+     */
+    protected static function shouldRegisterRestApiEndpoints(): bool
+    {
+        return true;
     }
 }

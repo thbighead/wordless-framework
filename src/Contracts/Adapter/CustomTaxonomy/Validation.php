@@ -2,40 +2,43 @@
 
 namespace Wordless\Contracts\Adapter\CustomTaxonomy;
 
+use Wordless\Exceptions\InvalidCustomTaxonomyName;
+use Wordless\Exceptions\ReservedCustomTaxonomyName;
 use Wordless\Helpers\Reserved;
 
 trait Validation
 {
     /**
      * @return void
-     * @throws InvalidCustomPostTypeKey
+     * @throws InvalidCustomTaxonomyName
      */
     private static function validateFormat()
     {
         if (preg_match(
-                '/^[\w-]{1,' . self::POST_TYPE_KEY_MAX_LENGTH . '}$/',
-                $type_key = static::TYPE_KEY ?? ''
+                '/^[\w-]{1,' . self::TAXONOMY_NAME_MAX_LENGTH . '}$/',
+                $type_key = static::getNameKey() ?? ''
             ) !== 1) {
-            throw new InvalidCustomPostTypeKey($type_key);
+            throw new InvalidCustomTaxonomyName($type_key);
         }
     }
 
     /**
      * @return void
-     * @throws ReservedCustomPostTypeKey
+     * @throws ReservedCustomTaxonomyName
      */
     private static function validateNotReserved()
     {
-        if (Reserved::isPostTypeReservedByWordPress($type_key = static::TYPE_KEY ?? '')) {
-            throw new ReservedCustomPostTypeKey($type_key);
+        if (Reserved::isTaxonomyReservedByWordPress($type_key = static::getNameKey())) {
+            throw new ReservedCustomTaxonomyName($type_key);
         }
     }
 
     /**
      * @return void
-     * @throws InvalidCustomPostTypeKey
+     * @throws InvalidCustomTaxonomyName
+     * @throws ReservedCustomTaxonomyName
      */
-    private static function validateTypeKey()
+    private static function validateNameKey()
     {
         self::validateFormat();
         self::validateNotReserved();

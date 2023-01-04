@@ -16,7 +16,7 @@ trait Validation
     {
         if (preg_match(
                 '/^[\w-]{1,' . self::POST_TYPE_KEY_MAX_LENGTH . '}$/',
-                $type_key = static::TYPE_KEY ?? ''
+                $type_key = static::getTypeKey()
             ) !== 1) {
             throw new InvalidCustomPostTypeKey($type_key);
         }
@@ -28,7 +28,7 @@ trait Validation
      */
     private static function validateNotReserved()
     {
-        if (Reserved::isPostTypeReservedByWordPress($type_key = static::TYPE_KEY ?? '')) {
+        if (Reserved::isPostTypeReservedByWordPress($type_key = static::getTypeKey())) {
             throw new ReservedCustomPostTypeKey($type_key);
         }
     }

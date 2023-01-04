@@ -2,7 +2,7 @@
 
 namespace Wordless\Abstractions\Guessers;
 
-use Wordless\Adapters\CustomPost;
+use Wordless\Adapters\Taxonomy;
 use Wordless\Helpers\Str;
 
 class CustomTaxonomyNameGuesser extends Guesser
@@ -18,7 +18,7 @@ class CustomTaxonomyNameGuesser extends Guesser
     {
         return Str::truncate(
             Str::slugCase($this->class_name),
-            CustomPost::POST_TYPE_KEY_MAX_LENGTH
+            Taxonomy::TAXONOMY_NAME_MAX_LENGTH
         );
     }
 }

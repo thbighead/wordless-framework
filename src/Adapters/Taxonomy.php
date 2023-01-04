@@ -2,20 +2,23 @@
 
 namespace Wordless\Adapters;
 
+use Wordless\Abstractions\Guessers\CustomTaxonomyNameGuesser;
 use Wordless\Abstractions\TaxonomyTermsList;
 use Wordless\Contracts\Adapter\CustomTaxonomy\Register;
+use Wordless\Contracts\Adapter\CustomTaxonomy\Repository;
 use Wordless\Exceptions\TaxonomyNotRegistered;
 use WP_Taxonomy;
-use WP_Term;
 
 /**
  * @mixin WP_Taxonomy
  */
 abstract class Taxonomy
 {
-    use Register;
+    use Register, Repository;
 
-    /** @var self[] $taxonomies */
+    /** @var array<static, string> $taxonomies_name_keys */
+    protected static array $taxonomies_name_keys = [];
+    /** @var static[] $taxonomies */
     private static array $taxonomies = [];
     /** @var TaxonomyTermsList[] $taxonomyTerms */
     private static array $taxonomyTerms = [];
@@ -25,58 +28,11 @@ abstract class Taxonomy
 
     private WP_Taxonomy $wpTaxonomy;
 
-    public static function find(string $taxonomy): ?self
+    private static function getNameKey()
     {
-        return self::$taxonomies[$taxonomy] ?? null;
-    }
-
-    /**
-     * @param string|int $taxonomy_term
-     * @return WP_Term|null
-     */
-    public static function findTerm($taxonomy_term): ?WP_Term
-    {
-        if (is_int($taxonomy_term) || is_numeric($taxonomy_term)) {
-            return static::getById((int)$taxonomy_term);
-        }
-
-        return static::getBySlug($taxonomy_term) ?? static::getByName($taxonomy_term);
-    }
-
-    public static function getAllCustom(): array
-    {
-        $customTaxonomies = [];
-
-        foreach (get_taxonomies(['_builtin' => false]) as $custom_taxonomy_key) {
-            try {
-                $customTaxonomies[] = new static($custom_taxonomy_key);
-            } catch (TaxonomyNotRegistered $exception) {
-                continue;
-            }
-        }
-
-        return $customTaxonomies;
-    }
-
-    public static function getById(int $id): ?WP_Term
-    {
-        return self::getTaxonomyTermsList()->getById($id);
-    }
-
-    public static function getByName(string $name): ?WP_Term
-    {
-        return self::getTaxonomyTermsList()->getByName($name);
-    }
-
-    public static function getBySlug(string $slug): ?WP_Term
-    {
-        return self::getTaxonomyTermsList()->getBySlug($slug);
-    }
-
-    private static function getTaxonomyTermsList(): TaxonomyTermsList
-    {
-        return self::$taxonomyTerms[static::NAME] ??
-            self::$taxonomyTerms[static::NAME] = new TaxonomyTermsList(static::NAME);
+        return self::$taxonomies_name_keys[static::class] ??
+            self::$taxonomies_name_keys[static::class] = static::NAME ??
+                (new CustomTaxonomyNameGuesser(static::class))->getValue();
     }
 
     public function __call(string $method_name, array $arguments)
@@ -86,6 +42,7 @@ abstract class Taxonomy
 
     /**
      * @param WP_Taxonomy|string $taxonomy
+     * @throws TaxonomyNotRegistered
      */
     public function __construct($taxonomy)
     {
@@ -95,7 +52,9 @@ abstract class Taxonomy
             return;
         }
 
-        $this->wpTaxonomy = get_taxonomy($taxonomy) ?: null;
+        if (($this->wpTaxonomy = get_taxonomy($taxonomy) ?: null) === null) {
+            throw new TaxonomyNotRegistered($taxonomy);
+        }
     }
 
     public function __get(string $attribute)
