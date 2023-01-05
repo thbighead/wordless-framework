@@ -1,6 +1,7 @@
 <?php /** @noinspection PhpUnhandledExceptionInspection */
 
 use Wordless\Abstractions\Bootstrapper;
+use Wordless\Abstractions\Hooker;
 use Wordless\Abstractions\WpSpeedUp;
 use Wordless\Hookers\AllowSvgUpload;
 use Wordless\Hookers\BootApiControllers;
@@ -11,8 +12,10 @@ use Wordless\Hookers\DeferEnqueuedScripts;
 use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Hookers\EnqueueThemeEnqueueables;
 use Wordless\Hookers\ForceXmlTagToUploadedSvgFiles;
+use Wordless\Hookers\HideContentEditorForCustomFrontPageAtAdmin;
 use Wordless\Hookers\HideDiagnosticsFromUserRoles;
 use Wordless\Hookers\HooksDebugLog;
+use Wordless\Hookers\ShowCustomFrontPageAtAdminSideMenu;
 use Wordless\Hookers\WordlessVersionOnAdmin;
 
 return [
@@ -27,8 +30,10 @@ return [
         DoNotLoadWpAdminBarOutsidePanel::class,
         EnqueueThemeEnqueueables::class,
         ForceXmlTagToUploadedSvgFiles::class,
+        HideContentEditorForCustomFrontPageAtAdmin::class,
         HideDiagnosticsFromUserRoles::class,
         HooksDebugLog::class,
+        ShowCustomFrontPageAtAdminSideMenu::class,
         WordlessVersionOnAdmin::class,
     ],
 
