@@ -3,6 +3,7 @@
 namespace Wordless\Adapters;
 
 use Wordless\Abstractions\CategoriesList;
+use Wordless\Abstractions\Enums\MetaType;
 use Wordless\Contracts\Adapter\RelatedMetaData;
 use Wordless\Contracts\Adapter\WithAcfs;
 use Wordless\Contracts\Adapter\WithMetaData;
@@ -53,14 +54,14 @@ class Category implements RelatedMetaData
         return self::getCategoriesList()->getBySlug($slug);
     }
 
+    public static function objectType(): string
+    {
+        return MetaType::TERM;
+    }
+
     private static function getCategoriesList(): CategoriesList
     {
         return self::$categories ?? self::$categories = new CategoriesList;
-    }
-
-    public static function objectType(): string
-    {
-        return 'term';
     }
 
     /**

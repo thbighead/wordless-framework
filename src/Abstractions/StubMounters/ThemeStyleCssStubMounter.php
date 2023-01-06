@@ -2,7 +2,7 @@
 
 namespace Wordless\Abstractions\StubMounters;
 
-class ThemeStyleCssStubMounter extends BaseStubMounter
+class ThemeStyleCssStubMounter extends StubMounter
 {
     private const STUB_UNFILLED_PLACE_KEY = '<[wordless_input_goes_here]>';
 
@@ -10,7 +10,7 @@ class ThemeStyleCssStubMounter extends BaseStubMounter
      * @param array $replace_content_dictionary
      * @return $this
      */
-    public function setReplaceContentDictionary(array $replace_content_dictionary): BaseStubMounter
+    public function setReplaceContentDictionary(array $replace_content_dictionary): StubMounter
     {
         $this->replace_content_dictionary = [
             self::STUB_UNFILLED_PLACE_KEY => $this->mountReplaceContent($replace_content_dictionary),

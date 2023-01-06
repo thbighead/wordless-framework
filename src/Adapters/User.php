@@ -2,6 +2,7 @@
 
 namespace Wordless\Adapters;
 
+use Wordless\Abstractions\Enums\MetaType;
 use Wordless\Contracts\Adapter\RelatedMetaData;
 use Wordless\Contracts\Adapter\WithAcfs;
 use Wordless\Contracts\Adapter\WithMetaData;
@@ -14,7 +15,7 @@ class User extends WP_User implements RelatedMetaData
 
     public static function objectType(): string
     {
-        return 'user';
+        return MetaType::USER;
     }
 
     /**

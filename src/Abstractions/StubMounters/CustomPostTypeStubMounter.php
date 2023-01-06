@@ -2,7 +2,7 @@
 
 namespace Wordless\Abstractions\StubMounters;
 
-class CustomPostTypeStubMounter extends BaseStubMounter
+class CustomPostTypeStubMounter extends StubMounter
 {
     protected function relativeStubFilename(): string
     {

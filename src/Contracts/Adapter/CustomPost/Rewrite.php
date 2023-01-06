@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Contracts\Adapter\WordlessCustomPost;
+namespace Wordless\Contracts\Adapter\CustomPost;
 
 /**
  * https://developer.wordpress.org/reference/functions/register_post_type/#rewrite

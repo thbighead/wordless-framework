@@ -3,30 +3,31 @@
 namespace Wordless\Hookers;
 
 use Wordless\Abstractions\Hooker;
-use Wordless\Adapters\CustomPost;
+use Wordless\Adapters\Taxonomy;
 use Wordless\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
 
-class BootCustomPostTypes extends Hooker
+class BootCustomTaxonomies extends Hooker
 {
-    public const HOOK_PRIORITY = 10;
-
     /**
      * WordPress action|filter hook identification
      */
     protected const HOOK = 'init';
+    /**
+     * WordPress action|filter hook priority
+     */
+    protected const HOOK_PRIORITY = BootCustomPostTypes::HOOK_PRIORITY - 1;
 
     /**
      * @return void
-     * @throws InvalidCustomPostTypeKey
      * @throws PathNotFoundException
      */
     public static function register()
     {
-        foreach (Config::tryToGetOrDefault('custom-post-types', []) as $customPostTypeClassNamespace) {
-            /** @var CustomPost $customPostTypeClassNamespace */
-            $customPostTypeClassNamespace::register();
+        foreach (Config::tryToGetOrDefault('custom-taxonomies', []) as $customTaxonomyClassNamespace) {
+            /** @var Taxonomy $customTaxonomyClassNamespace */
+            $customTaxonomyClassNamespace::register();
         }
     }
 }

@@ -5,6 +5,7 @@ use Wordless\Abstractions\WpSpeedUp;
 use Wordless\Hookers\AllowSvgUpload;
 use Wordless\Hookers\BootApiControllers;
 use Wordless\Hookers\BootCustomPostTypes;
+use Wordless\Hookers\BootCustomTaxonomies;
 use Wordless\Hookers\BootHttpRemoteCallsLog;
 use Wordless\Hookers\ChooseImageEditor;
 use Wordless\Hookers\DeferEnqueuedScripts;
@@ -22,6 +23,7 @@ return [
         BootApiControllers::class,
         BootCustomPostTypes::class,
         BootHttpRemoteCallsLog::class,
+        BootCustomTaxonomies::class,
         ChooseImageEditor::class,
         DeferEnqueuedScripts::class,
         DoNotLoadWpAdminBarOutsidePanel::class,
