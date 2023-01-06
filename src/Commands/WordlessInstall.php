@@ -103,7 +103,6 @@ class WordlessInstall extends ConsoleCommand
             $this->activateWpPlugins();
             $this->installWpLanguages();
             $this->makeWpBlogPublic();
-            $this->applyAdminConfiguration();
             $this->runWpCliCommand('core update-db', true);
             $this->executeWordlessCommand(
                 GeneratePublicWordpressSymbolicLinks::COMMAND_NAME,
@@ -113,6 +112,7 @@ class WordlessInstall extends ConsoleCommand
             $this->executeWordlessCommand(Migrate::COMMAND_NAME, [], $this->output);
             $this->executeWordlessCommand(SyncRoles::COMMAND_NAME, [], $this->output);
             $this->executeWordlessCommand(CreateInternalCache::COMMAND_NAME, [], $this->output);
+            $this->applyAdminConfiguration();
         } finally {
             $this->switchingMaintenanceMode(false);
         }
@@ -177,22 +177,20 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return void
+     * @throws ExceptionInterface
      * @throws PathNotFoundException
+     * @throws WpCliCommandReturnedNonZero
      */
     private function applyAdminConfiguration()
     {
-        update_option(
-            'date_format',
-            Config::tryToGetOrDefault('admin.datetime.date_format', 'Y-m-d')
-        );
-        update_option(
-            'time_format',
-            Config::tryToGetOrDefault('admin.datetime.time_format', 'H:i')
-        );
-        update_option(
-            StartOfWeek::KEY,
-            Config::tryToGetOrDefault('admin.' . StartOfWeek::KEY, StartOfWeek::SUNDAY)
-        );
+        $this->runWpCliCommand('option update date_format '
+            . Config::tryToGetOrDefault('admin.datetime.date_format', 'Y-m-d'));
+        $this->runWpCliCommand('option update time_format '
+            . Config::tryToGetOrDefault('admin.datetime.time_format', 'H:i'));
+        $this->runWpCliCommand('option update '
+            . StartOfWeek::KEY
+            . ' '
+            . Config::tryToGetOrDefault('admin.' . StartOfWeek::KEY, StartOfWeek::SUNDAY));
     }
 
     private function ask(string $question, $default = null)
