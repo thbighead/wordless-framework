@@ -10,6 +10,7 @@ use Composer\Installer\PackageEvent;
 use Composer\Package\CompletePackage;
 use Composer\Package\RootPackage;
 use Composer\Script\Event;
+use Wordless\Contracts\Abstraction\Composer\InputOutput;
 use Wordless\Contracts\Abstraction\Composer\ManagePlugin;
 use Wordless\Contracts\Abstraction\Composer\PackageDiscovery;
 use Wordless\Contracts\Abstraction\Composer\SetHostFromNginx;
@@ -19,7 +20,7 @@ use Wordless\Helpers\Str;
 
 class Composer
 {
-    use ManagePlugin, PackageDiscovery, SetHostFromNginx;
+    use InputOutput, ManagePlugin, PackageDiscovery, SetHostFromNginx;
 
     /** @var string WORDLESS_EXTRA_KEY final */
     protected const WORDLESS_EXTRA_KEY = 'wordless';
@@ -42,6 +43,7 @@ class Composer
      */
     public static function saveInstalledVersion(Event $composerEvent)
     {
+        static::initializeIo($composerEvent);
         $composer = $composerEvent->getComposer();
         /** @var RootPackage $projectPackage */
         $projectPackage = $composer->getPackage();
@@ -68,11 +70,13 @@ class Composer
         $root_project_path_constant = 'ROOT_PROJECT_PATH';
 
         if (!defined($root_project_path_constant)) {
+            static::getIo()->write("Defining $root_project_path_constant as {$composer->getConfig()->get('vendor-dir')}/..");
             define(
                 $root_project_path_constant,
                 "{$composer->getConfig()->get('vendor-dir')}/.."
             );
         }
+        static::getIo()->write("$root_project_path_constant defined as " . ROOT_PROJECT_PATH);
     }
 
     final protected static function extractPackageFromEvent(PackageEvent $composerEvent): ?CompletePackage
