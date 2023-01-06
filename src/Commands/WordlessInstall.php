@@ -105,18 +105,19 @@ class WordlessInstall extends ConsoleCommand
             $this->makeWpBlogPublic();
             $this->applyAdminConfiguration();
             $this->runWpCliCommand('core update-db', true);
+            $this->executeWordlessCommand(
+                GeneratePublicWordpressSymbolicLinks::COMMAND_NAME,
+                [],
+                $this->output
+            );
+            $this->executeWordlessCommand(Migrate::COMMAND_NAME, [], $this->output);
+            $this->executeWordlessCommand(SyncRoles::COMMAND_NAME, [], $this->output);
+            $this->executeWordlessCommand(CreateInternalCache::COMMAND_NAME, [], $this->output);
         } finally {
             $this->switchingMaintenanceMode(false);
         }
 
         $this->resolveWpConfigChmod();
-        $this->executeWordlessCommand(
-            GeneratePublicWordpressSymbolicLinks::COMMAND_NAME,
-            [],
-            $this->output
-        );
-        $this->executeWordlessCommand(Migrate::COMMAND_NAME, [], $this->output);
-        $this->executeWordlessCommand(SyncRoles::COMMAND_NAME, [], $this->output);
 
         return Command::SUCCESS;
     }
