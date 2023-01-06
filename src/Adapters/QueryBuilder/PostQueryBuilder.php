@@ -21,7 +21,10 @@ class PostQueryBuilder extends QueryBuilder
     public const KEY_CATEGORY = 'cat';
     public const KEY_HAS_PASSWORD = 'has_password';
     public const KEY_POST_PASSWORD = 'post_password';
+    public const KEY_SEARCH = 's';
     private bool $load_acfs = false;
+    /** @var array<string, bool> $search_words */
+    private array $search_words = [];
 
     public function __construct(string $post_type = PostType::POST)
     {
@@ -39,7 +42,7 @@ class PostQueryBuilder extends QueryBuilder
     public function count(): int
     {
         if (!$this->arePostsAlreadyLoaded()) {
-            parent::get();
+            $this->query();
         }
 
         return $this->getQuery()->found_posts;
@@ -54,7 +57,7 @@ class PostQueryBuilder extends QueryBuilder
         $this->load_acfs = $with_acfs;
         $posts = [];
 
-        foreach (parent::get() as $post) {
+        foreach ($this->query() as $post) {
             /** @var WP_Post $post */
             $posts[$post->ID] = new Post($post, $with_acfs);
         }
@@ -70,7 +73,7 @@ class PostQueryBuilder extends QueryBuilder
         $this->load_acfs = false;
         $this->arguments[WpQueryFields::FIELDS_KEY] = WpQueryFields::LIST_OF_POSTS_IDS;
 
-        return parent::get();
+        return $this->query();
     }
 
     public function isPaginated(): bool
@@ -85,7 +88,7 @@ class PostQueryBuilder extends QueryBuilder
         }
 
         if (!$this->arePostsAlreadyLoaded()) {
-            parent::get();
+            $this->query();
         }
 
         return $this->getQuery()->max_num_pages;
@@ -140,6 +143,24 @@ class PostQueryBuilder extends QueryBuilder
         $this->setPaged($page);
 
         return $this;
+    }
+
+    /**
+     * @param string|string[] $words
+     * @return $this
+     */
+    public function searchFor($words): PostQueryBuilder
+    {
+        return $this->search($words);
+    }
+
+    /**
+     * @param string|string[] $words
+     * @return $this
+     */
+    public function searchNotFor($words): PostQueryBuilder
+    {
+        return $this->search($words, false);
     }
 
     /**
@@ -366,6 +387,40 @@ class PostQueryBuilder extends QueryBuilder
     {
         return is_array($types) ?
             Arr::searchValue($types, PostType::ATTACHMENT) : $types === PostType::ATTACHMENT;
+    }
+
+    private function query()
+    {
+        $this->resolveSearch();
+
+        return parent::get();
+    }
+
+    private function resolveSearch()
+    {
+        foreach ($this->search_words as $word => $is_included) {
+            $this->arguments[self::KEY_SEARCH] = isset($this->arguments[self::KEY_SEARCH]) ?
+                "{$this->arguments[self::KEY_SEARCH]} " : '';
+
+            $this->arguments[self::KEY_SEARCH] .= $is_included ? $word : "-$word";
+        }
+    }
+
+    /**
+     * @param string|string[] $words
+     * @return $this
+     */
+    private function search($words, bool $include = true): PostQueryBuilder
+    {
+        if (empty($words)) {
+            return $this;
+        }
+
+        foreach (Arr::wrap($words) as $word) {
+            $this->search_words[$word] = $include;
+        }
+
+        return $this;
     }
 
     private function setPaged(int $page)
