@@ -15,6 +15,7 @@ use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Wordless\Abstractions\Enums\StartOfWeek;
 use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\ForceMode;
 use Wordless\Contracts\Command\RunWpCliCommand;
@@ -25,6 +26,7 @@ use Wordless\Exceptions\FailedToDeletePath;
 use Wordless\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Helpers\Config;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
@@ -101,6 +103,7 @@ class WordlessInstall extends ConsoleCommand
             $this->activateWpPlugins();
             $this->installWpLanguages();
             $this->makeWpBlogPublic();
+            $this->applyAdminConfiguration();
             $this->runWpCliCommand('core update-db', true);
         } finally {
             $this->switchingMaintenanceMode(false);
@@ -169,6 +172,26 @@ class WordlessInstall extends ConsoleCommand
     private function activateWpPlugins()
     {
         $this->runWpCliCommand('plugin activate --all');
+    }
+
+    /**
+     * @return void
+     * @throws PathNotFoundException
+     */
+    private function applyAdminConfiguration()
+    {
+        update_option(
+            'date_format',
+            Config::tryToGetOrDefault('admin.datetime.date_format', 'Y-m-d')
+        );
+        update_option(
+            'time_format',
+            Config::tryToGetOrDefault('admin.datetime.time_format', 'H:i')
+        );
+        update_option(
+            StartOfWeek::KEY,
+            Config::tryToGetOrDefault('admin.' . StartOfWeek::KEY, StartOfWeek::SUNDAY)
+        );
     }
 
     private function ask(string $question, $default = null)
