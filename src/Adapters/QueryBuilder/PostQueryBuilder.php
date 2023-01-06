@@ -3,7 +3,9 @@
 namespace Wordless\Adapters\QueryBuilder;
 
 use Wordless\Abstractions\Enums\QueryComparison;
+use Wordless\Abstractions\Enums\QueryOrderByDirection;
 use Wordless\Abstractions\Enums\WpQueryFields;
+use Wordless\Abstractions\Enums\WpQueryOrderByParameter;
 use Wordless\Abstractions\Enums\WpQueryStatus;
 use Wordless\Abstractions\Enums\WpQueryTaxonomy;
 use Wordless\Abstractions\Pagination\Posts;
@@ -22,6 +24,7 @@ class PostQueryBuilder extends QueryBuilder
     public const KEY_CATEGORY = 'cat';
     public const KEY_HAS_PASSWORD = 'has_password';
     public const KEY_IGNORE_STICKY_POSTS = 'ignore_sticky_posts';
+    public const KEY_ORDER_BY = 'orderby';
     public const KEY_POST_IN = 'post__in';
     public const KEY_POST_NOT_IN = 'post__not_in';
     public const KEY_POST_PASSWORD = 'post_password';
@@ -128,6 +131,44 @@ class PostQueryBuilder extends QueryBuilder
         return $this;
     }
 
+    /**
+     * @param string|string[]|array<string,string> $columns use WpQueryOrderByParameter constants to avoid errors
+     * @param string $direction ignored if $columns is an associative array
+     * @return PostQueryBuilder
+     */
+    public function orderBy($columns, string $direction = QueryOrderByDirection::ASCENDING): PostQueryBuilder
+    {
+        if (!isset($this->arguments[self::KEY_ORDER_BY])) {
+            $this->arguments[self::KEY_ORDER_BY] = [];
+        }
+
+        if (!is_array($columns)) {
+            $columns = [$columns => $direction];
+        }
+
+        if (!Arr::isAssociative($columns)) {
+            $order_by = [];
+
+            foreach ($columns as $column) {
+                $order_by[$column] = $direction;
+            }
+
+            $columns = $order_by;
+            unset($order_by);
+        }
+
+        foreach ($columns as $column => $order_direction) {
+            // ensuring the order of columns (if you ask it again it goes to the end of line)
+            if (isset($this->arguments[self::KEY_ORDER_BY][$column])) {
+                unset($this->arguments[self::KEY_ORDER_BY][$column]);
+            }
+
+            $this->arguments[self::KEY_ORDER_BY][$column] = $order_direction;
+        }
+
+        return $this;
+    }
+
     public function paginate(
         int  $page = Posts::FIRST_PAGE,
         int  $posts_per_page = Posts::DEFAULT_POSTS_PER_PAGE,
@@ -153,20 +194,22 @@ class PostQueryBuilder extends QueryBuilder
 
     /**
      * @param string|string[] $words
+     * @param bool $sorted_by_relevance
      * @return $this
      */
-    public function searchFor($words): PostQueryBuilder
+    public function searchFor($words, bool $sorted_by_relevance = true): PostQueryBuilder
     {
-        return $this->search($words);
+        return $this->search($words, $sorted_by_relevance);
     }
 
     /**
      * @param string|string[] $words
+     * @param bool $sorted_by_relevance
      * @return $this
      */
-    public function searchNotFor($words): PostQueryBuilder
+    public function searchNotFor($words, bool $sorted_by_relevance = true): PostQueryBuilder
     {
-        return $this->search($words, false);
+        return $this->search($words, $sorted_by_relevance, false);
     }
 
     /**
@@ -579,9 +622,11 @@ class PostQueryBuilder extends QueryBuilder
 
     /**
      * @param string|string[] $words
+     * @param bool $sorted_by_relevance
+     * @param bool $include
      * @return $this
      */
-    private function search($words, bool $include = true): PostQueryBuilder
+    private function search($words, bool $sorted_by_relevance = true, bool $include = true): PostQueryBuilder
     {
         if (empty($words)) {
             return $this;
@@ -591,11 +636,31 @@ class PostQueryBuilder extends QueryBuilder
             $this->search_words[$word] = $include;
         }
 
+        if ($sorted_by_relevance) {
+            $this->sortBySearchRelevance();
+        }
+
         return $this;
     }
 
     private function setPaged(int $page)
     {
         return $this->arguments[Posts::KEY_PAGED] = max($page, Posts::FIRST_PAGE);
+    }
+
+    private function sortBySearchRelevance()
+    {
+        $original_arguments = [];
+
+        // ensuring the relevance will be the first parameter of ordering
+        if (isset($this->arguments[self::KEY_ORDER_BY])) {
+            $original_arguments = $this->arguments[self::KEY_ORDER_BY];
+            unset($this->arguments[self::KEY_ORDER_BY]);
+        }
+
+        $this->orderBy(WpQueryOrderByParameter::SEARCH_RELEVANCE, QueryOrderByDirection::DESCENDING);
+
+        // ensuring the relevance will be the first parameter of ordering
+        $this->arguments[self::KEY_ORDER_BY] = $this->arguments[self::KEY_ORDER_BY] + $original_arguments;
     }
 }
