@@ -20,6 +20,7 @@ class PostQueryBuilder extends QueryBuilder
     public const KEY_AUTHOR = 'author';
     public const KEY_CATEGORY = 'cat';
     public const KEY_HAS_PASSWORD = 'has_password';
+    public const KEY_POST_PASSWORD = 'post_password';
     private bool $load_acfs = false;
 
     public function __construct(string $post_type = PostType::POST)
@@ -98,7 +99,7 @@ class PostQueryBuilder extends QueryBuilder
         $this->arguments[self::KEY_HAS_PASSWORD] = true;
 
         if ($password !== null) {
-            $this->arguments['post_password'] = $password;
+            $this->arguments[self::KEY_POST_PASSWORD] = $password;
         }
 
         return $this;
@@ -110,6 +111,10 @@ class PostQueryBuilder extends QueryBuilder
     public function onlyWithoutPassword(): PostQueryBuilder
     {
         $this->arguments[self::KEY_HAS_PASSWORD] = false;
+
+        if (isset($this->arguments[self::KEY_POST_PASSWORD])) {
+            unset($this->arguments[self::KEY_POST_PASSWORD]);
+        }
 
         return $this;
     }
