@@ -20,8 +20,12 @@ class PostQueryBuilder extends QueryBuilder
     public const KEY_AUTHOR = 'author';
     public const KEY_CATEGORY = 'cat';
     public const KEY_HAS_PASSWORD = 'has_password';
+    public const KEY_IGNORE_STICKY_POSTS = 'ignore_sticky_posts';
+    public const KEY_POST_IN = 'post__in';
+    public const KEY_POST_NOT_IN = 'post__not_in';
     public const KEY_POST_PASSWORD = 'post_password';
     public const KEY_SEARCH = 's';
+
     private bool $load_acfs = false;
     /** @var array<string, bool> $search_words */
     private array $search_words = [];
@@ -30,7 +34,8 @@ class PostQueryBuilder extends QueryBuilder
     {
         try {
             $this->setQuery(new WP_Query)
-                ->whereType($post_type);
+                ->whereType($post_type)
+                ->withoutStickyPosts();
             $this->arguments[WpQueryFields::FIELDS_KEY] = WpQueryFields::LIST_OF_POSTS;
 
             parent::__construct(WP_Query::class);
@@ -237,6 +242,35 @@ class PostQueryBuilder extends QueryBuilder
     }
 
     /**
+     * @param int|int[] $post_ids
+     * @return $this
+     */
+    public function whereId($post_ids): PostQueryBuilder
+    {
+        if (is_int($post_ids)) {
+            $this->arguments['p'] = $post_ids;
+
+            return $this;
+        }
+
+        if (empty($post_ids)) {
+            return $this;
+        }
+
+        if (count($post_ids) === 1) {
+            return $this->whereId($post_ids[0]);
+        }
+
+        $this->arguments[self::KEY_POST_IN] = $post_ids;
+
+        if (isset($this->arguments[self::KEY_POST_NOT_IN])) {
+            unset($this->arguments[self::KEY_POST_NOT_IN]);
+        }
+
+        return $this;
+    }
+
+    /**
      * @param int|int[] $ids
      * @return PostQueryBuilder
      */
@@ -271,12 +305,52 @@ class PostQueryBuilder extends QueryBuilder
     }
 
     /**
+     * @param int|int[] $post_ids
+     * @return $this
+     */
+    public function whereNotId($post_ids): PostQueryBuilder
+    {
+        $post_ids = Arr::wrap($post_ids);
+
+        if (empty($post_ids)) {
+            return $this;
+        }
+
+        $this->arguments[self::KEY_POST_NOT_IN] = $post_ids;
+
+        if (isset($this->arguments[self::KEY_POST_IN])) {
+            unset($this->arguments[self::KEY_POST_IN]);
+        }
+
+        return $this;
+    }
+
+    /**
      * @param int[] $ids
      * @return $this
      */
     public function whereNotTagId(array $ids): PostQueryBuilder
     {
         $this->arguments['tag__not_in'] = $ids;
+
+        return $this;
+    }
+
+    /**
+     * @param string|string[] $slugs
+     * @return $this
+     */
+    public function whereSlug($slugs): PostQueryBuilder
+    {
+        if (!is_array($slugs)) {
+            $this->arguments['name'] = $slugs;
+
+            return $this;
+        }
+
+        if (!empty($slugs)) {
+            $this->arguments['post_name__in'] = $slugs;
+        }
 
         return $this;
     }
@@ -342,6 +416,26 @@ class PostQueryBuilder extends QueryBuilder
         }
 
         $this->arguments[PostType::QUERY_TYPE_KEY] = $types;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function withStickyPosts(): PostQueryBuilder
+    {
+        $this->arguments[self::KEY_IGNORE_STICKY_POSTS] = false;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function withoutStickyPosts(): PostQueryBuilder
+    {
+        $this->arguments[self::KEY_IGNORE_STICKY_POSTS] = true;
 
         return $this;
     }
