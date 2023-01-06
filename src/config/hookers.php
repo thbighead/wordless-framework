@@ -1,7 +1,6 @@
 <?php /** @noinspection PhpUnhandledExceptionInspection */
 
 use Wordless\Abstractions\Bootstrapper;
-use Wordless\Abstractions\Hooker;
 use Wordless\Abstractions\WpSpeedUp;
 use Wordless\Hookers\AllowSvgUpload;
 use Wordless\Hookers\BootApiControllers;
