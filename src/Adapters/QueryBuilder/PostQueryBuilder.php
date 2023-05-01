@@ -5,12 +5,14 @@ namespace Wordless\Adapters\QueryBuilder;
 use Wordless\Abstractions\Enums\QueryComparison;
 use Wordless\Abstractions\Enums\QueryOrderByDirection;
 use Wordless\Abstractions\Enums\WpQueryFields;
+use Wordless\Abstractions\Enums\WpQueryMeta;
 use Wordless\Abstractions\Enums\WpQueryOrderByParameter;
 use Wordless\Abstractions\Enums\WpQueryStatus;
 use Wordless\Abstractions\Enums\WpQueryTaxonomy;
 use Wordless\Abstractions\Pagination\Posts;
 use Wordless\Adapters\Post;
 use Wordless\Adapters\PostType;
+use Wordless\Adapters\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 use Wordless\Adapters\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
 use Wordless\Exceptions\QueryAlreadySet;
 use Wordless\Helpers\Arr;
@@ -44,7 +46,7 @@ class PostQueryBuilder extends QueryBuilder
 
             parent::__construct(WP_Query::class);
         } catch (QueryAlreadySet $exception) {
-            Log::error("This is impossible, but... {$exception->getMessage()}");
+            Log::impossibleException($exception);
         }
     }
 
@@ -314,6 +316,13 @@ class PostQueryBuilder extends QueryBuilder
         return $this;
     }
 
+    public function whereMeta(MetaSubQueryBuilder $subQuery): PostQueryBuilder
+    {
+        $this->arguments[WpQueryMeta::KEY_META_QUERY] = $subQuery;
+
+        return $this;
+    }
+
     /**
      * @param int|int[] $ids
      * @return PostQueryBuilder
@@ -449,6 +458,13 @@ class PostQueryBuilder extends QueryBuilder
         return $this;
     }
 
+    public function whereTitle(string $title): PostQueryBuilder
+    {
+        $this->arguments['title'] = $title;
+
+        return $this;
+    }
+
     /**
      * @param string|string[] $types
      * @return $this
@@ -566,8 +582,13 @@ class PostQueryBuilder extends QueryBuilder
     protected function buildArguments(): array
     {
         $arguments = $this->arguments;
-        $taxonomySubQueryBuilder = $this->arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] ?? null;
 
+        $metaSubQueryBuilder = $this->arguments[WpQueryMeta::KEY_META_QUERY] ?? null;
+        if ($metaSubQueryBuilder instanceof MetaSubQueryBuilder) {
+            $arguments[WpQueryMeta::KEY_META_QUERY] = $metaSubQueryBuilder->build();
+        }
+
+        $taxonomySubQueryBuilder = $this->arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] ?? null;
         if ($taxonomySubQueryBuilder instanceof TaxonomySubQueryBuilder) {
             $arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] = $taxonomySubQueryBuilder->build();
         }

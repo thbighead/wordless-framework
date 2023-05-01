@@ -8,10 +8,10 @@ use Wordless\Adapters\QueryBuilder\PostQueryBuilder\EmptyTaxonomySubQueryBuilder
 
 class TryingToBuildEmptySubQuery extends Exception
 {
-    public function __construct(Throwable $previous = null)
+    public function __construct(string $subQueryClass, Throwable $previous = null)
     {
         parent::__construct(
-            EmptyTaxonomySubQueryBuilder::class . ' can\'t be built.',
+            "$subQueryClass can't be built.",
             0,
             $previous
         );
