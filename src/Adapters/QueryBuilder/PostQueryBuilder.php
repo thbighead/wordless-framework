@@ -2,12 +2,17 @@
 
 namespace Wordless\Adapters\QueryBuilder;
 
+use Wordless\Abstractions\Enums\QueryComparison;
+use Wordless\Abstractions\Enums\QueryOrderByDirection;
 use Wordless\Abstractions\Enums\WpQueryFields;
+use Wordless\Abstractions\Enums\WpQueryMeta;
+use Wordless\Abstractions\Enums\WpQueryOrderByParameter;
 use Wordless\Abstractions\Enums\WpQueryStatus;
 use Wordless\Abstractions\Enums\WpQueryTaxonomy;
 use Wordless\Abstractions\Pagination\Posts;
 use Wordless\Adapters\Post;
 use Wordless\Adapters\PostType;
+use Wordless\Adapters\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 use Wordless\Adapters\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
 use Wordless\Exceptions\QueryAlreadySet;
 use Wordless\Helpers\Arr;
@@ -20,25 +25,35 @@ class PostQueryBuilder extends QueryBuilder
     public const KEY_AUTHOR = 'author';
     public const KEY_CATEGORY = 'cat';
     public const KEY_HAS_PASSWORD = 'has_password';
+    public const KEY_IGNORE_STICKY_POSTS = 'ignore_sticky_posts';
+    public const KEY_ORDER_BY = 'orderby';
+    public const KEY_POST_IN = 'post__in';
+    public const KEY_POST_NOT_IN = 'post__not_in';
+    public const KEY_POST_PASSWORD = 'post_password';
+    public const KEY_SEARCH = 's';
+
     private bool $load_acfs = false;
+    /** @var array<string, bool> $search_words */
+    private array $search_words = [];
 
     public function __construct(string $post_type = PostType::POST)
     {
         try {
             $this->setQuery(new WP_Query)
-                ->whereType($post_type);
+                ->whereType($post_type)
+                ->withoutStickyPosts();
             $this->arguments[WpQueryFields::FIELDS_KEY] = WpQueryFields::LIST_OF_POSTS;
 
             parent::__construct(WP_Query::class);
         } catch (QueryAlreadySet $exception) {
-            Log::error("This is impossible, but... {$exception->getMessage()}");
+            Log::impossibleException($exception);
         }
     }
 
     public function count(): int
     {
         if (!$this->arePostsAlreadyLoaded()) {
-            parent::get();
+            $this->query();
         }
 
         return $this->getQuery()->found_posts;
@@ -53,7 +68,7 @@ class PostQueryBuilder extends QueryBuilder
         $this->load_acfs = $with_acfs;
         $posts = [];
 
-        foreach (parent::get() as $post) {
+        foreach ($this->query() as $post) {
             /** @var WP_Post $post */
             $posts[$post->ID] = new Post($post, $with_acfs);
         }
@@ -69,7 +84,7 @@ class PostQueryBuilder extends QueryBuilder
         $this->load_acfs = false;
         $this->arguments[WpQueryFields::FIELDS_KEY] = WpQueryFields::LIST_OF_POSTS_IDS;
 
-        return parent::get();
+        return $this->query();
     }
 
     public function isPaginated(): bool
@@ -84,7 +99,7 @@ class PostQueryBuilder extends QueryBuilder
         }
 
         if (!$this->arePostsAlreadyLoaded()) {
-            parent::get();
+            $this->query();
         }
 
         return $this->getQuery()->max_num_pages;
@@ -98,7 +113,7 @@ class PostQueryBuilder extends QueryBuilder
         $this->arguments[self::KEY_HAS_PASSWORD] = true;
 
         if ($password !== null) {
-            $this->arguments['post_password'] = $password;
+            $this->arguments[self::KEY_POST_PASSWORD] = $password;
         }
 
         return $this;
@@ -110,6 +125,48 @@ class PostQueryBuilder extends QueryBuilder
     public function onlyWithoutPassword(): PostQueryBuilder
     {
         $this->arguments[self::KEY_HAS_PASSWORD] = false;
+
+        if (isset($this->arguments[self::KEY_POST_PASSWORD])) {
+            unset($this->arguments[self::KEY_POST_PASSWORD]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string|string[]|array<string,string> $columns use WpQueryOrderByParameter constants to avoid errors
+     * @param string $direction ignored if $columns is an associative array
+     * @return PostQueryBuilder
+     */
+    public function orderBy($columns, string $direction = QueryOrderByDirection::ASCENDING): PostQueryBuilder
+    {
+        if (!isset($this->arguments[self::KEY_ORDER_BY])) {
+            $this->arguments[self::KEY_ORDER_BY] = [];
+        }
+
+        if (!is_array($columns)) {
+            $columns = [$columns => $direction];
+        }
+
+        if (!Arr::isAssociative($columns)) {
+            $order_by = [];
+
+            foreach ($columns as $column) {
+                $order_by[$column] = $direction;
+            }
+
+            $columns = $order_by;
+            unset($order_by);
+        }
+
+        foreach ($columns as $column => $order_direction) {
+            // ensuring the order of columns (if you ask it again it goes to the end of line)
+            if (isset($this->arguments[self::KEY_ORDER_BY][$column])) {
+                unset($this->arguments[self::KEY_ORDER_BY][$column]);
+            }
+
+            $this->arguments[self::KEY_ORDER_BY][$column] = $order_direction;
+        }
 
         return $this;
     }
@@ -135,6 +192,26 @@ class PostQueryBuilder extends QueryBuilder
         $this->setPaged($page);
 
         return $this;
+    }
+
+    /**
+     * @param string|string[] $words
+     * @param bool $sorted_by_relevance
+     * @return $this
+     */
+    public function searchFor($words, bool $sorted_by_relevance = true): PostQueryBuilder
+    {
+        return $this->search($words, $sorted_by_relevance);
+    }
+
+    /**
+     * @param string|string[] $words
+     * @param bool $sorted_by_relevance
+     * @return $this
+     */
+    public function searchNotFor($words, bool $sorted_by_relevance = true): PostQueryBuilder
+    {
+        return $this->search($words, $sorted_by_relevance, false);
     }
 
     /**
@@ -211,6 +288,42 @@ class PostQueryBuilder extends QueryBuilder
     }
 
     /**
+     * @param int|int[] $post_ids
+     * @return $this
+     */
+    public function whereId($post_ids): PostQueryBuilder
+    {
+        if (is_int($post_ids)) {
+            $this->arguments['p'] = $post_ids;
+
+            return $this;
+        }
+
+        if (empty($post_ids)) {
+            return $this;
+        }
+
+        if (count($post_ids) === 1) {
+            return $this->whereId($post_ids[0]);
+        }
+
+        $this->arguments[self::KEY_POST_IN] = $post_ids;
+
+        if (isset($this->arguments[self::KEY_POST_NOT_IN])) {
+            unset($this->arguments[self::KEY_POST_NOT_IN]);
+        }
+
+        return $this;
+    }
+
+    public function whereMeta(MetaSubQueryBuilder $subQuery): PostQueryBuilder
+    {
+        $this->arguments[WpQueryMeta::KEY_META_QUERY] = $subQuery;
+
+        return $this;
+    }
+
+    /**
      * @param int|int[] $ids
      * @return PostQueryBuilder
      */
@@ -245,12 +358,52 @@ class PostQueryBuilder extends QueryBuilder
     }
 
     /**
+     * @param int|int[] $post_ids
+     * @return $this
+     */
+    public function whereNotId($post_ids): PostQueryBuilder
+    {
+        $post_ids = Arr::wrap($post_ids);
+
+        if (empty($post_ids)) {
+            return $this;
+        }
+
+        $this->arguments[self::KEY_POST_NOT_IN] = $post_ids;
+
+        if (isset($this->arguments[self::KEY_POST_IN])) {
+            unset($this->arguments[self::KEY_POST_IN]);
+        }
+
+        return $this;
+    }
+
+    /**
      * @param int[] $ids
      * @return $this
      */
     public function whereNotTagId(array $ids): PostQueryBuilder
     {
         $this->arguments['tag__not_in'] = $ids;
+
+        return $this;
+    }
+
+    /**
+     * @param string|string[] $slugs
+     * @return $this
+     */
+    public function whereSlug($slugs): PostQueryBuilder
+    {
+        if (!is_array($slugs)) {
+            $this->arguments['name'] = $slugs;
+
+            return $this;
+        }
+
+        if (!empty($slugs)) {
+            $this->arguments['post_name__in'] = $slugs;
+        }
 
         return $this;
     }
@@ -305,6 +458,13 @@ class PostQueryBuilder extends QueryBuilder
         return $this;
     }
 
+    public function whereTitle(string $title): PostQueryBuilder
+    {
+        $this->arguments['title'] = $title;
+
+        return $this;
+    }
+
     /**
      * @param string|string[] $types
      * @return $this
@@ -321,13 +481,114 @@ class PostQueryBuilder extends QueryBuilder
     }
 
     /**
+     * @return $this
+     */
+    public function withAnyComments(): PostQueryBuilder
+    {
+        return $this->withComments();
+    }
+
+    /**
+     * @param int $how_many
+     * @param string $comparison use QueryComparisons constants to avoid errors
+     * @return $this
+     */
+    public function withComments(
+        int    $how_many = 1,
+        string $comparison = QueryComparison::GREATER_THAN_OR_EQUAL
+    ): PostQueryBuilder
+    {
+        $this->arguments['comment_count'] = ['compare' => $comparison, 'value' => $how_many];
+
+        return $this;
+    }
+
+    /**
+     * @param int $how_many
+     * @return $this
+     */
+    public function withDifferentThanComments(int $how_many): PostQueryBuilder
+    {
+        return $this->withComments($how_many, QueryComparison::DIFFERENT);
+    }
+
+    /**
+     * @param int $how_many
+     * @return $this
+     */
+    public function withLessThanComments(int $how_many): PostQueryBuilder
+    {
+        return $this->withComments($how_many, QueryComparison::LESS_THAN);
+    }
+
+    /**
+     * @param int $how_many
+     * @return $this
+     */
+    public function withLessThanOrEqualsComments(int $how_many): PostQueryBuilder
+    {
+        return $this->withComments($how_many, QueryComparison::LESS_THAN_OR_EQUAL);
+    }
+
+    /**
+     * @param int $how_many
+     * @return $this
+     */
+    public function withMoreThanComments(int $how_many): PostQueryBuilder
+    {
+        return $this->withComments($how_many, QueryComparison::GREATER_THAN);
+    }
+
+    /**
+     * @param int $how_many
+     * @return $this
+     */
+    public function withMoreThanOrEqualsComments(int $how_many): PostQueryBuilder
+    {
+        return $this->withComments($how_many, QueryComparison::GREATER_THAN_OR_EQUAL);
+    }
+
+    /**
+     * @return $this
+     */
+    public function withoutComments(): PostQueryBuilder
+    {
+        return $this->withComments(0, QueryComparison::EQUAL);
+    }
+
+    /**
+     * @return $this
+     */
+    public function withStickyPosts(): PostQueryBuilder
+    {
+        $this->arguments[self::KEY_IGNORE_STICKY_POSTS] = false;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function withoutStickyPosts(): PostQueryBuilder
+    {
+        $this->arguments[self::KEY_IGNORE_STICKY_POSTS] = true;
+
+        return $this;
+    }
+
+    /**
      * @return array<string, string|int|bool|array>
      */
     protected function buildArguments(): array
     {
         $arguments = $this->arguments;
-        $taxonomySubQueryBuilder = $this->arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] ?? null;
 
+        $metaSubQueryBuilder = $this->arguments[WpQueryMeta::KEY_META_QUERY] ?? null;
+        if ($metaSubQueryBuilder instanceof MetaSubQueryBuilder) {
+            $arguments[WpQueryMeta::KEY_META_QUERY] = $metaSubQueryBuilder->build();
+        }
+
+        $taxonomySubQueryBuilder = $this->arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] ?? null;
         if ($taxonomySubQueryBuilder instanceof TaxonomySubQueryBuilder) {
             $arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] = $taxonomySubQueryBuilder->build();
         }
@@ -363,8 +624,64 @@ class PostQueryBuilder extends QueryBuilder
             Arr::searchValue($types, PostType::ATTACHMENT) : $types === PostType::ATTACHMENT;
     }
 
+    private function query()
+    {
+        $this->resolveSearch();
+
+        return parent::get();
+    }
+
+    private function resolveSearch()
+    {
+        foreach ($this->search_words as $word => $is_included) {
+            $this->arguments[self::KEY_SEARCH] = isset($this->arguments[self::KEY_SEARCH]) ?
+                "{$this->arguments[self::KEY_SEARCH]} " : '';
+
+            $this->arguments[self::KEY_SEARCH] .= $is_included ? $word : "-$word";
+        }
+    }
+
+    /**
+     * @param string|string[] $words
+     * @param bool $sorted_by_relevance
+     * @param bool $include
+     * @return $this
+     */
+    private function search($words, bool $sorted_by_relevance = true, bool $include = true): PostQueryBuilder
+    {
+        if (empty($words)) {
+            return $this;
+        }
+
+        foreach (Arr::wrap($words) as $word) {
+            $this->search_words[$word] = $include;
+        }
+
+        if ($sorted_by_relevance) {
+            $this->sortBySearchRelevance();
+        }
+
+        return $this;
+    }
+
     private function setPaged(int $page)
     {
         return $this->arguments[Posts::KEY_PAGED] = max($page, Posts::FIRST_PAGE);
+    }
+
+    private function sortBySearchRelevance()
+    {
+        $original_arguments = [];
+
+        // ensuring the relevance will be the first parameter of ordering
+        if (isset($this->arguments[self::KEY_ORDER_BY])) {
+            $original_arguments = $this->arguments[self::KEY_ORDER_BY];
+            unset($this->arguments[self::KEY_ORDER_BY]);
+        }
+
+        $this->orderBy(WpQueryOrderByParameter::SEARCH_RELEVANCE, QueryOrderByDirection::DESCENDING);
+
+        // ensuring the relevance will be the first parameter of ordering
+        $this->arguments[self::KEY_ORDER_BY] = $this->arguments[self::KEY_ORDER_BY] + $original_arguments;
     }
 }

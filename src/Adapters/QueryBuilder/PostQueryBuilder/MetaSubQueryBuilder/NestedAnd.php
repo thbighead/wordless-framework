@@ -1,27 +1,29 @@
 <?php
 
-namespace Wordless\Adapters\QueryBuilder\PostQueryBuilder;
+namespace Wordless\Adapters\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 
 use Closure;
+use Wordless\Abstractions\Enums\WpQueryMeta;
 use Wordless\Abstractions\Enums\WpQueryTaxonomy;
-use Wordless\Exceptions\TryingToBuildEmptySubQuery;
+use Wordless\Adapters\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 
-class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
+class NestedAnd extends MetaSubQueryBuilder
 {
-    /**
-     * @return array
-     * @throws TryingToBuildEmptySubQuery
-     */
-    public function build(): array
+    public function __construct(array $meta_sub_query_arguments)
     {
-        throw new TryingToBuildEmptySubQuery(self::class);
+        $this->meta_sub_query_arguments = $meta_sub_query_arguments;
+        $this->meta_sub_query_arguments[WpQueryMeta::KEY_RELATION] = WpQueryMeta::RELATION_AND;
     }
 
-    public function whereTaxonomy(Closure $nestedSubQuery): InitializedTaxonomySubQueryBuilder
+    /**
+     * @param Closure $nestedSubQuery
+     * @return $this
+     */
+    public function andWhereTaxonomy(Closure $nestedSubQuery): NestedAnd
     {
-        $this->taxonomy_sub_query_arguments[] = $this->resolveClosure($nestedSubQuery);
+        $this->meta_sub_query_arguments[] = $this->resolveClosure($nestedSubQuery);
 
-        return new InitializedTaxonomySubQueryBuilder($this->taxonomy_sub_query_arguments);
+        return $this;
     }
 
     /**
@@ -29,14 +31,14 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
      * @param string $column
      * @param int|string|int[]|string[] $values
      * @param bool $include_children
-     * @return InitializedTaxonomySubQueryBuilder
+     * @return $this
      */
-    public function whereTaxonomyExists(
+    public function andWhereTaxonomyExists(
         string $taxonomy,
         string $column,
-        $values,
+               $values,
         bool $include_children = true
-    ): InitializedTaxonomySubQueryBuilder
+    ): NestedAnd
     {
         $this->setConditionToSubQuery($this->mountCondition(
             $taxonomy,
@@ -46,7 +48,7 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
             $include_children,
         ));
 
-        return new InitializedTaxonomySubQueryBuilder($this->taxonomy_sub_query_arguments);
+        return $this;
     }
 
     /**
@@ -54,14 +56,14 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
      * @param string $column
      * @param int|string|int[]|string[] $values
      * @param bool $include_children
-     * @return InitializedTaxonomySubQueryBuilder
+     * @return $this
      */
-    public function whereTaxonomyIn(
+    public function andWhereTaxonomyIn(
         string $taxonomy,
         string $column,
-        $values,
+               $values,
         bool $include_children = true
-    ): InitializedTaxonomySubQueryBuilder
+    ): NestedAnd
     {
         $this->setConditionToSubQuery($this->mountCondition(
             $taxonomy,
@@ -71,7 +73,7 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
             $include_children,
         ));
 
-        return new InitializedTaxonomySubQueryBuilder($this->taxonomy_sub_query_arguments);
+        return $this;
     }
 
     /**
@@ -79,14 +81,14 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
      * @param string $column
      * @param int|string|int[]|string[] $values
      * @param bool $include_children
-     * @return InitializedTaxonomySubQueryBuilder
+     * @return $this
      */
-    public function whereTaxonomyIs(
+    public function andWhereTaxonomyIs(
         string $taxonomy,
         string $column,
-        $values,
+               $values,
         bool $include_children = true
-    ): InitializedTaxonomySubQueryBuilder
+    ): NestedAnd
     {
         $this->setConditionToSubQuery($this->mountCondition(
             $taxonomy,
@@ -96,7 +98,7 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
             $include_children,
         ));
 
-        return new InitializedTaxonomySubQueryBuilder($this->taxonomy_sub_query_arguments);
+        return $this;
     }
 
     /**
@@ -104,14 +106,14 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
      * @param string $column
      * @param int|string|int[]|string[] $values
      * @param bool $include_children
-     * @return InitializedTaxonomySubQueryBuilder
+     * @return $this
      */
-    public function whereTaxonomyNotExists(
+    public function andWhereTaxonomyNotExists(
         string $taxonomy,
         string $column,
-        $values,
+               $values,
         bool $include_children = true
-    ): InitializedTaxonomySubQueryBuilder
+    ): NestedAnd
     {
         $this->setConditionToSubQuery($this->mountCondition(
             $taxonomy,
@@ -121,7 +123,7 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
             $include_children,
         ));
 
-        return new InitializedTaxonomySubQueryBuilder($this->taxonomy_sub_query_arguments);
+        return $this;
     }
 
     /**
@@ -129,14 +131,14 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
      * @param string $column
      * @param int|string|int[]|string[] $values
      * @param bool $include_children
-     * @return InitializedTaxonomySubQueryBuilder
+     * @return $this
      */
-    public function whereTaxonomyNotIn(
+    public function andWhereTaxonomyNotIn(
         string $taxonomy,
         string $column,
-        $values,
+               $values,
         bool $include_children = true
-    ): InitializedTaxonomySubQueryBuilder
+    ): NestedAnd
     {
         $this->setConditionToSubQuery($this->mountCondition(
             $taxonomy,
@@ -146,6 +148,6 @@ class EmptyTaxonomySubQueryBuilder extends TaxonomySubQueryBuilder
             $include_children,
         ));
 
-        return new InitializedTaxonomySubQueryBuilder($this->taxonomy_sub_query_arguments);
+        return $this;
     }
 }

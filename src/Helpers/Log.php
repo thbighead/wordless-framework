@@ -2,6 +2,8 @@
 
 namespace Wordless\Helpers;
 
+use Exception;
+
 class Log
 {
     public const TYPE_ERROR = 'ERROR';
@@ -11,6 +13,11 @@ class Log
     public static function error(string $message)
     {
         self::write($message, self::TYPE_ERROR);
+    }
+
+    public static function impossibleException(Exception $exception)
+    {
+        self::error("This is impossible, but... {$exception->getMessage()}");
     }
 
     public static function info(string $message)

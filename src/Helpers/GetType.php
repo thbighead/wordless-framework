@@ -2,6 +2,8 @@
 
 namespace Wordless\Helpers;
 
+use DateTimeInterface;
+
 class GetType
 {
     public const ARRAY = 'array';
@@ -9,6 +11,19 @@ class GetType
     public const DOUBLE = 'double';
     public const INTEGER = 'integer';
     public const STRING = 'string';
+
+    public static function isDateable($value): bool
+    {
+        if ($value instanceof DateTimeInterface) {
+            return true;
+        }
+
+        if (!is_string($value)) {
+            return false;
+        }
+
+        return strtotime($value) !== false;
+    }
 
     public static function isStringable($value): bool
     {
