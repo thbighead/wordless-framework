@@ -4,7 +4,7 @@ namespace Wordless\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Helpers\GetType;
+use Wordless\Application\Helpers\GetType;
 
 class InvalidTransientExpirationValue extends Exception
 {

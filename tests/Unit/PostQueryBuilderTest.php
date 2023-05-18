@@ -2,15 +2,15 @@
 
 namespace Wordless\Tests\Unit;
 
-use Wordless\Abstractions\Enums\WpQueryTaxonomy;
-use Wordless\Abstractions\Pagination\Posts;
-use Wordless\Adapters\Post;
-use Wordless\Adapters\PostType;
-use Wordless\Adapters\QueryBuilder\PostQueryBuilder;
-use Wordless\Adapters\QueryBuilder\PostQueryBuilder\EmptyTaxonomySubQueryBuilder;
-use Wordless\Adapters\QueryBuilder\QueryBuilder;
+use Wordless\Enums\WpQueryTaxonomy;
+use Wordless\Infrastructure\QueryBuilder;
 use Wordless\Tests\Contracts\NeedsTestEnvironment;
 use Wordless\Tests\WordlessTestCase;
+use Wordless\Wordpress\Models\Post;
+use Wordless\Wordpress\Models\PostType;
+use Wordless\Wordpress\Pagination\Posts;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\EmptyTaxonomySubQueryBuilder;
 
 class PostQueryBuilderTest extends WordlessTestCase
 {

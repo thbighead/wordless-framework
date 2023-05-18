@@ -4,11 +4,11 @@ namespace Wordless\Tests\Unit;
 
 use DateTimeImmutable;
 use Exception;
-use Wordless\Abstractions\JsonWebToken;
+use Wordless\Application\Helpers\Crypto;
+use Wordless\Application\JsonWebToken;
 use Wordless\Exceptions\InvalidConfigKey;
 use Wordless\Exceptions\InvalidJwtCryptoAlgorithmId;
 use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\Crypto;
 use Wordless\Tests\WordlessTestCase;
 
 class JwtTest extends WordlessTestCase

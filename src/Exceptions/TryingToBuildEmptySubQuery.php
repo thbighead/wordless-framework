@@ -4,7 +4,6 @@ namespace Wordless\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Adapters\QueryBuilder\PostQueryBuilder\EmptyTaxonomySubQueryBuilder;
 
 class TryingToBuildEmptySubQuery extends Exception
 {

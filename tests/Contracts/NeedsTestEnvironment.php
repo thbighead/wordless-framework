@@ -2,13 +2,13 @@
 
 namespace Wordless\Tests\Contracts;
 
-use Wordless\Commands\InitializeTestEnvironment;
-use Wordless\Exceptions\CliReturnedNonZero;
-use Wordless\Exceptions\FailedToChangeDirectoryTo;
+use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
+use Wordless\Application\Commands\InitializeTestEnvironment;
+use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangeDirectoryTo;
+use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\DirectoryFiles;
-use Wordless\Helpers\ProjectPath;
 
 trait NeedsTestEnvironment
 {

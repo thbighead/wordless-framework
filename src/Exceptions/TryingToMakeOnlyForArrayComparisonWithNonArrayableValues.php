@@ -4,7 +4,7 @@ namespace Wordless\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Adapters\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
+use Wordless\Infrastructure\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 
 class TryingToMakeOnlyForArrayComparisonWithNonArrayableValues extends Exception
 {

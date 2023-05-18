@@ -4,7 +4,7 @@ namespace Wordless\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Contracts\Singleton;
+use Wordless\Contracts\Traits\Singleton;
 
 class TryingToUnserializeSingleton extends Exception
 {

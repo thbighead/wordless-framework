@@ -4,7 +4,7 @@ namespace Wordless\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Adapters\Response;
+use Wordless\Infrastructure\Http\Response;
 
 class ValidationError extends Exception
 {

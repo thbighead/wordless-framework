@@ -4,7 +4,7 @@ namespace Wordless\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Abstractions\Menu;
+use Wordless\Infrastructure\Menu;
 
 class InvalidMenuClass extends Exception
 {

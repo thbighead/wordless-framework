@@ -4,7 +4,7 @@ namespace Wordless\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Adapters\User;
+use Wordless\Wordpress\Models\User;
 
 class NoUserAuthenticated extends Exception
 {

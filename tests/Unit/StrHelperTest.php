@@ -2,7 +2,7 @@
 
 namespace Wordless\Tests\Unit;
 
-use Wordless\Helpers\Str;
+use Wordless\Application\Helpers\Str;
 use Wordless\Tests\Unit\StrHelperTest\CaseStyleTests;
 use Wordless\Tests\Unit\StrHelperTest\UuidTests;
 use Wordless\Tests\WordlessTestCase;

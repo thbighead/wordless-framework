@@ -4,7 +4,7 @@ namespace Wordless\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Adapters\Taxonomy;
+use Wordless\Infrastructure\Taxonomy;
 
 class InvalidCustomTaxonomyName extends Exception
 {

@@ -4,7 +4,7 @@ namespace Wordless\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Abstractions\EnqueueableElements\EnqueueableStyle;
+use Wordless\Infrastructure\EnqueueableAsset\EnqueueableStyle;
 
 class InvalidMediaOption extends Exception
 {

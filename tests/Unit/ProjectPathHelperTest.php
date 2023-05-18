@@ -2,10 +2,10 @@
 
 namespace Wordless\Tests\Unit;
 
+use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\Str;
 use Wordless\Exceptions\InvalidUuidVersion;
 use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\ProjectPath;
-use Wordless\Helpers\Str;
 use Wordless\Tests\Contracts\NeedsTestEnvironment;
 use Wordless\Tests\WordlessTestCase;
 

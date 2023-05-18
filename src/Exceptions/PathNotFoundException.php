@@ -2,24 +2,19 @@
 
 namespace Wordless\Exceptions;
 
-use Exception;
+use ErrorException;
 use Throwable;
+use Wordless\Enums\ExceptionCode;
 
-class PathNotFoundException extends Exception
+class PathNotFoundException extends ErrorException
 {
-    private string $path;
-
-    /**
-     * PathNotFoundException constructor.
-     *
-     * @param string $path
-     * @param Throwable|null $previous
-     */
-    public function __construct(string $path, Throwable $previous = null)
+    public function __construct(private readonly string $path, ?Throwable $previous = null)
     {
-        $this->path = $path;
-
-        parent::__construct("'$this->path' not found.", 1, $previous);
+        parent::__construct(
+            "'$this->path' not found.",
+            ExceptionCode::logic_control->value,
+            previous: $previous
+        );
     }
 
     /**

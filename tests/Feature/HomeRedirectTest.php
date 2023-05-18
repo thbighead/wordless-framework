@@ -3,9 +3,9 @@
 namespace Wordless\Tests\Feature;
 
 use Symfony\Component\HttpFoundation\Response;
+use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Http;
 use Wordless\Exceptions\HttpRequestFailed;
-use Wordless\Helpers\Environment;
-use Wordless\Helpers\Http;
 use Wordless\Tests\Contracts\NeedsTestEnvironment;
 use Wordless\Tests\WordlessTestCase;
 

@@ -52,3 +52,14 @@ php console test:environment -f
 > ```shell
 > php console test:environment -f --drop-db
 > ```
+
+## Exception codes
+
+0. *Caught internally*: those exceptions should never interrupt the application because they are (or should be) always
+caught by the framework itself everytime it would be thrown;
+1. *Development error*: it means that the exception is thrown to force developers to always use a try-catch block
+when calling what throws it. It's a kind of exception that should only interrupt the application when a develop
+mistake occurs;
+2. *Logic control*: it controls any application logic. It may be wrapped by a try-catch code or not depending on what
+developers expect;
+3. *Intentional interrupt*: should never be caught. Exceptions are made to ALWAYS interrupt the application. 

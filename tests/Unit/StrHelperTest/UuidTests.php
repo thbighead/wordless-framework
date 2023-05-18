@@ -2,8 +2,8 @@
 
 namespace Wordless\Tests\Unit\StrHelperTest;
 
+use Wordless\Application\Helpers\Str;
 use Wordless\Exceptions\InvalidUuidVersion;
-use Wordless\Helpers\Str;
 
 trait UuidTests
 {

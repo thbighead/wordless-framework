@@ -2,7 +2,7 @@
 
 namespace Wordless\Tests\Unit\StrHelperTest\CaseStyleTests;
 
-use Wordless\Helpers\Str;
+use Wordless\Application\Helpers\Str;
 
 trait FromRawToAnother
 {

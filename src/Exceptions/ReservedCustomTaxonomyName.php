@@ -2,7 +2,7 @@
 
 namespace Wordless\Exceptions;
 
-use Wordless\Helpers\Reserved;
+use Wordless\Application\Helpers\Reserved;
 
 class ReservedCustomTaxonomyName extends InvalidCustomTaxonomyName
 {

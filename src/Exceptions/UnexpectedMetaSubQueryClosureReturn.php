@@ -4,8 +4,8 @@ namespace Wordless\Exceptions;
 
 use Throwable;
 use UnexpectedValueException;
-use Wordless\Adapters\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
-use Wordless\Helpers\GetType;
+use Wordless\Application\Helpers\GetType;
+use Wordless\Infrastructure\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 
 class UnexpectedMetaSubQueryClosureReturn extends UnexpectedValueException
 {

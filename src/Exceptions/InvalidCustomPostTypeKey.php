@@ -4,7 +4,7 @@ namespace Wordless\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Adapters\CustomPost;
+use Wordless\Infrastructure\CustomPost;
 
 class InvalidCustomPostTypeKey extends Exception
 {
