@@ -4,6 +4,7 @@ namespace Wordless\Infrastructure;
 
 use Generator;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\Str;
 use Wordless\Contracts\Traits\Singleton;
@@ -12,11 +13,10 @@ use Wordless\Controller\Traits\ResourceValidation;
 use Wordless\Controller\Traits\RestingWordPress;
 use Wordless\Controller\Traits\Routing;
 use Wordless\Core\InternalCache;
-use Wordless\Exceptions\FailedToFindCachedKey;
-use Wordless\Exceptions\FailedToGetControllerPathFromCachedData;
 use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\NoUserAuthenticated;
 use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Infrastructure\ApiController\Exceptions\FailedToGetControllerPathFromCachedData;
 use Wordless\Wordpress\Models\User;
 use WP_REST_Controller;
 
@@ -24,6 +24,7 @@ abstract class ApiController extends WP_REST_Controller
 {
     use AuthorizationCheck, ResourceValidation, RestingWordPress, Routing, Singleton;
 
+    final public const CACHE_PATH_KEY = 'path';
     /** @var bool[] */
     protected const AUTHENTICATION_PROTECTED_METHOD_ROUTES = [
         self::METHOD_NAME_TO_REST_DESTROY_ITEM => true,
@@ -67,14 +68,14 @@ abstract class ApiController extends WP_REST_Controller
             $cached_controllers_data = InternalCache::getValueOrFail('controllers');
 
             foreach ($cached_controllers_data as $controller_full_namespace => $controller_cached_data) {
-                $controller_pathing = $controller_cached_data['path'] ?? false;
+                $controller_pathing = $controller_cached_data[self::CACHE_PATH_KEY] ?? false;
 
                 if (!$controller_pathing) {
                     throw new FailedToGetControllerPathFromCachedData($controller_cached_data);
                 }
 
                 yield [
-                    $controller_cached_data['path'],
+                    $controller_cached_data[self::CACHE_PATH_KEY],
                     $controller_full_namespace,
                 ];
             }

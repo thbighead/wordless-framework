@@ -9,11 +9,11 @@ use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCreateSymlink;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToDeletePath;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\FailedToDeletePath;
-use Wordless\Exceptions\FailedToGetCurrentWorkingDirectory;
-use Wordless\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Exceptions\InvalidConfigKey;
 use Wordless\Exceptions\InvalidDirectory;
 use Wordless\Exceptions\PathNotFoundException;
@@ -147,9 +147,7 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
             return $link_name;
         }
 
-        if (($permissions = fileperms($public_path = ProjectPath::public())) === false) {
-            throw new FailedToGetDirectoryPermissions($public_path);
-        }
+        $permissions = DirectoryFiles::getPermissions($public_path = ProjectPath::public());
 
         $link_name_full_path = "$public_path/$link_name_relative_path";
 

@@ -6,10 +6,10 @@ use Wordless\Application\Cachers\ConfigCacher;
 use Wordless\Application\Cachers\ControllerCacher;
 use Wordless\Application\Cachers\EnvironmentCacher;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\FailedToFindCachedKey;
 use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\InvalidCache;
 use Wordless\Exceptions\PathNotFoundException;
@@ -17,7 +17,7 @@ use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
 class InternalCache
 {
-    private const INTERNAL_WORDLESS_CACHE_CONSTANT_NAME = 'INTERNAL_WORDLESS_CACHE';
+    public const INTERNAL_WORDLESS_CACHE_CONSTANT_NAME = 'INTERNAL_WORDLESS_CACHE';
     private const PHP_EXTENSION = '.php';
 
     /**
@@ -61,18 +61,13 @@ class InternalCache
         $key_pathing = explode('.', $key_pathing_string);
         $first_key = array_shift($key_pathing);
 
-        if (!isset(INTERNAL_WORDLESS_CACHE[$first_key])) {
-            throw new FailedToFindCachedKey($key_pathing_string, $first_key);
-        }
-
-        $pointer = INTERNAL_WORDLESS_CACHE[$first_key];
+        $pointer = INTERNAL_WORDLESS_CACHE[$first_key] ?? throw new FailedToFindCachedKey(
+            $key_pathing_string,
+            $first_key
+        );
 
         foreach ($key_pathing as $key) {
-            if (!isset($pointer[$key])) {
-                throw new FailedToFindCachedKey($key_pathing_string, $key);
-            }
-
-            $pointer = $pointer[$key];
+            $pointer = $pointer[$key] ?? throw new FailedToFindCachedKey($key_pathing_string, $key);
         }
 
         return $pointer;

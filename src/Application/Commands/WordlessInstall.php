@@ -20,15 +20,15 @@ use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\WriteRobotsTxt;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
+use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\WpConfigStubMounter;
 use Wordless\Application\Mounters\Stub\WpConfigStubMounter\Exceptions\WpConfigAlreadySet;
 use Wordless\Enums\StartOfWeek;
-use Wordless\Exceptions\FailedToDeletePath;
-use Wordless\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Infrastructure\ConsoleCommand;
@@ -307,9 +307,7 @@ class WordlessInstall extends ConsoleCommand
             $dot_env_content
         );
 
-        if (file_put_contents($dot_env_filepath, $dot_env_content) === false) {
-            throw new FailedToRewriteDotEnvFile($dot_env_filepath, $dot_env_content);
-        }
+        Environment::rewriteDotEnvFile($dot_env_filepath, $dot_env_content);
 
         // populates an internal array with env variables freshly new.
         $this->fresh_new_env_content = (new Dotenv)->parse($dot_env_content);

@@ -3,14 +3,14 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
+use Wordless\Application\Commands\Migrate\Exceptions\FailedToFindExecutedMigrationScript;
+use Wordless\Application\Commands\Migrate\Exceptions\FailedToFindMigrationScript;
 use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Guessers\MigrationClassNameGuesser;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\FailedToFindExecutedMigrationScript;
-use Wordless\Exceptions\FailedToFindMigrationScript;
 use Wordless\Exceptions\InvalidDirectory;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\ConsoleCommand;
@@ -187,7 +187,7 @@ class Migrate extends ConsoleCommand
      * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
-    private function filterMigrationsMissingExecution()
+    private function filterMigrationsMissingExecution(): void
     {
         $this->migrations_missing_execution = $this->getScriptsFilesToClassNamesDictionary();
 

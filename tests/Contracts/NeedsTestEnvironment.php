@@ -6,8 +6,8 @@ use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\InitializeTestEnvironment;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangeDirectoryTo;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\ProjectPath;
-use Wordless\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Exceptions\PathNotFoundException;
 
 trait NeedsTestEnvironment

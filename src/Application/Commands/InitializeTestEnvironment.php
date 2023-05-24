@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
+use Wordless\Application\Commands\InitializeTestEnvironment\Exceptions\FailedToInstallTestEnvironmentThroughComposer;
 use Wordless\Application\Commands\Traits\AllowRootMode;
 use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
@@ -15,11 +16,10 @@ use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCopyFile;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCreateDirectory;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToDeletePath;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
-use Wordless\Exceptions\FailedToDeletePath;
-use Wordless\Exceptions\FailedToGetCurrentWorkingDirectory;
-use Wordless\Exceptions\FailedToGetDirectoryPermissions;
-use Wordless\Exceptions\FailedToInstallTestEnvironmentThroughComposer;
 use Wordless\Exceptions\InvalidDirectory;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\ConsoleCommand;
@@ -97,7 +97,7 @@ class InitializeTestEnvironment extends ConsoleCommand
 
                 $this->installTestEnvironmentThroughComposer();
             }
-        } catch (PathNotFoundException $exception) {
+        } catch (PathNotFoundException) {
             $test_environment_directory_path = ProjectPath::root() . '/' . self::TARGET_DIRECTORY_NAME;
 
             $this->writelnWhenVerbose("Creating test environment at $test_environment_directory_path.");
@@ -120,7 +120,7 @@ class InitializeTestEnvironment extends ConsoleCommand
         return Command::SUCCESS;
     }
 
-    protected function setup(InputInterface $input, OutputInterface $output)
+    protected function setup(InputInterface $input, OutputInterface $output): void
     {
         parent::setup($input, $output);
 
@@ -137,7 +137,7 @@ class InitializeTestEnvironment extends ConsoleCommand
      * @throws FailedToGetCurrentWorkingDirectory
      * @throws PathNotFoundException
      */
-    private function resolveDropTestDatabase()
+    private function resolveDropTestDatabase(): void
     {
         if (!$this->input->getOption(self::DROP_DB_MODE)) {
             return;
@@ -165,7 +165,7 @@ class InitializeTestEnvironment extends ConsoleCommand
      * @throws FailedToGetCurrentWorkingDirectory
      * @throws PathNotFoundException
      */
-    private function executeComposerInstallInsideTestEnvironment()
+    private function executeComposerInstallInsideTestEnvironment(): void
     {
         DirectoryFiles::changeWorkingDirectoryDoAndGoBack(
             ProjectPath::root(self::TARGET_DIRECTORY_NAME),
@@ -188,7 +188,7 @@ class InitializeTestEnvironment extends ConsoleCommand
      * @throws FailedToGetCurrentWorkingDirectory
      * @throws PathNotFoundException
      */
-    private function executeConsoleCommandInsideTestEnvironment(string $command)
+    private function executeConsoleCommandInsideTestEnvironment(string $command): void
     {
         DirectoryFiles::changeWorkingDirectoryDoAndGoBack(
             ProjectPath::root(self::TARGET_DIRECTORY_NAME),
@@ -229,7 +229,7 @@ class InitializeTestEnvironment extends ConsoleCommand
      * @throws FailedToDeletePath
      * @throws FailedToInstallTestEnvironmentThroughComposer
      */
-    private function installTestEnvironmentThroughComposer()
+    private function installTestEnvironmentThroughComposer(): void
     {
         $command = 'composer create-project --prefer-dist '
             . ProjectPath::VENDOR_PACKAGE_PROJECT

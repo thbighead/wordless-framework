@@ -14,23 +14,23 @@ use Symfony\Component\Process\Process;
 
 abstract class ConsoleCommand extends Command
 {
-    public const DECORATION_COMMENT = 'comment';
-    public const DECORATION_DANGER = 'danger';
-    public const DECORATION_ERROR = 'error';
-    public const DECORATION_INFO = 'info';
-    public const DECORATION_QUESTION = 'question';
-    public const DECORATION_SUCCESS = 'success';
-    public const DECORATION_WARNING = 'warning';
+    final public const DECORATION_COMMENT = 'comment';
+    final public const DECORATION_DANGER = 'danger';
+    final public const DECORATION_ERROR = 'error';
+    final public const DECORATION_INFO = 'info';
+    final public const DECORATION_QUESTION = 'question';
+    final public const DECORATION_SUCCESS = 'success';
+    final public const DECORATION_WARNING = 'warning';
 
-    protected const ARGUMENT_DEFAULT_FIELD = 'default';
-    protected const ARGUMENT_DESCRIPTION_FIELD = 'description';
-    protected const ARGUMENT_MODE_FIELD = 'mode';
-    protected const ARGUMENT_NAME_FIELD = 'name';
-    protected const OPTION_DEFAULT_FIELD = 'default';
-    protected const OPTION_DESCRIPTION_FIELD = 'description';
-    protected const OPTION_MODE_FIELD = 'mode';
-    protected const OPTION_NAME_FIELD = 'name';
-    protected const OPTION_SHORTCUT_FIELD = 'shortcut';
+    final protected const ARGUMENT_DEFAULT_FIELD = 'default';
+    final protected const ARGUMENT_DESCRIPTION_FIELD = 'description';
+    final protected const ARGUMENT_MODE_FIELD = 'mode';
+    final protected const ARGUMENT_NAME_FIELD = 'name';
+    final protected const OPTION_DEFAULT_FIELD = 'default';
+    final protected const OPTION_DESCRIPTION_FIELD = 'description';
+    final protected const OPTION_MODE_FIELD = 'mode';
+    final protected const OPTION_NAME_FIELD = 'name';
+    final protected const OPTION_SHORTCUT_FIELD = 'shortcut';
 
     protected InputInterface $input;
     protected OutputInterface $output;
@@ -97,15 +97,15 @@ abstract class ConsoleCommand extends Command
         if ($this->output instanceof BufferedOutput) {
             exec($full_command, $output, $result_code);
             $this->output->writeln($output);
-        } else {
-            $result_code = Process::fromShellCommandline($full_command)
-                ->setTty(true)
-                ->run(function ($type, $buffer) {
-                    echo $buffer;
-                });
+
+            return $result_code;
         }
 
-        return $result_code;
+        return Process::fromShellCommandline($full_command)
+            ->setTty(true)
+            ->run(function ($type, $buffer) {
+                echo $buffer;
+            });
     }
 
     /**
@@ -119,7 +119,7 @@ abstract class ConsoleCommand extends Command
         string           $command_name,
         array            $inputs = [],
         ?OutputInterface $output = null
-    )
+    ): int|string
     {
         if (!($output instanceof OutputInterface)) {
             $output = $this->mountBufferedOutput();
@@ -178,37 +178,35 @@ abstract class ConsoleCommand extends Command
         return new Table($this->output);
     }
 
-    protected function setOutputStyles()
-    {
-        $this->output->getFormatter()->setStyle(
-            self::DECORATION_COMMENT,
-            new OutputFormatterStyle('gray')
-        );
-        $this->output->getFormatter()->setStyle(
-            self::DECORATION_DANGER,
-            new OutputFormatterStyle('red')
-        );
-        $this->output->getFormatter()->setStyle(
-            self::DECORATION_INFO,
-            new OutputFormatterStyle('cyan')
-        );
-        $this->output->getFormatter()->setStyle(
-            self::DECORATION_SUCCESS,
-            new OutputFormatterStyle('bright-green')
-        );
-        $this->output->getFormatter()->setStyle(
-            self::DECORATION_WARNING,
-            new OutputFormatterStyle('yellow')
-        );
-    }
-
-    protected function setup(InputInterface $input, OutputInterface $output)
+    protected function setup(InputInterface $input, OutputInterface $output): void
     {
         $this->input = $input;
         $this->output = $output;
 
-        $this->setOutputStyles();
+        $this->setupOutputStyles()
+            ->turnOnDecoratedOutputs();
+    }
 
+    protected function setupOutputStyle(string $name, string $color): static
+    {
+        $this->output->getFormatter()->setStyle($name, new OutputFormatterStyle($color));
+
+        return $this;
+    }
+
+    protected function setupOutputStyles(): static
+    {
+        $this->setupOutputStyle(self::DECORATION_COMMENT, 'gray')
+            ->setupOutputStyle(self::DECORATION_DANGER, 'red')
+            ->setupOutputStyle(self::DECORATION_INFO, 'cyan')
+            ->setupOutputStyle(self::DECORATION_SUCCESS, 'bright-green')
+            ->setupOutputStyle(self::DECORATION_WARNING, 'yellow');
+
+        return $this;
+    }
+
+    protected function turnOnDecoratedOutputs(): void
+    {
         $this->output->setDecorated(true);
     }
 
@@ -234,7 +232,7 @@ abstract class ConsoleCommand extends Command
         string   $before_script_message,
         callable $script,
         string   $after_script_message = ' Done!'
-    )
+    ): void
     {
         $this->wrapScriptWithMessages(
             $before_script_message,
@@ -244,164 +242,164 @@ abstract class ConsoleCommand extends Command
         );
     }
 
-    protected function write(string $message, ?string $decoration = null)
+    protected function write(string $message, ?string $decoration = null): void
     {
         $this->output->write($this->decorateText($message, $decoration));
     }
 
-    protected function writeComment(string $message)
+    protected function writeComment(string $message): void
     {
         $this->write($message, self::DECORATION_COMMENT);
     }
 
-    protected function writeCommentWhenVerbose(string $message)
+    protected function writeCommentWhenVerbose(string $message): void
     {
         $this->writeWhenVerbose($message, self::DECORATION_COMMENT);
     }
 
-    protected function writeDanger(string $message)
+    protected function writeDanger(string $message): void
     {
         $this->write($message, self::DECORATION_DANGER);
     }
 
-    protected function writeDangerWhenVerbose(string $message)
+    protected function writeDangerWhenVerbose(string $message): void
     {
         $this->writeWhenVerbose($message, self::DECORATION_DANGER);
     }
 
-    protected function writeError(string $message)
+    protected function writeError(string $message): void
     {
         $this->write($message, self::DECORATION_ERROR);
     }
 
-    protected function writeErrorWhenVerbose(string $message)
+    protected function writeErrorWhenVerbose(string $message): void
     {
         $this->writeWhenVerbose($message, self::DECORATION_ERROR);
     }
 
-    protected function writeInfo(string $message)
+    protected function writeInfo(string $message): void
     {
         $this->write($message, self::DECORATION_INFO);
     }
 
-    protected function writeInfoWhenVerbose(string $message)
+    protected function writeInfoWhenVerbose(string $message): void
     {
         $this->writeWhenVerbose($message, self::DECORATION_INFO);
     }
 
-    protected function writeln(string $message, ?string $decoration = null)
+    protected function writeln(string $message, ?string $decoration = null): void
     {
         $this->output->writeln($this->decorateText($message, $decoration));
     }
 
-    protected function writelnComment(string $message)
+    protected function writelnComment(string $message): void
     {
         $this->writeln($message, self::DECORATION_COMMENT);
     }
 
-    protected function writelnCommentWhenVerbose(string $message)
+    protected function writelnCommentWhenVerbose(string $message): void
     {
         $this->writelnWhenVerbose($message, self::DECORATION_COMMENT);
     }
 
-    protected function writelnDanger(string $message)
+    protected function writelnDanger(string $message): void
     {
         $this->writeln($message, self::DECORATION_DANGER);
     }
 
-    protected function writelnDangerWhenVerbose(string $message)
+    protected function writelnDangerWhenVerbose(string $message): void
     {
         $this->writelnWhenVerbose($message, self::DECORATION_DANGER);
     }
 
-    protected function writelnError(string $message)
+    protected function writelnError(string $message): void
     {
         $this->writeln($message, self::DECORATION_ERROR);
     }
 
-    protected function writelnErrorWhenVerbose(string $message)
+    protected function writelnErrorWhenVerbose(string $message): void
     {
         $this->writelnWhenVerbose($message, self::DECORATION_ERROR);
     }
 
-    protected function writelnInfo(string $message)
+    protected function writelnInfo(string $message): void
     {
         $this->writeln($message, self::DECORATION_INFO);
     }
 
-    protected function writelnInfoWhenVerbose(string $message)
+    protected function writelnInfoWhenVerbose(string $message): void
     {
         $this->writelnWhenVerbose($message, self::DECORATION_INFO);
     }
 
-    protected function writelnQuestion(string $message)
+    protected function writelnQuestion(string $message): void
     {
         $this->writeln($message, self::DECORATION_QUESTION);
     }
 
-    protected function writelnQuestionWhenVerbose(string $message)
+    protected function writelnQuestionWhenVerbose(string $message): void
     {
         $this->writelnWhenVerbose($message, self::DECORATION_QUESTION);
     }
 
-    protected function writelnSuccess(string $message)
+    protected function writelnSuccess(string $message): void
     {
         $this->writeln($message, self::DECORATION_SUCCESS);
     }
 
-    protected function writelnSuccessWhenVerbose(string $message)
+    protected function writelnSuccessWhenVerbose(string $message): void
     {
         $this->writelnWhenVerbose($message, self::DECORATION_SUCCESS);
     }
 
-    protected function writelnWarning(string $message)
+    protected function writelnWarning(string $message): void
     {
         $this->writeln($message, self::DECORATION_WARNING);
     }
 
-    protected function writelnWarningWhenVerbose(string $message)
+    protected function writelnWarningWhenVerbose(string $message): void
     {
         $this->writelnWhenVerbose($message, self::DECORATION_WARNING);
     }
 
-    protected function writelnWhenVerbose(string $message, ?string $decoration = null)
+    protected function writelnWhenVerbose(string $message, ?string $decoration = null): void
     {
         if ($this->isV()) {
             $this->writeln($message, $decoration);
         }
     }
 
-    protected function writeQuestion(string $message)
+    protected function writeQuestion(string $message): void
     {
         $this->write($message, self::DECORATION_QUESTION);
     }
 
-    protected function writeQuestionWhenVerbose(string $message)
+    protected function writeQuestionWhenVerbose(string $message): void
     {
         $this->writeWhenVerbose($message, self::DECORATION_QUESTION);
     }
 
-    protected function writeSuccess(string $message)
+    protected function writeSuccess(string $message): void
     {
         $this->write($message, self::DECORATION_SUCCESS);
     }
 
-    protected function writeSuccessWhenVerbose(string $message)
+    protected function writeSuccessWhenVerbose(string $message): void
     {
         $this->writeWhenVerbose($message, self::DECORATION_SUCCESS);
     }
 
-    protected function writeWarning(string $message)
+    protected function writeWarning(string $message): void
     {
         $this->write($message, self::DECORATION_WARNING);
     }
 
-    protected function writeWarningWhenVerbose(string $message)
+    protected function writeWarningWhenVerbose(string $message): void
     {
         $this->writeWhenVerbose($message, self::DECORATION_WARNING);
     }
 
-    protected function writeWhenVerbose(string $message, ?string $decoration = null)
+    protected function writeWhenVerbose(string $message, ?string $decoration = null): void
     {
         if ($this->isV()) {
             $this->write($message, $decoration);

@@ -2,8 +2,8 @@
 
 namespace Wordless\Application\Helpers;
 
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Core\InternalCache;
-use Wordless\Exceptions\FailedToFindCachedKey;
 use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\InvalidConfigKey;
 use Wordless\Exceptions\PathNotFoundException;

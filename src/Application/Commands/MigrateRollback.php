@@ -4,7 +4,7 @@ namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
-use Wordless\Exceptions\FailedToFindMigrationScript;
+use Wordless\Application\Commands\Migrate\Exceptions\FailedToFindMigrationScript;
 use Wordless\Exceptions\InvalidDirectory;
 use Wordless\Exceptions\PathNotFoundException;
 

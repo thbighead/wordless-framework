@@ -8,9 +8,9 @@ use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangePathPer
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCopyFile;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCreateSymlink;
-use Wordless\Exceptions\FailedToDeletePath;
-use Wordless\Exceptions\FailedToGetCurrentWorkingDirectory;
-use Wordless\Exceptions\FailedToGetDirectoryPermissions;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToDeletePath;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Exceptions\InvalidDirectory;
 use Wordless\Exceptions\PathNotFoundException;
 
@@ -87,11 +87,7 @@ class DirectoryFiles
      */
     public static function createDirectoryAt(string $path, ?int $permissions = null, bool $recursive = true): void
     {
-        $parent_path = dirname($path);
-
-        if (($permissions = $permissions ?? fileperms($parent_path)) === false) {
-            throw new FailedToGetDirectoryPermissions($parent_path);
-        }
+        $permissions = $permissions ?? self::getPermissions(dirname($path));
 
         if (!mkdir($path, $permissions, $recursive)) {
             throw new FailedToCreateDirectory($path);
@@ -149,6 +145,20 @@ class DirectoryFiles
         }
 
         return ProjectPath::realpath($current_working_directory);
+    }
+
+    /**
+     * @param string $path
+     * @return int
+     * @throws FailedToGetDirectoryPermissions
+     */
+    public static function getPermissions(string $path): int
+    {
+        if (($permissions = fileperms($path)) === false) {
+            throw new FailedToGetDirectoryPermissions($path);
+        }
+
+        return $permissions;
     }
 
     /**

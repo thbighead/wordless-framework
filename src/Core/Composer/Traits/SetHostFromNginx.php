@@ -3,12 +3,13 @@
 namespace Wordless\Core\Composer\Traits;
 
 use Composer\Script\Event;
+use Wordless\Application\Commands\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
+use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Composer\Exceptions\AppHostAlreadySetOnDotEnv;
-use Wordless\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\UnavailableNginxServerName;
 
@@ -104,6 +105,7 @@ trait SetHostFromNginx
      * @throws AppHostAlreadySetOnDotEnv
      * @throws FailedToRewriteDotEnvFile
      * @throws PathNotFoundException
+     * @throws DotEnvNotSetException
      */
     private static function setAppHostValueAtDotEnv(string $app_host): void
     {
@@ -119,11 +121,6 @@ trait SetHostFromNginx
             throw new AppHostAlreadySetOnDotEnv($host);
         }
 
-        if (file_put_contents(
-                $dot_env_filepath,
-                $dot_env_content = self::replaceAppHost($dot_env_filepath, $app_host)
-            ) === false) {
-            throw new FailedToRewriteDotEnvFile($dot_env_filepath, $dot_env_content);
-        }
+        Environment::rewriteDotEnvFile($dot_env_filepath, self::replaceAppHost($dot_env_filepath, $app_host));
     }
 }

@@ -5,17 +5,17 @@ namespace Wordless\Application\Helpers;
 use Symfony\Component\Dotenv\Dotenv;
 use Wordless\Application\Commands\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCopyFile;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
+use Wordless\Application\Helpers\Environment\Exceptions\FailedToFindPackagesMarkerInsideEnvFile;
+use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Core\InternalCache;
-use Wordless\Exceptions\FailedToFindCachedKey;
-use Wordless\Exceptions\FailedToFindPackagesMarkerInsideEnvFile;
-use Wordless\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\PathNotFoundException;
 
 class Environment
 {
-    public const COMMONLY_DOT_ENV_DEFAULT_VALUES = [
+    final public const COMMONLY_DOT_ENV_DEFAULT_VALUES = [
         'APP_NAME' => 'Wordless App',
         'APP_ENV' => 'local',
         'APP_URL' => 'https://wordless-app.dev.br',
@@ -33,16 +33,16 @@ class Environment
         'WP_DEBUG' => 'true',
         'WP_LANGUAGES' => 'en_US',
     ];
-    public const DOT_ENV_COMMENT_MARK = '#';
-    public const LOCAL = 'local';
-    public const PACKAGES_MARKER = <<<STRING
+    final public const DOT_ENV_COMMENT_MARK = '#';
+    final public const LOCAL = 'local';
+    final public const PACKAGES_MARKER = <<<STRING
 ###########################################################
 ##################### Packages Setup ######################
 ###########################################################
 
 STRING;
-    public const PRODUCTION = 'production';
-    public const STAGING = 'staging';
+    final public const PRODUCTION = 'production';
+    final public const STAGING = 'staging';
 
     /**
      * @return string
@@ -74,11 +74,11 @@ STRING;
         }
     }
 
-    public static function get(string $key, $default = null)
+    public static function get(string $key, mixed $default = null): mixed
     {
         try {
             $value = InternalCache::getValueOrFail("environment.$key");
-        } catch (FailedToFindCachedKey|InternalCacheNotLoaded $exception) {
+        } catch (FailedToFindCachedKey|InternalCacheNotLoaded) {
             $value = self::retrieveValue($key, $default);
         }
 
@@ -126,11 +126,26 @@ STRING;
 
         $dot_env_content = Str::replace($dot_env_content, self::PACKAGES_MARKER, $package_variables_content);
 
-        if (file_put_contents($dot_env_filepath, $dot_env_content) === false) {
-            throw new FailedToRewriteDotEnvFile($dot_env_filepath, $dot_env_filepath);
+        self::rewriteDotEnvFile($dot_env_filepath, $dot_env_content);
+    }
+
+    /**
+     * @param string $dot_env_filepath
+     * @param string $dot_env_new_content
+     * @return void
+     * @throws FailedToRewriteDotEnvFile
+     */
+    final public static function rewriteDotEnvFile(string $dot_env_filepath, string $dot_env_new_content): void
+    {
+        if (file_put_contents($dot_env_filepath, $dot_env_new_content) === false) {
+            throw new FailedToRewriteDotEnvFile($dot_env_filepath, $dot_env_new_content);
         }
     }
 
+    /**
+     * @param string $value
+     * @return string[]
+     */
     private static function findReferenceInValue(string $value): array
     {
         preg_match_all('/^\S+=[^\s"]*\$\{(.+)}[^\s"]*$/m', $value, $output_array);
@@ -159,7 +174,7 @@ STRING;
         return $package_variables_content;
     }
 
-    private static function resolveReferences(string $value)
+    private static function resolveReferences(string $value): string
     {
         do {
             $referenced_dot_env_variable_names = self::findReferenceInValue($value);
@@ -176,7 +191,7 @@ STRING;
         return $value;
     }
 
-    private static function retrieveValue(string $key, $default = null)
+    private static function retrieveValue(string $key, mixed $default = null): mixed
     {
         if (($value = getenv($key)) === false) {
             $value = $_ENV[$key] ?? $default;
@@ -189,17 +204,13 @@ STRING;
         return self::resolveReferences($value);
     }
 
-    private static function returnTypedValue($value)
+    private static function returnTypedValue(mixed $value): mixed
     {
-        switch (strtoupper($value)) {
-            case 'TRUE':
-                return true;
-            case 'FALSE':
-                return false;
-            case 'NULL':
-                return null;
-        }
-
-        return $value;
+        return match (strtoupper($value)) {
+            'TRUE' => true,
+            'FALSE' => false,
+            'NULL' => null,
+            default => $value,
+        };
     }
 }

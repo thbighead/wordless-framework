@@ -4,8 +4,8 @@ namespace Wordless\Controller\Traits;
 
 use Wordless\Application\Guessers\ControllerResourceNameGuesser;
 use Wordless\Application\Guessers\ControllerVersionGuesser;
+use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Core\InternalCache;
-use Wordless\Exceptions\FailedToFindCachedKey;
 use Wordless\Exceptions\InternalCacheNotLoaded;
 
 trait Guesser
