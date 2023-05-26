@@ -3,8 +3,8 @@
 namespace Wordless\Application\Commands\Traits;
 
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\PathNotFoundException;
 
 trait WriteRobotsTxt
 {

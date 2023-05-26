@@ -2,7 +2,7 @@
 
 namespace Wordless\Application\Hookers;
 
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WordPressFailedToFindRole;
 use Wordless\Infrastructure\ApiController;
 use Wordless\Infrastructure\Hooker;

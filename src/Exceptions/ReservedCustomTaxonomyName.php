@@ -3,6 +3,7 @@
 namespace Wordless\Exceptions;
 
 use Wordless\Application\Helpers\Reserved;
+use Wordless\Infrastructure\Taxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 
 class ReservedCustomTaxonomyName extends InvalidCustomTaxonomyName
 {

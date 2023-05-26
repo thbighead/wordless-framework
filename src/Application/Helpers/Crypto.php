@@ -4,16 +4,11 @@ namespace Wordless\Application\Helpers;
 
 class Crypto
 {
-    public const JWT_SYMMETRIC_HMAC_SHA256 = 'HS256';
-    public const JWT_SYMMETRIC_HMAC_SHA384 = 'HS384';
-    public const JWT_SYMMETRIC_HMAC_SHA512 = 'HS512';
-    public const JWT_SYMMETRIC_HMAC_BLAKE2B_HASH = 'BLAKE2B';
-
     public const HASH_ALGORITHM = 'sha256';
     public const HASHED_IV_LENGTH = 16;
     public const OPENSSL_CIPHER_ALGORITHM = 'AES-256-CBC';
 
-    public static function decrypt(string $string_to_decrypt)
+    public static function decrypt(string $string_to_decrypt): bool|string
     {
         return openssl_decrypt(
             base64_decode($string_to_decrypt),

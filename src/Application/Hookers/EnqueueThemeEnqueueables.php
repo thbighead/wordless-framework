@@ -2,7 +2,7 @@
 
 namespace Wordless\Application\Hookers;
 
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\EnqueueableAsset\EnqueueableStyle;
 use Wordless\Infrastructure\Hooker;

@@ -5,9 +5,9 @@ namespace Wordless\Application\Commands;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\ExceptionStubMounter;
-use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 

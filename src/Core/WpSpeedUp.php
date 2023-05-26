@@ -3,11 +3,11 @@
 namespace Wordless\Core;
 
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Hookers\RemoveAdditionalCssFromAdmin;
 use Wordless\Application\Hookers\RemoveEmojiFromTinyMce;
 use Wordless\Application\Hookers\RemoveEmojiFromWpResourceHints;
 use Wordless\Application\Hookers\RemoveGlobalCustomInlineStyles;
-use Wordless\Exceptions\PathNotFoundException;
 
 class WpSpeedUp
 {

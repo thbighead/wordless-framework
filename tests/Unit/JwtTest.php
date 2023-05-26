@@ -4,11 +4,11 @@ namespace Wordless\Tests\Unit;
 
 use DateTimeImmutable;
 use Exception;
-use Wordless\Application\Helpers\Crypto;
-use Wordless\Application\JsonWebToken;
-use Wordless\Exceptions\InvalidConfigKey;
-use Wordless\Exceptions\InvalidJwtCryptoAlgorithmId;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\JWT\Enums\CryptoAlgorithm;
+use Wordless\Application\JWT\Exceptions\InvalidJwtCryptoAlgorithmId;
+use Wordless\Application\JWT\Token;
 use Wordless\Tests\WordlessTestCase;
 
 class JwtTest extends WordlessTestCase
@@ -28,7 +28,7 @@ class JwtTest extends WordlessTestCase
     public static function setUpBeforeClass(): void
     {
         define('ROOT_PROJECT_PATH', __DIR__ . '/../../src');
-        $_ENV[JsonWebToken::ENVIRONMENT_SIGN_VARIABLE] = base64_encode(self::JWT_4096_KEY);
+        $_ENV[Token::ENVIRONMENT_SIGN_VARIABLE] = base64_encode(self::JWT_4096_KEY);
     }
 
     /**
@@ -40,10 +40,10 @@ class JwtTest extends WordlessTestCase
      */
     public function testParsingTokenConstructor()
     {
-        $jwt = new JsonWebToken(self::JWT_EXAMPLE);
+        $jwt = new Token(self::JWT_EXAMPLE);
 
         $this->assertEquals([
-            'alg' => Crypto::JWT_SYMMETRIC_HMAC_SHA256,
+            'alg' => CryptoAlgorithm::SYMMETRIC_HMAC_SHA256,
             'typ' => 'JWT',
         ], $jwt->getDecodedHeader());
 
@@ -66,7 +66,7 @@ class JwtTest extends WordlessTestCase
     {
         $this->assertEquals(
             self::JWT_TEST_PAYLOAD,
-            ($jwt = new JsonWebToken(self::JWT_TEST_PAYLOAD))->getDecodedPayload()
+            ($jwt = new Token(self::JWT_TEST_PAYLOAD))->getDecodedPayload()
         );
 
         $jwt->validateSignature();
@@ -82,7 +82,7 @@ class JwtTest extends WordlessTestCase
     {
         $this->assertEquals(
             self::JWT_TEST_PAYLOAD,
-            ($jwt = new JsonWebToken(self::JWT_TEST_PAYLOAD, Crypto::JWT_SYMMETRIC_HMAC_SHA256))->getDecodedPayload()
+            ($jwt = new Token(self::JWT_TEST_PAYLOAD, CryptoAlgorithm::SYMMETRIC_HMAC_SHA256))->getDecodedPayload()
         );
 
         $jwt->validateSignature();
@@ -97,7 +97,7 @@ class JwtTest extends WordlessTestCase
     public function testPayloadUsingCryptoHmacSha384Constructor()
     {
         $this->assertTrue(
-            (new JsonWebToken(self::JWT_TEST_PAYLOAD, Crypto::JWT_SYMMETRIC_HMAC_SHA384))->isValid()
+            (new Token(self::JWT_TEST_PAYLOAD, CryptoAlgorithm::SYMMETRIC_HMAC_SHA384))->isValid()
         );
     }
 
@@ -110,7 +110,7 @@ class JwtTest extends WordlessTestCase
     public function testPayloadUsingCryptoHmacSha512Constructor()
     {
         $this->assertTrue(
-            (new JsonWebToken(self::JWT_TEST_PAYLOAD, Crypto::JWT_SYMMETRIC_HMAC_SHA512))->isValid()
+            (new Token(self::JWT_TEST_PAYLOAD, CryptoAlgorithm::SYMMETRIC_HMAC_SHA512))->isValid()
         );
     }
 
@@ -123,7 +123,7 @@ class JwtTest extends WordlessTestCase
     public function testPayloadUsingCryptoBlake2BConstructor()
     {
         $this->assertTrue(
-            (new JsonWebToken(self::JWT_TEST_PAYLOAD, Crypto::JWT_SYMMETRIC_HMAC_BLAKE2B_HASH))->isValid()
+            (new Token(self::JWT_TEST_PAYLOAD, CryptoAlgorithm::SYMMETRIC_HMAC_BLAKE2B_HASH))->isValid()
         );
     }
 }

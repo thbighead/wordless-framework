@@ -2,13 +2,13 @@
 
 namespace Wordless\Application\Helpers;
 
-use Wordless\Exceptions\InvalidDirectory;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 
 class ProjectPath
 {
-    public const VENDOR_PACKAGE_PROJECT = 'thbighead/wordless';
-    public const VENDOR_PACKAGE_RELATIVE_PATH = self::VENDOR_PACKAGE_PROJECT . '-framework';
+    final public const VENDOR_PACKAGE_PROJECT = 'thbighead/wordless';
+    final public const VENDOR_PACKAGE_RELATIVE_PATH = self::VENDOR_PACKAGE_PROJECT . '-framework';
     private const SLASH = '/';
 
     /**
@@ -16,7 +16,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function app(string $additional_path = ''): string
+    final public static function app(string $additional_path = ''): string
     {
         return self::root("app/$additional_path");
     }
@@ -26,7 +26,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function cache(string $additional_path = ''): string
+    final public static function cache(string $additional_path = ''): string
     {
         return self::root("cache/$additional_path");
     }
@@ -36,13 +36,13 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function commands(string $additional_path = ''): string
+    final public static function commands(string $additional_path = ''): string
     {
         $relative_path = "Commands/$additional_path";
 
         try {
             return self::src($relative_path);
-        } catch (PathNotFoundException $exception) {
+        } catch (PathNotFoundException) {
             return self::app($relative_path);
         }
     }
@@ -52,13 +52,13 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function config(string $additional_path = ''): string
+    final public static function config(string $additional_path = ''): string
     {
         $relative_path = "config/$additional_path";
 
         try {
             return self::root($relative_path);
-        } catch (PathNotFoundException $exception) {
+        } catch (PathNotFoundException) {
             return self::src($relative_path);
         }
     }
@@ -68,7 +68,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function controllers(string $additional_path = ''): string
+    final public static function controllers(string $additional_path = ''): string
     {
         return self::app("Controllers/$additional_path");
     }
@@ -78,7 +78,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function customPostTypes(string $additional_path = ''): string
+    final public static function customPostTypes(string $additional_path = ''): string
     {
         return self::app("CustomPostTypes/$additional_path");
     }
@@ -88,7 +88,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function docker(string $additional_path = ''): string
+    final public static function docker(string $additional_path = ''): string
     {
         return self::root("docker/$additional_path");
     }
@@ -98,7 +98,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function exceptions(string $additional_path = ''): string
+    final public static function exceptions(string $additional_path = ''): string
     {
         return self::app("Exceptions/$additional_path");
     }
@@ -108,7 +108,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function hookers(string $additional_path = ''): string
+    final public static function hookers(string $additional_path = ''): string
     {
         return self::app("Hookers/$additional_path");
     }
@@ -119,15 +119,15 @@ class ProjectPath
      * @throws PathNotFoundException
      * @throws InvalidDirectory
      */
-    public static function migrations(string $additional_path = ''): string
+    final public static function migrations(string $additional_path = ''): string
     {
         try {
             return self::root($relative_path = "migrations/$additional_path");
-        } catch (PathNotFoundException $exception) {
+        } catch (PathNotFoundException) {
             foreach (DirectoryFiles::listFromDirectory(self::packages()) as $package_folder) {
                 try {
                     return self::packages("$package_folder/$relative_path");
-                } catch (PathNotFoundException $exception) {
+                } catch (PathNotFoundException) {
                     continue;
                 }
             }
@@ -143,9 +143,23 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function packages(string $additional_path = ''): string
+    final public static function packages(string $additional_path = ''): string
     {
         return self::root("packages/$additional_path");
+    }
+
+    /**
+     * @param string $full_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    final public static function path(string $full_path): string
+    {
+        if (($real_path = realpath($full_path)) === false) {
+            throw new PathNotFoundException($full_path);
+        }
+
+        return $real_path;
     }
 
     /**
@@ -153,7 +167,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function public(string $additional_path = ''): string
+    final public static function public(string $additional_path = ''): string
     {
         return self::root("public/$additional_path");
     }
@@ -163,7 +177,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function realpath(string $full_path): string
+    final public static function realpath(string $full_path): string
     {
         if (is_link($full_path)) {
             $real_path = self::realpath(dirname($full_path))
@@ -177,11 +191,7 @@ class ProjectPath
             return $real_path;
         }
 
-        if (($real_path = realpath($full_path)) === false) {
-            throw new PathNotFoundException($full_path);
-        }
-
-        return $real_path;
+        return self::path($full_path);
     }
 
     /**
@@ -189,7 +199,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function root(string $additional_path = ''): string
+    final public static function root(string $additional_path = ''): string
     {
         return self::full($additional_path);
     }
@@ -199,7 +209,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function scripts(string $additional_path = ''): string
+    final public static function scripts(string $additional_path = ''): string
     {
         return self::app("Scripts/$additional_path");
     }
@@ -209,7 +219,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function src(string $additional_path = ''): string
+    final public static function src(string $additional_path = ''): string
     {
         return self::vendorPackageRoot("src/$additional_path");
     }
@@ -219,13 +229,13 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function stubs(string $additional_path = ''): string
+    final public static function stubs(string $additional_path = ''): string
     {
         $relative_path = "stubs/$additional_path";
 
         try {
             return self::root($relative_path);
-        } catch (PathNotFoundException $exception) {
+        } catch (PathNotFoundException) {
             return self::src($relative_path);
         }
     }
@@ -235,7 +245,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function styles(string $additional_path = ''): string
+    final public static function styles(string $additional_path = ''): string
     {
         return self::app("Styles/$additional_path");
     }
@@ -245,7 +255,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function theme(string $additional_path = ''): string
+    final public static function theme(string $additional_path = ''): string
     {
         return self::wpThemes(Environment::get('WP_THEME', 'wordless') . "/$additional_path");
     }
@@ -255,7 +265,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function vendor(string $additional_path = ''): string
+    final public static function vendor(string $additional_path = ''): string
     {
         return self::root("vendor/$additional_path");
     }
@@ -265,7 +275,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function vendorPackageRoot(string $additional_path = ''): string
+    final public static function vendorPackageRoot(string $additional_path = ''): string
     {
         return self::vendor(self::VENDOR_PACKAGE_RELATIVE_PATH . "/$additional_path");
     }
@@ -275,7 +285,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function wp(string $additional_path = ''): string
+    final public static function wp(string $additional_path = ''): string
     {
         return self::root("wp/$additional_path");
     }
@@ -285,7 +295,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function wpCore(string $additional_path = ''): string
+    final public static function wpCore(string $additional_path = ''): string
     {
         return self::wp("wp-core/$additional_path");
     }
@@ -295,7 +305,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function wpContent(string $additional_path = ''): string
+    final public static function wpContent(string $additional_path = ''): string
     {
         return self::wp("wp-content/$additional_path");
     }
@@ -305,7 +315,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function wpMustUsePlugins(string $additional_path = ''): string
+    final public static function wpMustUsePlugins(string $additional_path = ''): string
     {
         return self::wpContent("mu-plugins/$additional_path");
     }
@@ -315,7 +325,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function wpPlugins(string $additional_path = ''): string
+    final public static function wpPlugins(string $additional_path = ''): string
     {
         return self::wpContent("plugins/$additional_path");
     }
@@ -325,7 +335,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function wpThemes(string $additional_path = ''): string
+    final public static function wpThemes(string $additional_path = ''): string
     {
         return self::wpContent("themes/$additional_path");
     }
@@ -335,7 +345,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    public static function wpUploads(string $additional_path = ''): string
+    final public static function wpUploads(string $additional_path = ''): string
     {
         return self::wpContent("uploads/$additional_path");
     }

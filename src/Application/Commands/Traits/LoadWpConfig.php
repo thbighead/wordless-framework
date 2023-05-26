@@ -5,7 +5,7 @@ namespace Wordless\Application\Commands\Traits;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Application\Helpers\ProjectPath;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 
 trait LoadWpConfig
 {

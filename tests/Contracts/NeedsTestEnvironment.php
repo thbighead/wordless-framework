@@ -8,7 +8,7 @@ use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\ProjectPath;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 
 trait NeedsTestEnvironment
 {

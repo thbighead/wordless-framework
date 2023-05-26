@@ -6,9 +6,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\HookerStubMounter;
-use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 

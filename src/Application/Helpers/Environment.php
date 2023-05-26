@@ -9,9 +9,9 @@ use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToFindPackagesMarkerInsideEnvFile;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\InternalCache;
-use Wordless\Exceptions\InternalCacheNotLoaded;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 
 class Environment
 {
@@ -83,6 +83,36 @@ STRING;
         }
 
         return self::returnTypedValue($value);
+    }
+
+    public static function isLocal(): bool
+    {
+        return static::get('APP_ENV') === self::LOCAL;
+    }
+
+    public static function isNotLocal(): bool
+    {
+        return !static::isLocal();
+    }
+
+    public static function isNotProduction(): bool
+    {
+        return !static::isProduction();
+    }
+
+    public static function isNotStaging(): bool
+    {
+        return !static::isStaging();
+    }
+
+    public static function isProduction(): bool
+    {
+        return static::get('APP_ENV') === self::PRODUCTION;
+    }
+
+    public static function isStaging(): bool
+    {
+        return static::get('APP_ENV') === self::STAGING;
     }
 
     /**

@@ -3,10 +3,10 @@
 namespace Wordless\Wordpress\Models;
 
 use Wordless\Enums\MetaType;
-use Wordless\Exceptions\NoUserAuthenticated;
 use Wordless\Infrastructure\Http\RelatedMetaData;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
 use Wordless\Wordpress\Models\Traits\WithMetaData;
+use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 use WP_User;
 
 class User extends WP_User implements RelatedMetaData

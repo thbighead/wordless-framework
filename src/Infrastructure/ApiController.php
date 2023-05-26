@@ -6,6 +6,7 @@ use Generator;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Contracts\Traits\Singleton;
 use Wordless\Controller\Traits\AuthorizationCheck;
@@ -13,11 +14,10 @@ use Wordless\Controller\Traits\ResourceValidation;
 use Wordless\Controller\Traits\RestingWordPress;
 use Wordless\Controller\Traits\Routing;
 use Wordless\Core\InternalCache;
-use Wordless\Exceptions\InternalCacheNotLoaded;
-use Wordless\Exceptions\NoUserAuthenticated;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 use Wordless\Infrastructure\ApiController\Exceptions\FailedToGetControllerPathFromCachedData;
 use Wordless\Wordpress\Models\User;
+use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 use WP_REST_Controller;
 
 abstract class ApiController extends WP_REST_Controller

@@ -9,10 +9,10 @@ use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\InternalCacheNotLoaded;
-use Wordless\Exceptions\InvalidCache;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
+use Wordless\Core\InternalCache\Exceptions\InvalidCache;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
 class InternalCache

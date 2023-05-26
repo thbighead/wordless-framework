@@ -4,7 +4,7 @@ namespace Wordless\Application\Cachers;
 
 use ReflectionException;
 use ReflectionMethod;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\ApiController;
 use Wordless\Infrastructure\Cacher;
 

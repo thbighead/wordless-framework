@@ -3,9 +3,9 @@
 namespace Wordless\Application\Mounters\Stub;
 
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\WpConfigStubMounter\Exceptions\WpConfigAlreadySet;
-use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Mounters\StubMounter;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 

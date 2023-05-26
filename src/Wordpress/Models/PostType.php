@@ -2,7 +2,7 @@
 
 namespace Wordless\Wordpress\Models;
 
-use Wordless\Exceptions\PostTypeNotRegistered;
+use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use WP_Post_Type;
 
 /**

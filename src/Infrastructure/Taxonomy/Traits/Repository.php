@@ -14,10 +14,10 @@ trait Repository
     }
 
     /**
-     * @param string|int $taxonomy_term
+     * @param int|string $taxonomy_term
      * @return WP_Term|null
      */
-    public static function findTerm($taxonomy_term): ?WP_Term
+    public static function findTerm(int|string $taxonomy_term): ?WP_Term
     {
         if (is_int($taxonomy_term) || is_numeric($taxonomy_term)) {
             return static::getById((int)$taxonomy_term);
@@ -33,7 +33,7 @@ trait Repository
         foreach (get_taxonomies(['_builtin' => false]) as $custom_taxonomy_key) {
             try {
                 $customTaxonomies[] = new static($custom_taxonomy_key);
-            } catch (TaxonomyNotRegistered $exception) {
+            } catch (TaxonomyNotRegistered) {
                 continue;
             }
         }

@@ -3,8 +3,8 @@
 namespace Wordless\Infrastructure\Mounters;
 
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
 abstract class StubMounter

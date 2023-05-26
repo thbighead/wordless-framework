@@ -11,9 +11,6 @@ class EnqueueableScript extends EnqueueableAsset
         return 'scripts';
     }
 
-    /**
-     * @return void
-     */
     public function enqueue(): void
     {
         /** @noinspection PhpRedundantOptionalArgumentInspection */

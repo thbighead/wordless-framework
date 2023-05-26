@@ -4,22 +4,22 @@ namespace Wordless\Core;
 
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
-use Wordless\Exceptions\InvalidConfigKey;
-use Wordless\Exceptions\InvalidMenuClass;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
 use Wordless\Infrastructure\Hooker;
 use Wordless\Infrastructure\Menu;
 
 class Bootstrapper
 {
-    public const HOOKERS_BOOT_CONFIG_KEY = 'boot';
-    public const HOOKERS_REMOVE_ACTION_CONFIG_KEY = 'action';
-    public const HOOKERS_REMOVE_CONFIG_KEY = 'remove';
-    public const HOOKERS_REMOVE_FILTER_CONFIG_KEY = 'filter';
-    public const HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY = 'function';
-    public const HOOKERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY = 'priority';
-    public const MENUS_CONFIG_KEY = 'menus';
+    final public const HOOKERS_BOOT_CONFIG_KEY = 'boot';
+    final public const HOOKERS_REMOVE_ACTION_CONFIG_KEY = 'action';
+    final public const HOOKERS_REMOVE_CONFIG_KEY = 'remove';
+    final public const HOOKERS_REMOVE_FILTER_CONFIG_KEY = 'filter';
+    final public const HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY = 'function';
+    final public const HOOKERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY = 'priority';
+    final public const MENUS_CONFIG_KEY = 'menus';
     private const ADMIN_CONFIG_FILENAME = 'admin';
     private const HOOKERS_CONFIG_FILENAME = 'hookers';
 

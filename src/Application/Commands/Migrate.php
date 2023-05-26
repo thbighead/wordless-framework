@@ -9,10 +9,10 @@ use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Guessers\MigrationClassNameGuesser;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\InvalidDirectory;
-use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\Migration\Script;
 

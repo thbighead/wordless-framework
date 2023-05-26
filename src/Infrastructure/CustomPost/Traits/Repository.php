@@ -3,8 +3,8 @@
 namespace Wordless\Infrastructure\CustomPost\Traits;
 
 use stdClass;
-use Wordless\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Models\PostType;
+use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 
 trait Repository
 {
@@ -12,7 +12,7 @@ trait Repository
     {
         try {
             return (array)((new PostType(self::getTypeKey()))->cap ?? new stdClass);
-        } catch (PostTypeNotRegistered $exception) {
+        } catch (PostTypeNotRegistered) {
             return [];
         }
     }

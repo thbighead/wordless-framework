@@ -4,12 +4,12 @@ namespace Wordless\Infrastructure;
 
 use InvalidArgumentException;
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\EnqueueableAsset\EnqueueableStyle;
 use Wordless\Infrastructure\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
-use Wordless\Infrastructure\Mounters\Enqueueable\EnqueueableMounter;
+use Wordless\Infrastructure\Mounters\EnqueueableMounter;
 
 abstract class EnqueueableAsset
 {

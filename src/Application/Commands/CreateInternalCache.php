@@ -4,8 +4,8 @@ namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\InternalCache;
-use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 

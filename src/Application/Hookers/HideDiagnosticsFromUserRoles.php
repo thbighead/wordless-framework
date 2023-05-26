@@ -3,7 +3,7 @@
 namespace Wordless\Application\Hookers;
 
 use Wordless\Application\Helpers\Config;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Hooker;
 use WP_User;
 

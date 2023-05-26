@@ -3,6 +3,7 @@
 namespace Wordless\Application\Helpers;
 
 use Generator;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangePathPermissions;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCopyFile;
@@ -11,8 +12,7 @@ use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCreateSymlink
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetDirectoryPermissions;
-use Wordless\Exceptions\InvalidDirectory;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 
 class DirectoryFiles
 {
@@ -114,9 +114,7 @@ class DirectoryFiles
      */
     public static function delete(string $path): void
     {
-        if (($path = realpath($path)) === false) {
-            throw new PathNotFoundException($path);
-        }
+        $path = ProjectPath::path($path);
 
         if (is_dir($path)) {
             if (!rmdir($path)) {

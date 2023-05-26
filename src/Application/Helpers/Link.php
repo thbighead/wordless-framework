@@ -2,7 +2,7 @@
 
 namespace Wordless\Application\Helpers;
 
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 
 class Link
 {

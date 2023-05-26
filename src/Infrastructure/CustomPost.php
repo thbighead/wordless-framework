@@ -2,11 +2,11 @@
 
 namespace Wordless\Infrastructure;
 
-use Wordless\Exceptions\PostTypeNotRegistered;
 use Wordless\Infrastructure\CustomPost\Traits\Register;
 use Wordless\Infrastructure\CustomPost\Traits\Repository;
 use Wordless\Wordpress\Models\Post;
 use Wordless\Wordpress\Models\PostType;
+use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use WP_Post;
 
 abstract class CustomPost extends Post

@@ -2,7 +2,10 @@
 
 namespace Wordless\Infrastructure\Taxonomy\Traits;
 
-use Wordless\Exceptions\InvalidCustomTaxonomyName;
+use Wordless\Infrastructure\Taxonomy\Traits\Register\Labels;
+use Wordless\Infrastructure\Taxonomy\Traits\Register\Rewrite;
+use Wordless\Infrastructure\Taxonomy\Traits\Register\Validation;
+use Wordless\Infrastructure\Taxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 
 trait Register
 {

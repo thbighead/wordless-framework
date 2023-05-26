@@ -13,6 +13,7 @@ use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCopyFile;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCreateDirectory;
@@ -20,8 +21,7 @@ use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
-use Wordless\Exceptions\InvalidDirectory;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\ConsoleCommand;
 
 class InitializeTestEnvironment extends ConsoleCommand

@@ -4,8 +4,8 @@ namespace Wordless\Application\Cachers;
 
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Cacher;
 
 class EnvironmentCacher extends Cacher

@@ -5,7 +5,9 @@ namespace Wordless\Application\Commands;
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCreateSymlink;
@@ -13,10 +15,8 @@ use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\InvalidConfigKey;
-use Wordless\Exceptions\InvalidDirectory;
-use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\ConsoleCommand;
 
 class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand

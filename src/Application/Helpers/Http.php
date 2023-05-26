@@ -3,7 +3,7 @@
 namespace Wordless\Application\Helpers;
 
 use Symfony\Component\HttpFoundation\Request;
-use Wordless\Exceptions\HttpRequestFailed;
+use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
 use WP_Error;
 use WP_Http;
 
@@ -25,7 +25,7 @@ class Http
      * @param array $body
      * @param array $headers
      * @return array
-     * @throws HttpRequestFailed
+     * @throws RequestFailed
      */
     public static function delete(string $endpoint, array $body = [], array $headers = []): array
     {
@@ -37,7 +37,7 @@ class Http
      * @param array $body
      * @param array $headers
      * @return array
-     * @throws HttpRequestFailed
+     * @throws RequestFailed
      */
     public static function get(string $endpoint, array $body = [], array $headers = []): array
     {
@@ -49,7 +49,7 @@ class Http
      * @param array $body
      * @param array $headers
      * @return array
-     * @throws HttpRequestFailed
+     * @throws RequestFailed
      */
     public static function patch(string $endpoint, array $body = [], array $headers = []): array
     {
@@ -61,7 +61,7 @@ class Http
      * @param array $body
      * @param array $headers
      * @return array
-     * @throws HttpRequestFailed
+     * @throws RequestFailed
      */
     public static function post(string $endpoint, array $body = [], array $headers = []): array
     {
@@ -73,7 +73,7 @@ class Http
      * @param array $body
      * @param array $headers
      * @return array
-     * @throws HttpRequestFailed
+     * @throws RequestFailed
      */
     public static function put(string $endpoint, array $body = [], array $headers = []): array
     {
@@ -86,13 +86,14 @@ class Http
      * @param array $body
      * @param array $headers
      * @return array
-     * @throws HttpRequestFailed
+     * @throws RequestFailed
      */
     public static function request(
         string $http_method,
         string $endpoint,
         array  $body = [],
-        array  $headers = []
+        array  $headers = [],
+        ?bool  $only_with_ssl = null,
     ): array
     {
         $response = self::getWpHttp()->request($endpoint, wp_parse_args([
@@ -101,17 +102,18 @@ class Http
             'body' => str_contains(($headers[self::CONTENT_TYPE] ?? ''), self::CONTENT_TYPE_APPLICATION_JSON) ?
                 json_encode($body) : $body,
             'timeout' => self::TIMEOUT,
-            'sslverify' => Environment::get('APP_ENV') === Environment::PRODUCTION,
+            'sslverify' => $only_with_ssl ?? Environment::isProduction(),
         ]));
 
         if ($response instanceof WP_Error) {
-            throw new HttpRequestFailed($response);
+            throw new RequestFailed($response);
         }
 
-        if (is_string($response['body'] ?? null)) {
-            if (!str_contains(($headers[self::ACCEPT] ?? ''), self::CONTENT_TYPE_APPLICATION_JSON)) {
+        if (is_string($response['body'] ?? false)) {
+            if (!Str::contains(($headers[self::ACCEPT] ?? ''), self::CONTENT_TYPE_APPLICATION_JSON)) {
                 $response['original_body'] = $response['body'];
             }
+
             $response['body'] = json_decode($response['body'], true);
         }
 

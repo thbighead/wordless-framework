@@ -4,8 +4,11 @@ namespace Wordless\Infrastructure\CustomPost\Traits;
 
 use Wordless\Application\Guessers\CustomPostTypeKeyGuesser;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Infrastructure\CustomPost\DTO\FieldsSupportedDTO;
+use Wordless\Infrastructure\CustomPost\Traits\Register\Labels;
+use Wordless\Infrastructure\CustomPost\Traits\Register\Rewrite;
+use Wordless\Infrastructure\CustomPost\Traits\Register\Validation;
+use Wordless\Infrastructure\CustomPost\Traits\Register\Validation\Exceptions\InvalidCustomPostTypeKey;
 
 trait Register
 {

@@ -6,6 +6,7 @@ use Doctrine\Inflector\Inflector;
 use Doctrine\Inflector\InflectorFactory;
 use Doctrine\Inflector\Language;
 use Ramsey\Uuid\Uuid;
+use Wordless\Application\Helpers\Str\Enums\UuidVersion;
 use Wordless\Exceptions\InvalidUuidVersion;
 
 class Str
@@ -228,37 +229,22 @@ class Str
     }
 
     /**
-     * @param int $version
+     * @param UuidVersion $version
      * @param bool $with_dashes
      * @return string
-     * @throws InvalidUuidVersion
      */
-    public static function uuid(int $version = 4, bool $with_dashes = true): string
+    public static function uuid(UuidVersion $version = UuidVersion::four, bool $with_dashes = true): string
     {
-        switch ($version) {
-            case 1:
-                $uuid = Uuid::uuid1();
-                break;
-            case 2:
-                $uuid = Uuid::uuid2(Uuid::DCE_DOMAIN_PERSON);
-                break;
-            case 3:
-                $uuid = Uuid::uuid3(Uuid::NAMESPACE_DNS, php_uname('n'));
-                break;
-            case 4:
-                $uuid = Uuid::uuid4();
-                break;
-            case 5:
-                $uuid = Uuid::uuid5(Uuid::NAMESPACE_DNS, php_uname('n'));
-                break;
-            case 6:
-                $uuid = Uuid::uuid6();
-                break;
-            default:
-                throw new InvalidUuidVersion($version);
-        }
+        $uuid = match ($version) {
+            UuidVersion::one => Uuid::uuid1(),
+            UuidVersion::two => Uuid::uuid2(Uuid::DCE_DOMAIN_PERSON),
+            UuidVersion::three => Uuid::uuid3(Uuid::NAMESPACE_DNS, php_uname('n')),
+            UuidVersion::four => Uuid::uuid4(),
+            UuidVersion::five => Uuid::uuid5(Uuid::NAMESPACE_DNS, php_uname('n')),
+            UuidVersion::six => Uuid::uuid6(),
+        };
 
-        return $with_dashes ? $uuid->toString() : str_replace('-', '', $uuid->toString());
+        return $with_dashes ? $uuid->toString() : static::replace($uuid->toString(), '-', '');
     }
 
     private static function getInflector(?string $language = null): Inflector

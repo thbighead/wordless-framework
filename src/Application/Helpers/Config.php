@@ -2,11 +2,11 @@
 
 namespace Wordless\Application\Helpers;
 
+use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\InternalCache;
-use Wordless\Exceptions\InternalCacheNotLoaded;
-use Wordless\Exceptions\InvalidConfigKey;
-use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 
 class Config
 {

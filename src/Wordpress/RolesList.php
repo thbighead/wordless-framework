@@ -3,8 +3,8 @@
 namespace Wordless\Wordpress;
 
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WordPressFailedToFindRole;
 use Wordless\Infrastructure\ApiController;
 use Wordless\Wordpress\Models\CustomTaxonomyTerm;

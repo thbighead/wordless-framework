@@ -11,12 +11,12 @@ use Composer\Package\CompletePackage;
 use Composer\Package\RootPackage;
 use Composer\Script\Event;
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Composer\Traits\InputOutput;
 use Wordless\Core\Composer\Traits\ManagePlugin;
 use Wordless\Core\Composer\Traits\PackageDiscovery;
 use Wordless\Core\Composer\Traits\SetHostFromNginx;
-use Wordless\Exceptions\PathNotFoundException;
 
 class Composer
 {

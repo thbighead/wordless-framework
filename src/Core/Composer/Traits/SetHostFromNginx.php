@@ -8,9 +8,9 @@ use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Composer\Exceptions\AppHostAlreadySetOnDotEnv;
-use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\UnavailableNginxServerName;
 
 trait SetHostFromNginx

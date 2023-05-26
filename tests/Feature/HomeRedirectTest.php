@@ -5,7 +5,7 @@ namespace Wordless\Tests\Feature;
 use Symfony\Component\HttpFoundation\Response;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Http;
-use Wordless\Exceptions\HttpRequestFailed;
+use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
 use Wordless\Tests\Contracts\NeedsTestEnvironment;
 use Wordless\Tests\WordlessTestCase;
 
@@ -15,7 +15,7 @@ class HomeRedirectTest extends WordlessTestCase
 
     /**
      * @return void
-     * @throws HttpRequestFailed
+     * @throws RequestFailed
      */
     public function testAvoidRedirectionsWhenEquals()
     {

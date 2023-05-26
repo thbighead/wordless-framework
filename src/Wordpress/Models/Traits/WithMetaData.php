@@ -2,7 +2,7 @@
 
 namespace Wordless\Wordpress\Models\Traits;
 
-use Wordless\Exceptions\InvalidMetaKey;
+use Wordless\Wordpress\Models\Traits\WithMetaData\Exceptions\InvalidMetaKey;
 
 trait WithMetaData
 {
@@ -13,11 +13,11 @@ trait WithMetaData
 
     /**
      * @param string $meta_key
-     * @param $default
+     * @param mixed $default
      * @return mixed
      * @throws InvalidMetaKey
      */
-    public function getMetaField(string $meta_key, $default = null)
+    public function getMetaField(string $meta_key, mixed $default = null): mixed
     {
         if (empty($meta_key)) {
             throw new InvalidMetaKey($meta_key);
