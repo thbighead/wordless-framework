@@ -4,7 +4,7 @@ namespace Wordless\Application\Mounters\Stub\WpConfigStubMounter\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class WpConfigAlreadySet extends Exception
 {

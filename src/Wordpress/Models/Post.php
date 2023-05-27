@@ -3,16 +3,16 @@
 namespace Wordless\Wordpress\Models;
 
 use Wordless\Application\Helpers\Arr;
-use Wordless\Enums\MetaType;
-use Wordless\Infrastructure\Http\RelatedMetaData;
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
-use Wordless\Wordpress\Models\Traits\WithMetaData;
 use WP_Post;
 
 /**
  * @mixin WP_Post
  */
-class Post implements RelatedMetaData
+class Post implements IRelatedMetaData
 {
     use WithAcfs, WithMetaData;
 
@@ -25,20 +25,14 @@ class Post implements RelatedMetaData
         return WP_Post::$method_name(...$arguments);
     }
 
-    /**
-     * @param WP_Post|int $post
-     * @param bool $with_acfs
-     * @return static
-     * @noinspection PhpMissingReturnTypeInspection
-     */
-    public static function get($post, bool $with_acfs = true)
+    public static function get(WP_Post|int $post, bool $with_acfs = true): static
     {
         return new static($post, $with_acfs);
     }
 
-    public static function objectType(): string
+    public static function objectType(): MetableObjectType
     {
-        return MetaType::POST;
+        return MetableObjectType::post;
     }
 
     public function __call(string $method_name, array $arguments)
@@ -46,11 +40,7 @@ class Post implements RelatedMetaData
         return $this->wpPost->$method_name(...$arguments);
     }
 
-    /**
-     * @param WP_Post|int $post
-     * @param bool $with_acfs
-     */
-    public function __construct($post, bool $with_acfs = true)
+    public function __construct(WP_Post|int $post, bool $with_acfs = true)
     {
         $this->wpPost = $post instanceof WP_Post ? $post : get_post($post);
 

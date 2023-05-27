@@ -4,7 +4,7 @@ namespace Wordless\Application\Helpers\ProjectPath\Exceptions;
 
 use ErrorException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class PathNotFoundException extends ErrorException
 {

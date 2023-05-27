@@ -6,7 +6,7 @@ use DomainException;
 use Throwable;
 use Wordless\Contracts\IMultipleConstructors;
 use Wordless\Contracts\IMultipleConstructors\Traits\MultipleConstructorsGuesser;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class ClassDoesNotImplementsMultipleConstructors extends DomainException
 {

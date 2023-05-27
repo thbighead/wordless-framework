@@ -2,8 +2,6 @@
 
 namespace Wordless\Wordpress\Models\Traits;
 
-use function Wordless\Wordpress\Traits\get_fields;
-
 trait WithAcfs
 {
     private array $acfs = [];
@@ -25,10 +23,10 @@ trait WithAcfs
     }
 
     /**
-     * @param string|int $from_id
+     * @param int|string $from_id
      * @return void
      */
-    private function loadAcfs($from_id)
+    private function loadAcfs(int|string $from_id): void
     {
         if (!function_exists('get_fields')) {
             return;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Enums;
+namespace Wordless\Infrastructure\Enums;
 
 enum ExceptionCode: int
 {

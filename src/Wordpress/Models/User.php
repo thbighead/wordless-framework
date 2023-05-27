@@ -2,20 +2,20 @@
 
 namespace Wordless\Wordpress\Models;
 
-use Wordless\Enums\MetaType;
-use Wordless\Infrastructure\Http\RelatedMetaData;
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
-use Wordless\Wordpress\Models\Traits\WithMetaData;
 use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 use WP_User;
 
-class User extends WP_User implements RelatedMetaData
+class User extends WP_User implements IRelatedMetaData
 {
     use WithAcfs, WithMetaData;
 
-    public static function objectType(): string
+    public static function objectType(): MetableObjectType
     {
-        return MetaType::USER;
+        return MetableObjectType::user;
     }
 
     /**

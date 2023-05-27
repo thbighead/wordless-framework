@@ -4,7 +4,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\CannotBuild\Ex
 
 use ErrorException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class TryingToBuildEmptySubQuery extends ErrorException
 {

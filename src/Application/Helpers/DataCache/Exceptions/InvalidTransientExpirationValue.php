@@ -6,7 +6,7 @@ use DateTimeInterface;
 use InvalidArgumentException;
 use Throwable;
 use Wordless\Application\Helpers\GetType;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class InvalidTransientExpirationValue extends InvalidArgumentException
 {

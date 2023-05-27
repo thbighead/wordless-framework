@@ -1,11 +1,11 @@
 <?php
 
-namespace Wordless\Enums;
+namespace Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums;
 
-class MetaType
+enum MetableObjectType
 {
-    public const POST = 'post';
-    public const COMMENT = 'comment';
-    public const TERM = 'term';
-    public const USER = 'user';
+    case post;
+    case comment;
+    case term;
+    case user;
 }

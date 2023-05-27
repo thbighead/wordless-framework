@@ -5,7 +5,7 @@ namespace Wordless\Application\Helpers\Environment\Exceptions;
 use ErrorException;
 use Throwable;
 use Wordless\Application\Helpers\Environment;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToFindPackagesMarkerInsideEnvFile extends ErrorException
 {

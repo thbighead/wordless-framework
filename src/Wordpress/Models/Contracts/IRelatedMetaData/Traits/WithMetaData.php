@@ -1,8 +1,8 @@
 <?php
 
-namespace Wordless\Wordpress\Models\Traits;
+namespace Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits;
 
-use Wordless\Wordpress\Models\Traits\WithMetaData\Exceptions\InvalidMetaKey;
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData\Exceptions\InvalidMetaKey;
 
 trait WithMetaData
 {
@@ -13,7 +13,7 @@ trait WithMetaData
 
     /**
      * @param string $meta_key
-     * @param mixed $default
+     * @param mixed|null $default
      * @return mixed
      * @throws InvalidMetaKey
      */
@@ -57,13 +57,8 @@ trait WithMetaData
         $this->all_meta_loaded = true;
     }
 
-    /**
-     * @param string $meta_key
-     * @param bool $single_result
-     * @return mixed
-     */
-    final protected function callGetMetaData(string $meta_key = '', bool $single_result = true)
+    final protected function callGetMetaData(string $meta_key = '', bool $single_result = true): mixed
     {
-        return get_metadata(static::objectType(), $this->ID, $meta_key, $single_result);
+        return get_metadata(static::objectType()->name, $this->ID, $meta_key, $single_result);
     }
 }

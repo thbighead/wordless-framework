@@ -29,12 +29,12 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\WpConfigStubMounter;
 use Wordless\Application\Mounters\Stub\WpConfigStubMounter\Exceptions\WpConfigAlreadySet;
-use Wordless\Enums\StartOfWeek;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO\Enums\OptionMode;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
+use Wordless\Wordpress\Enums\StartOfWeek;
 
 class WordlessInstall extends ConsoleCommand
 {
@@ -192,7 +192,7 @@ class WordlessInstall extends ConsoleCommand
         $this->runWpCliCommand('option update '
             . StartOfWeek::KEY
             . ' '
-            . Config::tryToGetOrDefault('admin.' . StartOfWeek::KEY, StartOfWeek::SUNDAY));
+            . Config::tryToGetOrDefault('admin.' . StartOfWeek::KEY, StartOfWeek::sunday->value));
     }
 
     private function ask(string $question, $default = null)

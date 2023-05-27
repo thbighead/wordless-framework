@@ -4,7 +4,7 @@ namespace Wordless\Application\Helpers\DirestoryFiles\Exceptions;
 
 use ErrorException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToCreateDirectory extends ErrorException
 {

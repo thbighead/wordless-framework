@@ -5,7 +5,7 @@ namespace Wordless\Contracts\Singleton\Exceptions;
 use ErrorException;
 use Throwable;
 use Wordless\Contracts\Singleton;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class TryingToUnserializeSingleton extends ErrorException
 {

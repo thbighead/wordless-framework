@@ -4,7 +4,7 @@ namespace Wordless\Application\Helpers\Http\Exceptions;
 
 use ErrorException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 use WP_Error;
 
 class RequestFailed extends ErrorException

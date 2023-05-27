@@ -1,17 +1,14 @@
 <?php
 
-namespace Wordless\Infrastructure\Http;
+namespace Wordless\Wordpress\Models\Contracts;
 
-interface RelatedMetaData
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
+
+interface IRelatedMetaData
 {
-    public static function objectType(): string;
+    public static function objectType(): MetableObjectType;
 
-    /**
-     * @param string $meta_key
-     * @param mixed $default
-     * @return mixed
-     */
-    public function getMetaField(string $meta_key, $default = null);
+    public function getMetaField(string $meta_key, mixed $default = null): mixed;
 
     /**
      * @return array<string, mixed>

@@ -4,7 +4,7 @@ namespace Wordless\Core\Bootstrapper\Exceptions;
 
 use DomainException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class DuplicatedMenuId extends DomainException
 {
