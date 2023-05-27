@@ -3,20 +3,26 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputOption;
 use Wordless\Application\Commands\Migrate\Exceptions\FailedToFindMigrationScript;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO\Enums\OptionMode;
 
 class MigrateRollback extends Migrate
 {
-    protected static $defaultName = 'migrate:rollback';
-
+    final public const COMMAND_NAME = 'migrate:rollback';
     private const NUMBER_OF_CHUNKS_OPTION = 'chunks';
     private const ALL_CHUNKS_VALUE = 'all';
 
+    protected static $defaultName = self::COMMAND_NAME;
+
     private int $number_of_chunks;
 
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [];
@@ -35,11 +41,11 @@ class MigrateRollback extends Migrate
     protected function options(): array
     {
         return [
-            [
-                self::OPTION_NAME_FIELD => self::NUMBER_OF_CHUNKS_OPTION,
-                self::OPTION_MODE_FIELD => InputOption::VALUE_OPTIONAL,
-                self::OPTION_DESCRIPTION_FIELD => 'How many chunks you want to rollback. Default is 1.',
-            ],
+            new OptionDTO(
+                self::NUMBER_OF_CHUNKS_OPTION,
+                'How many chunks you want to rollback. Default is 1.',
+                mode: OptionMode::optional_value
+            ),
         ];
     }
 

@@ -14,6 +14,8 @@ use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
 use Wordless\Infrastructure\Migration\Script;
 
 class Migrate extends ConsoleCommand
@@ -32,6 +34,9 @@ class Migrate extends ConsoleCommand
     private array $migration_files;
     private string $now;
 
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [];
@@ -114,6 +119,9 @@ class Migrate extends ConsoleCommand
             . ' option and run every migration script missing from it ordered by filename.';
     }
 
+    /**
+     * @return OptionDTO[]
+     */
     protected function options(): array
     {
         return [

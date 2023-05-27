@@ -3,13 +3,16 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\MigrationStubMounter;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO\Enums\ArgumentMode;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
 use Wordless\Infrastructure\Migration\Script;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
@@ -17,19 +20,22 @@ class MakeMigration extends ConsoleCommand
 {
     use LoadWpConfig;
 
-    protected static $defaultName = 'make:migration';
-
+    final public const COMMAND_NAME = 'make:migration';
     private const MIGRATION_CLASS_ARGUMENT_NAME = 'snake_cased_migration_class';
 
+    protected static $defaultName = self::COMMAND_NAME;
+
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [
-            [
-                self::ARGUMENT_DESCRIPTION_FIELD =>
-                    'The name of your new migration file in snake case (using _ between words).',
-                self::ARGUMENT_MODE_FIELD => InputArgument::REQUIRED,
-                self::ARGUMENT_NAME_FIELD => self::MIGRATION_CLASS_ARGUMENT_NAME,
-            ],
+            new ArgumentDTO(
+                self::MIGRATION_CLASS_ARGUMENT_NAME,
+                'The name of your new migration file in snake case (using _ between words).',
+                ArgumentMode::required
+            ),
         ];
     }
 
@@ -43,6 +49,9 @@ class MakeMigration extends ConsoleCommand
         return 'Creates a migration script file using its name to guess the generated class name.';
     }
 
+    /**
+     * @return OptionDTO[]
+     */
     protected function options(): array
     {
         return [];
@@ -52,6 +61,7 @@ class MakeMigration extends ConsoleCommand
      * @return int
      * @throws FailedToCopyStub
      * @throws PathNotFoundException
+     * @throws InvalidDirectory
      */
     protected function runIt(): int
     {

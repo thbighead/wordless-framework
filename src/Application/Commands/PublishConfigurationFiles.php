@@ -3,7 +3,6 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Wordless\Application\Commands\PublishConfigurationFiles\Exceptions\FailedToCopyConfig;
 use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Helpers\DirectoryFiles;
@@ -12,6 +11,9 @@ use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO\Enums\ArgumentMode;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
 
 class PublishConfigurationFiles extends ConsoleCommand
 {
@@ -22,16 +24,18 @@ class PublishConfigurationFiles extends ConsoleCommand
     private const FORCE_MODE = 'force';
     private const CONFIG_FILENAME_ARGUMENT_NAME = 'config_filename';
 
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [
-            [
-                self::ARGUMENT_DEFAULT_FIELD => [],
-                self::ARGUMENT_DESCRIPTION_FIELD =>
-                    'Configuration filenames to publish. If none passed, all files shall be published.',
-                self::ARGUMENT_MODE_FIELD => InputArgument::IS_ARRAY,
-                self::ARGUMENT_NAME_FIELD => self::CONFIG_FILENAME_ARGUMENT_NAME,
-            ],
+            new ArgumentDTO(
+                self::CONFIG_FILENAME_ARGUMENT_NAME,
+                'Configuration filenames to publish. If none passed, all files shall be published.',
+                ArgumentMode::array_optional,
+                []
+            ),
         ];
     }
 
@@ -45,6 +49,9 @@ class PublishConfigurationFiles extends ConsoleCommand
         return 'Copies all configuration files from framework to your project path if they already exists. If want to overwrite files in project root use the force mode.';
     }
 
+    /**
+     * @return OptionDTO[]
+     */
     protected function options(): array
     {
         return [
@@ -104,7 +111,7 @@ class PublishConfigurationFiles extends ConsoleCommand
      * @throws FailedToCopyConfig
      * @throws PathNotFoundException
      */
-    private function publishConfigFilesFromSrcDirectory()
+    private function publishConfigFilesFromSrcDirectory(): void
     {
         foreach (DirectoryFiles::recursiveRead(ProjectPath::src('config')) as $config_filepath_from) {
             $this->skipOrCopiedConfigFile($config_filepath_from);
@@ -116,7 +123,7 @@ class PublishConfigurationFiles extends ConsoleCommand
      * @throws FailedToCopyConfig
      * @throws PathNotFoundException
      */
-    private function skipOrCopiedConfigFile(string $config_filepath_from)
+    private function skipOrCopiedConfigFile(string $config_filepath_from): void
     {
         $config_relative_filepath = 'config/' . basename($config_filepath_from);
 
@@ -129,7 +136,7 @@ class PublishConfigurationFiles extends ConsoleCommand
 
                 return;
             }
-        } catch (PathNotFoundException $exception) {
+        } catch (PathNotFoundException) {
             $config_filepath_to = ProjectPath::root() . DIRECTORY_SEPARATOR . $config_relative_filepath;
             $this->writeComment("File destination at $config_filepath_to does not exists... ");
         }

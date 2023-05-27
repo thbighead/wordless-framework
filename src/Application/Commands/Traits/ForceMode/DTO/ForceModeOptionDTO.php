@@ -7,7 +7,7 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO\Enums\OptionMode;
 
 class ForceModeOptionDTO extends OptionDTO
 {
-    final protected const FORCE_MODE = 'force';
+    final public const FORCE_MODE = 'force';
 
     public function __construct(string $description)
     {

@@ -3,34 +3,36 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\ControllerStubMounter;
 use Wordless\Infrastructure\ApiController;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO\Enums\ArgumentMode;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO\Enums\OptionMode;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 
 class MakeController extends ConsoleCommand
 {
-    protected static $defaultName = 'make:controller';
-
+    final public const COMMAND_NAME = 'make:controller';
     private const CONTROLLER_CLASS_ARGUMENT_NAME = 'PascalCasedControllerClass';
     private const NO_PERMISSIONS_MODE = 'no-permissions';
+
+    protected static $defaultName = self::COMMAND_NAME;
 
     protected function arguments(): array
     {
         return [
-            [
-                self::ARGUMENT_DESCRIPTION_FIELD =>
-                    'The class name of your new controller file in pascal case.',
-                self::ARGUMENT_MODE_FIELD => InputArgument::REQUIRED,
-                self::ARGUMENT_NAME_FIELD => self::CONTROLLER_CLASS_ARGUMENT_NAME,
-            ],
+            new ArgumentDTO(
+                self::CONTROLLER_CLASS_ARGUMENT_NAME,
+                'The class name of your new controller file in pascal case.',
+                ArgumentMode::required
+            ),
         ];
     }
 
@@ -47,12 +49,11 @@ class MakeController extends ConsoleCommand
     protected function options(): array
     {
         return [
-            [
-                self::OPTION_NAME_FIELD => self::NO_PERMISSIONS_MODE,
-                self::OPTION_SHORTCUT_FIELD => 'N',
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Don\'t auto register CPT permissions into admin role.',
-            ],
+            new OptionDTO(
+                self::NO_PERMISSIONS_MODE,
+                'Don\'t auto register CPT permissions into admin role.',
+                mode: OptionMode::no_value
+            ),
         ];
     }
 
@@ -90,7 +91,7 @@ class MakeController extends ConsoleCommand
      * @return void
      * @throws FailedToFindRole
      */
-    private function resolveNoPermissionsMode(string $controller_class_name)
+    private function resolveNoPermissionsMode(string $controller_class_name): void
     {
         if ($this->isNoPermissionsMode()) {
             return;

@@ -6,7 +6,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Dotenv\Dotenv;
@@ -32,6 +31,9 @@ use Wordless\Application\Mounters\Stub\WpConfigStubMounter\Exceptions\WpConfigAl
 use Wordless\Enums\StartOfWeek;
 use Wordless\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO\Enums\OptionMode;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
 class WordlessInstall extends ConsoleCommand
@@ -59,6 +61,9 @@ class WordlessInstall extends ConsoleCommand
     private array $wp_languages;
     private bool $maintenance_mode;
 
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [];
@@ -126,21 +131,19 @@ class WordlessInstall extends ConsoleCommand
         return 'Completely installs this project calling WP-CLI.';
     }
 
+    /**
+     * @return OptionDTO[]
+     */
     protected function options(): array
     {
         return [
             $this->mountAllowRootModeOption(),
             $this->mountForceModeOption('Forces a project installation.'),
-            [
-                self::OPTION_NAME_FIELD => self::NO_ASK_MODE,
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Don\'t ask for any input while running.',
-            ],
-            [
-                self::OPTION_NAME_FIELD => self::NO_DB_CREATION_MODE,
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Don\'t run WP CLI to check and create a database for application.',
-            ],
+            new OptionDTO(
+                self::NO_ASK_MODE,
+                'Don\'t ask for any input while running.',
+                mode: OptionMode::no_value,
+            ),
         ];
     }
 
@@ -238,14 +241,6 @@ class WordlessInstall extends ConsoleCommand
      */
     private function createWpDatabase(): void
     {
-        if ($this->input->getOption(self::NO_DB_CREATION_MODE)) {
-            $this->writelnInfoWhenVerbose(
-                'Running with no database creation mode. Skipping database check and creation.'
-            );
-
-            return;
-        }
-
         $database_username = $this->getEnvVariableByKey('DB_USER');
         $database_password = $this->getEnvVariableByKey('DB_PASSWORD');
 

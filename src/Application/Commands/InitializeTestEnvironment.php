@@ -4,12 +4,12 @@ namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\InitializeTestEnvironment\Exceptions\FailedToInstallTestEnvironmentThroughComposer;
 use Wordless\Application\Commands\Traits\AllowRootMode;
 use Wordless\Application\Commands\Traits\ForceMode;
+use Wordless\Application\Commands\Traits\ForceMode\DTO\ForceModeOptionDTO;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\DirectoryFiles;
@@ -23,21 +23,26 @@ use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetDirectoryP
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO\Enums\OptionMode;
 
 class InitializeTestEnvironment extends ConsoleCommand
 {
     use AllowRootMode, ForceMode, RunWpCliCommand;
 
-    protected static $defaultName = self::COMMAND_NAME;
+    final public const COMMAND_NAME = 'test:environment';
 
-    public const COMMAND_NAME = 'test:environment';
-    public const DROP_DB_MODE = 'drop-db';
-    public const FORCE_MODE = 'force';
-    public const TARGET_DIRECTORY_NAME = 'test-environment';
-    private const ALLOW_ROOT_MODE = 'allow-root';
+    final public const TARGET_DIRECTORY_NAME = 'test-environment';
+    private const DROP_DB_MODE = 'drop-db';
+
+    protected static $defaultName = self::COMMAND_NAME;
 
     private array $option_inputs;
 
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [];
@@ -45,14 +50,17 @@ class InitializeTestEnvironment extends ConsoleCommand
 
     protected function description(): string
     {
-        return 'Initialize a test environment inside of ' . self::TARGET_DIRECTORY_NAME . ' directory';
+        return 'Initializes a test environment inside of ' . self::TARGET_DIRECTORY_NAME . ' directory.';
     }
 
     protected function help(): string
     {
-        return 'This test environment will install a wordless project using Composer command.';
+        return 'Installs a Wordless project test environment using a Composer command.';
     }
 
+    /**
+     * @return OptionDTO[]
+     */
     protected function options(): array
     {
         return [
@@ -60,11 +68,11 @@ class InitializeTestEnvironment extends ConsoleCommand
             $this->mountForceModeOption(
                 'Deletes everything inside test-environment to install from zero.'
             ),
-            [
-                self::OPTION_NAME_FIELD => self::DROP_DB_MODE,
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Also drops test database when in force mode.',
-            ],
+            new OptionDTO(
+                self::DROP_DB_MODE,
+                'Also drops test database when in force mode.',
+                mode: OptionMode::no_value
+            ),
         ];
     }
 
@@ -126,7 +134,7 @@ class InitializeTestEnvironment extends ConsoleCommand
 
         $this->option_inputs = Arr::except(
             $this->extractOptionsFromOriginalInput(),
-            ['--' . self::FORCE_MODE => true]
+            ['--' . ForceModeOptionDTO::FORCE_MODE => true]
         );
     }
 

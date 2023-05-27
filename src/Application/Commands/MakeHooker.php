@@ -3,32 +3,37 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\HookerStubMounter;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO\Enums\ArgumentMode;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
 class MakeHooker extends ConsoleCommand
 {
     use LoadWpConfig;
 
-    protected static $defaultName = 'make:hooker';
-
+    final public const COMMAND_NAME = 'make:hooker';
     private const HOOKER_CLASS_ARGUMENT_NAME = 'PascalCasedHookerClass';
 
+    protected static $defaultName = self::COMMAND_NAME;
+
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [
-            [
-                self::ARGUMENT_DESCRIPTION_FIELD =>
-                    'The class name of your new hooker file in pascal case.',
-                self::ARGUMENT_MODE_FIELD => InputArgument::REQUIRED,
-                self::ARGUMENT_NAME_FIELD => self::HOOKER_CLASS_ARGUMENT_NAME,
-            ],
+            new ArgumentDTO(
+                self::HOOKER_CLASS_ARGUMENT_NAME,
+                'The class name of your new hooker file in pascal case.',
+                ArgumentMode::required
+            ),
         ];
     }
 
@@ -42,6 +47,9 @@ class MakeHooker extends ConsoleCommand
         return 'Creates a hooker script file based on its class name.';
     }
 
+    /**
+     * @return OptionDTO[]
+     */
     protected function options(): array
     {
         return [];

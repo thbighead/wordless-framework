@@ -7,13 +7,20 @@ use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
 
 class MigrationList extends ConsoleCommand
 {
     use LoadWpConfig;
 
-    protected static $defaultName = 'migrate:list';
+    final public const COMMAND_NAME = 'migrate:list';
 
+    protected static $defaultName = self::COMMAND_NAME;
+
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [];
@@ -26,17 +33,17 @@ class MigrationList extends ConsoleCommand
 
     protected function help(): string
     {
-        return $this->description();
+        return 'Show every migration saved as executed details inside the `options` database table.';
     }
 
+    /**
+     * @return OptionDTO[]
+     */
     protected function options(): array
     {
         return [];
     }
 
-    /**
-     * @return int
-     */
     protected function runIt(): int
     {
         $outputTable = $this->mountTable();

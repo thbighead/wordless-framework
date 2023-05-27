@@ -8,6 +8,7 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO\Enums\ArgumentMode;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
 
 class WpCliCaller extends ConsoleCommand
 {
@@ -62,6 +63,9 @@ class WpCliCaller extends ConsoleCommand
         return 'Instead of choosing the right script according to your OS and executing it with absolute path inside vendor/bin folder, just run php console wp:run "{command}".';
     }
 
+    /**
+     * @return OptionDTO[]
+     */
     protected function options(): array
     {
         return [];

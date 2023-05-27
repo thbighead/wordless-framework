@@ -18,16 +18,22 @@ use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
 
 class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
 {
-    public const COMMAND_NAME = 'wordless:symlinks';
+    final public const COMMAND_NAME = 'wordless:symlinks';
     private const FILTER_RULE = '!';
     private const SLASH = '/';
+
     protected static $defaultName = self::COMMAND_NAME;
 
     private array $symlinks = [];
 
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [];
@@ -43,6 +49,9 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
         return 'Reading config/wp-symlinks.php this script creates symbolic links to allow or not direct access through HTTP.';
     }
 
+    /**
+     * @return OptionDTO[]
+     */
     protected function options(): array
     {
         return [];
@@ -50,11 +59,12 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
 
     /**
      * @return int
+     * @throws FailedToChangeDirectoryTo
      * @throws FailedToCreateDirectory
      * @throws FailedToCreateSymlink
      * @throws FailedToDeletePath
+     * @throws FailedToGetCurrentWorkingDirectory
      * @throws FailedToGetDirectoryPermissions
-     * @throws InvalidConfigKey
      * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
@@ -164,11 +174,11 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
 
     /**
      * @param string $target
-     * @return array|string
+     * @return string[]|string
      * @throws PathNotFoundException
      * @throws InvalidDirectory
      */
-    private function parseTarget(string $target)
+    private function parseTarget(string $target): array|string
     {
         if (!Str::contains($target, self::FILTER_RULE)) {
             return trim($target, self::SLASH);

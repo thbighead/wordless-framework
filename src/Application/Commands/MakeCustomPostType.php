@@ -3,14 +3,16 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\CustomPostTypeStubMounter;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO\Enums\ArgumentMode;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO\Enums\OptionMode;
 use Wordless\Infrastructure\CustomPost;
 use Wordless\Infrastructure\CustomPost\Traits\Register\Validation\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
@@ -22,21 +24,24 @@ class MakeCustomPostType extends ConsoleCommand
 {
     use LoadWpConfig;
 
-    protected static $defaultName = 'make:cpt';
-
+    final public const COMMAND_NAME = 'make:cpt';
     private const CONTROLLER_OPTION = 'controller';
     private const CUSTOM_POST_TYPE_CLASS_ARGUMENT_NAME = 'PascalCasedCustomPostTypeClass';
     private const NO_PERMISSIONS_MODE = 'no-permissions';
 
+    protected static $defaultName = self::COMMAND_NAME;
+
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [
-            [
-                self::ARGUMENT_DESCRIPTION_FIELD =>
-                    'The class name of your new Custom Post Type file in pascal case.',
-                self::ARGUMENT_MODE_FIELD => InputArgument::REQUIRED,
-                self::ARGUMENT_NAME_FIELD => self::CUSTOM_POST_TYPE_CLASS_ARGUMENT_NAME,
-            ],
+            new ArgumentDTO(
+                self::CUSTOM_POST_TYPE_CLASS_ARGUMENT_NAME,
+                'The class name of your new Custom Post Type file in pascal case.',
+                ArgumentMode::required
+            ),
         ];
     }
 
@@ -47,25 +52,25 @@ class MakeCustomPostType extends ConsoleCommand
 
     protected function help(): string
     {
-        return
-            'Creates a Custom Post Type file based on its class name. Its permissions shall be automatically registered as capable for admin role.';
+        return 'Creates a Custom Post Type file based on its class name. Its permissions shall be automatically registered as capable for admin role.';
     }
 
+    /**
+     * @return OptionDTO[]
+     */
     protected function options(): array
     {
         return [
-            [
-                self::OPTION_NAME_FIELD => self::CONTROLLER_OPTION,
-                self::OPTION_MODE_FIELD => InputOption::VALUE_REQUIRED,
-                self::OPTION_DESCRIPTION_FIELD =>
-                    'The Controller class name to be used by REST API to serve this resource',
-            ],
-            [
-                self::OPTION_NAME_FIELD => self::NO_PERMISSIONS_MODE,
-                self::OPTION_SHORTCUT_FIELD => 'N',
-                self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-                self::OPTION_DESCRIPTION_FIELD => 'Don\'t auto register CPT permissions into admin role.',
-            ],
+            new OptionDTO(
+                self::CONTROLLER_OPTION,
+                'The Controller class name to be used by REST API to serve this resource',
+                mode: OptionMode::required_value
+            ),
+            new OptionDTO(
+                self::NO_PERMISSIONS_MODE,
+                'Don\'t auto register CPT permissions into admin role.',
+                mode: OptionMode::no_value,
+            ),
         ];
     }
 
@@ -140,7 +145,7 @@ class MakeCustomPostType extends ConsoleCommand
      * @throws PathNotFoundException
      * @throws FailedToFindRole
      */
-    private function resolveNoPermissionsMode(string $custom_post_type_class_name)
+    private function resolveNoPermissionsMode(string $custom_post_type_class_name): void
     {
         if ($this->isNoPermissionsMode()) {
             return;

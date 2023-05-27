@@ -7,6 +7,8 @@ use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\InternalCache;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
 class CreateInternalCache extends ConsoleCommand
@@ -17,6 +19,9 @@ class CreateInternalCache extends ConsoleCommand
 
     protected static $defaultName = self::COMMAND_NAME;
 
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [];
@@ -24,14 +29,17 @@ class CreateInternalCache extends ConsoleCommand
 
     protected function description(): string
     {
-        return "{$this->help()} This avoid uses of reflections and calculations throughout system booting.";
+        return 'Generate Wordless internal cache files.';
     }
 
     protected function help(): string
     {
-        return 'Generate Wordless internal cache files.';
+        return 'This avoid uses of reflections and calculations throughout system booting.';
     }
 
+    /**
+     * @return OptionDTO[]
+     */
     protected function options(): array
     {
         return [];

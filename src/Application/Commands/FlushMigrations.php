@@ -6,6 +6,8 @@ use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Commands\Migrate\Exceptions\FailedToFindMigrationScript;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
 
 class FlushMigrations extends Migrate
 {
@@ -13,6 +15,9 @@ class FlushMigrations extends Migrate
 
     protected static $defaultName = self::COMMAND_NAME;
 
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [];
@@ -25,9 +30,12 @@ class FlushMigrations extends Migrate
 
     protected function help(): string
     {
-        return "{$this->description()} If migrations aren't found they still are going to be excluded from database.";
+        return 'If migrations aren\'t found they still are going to be excluded from database.';
     }
 
+    /**
+     * @return OptionDTO[]
+     */
     protected function options(): array
     {
         return [];

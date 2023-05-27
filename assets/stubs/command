@@ -4,11 +4,18 @@ namespace App\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
 
 class DummyCommand extends ConsoleCommand
 {
-    protected static $defaultName = 'command:name';
+    final public const COMMAND_NAME = 'command:name';
 
+    protected static $defaultName = self::COMMAND_NAME;
+
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [];
@@ -25,6 +32,9 @@ class DummyCommand extends ConsoleCommand
         return '';
     }
 
+    /**
+     * @return OptionDTO[]
+     */
     protected function options(): array
     {
         return [];
