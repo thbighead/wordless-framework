@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Infrastructure\CustomPost\Traits\Register;
+namespace Wordless\Infrastructure\CustomPost\Traits\Register\Traits;
 
 /**
  * https://developer.wordpress.org/reference/functions/register_post_type/#rewrite

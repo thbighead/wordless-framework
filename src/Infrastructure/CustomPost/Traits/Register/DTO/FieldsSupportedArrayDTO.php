@@ -1,15 +1,15 @@
 <?php
 
-namespace Wordless\Infrastructure\CustomPost\DTO;
+namespace Wordless\Infrastructure\CustomPost\Traits\Register\DTO;
 
 use Wordless\Contracts\ArrayDTO;
-use Wordless\Enums\CustomPostTypeField;
+use Wordless\Infrastructure\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO\Enums\CustomPostTypeFieldSupported;
 
 final class FieldsSupportedArrayDTO extends ArrayDTO
 {
     /** @var string[] $data */
-    protected mixed $data = [];
-    /** @var CustomPostTypeField[] $supported */
+    protected ?array $data = [];
+    /** @var CustomPostTypeFieldSupported[] $supported */
     private array $supported = [];
 
     public function getData(): ?array
@@ -17,7 +17,7 @@ final class FieldsSupportedArrayDTO extends ArrayDTO
         $this->supported = [];
 
         foreach ($this->data as $fieldSupported) {
-            /** @var CustomPostTypeField $fieldSupported */
+            /** @var CustomPostTypeFieldSupported $fieldSupported */
             $this->supported[] = $fieldSupported->value;
         }
 
@@ -25,7 +25,7 @@ final class FieldsSupportedArrayDTO extends ArrayDTO
     }
 
     /**
-     * @return CustomPostTypeField[]|null
+     * @return CustomPostTypeFieldSupported[]|null
      */
     public function getSupported(): ?array
     {
@@ -38,14 +38,14 @@ final class FieldsSupportedArrayDTO extends ArrayDTO
 
     public function supportAuthor(): FieldsSupportedArrayDTO
     {
-        $this->data[CustomPostTypeField::AUTHOR->name] = CustomPostTypeField::AUTHOR;
+        $this->data[CustomPostTypeFieldSupported::author->name] = CustomPostTypeFieldSupported::author;
 
         return $this;
     }
 
     public function supportComments(): FieldsSupportedArrayDTO
     {
-        $this->data[CustomPostTypeField::COMMENTS->name] = CustomPostTypeField::COMMENTS;
+        $this->data[CustomPostTypeFieldSupported::comments->name] = CustomPostTypeFieldSupported::comments;
 
         return $this;
     }
@@ -62,21 +62,21 @@ final class FieldsSupportedArrayDTO extends ArrayDTO
 
     public function supportCustomFields(): FieldsSupportedArrayDTO
     {
-        $this->data[CustomPostTypeField::CUSTOM->name] = CustomPostTypeField::CUSTOM;
+        $this->data[CustomPostTypeFieldSupported::custom->name] = CustomPostTypeFieldSupported::custom;
 
         return $this;
     }
 
     public function supportEditor(): FieldsSupportedArrayDTO
     {
-        $this->data[CustomPostTypeField::CONTENT->name] = CustomPostTypeField::CONTENT;
+        $this->data[CustomPostTypeFieldSupported::content->name] = CustomPostTypeFieldSupported::content;
 
         return $this;
     }
 
     public function supportExcerpt(): FieldsSupportedArrayDTO
     {
-        $this->data[CustomPostTypeField::EXCERPT->name] = CustomPostTypeField::EXCERPT;
+        $this->data[CustomPostTypeFieldSupported::excerpt->name] = CustomPostTypeFieldSupported::excerpt;
 
         return $this;
     }
@@ -103,50 +103,55 @@ final class FieldsSupportedArrayDTO extends ArrayDTO
 
     public function supportHierarchicalFields(): FieldsSupportedArrayDTO
     {
-        $this->data[CustomPostTypeField::HIERARCHICAL_FIELDS->name] = CustomPostTypeField::HIERARCHICAL_FIELDS;
+        $this->data[CustomPostTypeFieldSupported::hierarchical_fields->name] =
+            CustomPostTypeFieldSupported::hierarchical_fields;
 
         return $this;
     }
 
     public function supportPageAttributes(): FieldsSupportedArrayDTO
     {
-        $this->data[CustomPostTypeField::HIERARCHICAL_FIELDS->name] = CustomPostTypeField::HIERARCHICAL_FIELDS;
+        $this->data[CustomPostTypeFieldSupported::hierarchical_fields->name] =
+            CustomPostTypeFieldSupported::hierarchical_fields;
 
         return $this;
     }
 
     public function supportPostFormats(): FieldsSupportedArrayDTO
     {
-        $this->data[CustomPostTypeField::POST_FORMATS->name] = CustomPostTypeField::POST_FORMATS;
+        $this->data[CustomPostTypeFieldSupported::post_formats->name] =
+            CustomPostTypeFieldSupported::post_formats;
 
         return $this;
     }
 
     public function supportRevisions(): FieldsSupportedArrayDTO
     {
-        $this->data[CustomPostTypeField::REVISIONS->name] = CustomPostTypeField::REVISIONS;
+        $this->data[CustomPostTypeFieldSupported::revisions->name] =
+            CustomPostTypeFieldSupported::revisions;
 
         return $this;
     }
 
     public function supportThumbnail(): FieldsSupportedArrayDTO
     {
-        $this->data[CustomPostTypeField::FEATURED_THUMBNAIL_IMAGE->name] =
-            CustomPostTypeField::FEATURED_THUMBNAIL_IMAGE;
+        $this->data[CustomPostTypeFieldSupported::featured_thumbnail_image->name] =
+            CustomPostTypeFieldSupported::featured_thumbnail_image;
 
         return $this;
     }
 
     public function supportTitle(): FieldsSupportedArrayDTO
     {
-        $this->data[CustomPostTypeField::TITLE->name] = CustomPostTypeField::TITLE;
+        $this->data[CustomPostTypeFieldSupported::title->name] = CustomPostTypeFieldSupported::title;
 
         return $this;
     }
 
     public function supportTrackbacks(): FieldsSupportedArrayDTO
     {
-        $this->data[CustomPostTypeField::TRACK_BACKS->name] = CustomPostTypeField::TRACK_BACKS;
+        $this->data[CustomPostTypeFieldSupported::track_backs->name] =
+            CustomPostTypeFieldSupported::track_backs;
 
         return $this;
     }

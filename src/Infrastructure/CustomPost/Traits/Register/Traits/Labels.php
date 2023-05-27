@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Infrastructure\CustomPost\Traits\Register;
+namespace Wordless\Infrastructure\CustomPost\Traits\Register\Traits;
 
 use Wordless\Application\Helpers\Str;
 

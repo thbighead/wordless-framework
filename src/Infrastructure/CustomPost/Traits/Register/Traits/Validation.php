@@ -1,10 +1,10 @@
 <?php
 
-namespace Wordless\Infrastructure\CustomPost\Traits\Register;
+namespace Wordless\Infrastructure\CustomPost\Traits\Register\Traits;
 
 use Wordless\Application\Helpers\Reserved;
-use Wordless\Infrastructure\CustomPost\Traits\Register\Validation\Exceptions\InvalidCustomPostTypeKey;
-use Wordless\Infrastructure\CustomPost\Traits\Register\Validation\Exceptions\ReservedCustomPostTypeKey;
+use Wordless\Infrastructure\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
+use Wordless\Infrastructure\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
 
 trait Validation
 {

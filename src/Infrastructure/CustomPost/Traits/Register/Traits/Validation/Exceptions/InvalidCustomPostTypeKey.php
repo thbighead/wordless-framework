@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Infrastructure\CustomPost\Traits\Register\Validation\Exceptions;
+namespace Wordless\Infrastructure\CustomPost\Traits\Register\Traits\Validation\Exceptions;
 
 use InvalidArgumentException;
 use Throwable;

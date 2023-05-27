@@ -4,11 +4,12 @@ namespace Wordless\Infrastructure\CustomPost\Traits;
 
 use Wordless\Application\Guessers\CustomPostTypeKeyGuesser;
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\CustomPost\DTO\FieldsSupportedArrayDTO;
-use Wordless\Infrastructure\CustomPost\Traits\Register\Labels;
-use Wordless\Infrastructure\CustomPost\Traits\Register\Rewrite;
-use Wordless\Infrastructure\CustomPost\Traits\Register\Validation;
-use Wordless\Infrastructure\CustomPost\Traits\Register\Validation\Exceptions\InvalidCustomPostTypeKey;
+use Wordless\Infrastructure\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO;
+use Wordless\Infrastructure\CustomPost\Traits\Register\Enums\CustomPostTypeMenuPosition;
+use Wordless\Infrastructure\CustomPost\Traits\Register\Traits\Labels;
+use Wordless\Infrastructure\CustomPost\Traits\Register\Traits\Rewrite;
+use Wordless\Infrastructure\CustomPost\Traits\Register\Traits\Validation;
+use Wordless\Infrastructure\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
 
 trait Register
 {
@@ -161,10 +162,9 @@ trait Register
 
     /**
      * https://developer.wordpress.org/reference/functions/register_post_type/#menu_position
-     * Use CustomPostTypeMenuPosition constants to set it easily.
-     * @return int|null
+     * @return CustomPostTypeMenuPosition|null
      */
-    protected static function getAdminMenuPosition(): ?int
+    protected static function getAdminMenuPosition(): ?CustomPostTypeMenuPosition
     {
         return null; // bellow Comments
     }
@@ -230,7 +230,7 @@ trait Register
         }
 
         if (($menu_position = static::getAdminMenuPosition()) !== null) {
-            $arguments['menu_position'] = $menu_position;
+            $arguments['menu_position'] = $menu_position->value;
         }
 
         if (($capability_type = static::getCapabilityType()) !== null) {
@@ -274,11 +274,11 @@ trait Register
 
     /**
      * https://developer.wordpress.org/reference/functions/register_post_type/#supports
-     * @return FieldsSupportedArrayDTO
+     * @return FieldsSupportedArrayDTO|null
      */
-    protected static function postFields(): FieldsSupportedArrayDTO
+    protected static function postFields(): ?FieldsSupportedArrayDTO
     {
-        return FieldsSupportedArrayDTO::make();
+        return null;
     }
 
     /**
