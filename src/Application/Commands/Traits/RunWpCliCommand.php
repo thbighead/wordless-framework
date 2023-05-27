@@ -5,8 +5,8 @@ namespace Wordless\Application\Commands\Traits;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Application\Commands\Traits\AllowRootMode\DTO\AllowRootModeOptionDTO;
+use Wordless\Application\Commands\Traits\WunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Commands\WpCliCaller;
-use Wordless\Exceptions\WpCliCommandReturnedNonZero;
 
 trait RunWpCliCommand
 {
