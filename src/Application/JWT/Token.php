@@ -21,8 +21,8 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Application\JWT\Enums\CryptoAlgorithm;
 use Wordless\Application\JWT\Exceptions\InvalidJwtCryptoAlgorithmId;
 use Wordless\Application\JWT\Traits\Constructors;
-use Wordless\Contracts\MultipleConstructors\IMultipleConstructors;
-use Wordless\Contracts\MultipleConstructors\Traits\MultipleConstructorsGuesser;
+use Wordless\Contracts\IMultipleConstructors;
+use Wordless\Contracts\IMultipleConstructors\Traits\MultipleConstructorsGuesser;
 
 /**
  * Using https://lcobucci-jwt.readthedocs.io/en/latest/

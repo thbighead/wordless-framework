@@ -42,7 +42,8 @@ abstract class EnqueueableAsset
         string  $relative_file_path,
         array   $dependencies = [],
         ?string $version = null
-    ) {
+    )
+    {
         $this->setId($id);
         $this->relative_file_path = $relative_file_path;
         $this->dependencies = $dependencies;

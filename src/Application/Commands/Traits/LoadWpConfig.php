@@ -15,7 +15,7 @@ trait LoadWpConfig
      * @return void
      * @throws PathNotFoundException
      */
-    protected function setup(InputInterface $input, OutputInterface $output)
+    protected function setup(InputInterface $input, OutputInterface $output): void
     {
         /** @noinspection PhpMultipleClassDeclarationsInspection */
         parent::setup($input, $output);

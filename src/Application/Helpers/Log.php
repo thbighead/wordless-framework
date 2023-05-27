@@ -2,38 +2,29 @@
 
 namespace Wordless\Application\Helpers;
 
-use Exception;
+use Wordless\Application\Helpers\Log\Enums\Type;
 
 class Log
 {
-    public const TYPE_ERROR = 'ERROR';
-    public const TYPE_WARNING = 'WARNING';
-    public const TYPE_INFO = 'INFO';
-
-    public static function error(string $message)
+    final public static function error(string $message): void
     {
-        self::write($message, self::TYPE_ERROR);
+        self::write($message, Type::ERROR);
     }
 
-    public static function impossibleException(Exception $exception)
+    final public static function info(string $message): void
     {
-        self::error("This is impossible, but... {$exception->getMessage()}");
+        self::write($message, Type::INFO);
     }
 
-    public static function info(string $message)
+    final public static function warning(string $message): void
     {
-        self::write($message, self::TYPE_INFO);
+        self::write($message, Type::WARNING);
     }
 
-    public static function warning(string $message)
-    {
-        self::write($message, self::TYPE_WARNING);
-    }
-
-    private static function write(string $message, ?string $type = null)
+    private static function write(string $message, ?Type $type = null): void
     {
         if ($type !== null) {
-            $type = Str::upper($type);
+            $type = Str::upper($type->value);
             $message = "[$type] $message";
         }
 

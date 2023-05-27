@@ -5,9 +5,9 @@ namespace Wordless\Application\Commands;
 use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Exceptions\WordPressFailedToFindRole;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
+use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 use Wordless\Wordpress\RolesList;
 
 class SyncRoles extends ConsoleCommand
@@ -42,7 +42,7 @@ class SyncRoles extends ConsoleCommand
      * @return int
      * @throws FailedToCreateRole
      * @throws PathNotFoundException
-     * @throws WordPressFailedToFindRole
+     * @throws FailedToFindRole
      */
     protected function runIt(): int
     {

@@ -11,17 +11,18 @@ use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Composer\Exceptions\AppHostAlreadySetOnDotEnv;
-use Wordless\Exceptions\UnavailableNginxServerName;
+use Wordless\Core\Composer\Traits\SetHostFromNginx\Exceptions\UnavailableNginxServerName;
 
 trait SetHostFromNginx
 {
     /**
      * @param Event $composerEvent
      * @return void
+     * @throws DotEnvNotSetException
      * @throws FailedToRewriteDotEnvFile
      * @throws PathNotFoundException
      */
-    public static function setHost(Event $composerEvent)
+    public static function setHost(Event $composerEvent): void
     {
         static::initializeIo($composerEvent);
         self::defineProjectPath($composerEvent->getComposer());

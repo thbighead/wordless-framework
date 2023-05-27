@@ -4,7 +4,7 @@ namespace Wordless\Infrastructure\CustomPost\Traits;
 
 use Wordless\Application\Guessers\CustomPostTypeKeyGuesser;
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\CustomPost\DTO\FieldsSupportedDTO;
+use Wordless\Infrastructure\CustomPost\DTO\FieldsSupportedArrayDTO;
 use Wordless\Infrastructure\CustomPost\Traits\Register\Labels;
 use Wordless\Infrastructure\CustomPost\Traits\Register\Rewrite;
 use Wordless\Infrastructure\CustomPost\Traits\Register\Validation;
@@ -274,11 +274,11 @@ trait Register
 
     /**
      * https://developer.wordpress.org/reference/functions/register_post_type/#supports
-     * @return FieldsSupportedDTO
+     * @return FieldsSupportedArrayDTO
      */
-    protected static function postFields(): FieldsSupportedDTO
+    protected static function postFields(): FieldsSupportedArrayDTO
     {
-        return FieldsSupportedDTO::make();
+        return FieldsSupportedArrayDTO::make();
     }
 
     /**

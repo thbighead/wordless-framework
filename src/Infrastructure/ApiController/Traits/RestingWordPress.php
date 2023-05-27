@@ -3,7 +3,7 @@
 namespace Wordless\Controller\Traits;
 
 use Wordless\Application\Helpers\Debugger;
-use Wordless\Exceptions\ValidationError;
+use Wordless\Infrastructure\ApiController\Traits\ResourceValidation\Exceptions\ValidationError;
 use Wordless\Infrastructure\Http\Request;
 use Wordless\Infrastructure\Http\Response;
 use WP_Error;

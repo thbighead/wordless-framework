@@ -10,12 +10,12 @@ use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\CustomPostTypeStubMounter;
-use Wordless\Exceptions\WordPressFailedToFindRole;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\CustomPost;
 use Wordless\Infrastructure\CustomPost\Traits\Register\Validation\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
+use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 use Wordless\Wordpress\RolesList;
 
 class MakeCustomPostType extends ConsoleCommand
@@ -75,7 +75,7 @@ class MakeCustomPostType extends ConsoleCommand
      * @throws FailedToCreateRole
      * @throws InvalidCustomPostTypeKey
      * @throws PathNotFoundException
-     * @throws WordPressFailedToFindRole
+     * @throws FailedToFindRole
      */
     protected function runIt(): int
     {
@@ -138,7 +138,7 @@ class MakeCustomPostType extends ConsoleCommand
      * @throws FailedToCreateRole
      * @throws InvalidCustomPostTypeKey
      * @throws PathNotFoundException
-     * @throws WordPressFailedToFindRole
+     * @throws FailedToFindRole
      */
     private function resolveNoPermissionsMode(string $custom_post_type_class_name)
     {

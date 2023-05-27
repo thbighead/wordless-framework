@@ -8,12 +8,14 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Application\Commands\Exceptions\DotEnvNotSetException;
+use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Infrastructure\ConsoleCommand;
 
 class ReplaceBaseUrls extends ConsoleCommand
 {
+    use RunWpCliCommand;
     private const BASE_URLS_TO_SEARCH_FOR_REPLACING = 'base_urls';
 
     protected static $defaultName = 'replace:base_urls';
@@ -100,25 +102,10 @@ class ReplaceBaseUrls extends ConsoleCommand
      * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
-    private function runDatabaseSearchReplace()
+    private function runDatabaseSearchReplace(): void
     {
         foreach ($this->base_urls_to_search as $base_url_to_search) {
             $this->runWpCliCommand("search-replace '$base_url_to_search' '$this->app_url'");
-        }
-    }
-
-    /**
-     * @param string $command
-     * @return void
-     * @throws WpCliCommandReturnedNonZero
-     * @throws ExceptionInterface
-     */
-    private function runWpCliCommand(string $command): void
-    {
-        if (($return_var = $this->executeWordlessCommand(WpCliCaller::COMMAND_NAME, [
-            WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => $command,
-        ], $this->output))) {
-            throw new WpCliCommandReturnedNonZero($command, $return_var);
         }
     }
 }

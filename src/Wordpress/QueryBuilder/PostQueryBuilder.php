@@ -3,7 +3,6 @@
 namespace Wordless\Wordpress\QueryBuilder;
 
 use Wordless\Application\Helpers\Arr;
-use Wordless\Application\Helpers\Log;
 use Wordless\Enums\QueryComparison;
 use Wordless\Enums\QueryOrderByDirection;
 use Wordless\Enums\WpQueryFields;
@@ -11,7 +10,6 @@ use Wordless\Enums\WpQueryMeta;
 use Wordless\Enums\WpQueryOrderByParameter;
 use Wordless\Enums\WpQueryStatus;
 use Wordless\Enums\WpQueryTaxonomy;
-use Wordless\Exceptions\QueryAlreadySet;
 use Wordless\Infrastructure\QueryBuilder;
 use Wordless\Infrastructure\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 use Wordless\Infrastructure\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
@@ -39,16 +37,11 @@ class PostQueryBuilder extends QueryBuilder
 
     public function __construct(string $post_type = PostType::POST)
     {
-        try {
-            $this->setQuery(new WP_Query)
-                ->whereType($post_type)
-                ->withoutStickyPosts();
-            $this->arguments[WpQueryFields::FIELDS_KEY] = WpQueryFields::LIST_OF_POSTS;
+        $this->whereType($post_type)
+            ->withoutStickyPosts();
+        $this->arguments[WpQueryFields::FIELDS_KEY] = WpQueryFields::LIST_OF_POSTS;
 
-            parent::__construct(WP_Query::class);
-        } catch (QueryAlreadySet $exception) {
-            Log::impossibleException($exception);
-        }
+        parent::__construct(new WP_Query);
     }
 
     public function count(): int
@@ -139,7 +132,10 @@ class PostQueryBuilder extends QueryBuilder
      * @param string $direction ignored if $columns is an associative array
      * @return PostQueryBuilder
      */
-    public function orderBy($columns, string $direction = QueryOrderByDirection::ASCENDING): PostQueryBuilder
+    public function orderBy(
+        array|string $columns,
+        string $direction = QueryOrderByDirection::ASCENDING
+    ): PostQueryBuilder
     {
         if (!isset($this->arguments[self::KEY_ORDER_BY])) {
             $this->arguments[self::KEY_ORDER_BY] = [];
@@ -200,7 +196,7 @@ class PostQueryBuilder extends QueryBuilder
      * @param bool $sorted_by_relevance
      * @return $this
      */
-    public function searchFor($words, bool $sorted_by_relevance = true): PostQueryBuilder
+    public function searchFor(array|string $words, bool $sorted_by_relevance = true): PostQueryBuilder
     {
         return $this->search($words, $sorted_by_relevance);
     }
@@ -210,7 +206,7 @@ class PostQueryBuilder extends QueryBuilder
      * @param bool $sorted_by_relevance
      * @return $this
      */
-    public function searchNotFor($words, bool $sorted_by_relevance = true): PostQueryBuilder
+    public function searchNotFor(array|string $words, bool $sorted_by_relevance = true): PostQueryBuilder
     {
         return $this->search($words, $sorted_by_relevance, false);
     }
@@ -235,7 +231,7 @@ class PostQueryBuilder extends QueryBuilder
      * @param int|int[] $ids
      * @return PostQueryBuilder
      */
-    public function whereAuthorId($ids): PostQueryBuilder
+    public function whereAuthorId(array|int $ids): PostQueryBuilder
     {
         if (is_array($ids)) {
             $ids = implode(',', $ids);
@@ -262,7 +258,7 @@ class PostQueryBuilder extends QueryBuilder
      * @param bool $and
      * @return $this
      */
-    public function whereCategoryId($ids, bool $and = false): PostQueryBuilder
+    public function whereCategoryId(array|int $ids, bool $and = false): PostQueryBuilder
     {
         if (is_array($ids)) {
             $this->arguments[$and ? 'category__and' : 'category__in'] = $ids;
@@ -280,7 +276,7 @@ class PostQueryBuilder extends QueryBuilder
      * @param bool $and
      * @return $this
      */
-    public function whereCategoryName($names, bool $and = false): PostQueryBuilder
+    public function whereCategoryName(array|string $names, bool $and = false): PostQueryBuilder
     {
         $this->arguments['category_name'] = is_array($names) ?
             implode($and ? '+' : ',', $names) : $names;
@@ -292,7 +288,7 @@ class PostQueryBuilder extends QueryBuilder
      * @param int|int[] $post_ids
      * @return $this
      */
-    public function whereId($post_ids): PostQueryBuilder
+    public function whereId(array|int $post_ids): PostQueryBuilder
     {
         if (is_int($post_ids)) {
             $this->arguments['p'] = $post_ids;
@@ -328,7 +324,7 @@ class PostQueryBuilder extends QueryBuilder
      * @param int|int[] $ids
      * @return PostQueryBuilder
      */
-    public function whereNotAuthorId($ids): PostQueryBuilder
+    public function whereNotAuthorId(array|int $ids): PostQueryBuilder
     {
         if (is_array($ids)) {
             $this->arguments['author__not_in'] = $ids;
@@ -345,7 +341,7 @@ class PostQueryBuilder extends QueryBuilder
      * @param int|int[] $ids
      * @return $this
      */
-    public function whereNotCategoryId($ids): PostQueryBuilder
+    public function whereNotCategoryId(array|int $ids): PostQueryBuilder
     {
         if (is_array($ids)) {
             $this->arguments['category__not_in'] = $ids;
@@ -362,7 +358,7 @@ class PostQueryBuilder extends QueryBuilder
      * @param int|int[] $post_ids
      * @return $this
      */
-    public function whereNotId($post_ids): PostQueryBuilder
+    public function whereNotId(array|int $post_ids): PostQueryBuilder
     {
         $post_ids = Arr::wrap($post_ids);
 
@@ -394,7 +390,7 @@ class PostQueryBuilder extends QueryBuilder
      * @param string|string[] $slugs
      * @return $this
      */
-    public function whereSlug($slugs): PostQueryBuilder
+    public function whereSlug(array|string $slugs): PostQueryBuilder
     {
         if (!is_array($slugs)) {
             $this->arguments['name'] = $slugs;
@@ -426,7 +422,7 @@ class PostQueryBuilder extends QueryBuilder
      * @param bool $and
      * @return $this
      */
-    public function whereTagId($ids, bool $and = false): PostQueryBuilder
+    public function whereTagId(array|int $ids, bool $and = false): PostQueryBuilder
     {
         if (is_array($ids)) {
             $this->arguments[$and ? 'tag__and' : 'tag__in'] = $ids;
@@ -444,7 +440,7 @@ class PostQueryBuilder extends QueryBuilder
      * @param bool $and
      * @return $this
      */
-    public function whereTagName($names, bool $and = false): PostQueryBuilder
+    public function whereTagName(array|string $names, bool $and = false): PostQueryBuilder
     {
         $this->arguments['tag'] = is_array($names) ?
             implode($and ? '+' : ',', $names) : $names;
@@ -470,7 +466,7 @@ class PostQueryBuilder extends QueryBuilder
      * @param string|string[] $types
      * @return $this
      */
-    public function whereType($types): PostQueryBuilder
+    public function whereType(array|string $types): PostQueryBuilder
     {
         if ($this->isForTypeAttachment($types) && !$this->isForStatusAny()) {
             $this->arguments[WpQueryStatus::POST_STATUS_KEY] = WpQueryStatus::INHERIT;
@@ -619,20 +615,20 @@ class PostQueryBuilder extends QueryBuilder
      * @param string|string[] $types
      * @return bool
      */
-    private function isForTypeAttachment($types): bool
+    private function isForTypeAttachment(array|string $types): bool
     {
         return is_array($types) ?
             Arr::searchValue($types, PostType::ATTACHMENT) : $types === PostType::ATTACHMENT;
     }
 
-    private function query()
+    private function query(): array
     {
         $this->resolveSearch();
 
         return parent::get();
     }
 
-    private function resolveSearch()
+    private function resolveSearch(): void
     {
         foreach ($this->search_words as $word => $is_included) {
             $this->arguments[self::KEY_SEARCH] = isset($this->arguments[self::KEY_SEARCH]) ?
@@ -648,7 +644,11 @@ class PostQueryBuilder extends QueryBuilder
      * @param bool $include
      * @return $this
      */
-    private function search($words, bool $sorted_by_relevance = true, bool $include = true): PostQueryBuilder
+    private function search(
+        array|string $words,
+        bool $sorted_by_relevance = true,
+        bool $include = true
+    ): PostQueryBuilder
     {
         if (empty($words)) {
             return $this;
@@ -670,7 +670,7 @@ class PostQueryBuilder extends QueryBuilder
         return $this->arguments[Posts::KEY_PAGED] = max($page, Posts::FIRST_PAGE);
     }
 
-    private function sortBySearchRelevance()
+    private function sortBySearchRelevance(): void
     {
         $original_arguments = [];
 

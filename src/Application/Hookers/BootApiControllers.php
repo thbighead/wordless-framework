@@ -3,16 +3,16 @@
 namespace Wordless\Application\Hookers;
 
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Exceptions\WordPressFailedToFindRole;
 use Wordless\Infrastructure\ApiController;
 use Wordless\Infrastructure\Hooker;
+use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 
 class BootApiControllers extends Hooker
 {
     /**
      * @return void
      * @throws PathNotFoundException
-     * @throws WordPressFailedToFindRole
+     * @throws FailedToFindRole
      */
     public static function register()
     {
@@ -27,9 +27,12 @@ class BootApiControllers extends Hooker
     /**
      * @param string $controller_pathing
      * @param string $controller_full_namespace
-     * @throws WordPressFailedToFindRole
+     * @throws FailedToFindRole
      */
-    private static function requireAndRegisterController(string $controller_pathing, string $controller_full_namespace)
+    private static function requireAndRegisterController(
+        string $controller_pathing,
+        string $controller_full_namespace
+    ): void
     {
         /** @var ApiController $controller_full_namespace */
         require_once $controller_pathing;

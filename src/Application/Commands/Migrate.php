@@ -20,11 +20,11 @@ class Migrate extends ConsoleCommand
 {
     use ForceMode, LoadWpConfig;
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     public const COMMAND_NAME = 'migrate';
+
     public const MIGRATIONS_WP_OPTION_NAME = 'wordless_migrations_already_executed';
-    protected const FORCE_MODE = 'force';
+
+    protected static $defaultName = self::COMMAND_NAME;
 
     private array $executed_migrations_list;
     private array $guessed_migrations_class_names;
@@ -137,7 +137,7 @@ class Migrate extends ConsoleCommand
         return Command::SUCCESS;
     }
 
-    protected function trashMigrationsOption()
+    protected function trashMigrationsOption(): void
     {
         $this->wrapScriptWithMessages(
             'Trashing ' . self::MIGRATIONS_WP_OPTION_NAME . '...',
@@ -150,7 +150,7 @@ class Migrate extends ConsoleCommand
         );
     }
 
-    private function addToExecutedMigrationsListOption(string $migration_filename)
+    private function addToExecutedMigrationsListOption(string $migration_filename): void
     {
         if (!isset($this->executed_migrations_list[$this->getNow()])) {
             $this->executed_migrations_list[$this->getNow()] = [];
@@ -167,7 +167,7 @@ class Migrate extends ConsoleCommand
      * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
-    private function executeMissingMigrationsScripts()
+    private function executeMissingMigrationsScripts(): void
     {
         if (empty($this->migrations_missing_execution)) {
             $this->writelnInfo('No missing migrations to execute.');
@@ -236,7 +236,7 @@ class Migrate extends ConsoleCommand
                 $files_list = array_merge($files_list, DirectoryFiles::listFromDirectory(
                     ProjectPath::packages("$package_folder/migrations")
                 ));
-            } catch (PathNotFoundException|InvalidDirectory $exception) {
+            } catch (PathNotFoundException|InvalidDirectory) {
                 continue;
             }
         }
@@ -259,7 +259,7 @@ class Migrate extends ConsoleCommand
      * @return void
      * @throws FailedToFindExecutedMigrationScript
      */
-    private function removeFromExecutedMigrationsListOption(string $migration_filename)
+    private function removeFromExecutedMigrationsListOption(string $migration_filename): void
     {
         $removed_migration = null;
 
@@ -289,7 +289,7 @@ class Migrate extends ConsoleCommand
      * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
-    private function resolveForceMode()
+    private function resolveForceMode(): void
     {
         if ($this->isForceMode()) {
             $this->writelnWarning(

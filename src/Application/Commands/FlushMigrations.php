@@ -9,7 +9,9 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 
 class FlushMigrations extends Migrate
 {
-    protected static $defaultName = 'migrate:flush';
+    final public const COMMAND_NAME = 'migrate:flush';
+
+    protected static $defaultName = self::COMMAND_NAME;
 
     protected function arguments(): array
     {
@@ -18,7 +20,7 @@ class FlushMigrations extends Migrate
 
     protected function description(): string
     {
-        return 'Erases ' . self::MIGRATIONS_WP_OPTION_NAME . '.';
+        return 'Erases ' . static::MIGRATIONS_WP_OPTION_NAME . '.';
     }
 
     protected function help(): string

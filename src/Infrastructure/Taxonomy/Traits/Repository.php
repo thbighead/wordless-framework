@@ -2,7 +2,7 @@
 
 namespace Wordless\Infrastructure\Taxonomy\Traits;
 
-use Wordless\Exceptions\TaxonomyNotRegistered;
+use Wordless\Infrastructure\Taxonomy\Exceptions\TaxonomyNotRegistered;
 use Wordless\Wordpress\TaxonomyTermsList;
 use WP_Term;
 

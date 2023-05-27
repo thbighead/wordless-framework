@@ -6,13 +6,15 @@ use Closure;
 use Wordless\Application\Helpers\GetType;
 use Wordless\Application\Helpers\Log;
 use Wordless\Enums\WpQueryMeta;
-use Wordless\Exceptions\TryingToBuildEmptySubQuery;
 use Wordless\Exceptions\TryingToMakeNonArrayComparisonWithArrayableValues;
 use Wordless\Exceptions\TryingToMakeOnlyForArrayComparisonWithNonArrayableValues;
 use Wordless\Infrastructure\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\CannotBuild;
 
 class EmptyMetaSubQueryBuilder extends MetaSubQueryBuilder
 {
+    use CannotBuild;
+
     public function whereMeta(Closure $nestedSubQuery): InitializedMetaSubQueryBuilder
     {
         $this->meta_sub_query_arguments[] = $this->resolveClosure($nestedSubQuery);
@@ -161,15 +163,6 @@ class EmptyMetaSubQueryBuilder extends MetaSubQueryBuilder
         ));
 
         return new InitializedMetaSubQueryBuilder($this->meta_sub_query_arguments);
-    }
-
-    /**
-     * @return array
-     * @throws TryingToBuildEmptySubQuery
-     */
-    final public function build(): array
-    {
-        throw new TryingToBuildEmptySubQuery(self::class);
     }
 
     protected function mountKeyCompare(): string

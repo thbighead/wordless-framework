@@ -149,7 +149,7 @@ class InitializeTestEnvironment extends ConsoleCommand
                 function () {
                     $command = 'php console wp:run "db drop --yes --quiet"';
 
-                    if ($command_result = $this->executeCommand($command)) {
+                    if ($command_result = $this->callExternalCommand($command)) {
                         throw new CliReturnedNonZero($command, $command_result);
                     }
                 },
@@ -172,7 +172,7 @@ class InitializeTestEnvironment extends ConsoleCommand
             function () {
                 $command = 'composer install';
 
-                if ($command_result = $this->executeCommand($command)) {
+                if ($command_result = $this->callExternalCommand($command)) {
                     throw new CliReturnedNonZero($command, $command_result);
                 }
             },
@@ -201,7 +201,7 @@ class InitializeTestEnvironment extends ConsoleCommand
                     }
                 }
 
-                if ($command_result = $this->executeCommand($command)) {
+                if ($command_result = $this->callExternalCommand($command)) {
                     throw new CliReturnedNonZero($command, $command_result);
                 }
             },
@@ -238,7 +238,7 @@ class InitializeTestEnvironment extends ConsoleCommand
             . ' --no-install --no-scripts --quiet --repository="{\"type\":\"path\",\"url\":\"../www\",\"options\":{\"symlink\":false}}"';
         $this->writeln("Executing '$command'");
 
-        if ($this->executeCommand($command) !== Command::SUCCESS) {
+        if ($this->callExternalCommand($command) !== Command::SUCCESS) {
             throw new FailedToInstallTestEnvironmentThroughComposer($command);
         }
 

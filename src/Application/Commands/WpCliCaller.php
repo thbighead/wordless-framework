@@ -2,16 +2,17 @@
 
 namespace Wordless\Application\Commands;
 
-use Symfony\Component\Console\Input\InputArgument;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO\Enums\ArgumentMode;
 
 class WpCliCaller extends ConsoleCommand
 {
-    public const COMMAND_NAME = 'wp:run';
-    public const WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME = 'wp_cli_full_command_string';
+    final public const COMMAND_NAME = 'wp:run';
+    final public const WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME = 'wp_cli_full_command_string';
     private const NON_WINDOWS_OS = 'non-windows';
     private const PARTIAL_REWRITE_STRUCTURE_COMMAND = 'rewrite structure ';
     private const WINDOWS_OS = 'windows';
@@ -20,15 +21,18 @@ class WpCliCaller extends ConsoleCommand
 
     private string $operational_system;
 
+    /**
+     * @return ArgumentDTO[]
+     */
     protected function arguments(): array
     {
         return [
-            [
-                self::ARGUMENT_DEFAULT_FIELD => '',
-                self::ARGUMENT_DESCRIPTION_FIELD => 'A string containing exactly what you want to run with "wp"',
-                self::ARGUMENT_MODE_FIELD => InputArgument::OPTIONAL,
-                self::ARGUMENT_NAME_FIELD => self::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME,
-            ],
+            new ArgumentDTO(
+                self::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME,
+                'A string containing exactly what you want to run with "wp"',
+                ArgumentMode::optional,
+                ''
+            ),
         ];
     }
 
@@ -48,9 +52,9 @@ class WpCliCaller extends ConsoleCommand
         $wp_cli_filepath = $this->chooseWpCliScriptByOperationalSystem();
         $full_command = "$wp_cli_filepath $wp_cli_full_command_string";
 
-        $this->writelnWhenVerbose("Executing $full_command...");
+        $this->writelnInfoWhenVerbose("Executing $full_command...");
 
-        return $this->executeCommand($full_command);
+        return $this->callExternalCommand($full_command);
     }
 
     protected function help(): string
@@ -89,7 +93,7 @@ class WpCliCaller extends ConsoleCommand
         return $this->guessOperationalSystem() === self::WINDOWS_OS;
     }
 
-    private function treatRewriteStructureOnWindows(string &$wp_cli_full_command_string)
+    private function treatRewriteStructureOnWindows(string &$wp_cli_full_command_string): void
     {
         if ($this->isOnWindows()
             && Str::beginsWith($wp_cli_full_command_string, self::PARTIAL_REWRITE_STRUCTURE_COMMAND)) {
@@ -106,7 +110,7 @@ class WpCliCaller extends ConsoleCommand
         }
     }
 
-    private function treatWpCliCommand(string &$wp_cli_full_command_string)
+    private function treatWpCliCommand(string &$wp_cli_full_command_string): void
     {
         $this->treatRewriteStructureOnWindows($wp_cli_full_command_string);
     }

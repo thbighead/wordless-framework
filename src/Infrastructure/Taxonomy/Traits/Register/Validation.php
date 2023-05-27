@@ -3,8 +3,8 @@
 namespace Wordless\Infrastructure\Taxonomy\Traits\Register;
 
 use Wordless\Application\Helpers\Reserved;
-use Wordless\Exceptions\ReservedCustomTaxonomyName;
 use Wordless\Infrastructure\Taxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
+use Wordless\Infrastructure\Taxonomy\Traits\Register\Validation\Exceptions\ReservedCustomTaxonomyName;
 
 trait Validation
 {
@@ -28,7 +28,7 @@ trait Validation
      */
     private static function validateNotReserved(): void
     {
-        if (Reserved::isTaxonomyReservedByWordPress($type_key = static::getNameKey())) {
+        if (Reserved::isTaxonomyUsedByWordPress($type_key = static::getNameKey())) {
             throw new ReservedCustomTaxonomyName($type_key);
         }
     }

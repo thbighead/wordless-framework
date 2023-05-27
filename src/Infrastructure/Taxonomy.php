@@ -3,7 +3,7 @@
 namespace Wordless\Infrastructure;
 
 use Wordless\Application\Guessers\CustomTaxonomyNameGuesser;
-use Wordless\Exceptions\TaxonomyNotRegistered;
+use Wordless\Infrastructure\Taxonomy\Exceptions\TaxonomyNotRegistered;
 use Wordless\Infrastructure\Taxonomy\Traits\Register;
 use Wordless\Infrastructure\Taxonomy\Traits\Repository;
 use Wordless\Wordpress\TaxonomyTermsList;
@@ -44,7 +44,7 @@ abstract class Taxonomy
      * @param WP_Taxonomy|string $taxonomy
      * @throws TaxonomyNotRegistered
      */
-    public function __construct($taxonomy)
+    public function __construct(WP_Taxonomy|string $taxonomy)
     {
         if ($taxonomy instanceof WP_Taxonomy) {
             $this->wpTaxonomy = $taxonomy;

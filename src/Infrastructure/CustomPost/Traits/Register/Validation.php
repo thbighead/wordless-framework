@@ -28,7 +28,7 @@ trait Validation
      */
     private static function validateNotReserved(): void
     {
-        if (Reserved::isPostTypeReservedByWordPress($type_key = static::getTypeKey())) {
+        if (Reserved::isPostTypeUsedByWordPress($type_key = static::getTypeKey())) {
             throw new ReservedCustomPostTypeKey($type_key);
         }
     }

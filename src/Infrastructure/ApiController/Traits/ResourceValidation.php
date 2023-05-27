@@ -1,10 +1,10 @@
 <?php
 
-namespace Wordless\Controller\Traits;
+namespace Wordless\Infrastructure\ApiController\Traits;
 
 use Symfony\Component\Validator\Constraint;
 use Wordless\Application\Validator;
-use Wordless\Exceptions\ValidationError;
+use Wordless\Infrastructure\ApiController\Traits\ResourceValidation\Exceptions\ValidationError;
 
 trait ResourceValidation
 {

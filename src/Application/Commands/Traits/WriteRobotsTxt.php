@@ -14,7 +14,7 @@ trait WriteRobotsTxt
      * @return void
      * @throws PathNotFoundException
      */
-    private function mountRobotsTxtFromStub(string $filename, string $new_robots_txt_filepath)
+    private function mountRobotsTxtFromStub(string $filename, string $new_robots_txt_filepath): void
     {
         $robots_txt_content = file_get_contents(ProjectPath::stubs($filename));
 

@@ -3,8 +3,8 @@
 namespace Wordless\Wordpress\Models;
 
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\WordPressFailedToFindRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
+use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 use Wordless\Wordpress\RolesList;
 use WP_Role;
 
@@ -87,7 +87,7 @@ class Role extends WP_Role
     /**
      * @param string $role
      * @return Role|null
-     * @throws WordPressFailedToFindRole
+     * @throws FailedToFindRole
      */
     public static function find(string $role): ?Role
     {
@@ -95,7 +95,7 @@ class Role extends WP_Role
             return new static($roleObject);
         }
 
-        throw new WordPressFailedToFindRole($role);
+        throw new FailedToFindRole($role);
     }
 
     public static function isDefaultByName(string $role): bool
@@ -108,7 +108,7 @@ class Role extends WP_Role
         return self::$wpRolesRepository ?? self::$wpRolesRepository = new RolesList;
     }
 
-    public function addCapability(string $capability)
+    public function addCapability(string $capability): void
     {
         $this->add_cap($capability);
     }
@@ -123,7 +123,7 @@ class Role extends WP_Role
         return $this->is_default ?? $this->is_default = self::isDefaultByName($this->name);
     }
 
-    public function removeCapability(string $capability)
+    public function removeCapability(string $capability): void
     {
         $this->remove_cap($capability);
     }
@@ -132,7 +132,7 @@ class Role extends WP_Role
      * @param bool[] $capabilities
      * @return void
      */
-    public function syncCapabilities(array $capabilities)
+    public function syncCapabilities(array $capabilities): void
     {
         foreach ($capabilities as $capability => $can) {
             $can ? $this->addCapability($capability) : $this->removeCapability($capability);

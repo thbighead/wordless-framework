@@ -3,23 +3,22 @@
 namespace Wordless\Exceptions;
 
 use Exception;
+use InvalidArgumentException;
 use Throwable;
+use Wordless\Enums\ExceptionCode;
 use Wordless\Infrastructure\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 
-class TryingToMakeNonArrayComparisonWithArrayableValues extends Exception
+class TryingToMakeNonArrayComparisonWithArrayableValues extends InvalidArgumentException
 {
-    private string $comparison;
-    /** @var mixed */
-    private $values;
-
-    public function __construct(string $comparison, $values, Throwable $previous = null)
+    public function __construct(private readonly string $comparison, private $values, ?Throwable $previous = null)
     {
-        $this->comparison = $comparison;
-        $this->values = $values;
-
-        parent::__construct('Trying to make a '
+        parent::__construct(
+            'Trying to make a '
             . MetaSubQueryBuilder::class
-            . " '$comparison' comparison with arrayable (array or CSV) value", 0, $previous);
+            . " '$this->comparison' comparison with arrayable (array or CSV) value",
+            ExceptionCode::development_error->value,
+            $previous
+        );
     }
 
     public function getComparison(): string
@@ -27,7 +26,7 @@ class TryingToMakeNonArrayComparisonWithArrayableValues extends Exception
         return $this->comparison;
     }
 
-    public function getValues()
+    public function getValues(): mixed
     {
         return $this->values;
     }

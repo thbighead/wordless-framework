@@ -8,7 +8,7 @@ use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Contracts\Traits\Singleton;
+use Wordless\Contracts\Singleton;
 use Wordless\Controller\Traits\AuthorizationCheck;
 use Wordless\Controller\Traits\ResourceValidation;
 use Wordless\Controller\Traits\RestingWordPress;

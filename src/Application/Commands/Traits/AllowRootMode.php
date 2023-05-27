@@ -2,23 +2,19 @@
 
 namespace Wordless\Application\Commands\Traits;
 
-use Symfony\Component\Console\Input\InputOption;
+use Wordless\Application\Commands\Traits\AllowRootMode\DTO\AllowRootModeOptionDTO;
 
 trait AllowRootMode
 {
-    protected function allowRootMode(): bool
+    protected function isAllowRootMode(): bool
     {
-        return (bool)$this->input->getOption(self::ALLOW_ROOT_MODE);
+        return (bool)$this->input->getOption(AllowRootModeOptionDTO::ALLOW_ROOT_MODE);
     }
 
     protected function mountAllowRootModeOption(
         string $option_description = 'Runs every WP-CLI using --allow-root flag'
-    ): array
+    ): AllowRootModeOptionDTO
     {
-        return [
-            self::OPTION_NAME_FIELD => self::ALLOW_ROOT_MODE,
-            self::OPTION_MODE_FIELD => InputOption::VALUE_NONE,
-            self::OPTION_DESCRIPTION_FIELD => $option_description,
-        ];
+        return new AllowRootModeOptionDTO($option_description);
     }
 }

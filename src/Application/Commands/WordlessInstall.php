@@ -41,10 +41,7 @@ class WordlessInstall extends ConsoleCommand
     protected static $defaultName = 'wordless:install';
 
     public const TEMP_MAIL = 'temp@mail.not.real';
-    protected const ALLOW_ROOT_MODE = 'allow-root';
-    protected const FORCE_MODE = 'force';
-    private const NO_ASK_MODE = 'no-ask';
-    private const NO_DB_CREATION_MODE = 'no-db-creation';
+    final protected const NO_ASK_MODE = 'no-ask';
     private const WORDPRESS_SALT_FILLABLE_VALUES = [
         '#AUTH_KEY',
         '#SECURE_AUTH_KEY',
@@ -106,14 +103,14 @@ class WordlessInstall extends ConsoleCommand
             $this->installWpLanguages();
             $this->makeWpBlogPublic();
             $this->runWpCliCommand('core update-db', true);
-            $this->executeWordlessCommand(
+            $this->callConsoleCommand(
                 GeneratePublicWordpressSymbolicLinks::COMMAND_NAME,
                 [],
                 $this->output
             );
-            $this->executeWordlessCommand(Migrate::COMMAND_NAME, [], $this->output);
-            $this->executeWordlessCommand(SyncRoles::COMMAND_NAME, [], $this->output);
-            $this->executeWordlessCommand(CreateInternalCache::COMMAND_NAME, [], $this->output);
+            $this->callConsoleCommand(Migrate::COMMAND_NAME, [], $this->output);
+            $this->callConsoleCommand(SyncRoles::COMMAND_NAME, [], $this->output);
+            $this->callConsoleCommand(CreateInternalCache::COMMAND_NAME, [], $this->output);
             $this->applyAdminConfiguration();
         } finally {
             $this->switchingMaintenanceMode(false);

@@ -2,35 +2,28 @@
 
 namespace Wordless\Infrastructure;
 
-use Wordless\Exceptions\QueryAlreadySet;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
+use WP_Query;
 
 abstract class QueryBuilder
 {
     protected array $arguments = [];
-    protected string $queryClass;
-    /** @var mixed $query */
-    private $query;
+    private mixed $query;
 
     public static function fromPostEntity(string $post_type = PostType::ANY): PostQueryBuilder
     {
         return new PostQueryBuilder($post_type);
     }
 
-    public function __construct(?string $queryClass)
+    public function __construct(WP_Query $wpQuery)
     {
-        $this->queryClass = $queryClass ?? get_class($this->query);
+        $this->query = $wpQuery;
     }
 
-    public function get()
+    public function get(): array
     {
         return $this->getQuery()->query($this->buildArguments());
-    }
-
-    public function resetQuery()
-    {
-        $this->query = new $this->queryClass;
     }
 
     /**
@@ -44,21 +37,5 @@ abstract class QueryBuilder
     protected function getQuery()
     {
         return $this->query;
-    }
-
-    /**
-     * @param $query
-     * @return $this
-     * @throws QueryAlreadySet
-     */
-    protected function setQuery($query): QueryBuilder
-    {
-        if (isset($this->query)) {
-            throw new QueryAlreadySet;
-        }
-
-        $this->query = $query;
-
-        return $this;
     }
 }

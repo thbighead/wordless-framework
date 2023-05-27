@@ -9,11 +9,11 @@ use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\ControllerStubMounter;
-use Wordless\Exceptions\WordPressFailedToFindRole;
 use Wordless\Infrastructure\ApiController;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 use Wordless\Wordpress\Models\Role;
+use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 
 class MakeController extends ConsoleCommand
 {
@@ -60,7 +60,7 @@ class MakeController extends ConsoleCommand
      * @return int
      * @throws FailedToCopyStub
      * @throws PathNotFoundException
-     * @throws WordPressFailedToFindRole
+     * @throws FailedToFindRole
      */
     protected function runIt(): int
     {
@@ -88,7 +88,7 @@ class MakeController extends ConsoleCommand
     /**
      * @param string $controller_class_name
      * @return void
-     * @throws WordPressFailedToFindRole
+     * @throws FailedToFindRole
      */
     private function resolveNoPermissionsMode(string $controller_class_name)
     {

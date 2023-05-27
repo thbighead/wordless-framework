@@ -13,9 +13,9 @@ class CreateInternalCache extends ConsoleCommand
 {
     use LoadWpConfig;
 
-    protected static $defaultName = self::COMMAND_NAME;
+    final public const COMMAND_NAME = 'cache:create';
 
-    public const COMMAND_NAME = 'cache:create';
+    protected static $defaultName = self::COMMAND_NAME;
 
     protected function arguments(): array
     {
@@ -24,12 +24,12 @@ class CreateInternalCache extends ConsoleCommand
 
     protected function description(): string
     {
-        return 'Generate Wordless internal cache files.';
+        return "{$this->help()} This avoid uses of reflections and calculations throughout system booting.";
     }
 
     protected function help(): string
     {
-        return 'Generate Wordless internal cache files to avoid some uses of reflections and calculations throughout system booting.';
+        return 'Generate Wordless internal cache files.';
     }
 
     protected function options(): array
@@ -42,13 +42,13 @@ class CreateInternalCache extends ConsoleCommand
         try {
             $this->wrapScriptWithMessages(
                 'Generating internal caches...',
-                function () {
-                    InternalCache::generate();
-                }
+                fn() => InternalCache::generate()
             );
+
             return Command::SUCCESS;
         } catch (FailedToCopyStub|PathNotFoundException $exception) {
-            $this->writelnError($exception->getMessage());
+            $this->writelnDanger($exception->getMessage());
+
             return Command::FAILURE;
         }
     }

@@ -49,11 +49,7 @@ class TaxonomyTermsList
         return self::$taxonomy_terms_keyed_by_id;
     }
 
-    /**
-     * @param string|int $category
-     * @return WP_Term|null
-     */
-    public function find($category): ?WP_Term
+    public function find(int|string $category): ?WP_Term
     {
         if (is_int($category) || is_numeric($category)) {
             return $this->getById((int)$category);

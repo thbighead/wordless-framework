@@ -5,8 +5,8 @@ namespace Wordless\Application\Helpers;
 use DateTimeInterface;
 use Wordless\Application\Helpers\DataCache\Exceptions\FailedToSetTransient;
 use Wordless\Application\Helpers\DataCache\Exceptions\InvalidTransientExpirationValue;
-use Wordless\Exceptions\TransientKeyIsTooLong;
-use Wordless\Exceptions\TransientKeyNotFound;
+use Wordless\Application\Helpers\DataCache\Exceptions\TransientKeyIsTooLong;
+use Wordless\Application\Helpers\DataCache\Exceptions\TransientKeyNotFound;
 
 class DataCache
 {

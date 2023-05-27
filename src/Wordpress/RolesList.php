@@ -5,12 +5,12 @@ namespace Wordless\Wordpress;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\WordPressFailedToFindRole;
 use Wordless\Infrastructure\ApiController;
 use Wordless\Wordpress\Models\CustomTaxonomyTerm;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
+use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 use WP_Roles;
 
 class RolesList extends WP_Roles
@@ -41,7 +41,7 @@ class RolesList extends WP_Roles
      * @return void
      * @throws FailedToCreateRole
      * @throws PathNotFoundException
-     * @throws WordPressFailedToFindRole
+     * @throws FailedToFindRole
      */
     public static function sync()
     {
@@ -59,7 +59,7 @@ class RolesList extends WP_Roles
         foreach (Config::tryToGetOrDefault('permissions', []) as $role_key => $permissions) {
             try {
                 $role = Role::find($role_key);
-            } catch (WordPressFailedToFindRole $exception) {
+            } catch (FailedToFindRole $exception) {
                 Role::create(
                     Str::titleCase($role_key),
                     array_filter($permissions, function (bool $value) {
@@ -96,7 +96,7 @@ class RolesList extends WP_Roles
     /**
      * @return void
      * @throws PathNotFoundException
-     * @throws WordPressFailedToFindRole
+     * @throws FailedToFindRole
      */
     public static function syncPermissionsToAdminAsDefault()
     {
@@ -108,7 +108,7 @@ class RolesList extends WP_Roles
      * @param Role $role
      * @return void
      * @throws PathNotFoundException
-     * @throws WordPressFailedToFindRole
+     * @throws FailedToFindRole
      */
     public static function syncRestResourcesPermissionsToRole(Role $role)
     {
@@ -137,7 +137,7 @@ class RolesList extends WP_Roles
      * @param string $controller_full_namespace
      * @param Role $role
      * @return void
-     * @throws WordPressFailedToFindRole
+     * @throws FailedToFindRole
      */
     private static function requireAndRegisterControllersPermissions(string $controller_pathing, string $controller_full_namespace, Role $role)
     {
