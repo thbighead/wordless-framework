@@ -3,7 +3,8 @@
 namespace Wordless\Application\Hookers;
 
 use Wordless\Infrastructure\Hooker;
-use Wordless\Enums\AdminMenuItemPosition;
+use Wordless\Wordpress\Enums\AdminMenuItemPosition;
+use Wordless\Wordpress\Enums\DashIcon;
 
 class ShowCustomFrontPageAtAdminSideMenu extends Hooker
 {
@@ -33,7 +34,7 @@ class ShowCustomFrontPageAtAdminSideMenu extends Hooker
                 'edit_published_posts',
                 "post.php?action=edit&post=$front_page_id",
                 null,
-                'dashicons-admin-home',
+                DashIcon::home->value,
                 AdminMenuItemPosition::AFTER_FIRST_SEPARATOR->value
             );
         }

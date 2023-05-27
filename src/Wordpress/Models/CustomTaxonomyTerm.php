@@ -2,29 +2,26 @@
 
 namespace Wordless\Wordpress\Models;
 
-use Wordless\Enums\MetaType;
-use Wordless\Infrastructure\Http\RelatedMetaData;
 use Wordless\Infrastructure\Taxonomy;
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
-use Wordless\Wordpress\Models\Traits\WithMetaData;
 use WP_Term;
 
-class CustomTaxonomyTerm implements RelatedMetaData
+class CustomTaxonomyTerm implements IRelatedMetaData
 {
     use WithAcfs, WithMetaData;
 
     protected Taxonomy $taxonomy;
     private WP_Term $wpTaxonomyTerm;
 
-    public static function objectType(): string
+    public static function objectType(): MetableObjectType
     {
-        return MetaType::TERM;
+        return MetableObjectType::term;
     }
 
-    /**
-     * @param WP_Term|int $taxonomyTerm
-     */
-    public function __construct($taxonomyTerm, bool $with_acfs = true)
+    public function __construct(WP_Term|int $taxonomyTerm, bool $with_acfs = true)
     {
         $this->wpTaxonomyTerm = $taxonomyTerm instanceof WP_Term ? $taxonomyTerm : get_term($taxonomyTerm);
         $this->taxonomy = Taxonomy::find($this->wpTaxonomyTerm->taxonomy);
@@ -44,7 +41,7 @@ class CustomTaxonomyTerm implements RelatedMetaData
         return $this->taxonomy;
     }
 
-    private function loadTaxonomyAcfs(int $term_id)
+    private function loadTaxonomyAcfs(int $term_id): void
     {
         $this->loadAcfs("{$this->taxonomy->name}_$term_id");
     }

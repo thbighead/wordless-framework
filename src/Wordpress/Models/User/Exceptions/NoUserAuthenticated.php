@@ -4,7 +4,7 @@ namespace Wordless\Wordpress\Models\User\Exceptions;
 
 use DomainException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 use Wordless\Wordpress\Models\User;
 
 class NoUserAuthenticated extends DomainException

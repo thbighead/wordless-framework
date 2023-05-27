@@ -4,7 +4,7 @@ namespace Wordless\Core\InternalCache\Exceptions;
 
 use DomainException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class InvalidCache extends DomainException
 {

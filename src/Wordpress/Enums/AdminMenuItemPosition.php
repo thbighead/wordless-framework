@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Enums;
+namespace Wordless\Wordpress\Enums;
 
 enum AdminMenuItemPosition: int
 {

@@ -4,7 +4,7 @@ namespace Wordless\Core\Composer\Traits\SetHostFromNginx\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class UnavailableNginxServerName extends Exception
 {

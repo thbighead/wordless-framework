@@ -4,7 +4,7 @@ namespace Wordless\Infrastructure\ApiController\Traits\ResourceValidation\Except
 
 use InvalidArgumentException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 use Wordless\Infrastructure\Http\Response;
 
 class ValidationError extends InvalidArgumentException

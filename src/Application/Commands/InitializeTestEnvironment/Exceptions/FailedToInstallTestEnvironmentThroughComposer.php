@@ -4,7 +4,7 @@ namespace Wordless\Application\Commands\InitializeTestEnvironment\Exceptions;
 
 use ErrorException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToInstallTestEnvironmentThroughComposer extends ErrorException
 {

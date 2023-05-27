@@ -4,7 +4,7 @@ namespace Wordless\Application\Commands\Migrate\Exceptions;
 
 use DomainException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToFindMigrationScript extends DomainException
 {

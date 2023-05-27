@@ -5,7 +5,7 @@ namespace Wordless\Application\Helpers\DirestoryFiles\Exceptions;
 use InvalidArgumentException;
 use Throwable;
 use Wordless\Core\InternalCache;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToFindCachedKey extends InvalidArgumentException
 {

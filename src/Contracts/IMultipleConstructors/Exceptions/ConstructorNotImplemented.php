@@ -5,7 +5,7 @@ namespace Wordless\Contracts\IMultipleConstructors\Exceptions;
 use BadMethodCallException;
 use Throwable;
 use Wordless\Contracts\IMultipleConstructors\Traits\MultipleConstructorsGuesser;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class ConstructorNotImplemented extends BadMethodCallException
 {

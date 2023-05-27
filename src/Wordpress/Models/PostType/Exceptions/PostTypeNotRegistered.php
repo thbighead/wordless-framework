@@ -4,7 +4,7 @@ namespace Wordless\Wordpress\Models\PostType\Exceptions;
 
 use InvalidArgumentException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class PostTypeNotRegistered extends InvalidArgumentException
 {

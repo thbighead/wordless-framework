@@ -4,8 +4,8 @@ namespace Wordless\Infrastructure\CustomPost\Traits\Register\Validation\Exceptio
 
 use InvalidArgumentException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
 use Wordless\Infrastructure\CustomPost;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class InvalidCustomPostTypeKey extends InvalidArgumentException
 {

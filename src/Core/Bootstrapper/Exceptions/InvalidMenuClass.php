@@ -4,7 +4,7 @@ namespace Wordless\Core\Bootstrapper\Exceptions;
 
 use ErrorException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 use Wordless\Infrastructure\Menu;
 
 class InvalidMenuClass extends ErrorException

@@ -4,7 +4,7 @@ namespace Wordless\Application\Commands\Exceptions;
 
 use ErrorException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class CliReturnedNonZero extends ErrorException
 {

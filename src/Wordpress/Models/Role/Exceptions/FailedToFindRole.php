@@ -4,7 +4,7 @@ namespace Wordless\Wordpress\Models\Role\Exceptions;
 
 use InvalidArgumentException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToFindRole extends InvalidArgumentException
 {

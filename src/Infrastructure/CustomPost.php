@@ -21,20 +21,17 @@ abstract class CustomPost extends Post
     private PostType $type;
 
     /**
-     * @param WP_Post|int $post
+     * @param int|WP_Post $post
      * @param bool $with_acfs
      * @throws PostTypeNotRegistered
      */
-    public function __construct($post, bool $with_acfs = true)
+    public function __construct(WP_Post|int $post, bool $with_acfs = true)
     {
         parent::__construct($post, $with_acfs);
 
         $this->type = new PostType($this->post_type);
     }
 
-    /**
-     * @return PostType
-     */
     public function getType(): PostType
     {
         return $this->type;

@@ -4,7 +4,7 @@ namespace Wordless\Infrastructure\Taxonomy\Exceptions;
 
 use InvalidArgumentException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class TaxonomyNotRegistered extends InvalidArgumentException
 {

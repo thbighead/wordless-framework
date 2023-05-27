@@ -5,7 +5,7 @@ use Wordless\Application\Hookers\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Application\Hookers\HideDiagnosticsFromUserRoles;
 use Wordless\Core\Bootstrapper;
 use Wordless\Core\WpSpeedUp;
-use Wordless\Enums\StartOfWeek;
+use Wordless\Wordpress\Enums\StartOfWeek;
 use Wordless\Wordpress\Models\Role;
 
 return [
@@ -18,7 +18,7 @@ return [
         Role::AUTHOR => false,
     ],
     Bootstrapper::MENUS_CONFIG_KEY => [],
-    StartOfWeek::KEY => StartOfWeek::SUNDAY,
+    StartOfWeek::KEY => StartOfWeek::sunday->value,
     'datetime' => [
         'timezone' => 'UTC+0',
         'date_format' => 'F j, Y',

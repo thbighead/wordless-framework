@@ -4,7 +4,7 @@ namespace Wordless\Wordpress\Models\Role\Exceptions;
 
 use ErrorException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToCreateRole extends ErrorException
 {

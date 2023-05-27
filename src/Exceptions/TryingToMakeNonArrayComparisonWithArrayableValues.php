@@ -2,10 +2,9 @@
 
 namespace Wordless\Exceptions;
 
-use Exception;
 use InvalidArgumentException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 use Wordless\Infrastructure\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 
 class TryingToMakeNonArrayComparisonWithArrayableValues extends InvalidArgumentException

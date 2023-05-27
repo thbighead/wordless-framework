@@ -2,14 +2,14 @@
 
 namespace Wordless\Wordpress\Models;
 
-use Wordless\Enums\MetaType;
-use Wordless\Infrastructure\Http\RelatedMetaData;
 use Wordless\Wordpress\CategoriesList;
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
+use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
-use Wordless\Wordpress\Models\Traits\WithMetaData;
 use WP_Term;
 
-class Category implements RelatedMetaData
+class Category implements IRelatedMetaData
 {
     use WithAcfs, WithMetaData;
 
@@ -26,11 +26,7 @@ class Category implements RelatedMetaData
         return self::getCategoriesList()->all();
     }
 
-    /**
-     * @param string|int $category
-     * @return WP_Term|null
-     */
-    public static function find($category): ?WP_Term
+    public static function find(int|string $category): ?WP_Term
     {
         if (is_int($category) || is_numeric($category)) {
             return static::getById((int)$category);
@@ -54,9 +50,9 @@ class Category implements RelatedMetaData
         return self::getCategoriesList()->getBySlug($slug);
     }
 
-    public static function objectType(): string
+    public static function objectType(): MetableObjectType
     {
-        return MetaType::TERM;
+        return MetableObjectType::term;
     }
 
     private static function getCategoriesList(): CategoriesList
@@ -64,11 +60,7 @@ class Category implements RelatedMetaData
         return self::$categories ?? self::$categories = new CategoriesList;
     }
 
-    /**
-     * @param WP_Term|int|string $category
-     * @param bool $with_acfs
-     */
-    public function __construct($category, bool $with_acfs = true)
+    public function __construct(WP_Term|int|string $category, bool $with_acfs = true)
     {
         $this->wpCategory = $category instanceof WP_Term ? $category : static::find($category);
 
@@ -82,7 +74,7 @@ class Category implements RelatedMetaData
         return $this->wpCategory;
     }
 
-    private function loadCategoryAcfs(int $from_id)
+    private function loadCategoryAcfs(int $from_id): void
     {
         $this->loadAcfs("category_$from_id");
     }

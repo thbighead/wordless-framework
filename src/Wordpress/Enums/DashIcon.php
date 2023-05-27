@@ -1,671 +1,671 @@
-<?php /** @noinspection PhpUnused */
+<?php
 
-namespace Wordless\Application\Helpers;
+namespace Wordless\Wordpress\Enums;
 
-class DashIcon
+enum DashIcon: string
 {
     private const DASHICON_PREFIX = 'dashicons-';
 
     /** @var string https://developer.wordpress.org/resource/dashicons/#menu */
-    public const MENU_1 = self::DASHICON_PREFIX . 'menu';
+    case menu_1 = self::DASHICON_PREFIX . 'menu';
     /** @var string https://developer.wordpress.org/resource/dashicons/#menu-alt */
-    public const MENU_2 = self::DASHICON_PREFIX . 'menu-alt';
+    case menu_2 = self::DASHICON_PREFIX . 'menu-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#menu-alt2 */
-    public const MENU_3 = self::DASHICON_PREFIX . 'menu-alt2';
+    case menu_3 = self::DASHICON_PREFIX . 'menu-alt2';
     /** @var string https://developer.wordpress.org/resource/dashicons/#menu-alt3 */
-    public const MENU_4 = self::DASHICON_PREFIX . 'menu-alt3';
+    case menu_4 = self::DASHICON_PREFIX . 'menu-alt3';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-site */
-    public const WORLD_AMERICA = self::DASHICON_PREFIX . 'admin-site';
+    case world_america = self::DASHICON_PREFIX . 'admin-site';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-site-alt */
-    public const WORLD_EUROPE_AND_AFRICA = self::DASHICON_PREFIX . 'admin-site-alt';
+    case world_europe_and_africa = self::DASHICON_PREFIX . 'admin-site-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-site-alt2 */
-    public const WORLD_EAST = self::DASHICON_PREFIX . 'admin-site-alt2';
+    case world_east = self::DASHICON_PREFIX . 'admin-site-alt2';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-site-alt3 */
-    public const WORLD_GENERAL = self::DASHICON_PREFIX . 'admin-site-alt3';
+    case world_general = self::DASHICON_PREFIX . 'admin-site-alt3';
     /** @var string https://developer.wordpress.org/resource/dashicons/#dashboard */
-    public const DASHBOARD_1 = self::DASHICON_PREFIX . 'dashboard';
+    case dashboard_1 = self::DASHICON_PREFIX . 'dashboard';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-post */
-    public const PIN_1 = self::DASHICON_PREFIX . 'admin-post';
+    case pin_1 = self::DASHICON_PREFIX . 'admin-post';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-media */
-    public const MEDIA = self::DASHICON_PREFIX . 'admin-media';
+    case media = self::DASHICON_PREFIX . 'admin-media';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-links */
-    public const HYPERLINK = self::DASHICON_PREFIX . 'admin-links';
+    case hyperlink = self::DASHICON_PREFIX . 'admin-links';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-page */
-    public const COPY = self::DASHICON_PREFIX . 'admin-page';
+    case copy = self::DASHICON_PREFIX . 'admin-page';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-comments */
-    public const COMMENT_1 = self::DASHICON_PREFIX . 'admin-comments';
+    case comment_1 = self::DASHICON_PREFIX . 'admin-comments';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-appearance */
-    public const BRUSH = self::DASHICON_PREFIX . 'admin-appearance';
+    case brush = self::DASHICON_PREFIX . 'admin-appearance';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-plugins */
-    public const PLUG = self::DASHICON_PREFIX . 'admin-plugins';
+    case plug = self::DASHICON_PREFIX . 'admin-plugins';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-users */
-    public const USER_1 = self::DASHICON_PREFIX . 'admin-users';
+    case user_1 = self::DASHICON_PREFIX . 'admin-users';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-tools */
-    public const TOOL = self::DASHICON_PREFIX . 'admin-tools';
+    case tool = self::DASHICON_PREFIX . 'admin-tools';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-settings */
-    public const SETTING = self::DASHICON_PREFIX . 'admin-settings';
+    case setting = self::DASHICON_PREFIX . 'admin-settings';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-network */
-    public const KEY_1 = self::DASHICON_PREFIX . 'admin-network';
+    case key_1 = self::DASHICON_PREFIX . 'admin-network';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-home */
-    public const HOME = self::DASHICON_PREFIX . 'admin-home';
+    case home = self::DASHICON_PREFIX . 'admin-home';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-generic */
-    public const GEAR = self::DASHICON_PREFIX . 'admin-generic';
+    case gear = self::DASHICON_PREFIX . 'admin-generic';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-collapse */
-    public const CIRCLE_ARROW_LEFT = self::DASHICON_PREFIX . 'admin-collapse';
+    case circle_arrow_left = self::DASHICON_PREFIX . 'admin-collapse';
     /** @var string https://developer.wordpress.org/resource/dashicons/#filter */
-    public const FILTER = self::DASHICON_PREFIX . 'filter';
+    case filter = self::DASHICON_PREFIX . 'filter';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-customizer */
-    public const PAINTBRUSH = self::DASHICON_PREFIX . 'admin-customizer';
+    case paintbrush = self::DASHICON_PREFIX . 'admin-customizer';
     /** @var string https://developer.wordpress.org/resource/dashicons/#admin-multisite */
-    public const HOUSES = self::DASHICON_PREFIX . 'admin-multisite';
+    case houses = self::DASHICON_PREFIX . 'admin-multisite';
     /** @var string https://developer.wordpress.org/resource/dashicons/#welcome-write-blog */
-    public const WRITE = self::DASHICON_PREFIX . 'welcome-write-blog';
+    case write = self::DASHICON_PREFIX . 'welcome-write-blog';
     /** @var string https://developer.wordpress.org/resource/dashicons/#welcome-add-page */
-    public const ADD_PAGE = self::DASHICON_PREFIX . 'welcome-add-page';
+    case add_page = self::DASHICON_PREFIX . 'welcome-add-page';
     /** @var string https://developer.wordpress.org/resource/dashicons/#welcome-view-site */
-    public const SCREEN_VISIBILITY = self::DASHICON_PREFIX . 'welcome-view-site';
+    case screen_visibility = self::DASHICON_PREFIX . 'welcome-view-site';
     /** @var string https://developer.wordpress.org/resource/dashicons/#welcome-widgets-menus */
-    public const DASHBOARD_2 = self::DASHICON_PREFIX . 'welcome-widgets-menus';
+    case dashboard_2 = self::DASHICON_PREFIX . 'welcome-widgets-menus';
     /** @var string https://developer.wordpress.org/resource/dashicons/#welcome-comments */
-    public const COMMENT_BLOCKED = self::DASHICON_PREFIX . 'welcome-comments';
+    case comment_blocked = self::DASHICON_PREFIX . 'welcome-comments';
     /** @var string https://developer.wordpress.org/resource/dashicons/#welcome-learn-more */
-    public const GRADUATION_CAP = self::DASHICON_PREFIX . 'welcome-learn-more';
+    case graduation_cap = self::DASHICON_PREFIX . 'welcome-learn-more';
     /** @var string https://developer.wordpress.org/resource/dashicons/#format-aside */
-    public const PAGE = self::DASHICON_PREFIX . 'format-aside';
+    case page = self::DASHICON_PREFIX . 'format-aside';
     /** @var string https://developer.wordpress.org/resource/dashicons/#format-image */
-    public const IMAGE = self::DASHICON_PREFIX . 'format-image';
+    case image = self::DASHICON_PREFIX . 'format-image';
     /** @var string https://developer.wordpress.org/resource/dashicons/#format-gallery */
-    public const GALLERY = self::DASHICON_PREFIX . 'format-gallery';
+    case gallery = self::DASHICON_PREFIX . 'format-gallery';
     /** @var string https://developer.wordpress.org/resource/dashicons/#format-video */
-    public const VIDEO_1 = self::DASHICON_PREFIX . 'format-video';
+    case video_1 = self::DASHICON_PREFIX . 'format-video';
     /** @var string https://developer.wordpress.org/resource/dashicons/#format-status */
-    public const COMMENT_DOTS = self::DASHICON_PREFIX . 'format-status';
+    case comment_dots = self::DASHICON_PREFIX . 'format-status';
     /** @var string https://developer.wordpress.org/resource/dashicons/#format-quote */
-    public const QUOTE_1 = self::DASHICON_PREFIX . 'format-quote';
+    case quote_1 = self::DASHICON_PREFIX . 'format-quote';
     /** @var string https://developer.wordpress.org/resource/dashicons/#format-chat */
-    public const CHAT = self::DASHICON_PREFIX . 'format-chat';
+    case chat = self::DASHICON_PREFIX . 'format-chat';
     /** @var string https://developer.wordpress.org/resource/dashicons/#format-audio */
-    public const AUDIO = self::DASHICON_PREFIX . 'format-audio';
+    case audio = self::DASHICON_PREFIX . 'format-audio';
     /** @var string https://developer.wordpress.org/resource/dashicons/#camera */
-    public const CAMERA_1 = self::DASHICON_PREFIX . 'camera';
+    case camera_1 = self::DASHICON_PREFIX . 'camera';
     /** @var string https://developer.wordpress.org/resource/dashicons/#camera-alt */
-    public const CAMERA_2 = self::DASHICON_PREFIX . 'camera-alt';
+    case camera_2 = self::DASHICON_PREFIX . 'camera-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#images-alt */
-    public const IMAGES_1 = self::DASHICON_PREFIX . 'images-alt';
+    case images_1 = self::DASHICON_PREFIX . 'images-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#images-alt2 */
-    public const IMAGES_2 = self::DASHICON_PREFIX . 'images-alt2';
+    case images_2 = self::DASHICON_PREFIX . 'images-alt2';
     /** @var string https://developer.wordpress.org/resource/dashicons/#video-alt */
-    public const CAMERA_3 = self::DASHICON_PREFIX . 'video-alt';
+    case camera_3 = self::DASHICON_PREFIX . 'video-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#video-alt2 */
-    public const CAMERA_4 = self::DASHICON_PREFIX . 'video-alt2';
+    case camera_4 = self::DASHICON_PREFIX . 'video-alt2';
     /** @var string https://developer.wordpress.org/resource/dashicons/#video-alt3 */
-    public const PLAY_BUTTON = self::DASHICON_PREFIX . 'video-alt3';
+    case play_button = self::DASHICON_PREFIX . 'video-alt3';
     /** @var string https://developer.wordpress.org/resource/dashicons/#media-archive */
-    public const FILE_COMPRESSED = self::DASHICON_PREFIX . 'media-archive';
+    case file_compressed = self::DASHICON_PREFIX . 'media-archive';
     /** @var string https://developer.wordpress.org/resource/dashicons/#media-audio */
-    public const FILE_AUDIO = self::DASHICON_PREFIX . 'media-audio';
+    case file_audio = self::DASHICON_PREFIX . 'media-audio';
     /** @var string https://developer.wordpress.org/resource/dashicons/#media-code */
-    public const FILE_CODE = self::DASHICON_PREFIX . 'media-code';
+    case file_code = self::DASHICON_PREFIX . 'media-code';
     /** @var string https://developer.wordpress.org/resource/dashicons/#media-default */
-    public const FILE = self::DASHICON_PREFIX . 'media-default';
+    case file = self::DASHICON_PREFIX . 'media-default';
     /** @var string https://developer.wordpress.org/resource/dashicons/#media-document */
-    public const FILE_DOCUMENT = self::DASHICON_PREFIX . 'media-document';
+    case file_document = self::DASHICON_PREFIX . 'media-document';
     /** @var string https://developer.wordpress.org/resource/dashicons/#media-interactive */
-    public const FILE_CERTIFICATION = self::DASHICON_PREFIX . 'media-interactive';
+    case file_certification = self::DASHICON_PREFIX . 'media-interactive';
     /** @var string https://developer.wordpress.org/resource/dashicons/#media-spreadsheet */
-    public const FILE_SPREADSHEET = self::DASHICON_PREFIX . 'media-spreadsheet';
+    case file_spreadsheet = self::DASHICON_PREFIX . 'media-spreadsheet';
     /** @var string https://developer.wordpress.org/resource/dashicons/#media-text */
-    public const FILE_TEXT_1 = self::DASHICON_PREFIX . 'media-text';
+    case file_text_1 = self::DASHICON_PREFIX . 'media-text';
     /** @var string https://developer.wordpress.org/resource/dashicons/#media-video */
-    public const FILE_VIDEO = self::DASHICON_PREFIX . 'media-video';
+    case file_video = self::DASHICON_PREFIX . 'media-video';
     /** @var string https://developer.wordpress.org/resource/dashicons/#playlist-audio */
-    public const PLAYLIST_AUDIO = self::DASHICON_PREFIX . 'playlist-audio';
+    case playlist_audio = self::DASHICON_PREFIX . 'playlist-audio';
     /** @var string https://developer.wordpress.org/resource/dashicons/#playlist-video */
-    public const PLAYLIST_VIDEO = self::DASHICON_PREFIX . 'playlist-video';
+    case playlist_video = self::DASHICON_PREFIX . 'playlist-video';
     /** @var string https://developer.wordpress.org/resource/dashicons/#controls-play */
-    public const PLAY = self::DASHICON_PREFIX . 'controls-play';
+    case play = self::DASHICON_PREFIX . 'controls-play';
     /** @var string https://developer.wordpress.org/resource/dashicons/#controls-pause */
-    public const PAUSE = self::DASHICON_PREFIX . 'controls-pause';
+    case pause = self::DASHICON_PREFIX . 'controls-pause';
     /** @var string https://developer.wordpress.org/resource/dashicons/#controls-forward */
-    public const FORWARD = self::DASHICON_PREFIX . 'controls-forward';
+    case forward = self::DASHICON_PREFIX . 'controls-forward';
     /** @var string https://developer.wordpress.org/resource/dashicons/#controls-skipforward */
-    public const SKIP_FORWARD = self::DASHICON_PREFIX . 'controls-skipforward';
+    case skip_forward = self::DASHICON_PREFIX . 'controls-skipforward';
     /** @var string https://developer.wordpress.org/resource/dashicons/#controls-back */
-    public const BACK = self::DASHICON_PREFIX . 'controls-back';
+    case back = self::DASHICON_PREFIX . 'controls-back';
     /** @var string https://developer.wordpress.org/resource/dashicons/#controls-skipback */
-    public const SKIP_BACK = self::DASHICON_PREFIX . 'controls-skipback';
+    case skip_back = self::DASHICON_PREFIX . 'controls-skipback';
     /** @var string https://developer.wordpress.org/resource/dashicons/#controls-repeat */
-    public const REPEAT = self::DASHICON_PREFIX . 'controls-repeat';
+    case repeat = self::DASHICON_PREFIX . 'controls-repeat';
     /** @var string https://developer.wordpress.org/resource/dashicons/#controls-volumeon */
-    public const VOLUME_ON = self::DASHICON_PREFIX . 'controls-volumeon';
+    case volume_on = self::DASHICON_PREFIX . 'controls-volumeon';
     /** @var string https://developer.wordpress.org/resource/dashicons/#controls-volumeoff */
-    public const VOLUME_OFF = self::DASHICON_PREFIX . 'controls-volumeoff';
+    case volume_off = self::DASHICON_PREFIX . 'controls-volumeoff';
     /** @var string https://developer.wordpress.org/resource/dashicons/#image-crop */
-    public const CROP_IMAGE = self::DASHICON_PREFIX . 'image-crop';
+    case crop_image = self::DASHICON_PREFIX . 'image-crop';
     /** @var string https://developer.wordpress.org/resource/dashicons/#image-rotate */
-    public const REFRESH = self::DASHICON_PREFIX . 'image-rotate';
+    case refresh = self::DASHICON_PREFIX . 'image-rotate';
     /** @var string https://developer.wordpress.org/resource/dashicons/#image-rotate-left */
-    public const ROTATE_LEFT = self::DASHICON_PREFIX . 'image-rotate-left';
+    case rotate_left = self::DASHICON_PREFIX . 'image-rotate-left';
     /** @var string https://developer.wordpress.org/resource/dashicons/#image-rotate-right */
-    public const ROTATE_RIGHT = self::DASHICON_PREFIX . 'image-rotate-right';
+    case rotate_right = self::DASHICON_PREFIX . 'image-rotate-right';
     /** @var string https://developer.wordpress.org/resource/dashicons/#image-flip-vertical */
-    public const FLIP_VERTICAL = self::DASHICON_PREFIX . 'image-flip-vertical';
+    case flip_vertical = self::DASHICON_PREFIX . 'image-flip-vertical';
     /** @var string https://developer.wordpress.org/resource/dashicons/#image-flip-horizontal */
-    public const FLIP_HORIZONTAL = self::DASHICON_PREFIX . 'image-flip-horizontal';
+    case flip_horizontal = self::DASHICON_PREFIX . 'image-flip-horizontal';
     /** @var string https://developer.wordpress.org/resource/dashicons/#image-filter */
-    public const CIRCLES_TRIANGLE = self::DASHICON_PREFIX . 'image-filter';
+    case circles_triangle = self::DASHICON_PREFIX . 'image-filter';
     /** @var string https://developer.wordpress.org/resource/dashicons/#undo */
-    public const UNDO = self::DASHICON_PREFIX . 'undo';
+    case undo = self::DASHICON_PREFIX . 'undo';
     /** @var string https://developer.wordpress.org/resource/dashicons/#redo */
-    public const REDO = self::DASHICON_PREFIX . 'redo';
+    case redo = self::DASHICON_PREFIX . 'redo';
     /** @var string https://developer.wordpress.org/resource/dashicons/#database-add */
-    public const DATABASE_ADD = self::DASHICON_PREFIX . 'database-add';
+    case database_add = self::DASHICON_PREFIX . 'database-add';
     /** @var string https://developer.wordpress.org/resource/dashicons/#database */
-    public const DATABASE = self::DASHICON_PREFIX . 'database';
+    case database = self::DASHICON_PREFIX . 'database';
     /** @var string https://developer.wordpress.org/resource/dashicons/#database-export */
-    public const DATABASE_EXPORT = self::DASHICON_PREFIX . 'database-export';
+    case database_export = self::DASHICON_PREFIX . 'database-export';
     /** @var string https://developer.wordpress.org/resource/dashicons/#database-import */
-    public const DATABASE_IMPORT = self::DASHICON_PREFIX . 'database-import';
+    case database_import = self::DASHICON_PREFIX . 'database-import';
     /** @var string https://developer.wordpress.org/resource/dashicons/#database-remove */
-    public const DATABASE_REMOVE = self::DASHICON_PREFIX . 'database-remove';
+    case database_remove = self::DASHICON_PREFIX . 'database-remove';
     /** @var string https://developer.wordpress.org/resource/dashicons/#database-view */
-    public const DATABASE_CHECKED = self::DASHICON_PREFIX . 'database-view';
+    case database_checked = self::DASHICON_PREFIX . 'database-view';
     /** @var string https://developer.wordpress.org/resource/dashicons/#align-full-width */
-    public const ALIGN_TOP = self::DASHICON_PREFIX . 'align-full-width';
+    case align_top = self::DASHICON_PREFIX . 'align-full-width';
     /** @var string https://developer.wordpress.org/resource/dashicons/#align-pull-left */
-    public const ALIGN_LEFT = self::DASHICON_PREFIX . 'align-pull-left';
+    case align_left = self::DASHICON_PREFIX . 'align-pull-left';
     /** @var string https://developer.wordpress.org/resource/dashicons/#align-pull-right */
-    public const ALIGN_RIGHT = self::DASHICON_PREFIX . 'align-pull-right';
+    case align_right = self::DASHICON_PREFIX . 'align-pull-right';
     /** @var string https://developer.wordpress.org/resource/dashicons/#align-wide */
-    public const ALIGN_CENTER_VERTICAL = self::DASHICON_PREFIX . 'align-wide';
+    case align_center_vertical = self::DASHICON_PREFIX . 'align-wide';
     /** @var string https://developer.wordpress.org/resource/dashicons/#block-default */
-    public const TOY_BLOCK = self::DASHICON_PREFIX . 'block-default';
+    case toy_block = self::DASHICON_PREFIX . 'block-default';
     /** @var string https://developer.wordpress.org/resource/dashicons/#button */
-    public const KEYBOARD_BUTTON = self::DASHICON_PREFIX . 'button';
+    case keyboard_button = self::DASHICON_PREFIX . 'button';
     /** @var string https://developer.wordpress.org/resource/dashicons/#cloud-saved */
-    public const CLOUD_CHECKED = self::DASHICON_PREFIX . 'cloud-saved';
+    case cloud_checked = self::DASHICON_PREFIX . 'cloud-saved';
     /** @var string https://developer.wordpress.org/resource/dashicons/#cloud-upload */
-    public const CLOUD_UPLOAD = self::DASHICON_PREFIX . 'cloud-upload';
+    case cloud_upload = self::DASHICON_PREFIX . 'cloud-upload';
     /** @var string https://developer.wordpress.org/resource/dashicons/#columns */
-    public const COLUMNS = self::DASHICON_PREFIX . 'columns';
+    case columns = self::DASHICON_PREFIX . 'columns';
     /** @var string https://developer.wordpress.org/resource/dashicons/#cover-image */
-    public const ALIGN_TOP_IMAGE = self::DASHICON_PREFIX . 'cover-image';
+    case align_top_image = self::DASHICON_PREFIX . 'cover-image';
     /** @var string https://developer.wordpress.org/resource/dashicons/#ellipsis */
-    public const ELLIPSIS = self::DASHICON_PREFIX . 'ellipsis';
+    case ellipsis = self::DASHICON_PREFIX . 'ellipsis';
     /** @var string https://developer.wordpress.org/resource/dashicons/#embed-audio */
-    public const EMBED_AUDIO = self::DASHICON_PREFIX . 'embed-audio';
+    case embed_audio = self::DASHICON_PREFIX . 'embed-audio';
     /** @var string https://developer.wordpress.org/resource/dashicons/#embed-generic */
-    public const EMBED = self::DASHICON_PREFIX . 'embed-generic';
+    case embed = self::DASHICON_PREFIX . 'embed-generic';
     /** @var string https://developer.wordpress.org/resource/dashicons/#embed-photo */
-    public const EMBED_IMAGE = self::DASHICON_PREFIX . 'embed-photo';
+    case embed_image = self::DASHICON_PREFIX . 'embed-photo';
     /** @var string https://developer.wordpress.org/resource/dashicons/#embed-post */
-    public const EMBED_LOCALIZATION = self::DASHICON_PREFIX . 'embed-post';
+    case embed_localization = self::DASHICON_PREFIX . 'embed-post';
     /** @var string https://developer.wordpress.org/resource/dashicons/#embed-video */
-    public const EMBED_VIDEO = self::DASHICON_PREFIX . 'embed-video';
+    case embed_video = self::DASHICON_PREFIX . 'embed-video';
     /** @var string https://developer.wordpress.org/resource/dashicons/#exit */
-    public const EXIT = self::DASHICON_PREFIX . 'exit';
+    case exit = self::DASHICON_PREFIX . 'exit';
     /** @var string https://developer.wordpress.org/resource/dashicons/#heading */
-    public const HEADING = self::DASHICON_PREFIX . 'heading';
+    case heading = self::DASHICON_PREFIX . 'heading';
     /** @var string https://developer.wordpress.org/resource/dashicons/#html */
-    public const HTML = self::DASHICON_PREFIX . 'html';
+    case html = self::DASHICON_PREFIX . 'html';
     /** @var string https://developer.wordpress.org/resource/dashicons/#info-outline */
-    public const INFO_1 = self::DASHICON_PREFIX . 'info-outline';
+    case info_1 = self::DASHICON_PREFIX . 'info-outline';
     /** @var string https://developer.wordpress.org/resource/dashicons/#insert */
-    public const ADD_1 = self::DASHICON_PREFIX . 'insert';
+    case add_1 = self::DASHICON_PREFIX . 'insert';
     /** @var string https://developer.wordpress.org/resource/dashicons/#insert-after */
-    public const ADD_TO_TOP = self::DASHICON_PREFIX . 'insert-after';
+    case add_to_top = self::DASHICON_PREFIX . 'insert-after';
     /** @var string https://developer.wordpress.org/resource/dashicons/#insert-before */
-    public const ADD_TO_BOTTOM = self::DASHICON_PREFIX . 'insert-before';
+    case add_to_bottom = self::DASHICON_PREFIX . 'insert-before';
     /** @var string https://developer.wordpress.org/resource/dashicons/#remove */
-    public const REMOVE_1 = self::DASHICON_PREFIX . 'remove';
+    case remove_1 = self::DASHICON_PREFIX . 'remove';
     /** @var string https://developer.wordpress.org/resource/dashicons/#saved */
-    public const CHECKED_1 = self::DASHICON_PREFIX . 'saved';
+    case checked_1 = self::DASHICON_PREFIX . 'saved';
     /** @var string https://developer.wordpress.org/resource/dashicons/#shortcode */
-    public const SHORTCODE = self::DASHICON_PREFIX . 'shortcode';
+    case shortcode = self::DASHICON_PREFIX . 'shortcode';
     /** @var string https://developer.wordpress.org/resource/dashicons/#table-col-after */
-    public const TABLE_ADD_COLUMN_RIGHT = self::DASHICON_PREFIX . 'table-col-after';
+    case table_add_column_right = self::DASHICON_PREFIX . 'table-col-after';
     /** @var string https://developer.wordpress.org/resource/dashicons/#table-col-before */
-    public const TABLE_ADD_COLUMN_LEFT = self::DASHICON_PREFIX . 'table-col-before';
+    case table_add_column_left = self::DASHICON_PREFIX . 'table-col-before';
     /** @var string https://developer.wordpress.org/resource/dashicons/#table-col-delete */
-    public const TABLE_REMOVE_COLUMN = self::DASHICON_PREFIX . 'table-col-delete';
+    case table_remove_column = self::DASHICON_PREFIX . 'table-col-delete';
     /** @var string https://developer.wordpress.org/resource/dashicons/#table-row-after */
-    public const TABLE_ADD_ROW_TO_BOTTOM = self::DASHICON_PREFIX . 'table-row-after';
+    case table_add_row_to_bottom = self::DASHICON_PREFIX . 'table-row-after';
     /** @var string https://developer.wordpress.org/resource/dashicons/#table-row-before */
-    public const TABLE_ADD_ROW_TO_TOP = self::DASHICON_PREFIX . 'table-row-before';
+    case table_add_row_to_top = self::DASHICON_PREFIX . 'table-row-before';
     /** @var string https://developer.wordpress.org/resource/dashicons/#table-row-delete */
-    public const TABLE_REMOVE_ROW = self::DASHICON_PREFIX . 'table-row-delete';
+    case table_remove_row = self::DASHICON_PREFIX . 'table-row-delete';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-bold */
-    public const BOLD = self::DASHICON_PREFIX . 'editor-bold';
+    case bold = self::DASHICON_PREFIX . 'editor-bold';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-italic */
-    public const ITALIC = self::DASHICON_PREFIX . 'editor-italic';
+    case italic = self::DASHICON_PREFIX . 'editor-italic';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-ul */
-    public const LIST_UNORDERED = self::DASHICON_PREFIX . 'editor-ul';
+    case list_unordered = self::DASHICON_PREFIX . 'editor-ul';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-ol */
-    public const LIST_ORDERED = self::DASHICON_PREFIX . 'editor-ol';
+    case list_ordered = self::DASHICON_PREFIX . 'editor-ol';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-ol-rtl */
-    public const LIST_ORDERED_RTL = self::DASHICON_PREFIX . 'editor-ol-rtl';
+    case list_ordered_rtl = self::DASHICON_PREFIX . 'editor-ol-rtl';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-quote */
-    public const QUOTE_2 = self::DASHICON_PREFIX . 'editor-quote';
+    case quote_2 = self::DASHICON_PREFIX . 'editor-quote';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-alignleft */
-    public const TEXT_ALIGN_LEFT = self::DASHICON_PREFIX . 'editor-alignleft';
+    case text_align_left = self::DASHICON_PREFIX . 'editor-alignleft';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-aligncenter */
-    public const TEXT_ALIGN_CENTER = self::DASHICON_PREFIX . 'editor-aligncenter';
+    case text_align_center = self::DASHICON_PREFIX . 'editor-aligncenter';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-alignright */
-    public const TEXT_ALIGN_RIGHT = self::DASHICON_PREFIX . 'editor-alignright';
+    case text_align_right = self::DASHICON_PREFIX . 'editor-alignright';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-insertmore */
-    public const TEXT_LINEBREAK = self::DASHICON_PREFIX . 'editor-insertmore';
+    case text_linebreak = self::DASHICON_PREFIX . 'editor-insertmore';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-spellcheck */
-    public const SPELLCHECK = self::DASHICON_PREFIX . 'editor-spellcheck';
+    case spellcheck = self::DASHICON_PREFIX . 'editor-spellcheck';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-expand */
-    public const EXPAND = self::DASHICON_PREFIX . 'editor-expand';
+    case expand = self::DASHICON_PREFIX . 'editor-expand';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-contract */
-    public const RETRACT = self::DASHICON_PREFIX . 'editor-contract';
+    case retract = self::DASHICON_PREFIX . 'editor-contract';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-kitchensink */
-    public const BLOCKS_WRAPPED = self::DASHICON_PREFIX . 'editor-kitchensink';
+    case blocks_wrapped = self::DASHICON_PREFIX . 'editor-kitchensink';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-underline */
-    public const UNDERLINE = self::DASHICON_PREFIX . 'editor-underline';
+    case underline = self::DASHICON_PREFIX . 'editor-underline';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-justify */
-    public const TEXT_ALIGN_JUSTIFY = self::DASHICON_PREFIX . 'editor-justify';
+    case text_align_justify = self::DASHICON_PREFIX . 'editor-justify';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-textcolor */
-    public const FONTCOLOR = self::DASHICON_PREFIX . 'editor-textcolor';
+    case fontcolor = self::DASHICON_PREFIX . 'editor-textcolor';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-paste-word */
-    public const PASTE_WORD = self::DASHICON_PREFIX . 'editor-paste-word';
+    case paste_word = self::DASHICON_PREFIX . 'editor-paste-word';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-paste-text */
-    public const PASTE_TEXT = self::DASHICON_PREFIX . 'editor-paste-text';
+    case paste_text = self::DASHICON_PREFIX . 'editor-paste-text';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-removeformatting */
-    public const ERASER = self::DASHICON_PREFIX . 'editor-removeformatting';
+    case eraser = self::DASHICON_PREFIX . 'editor-removeformatting';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-video */
-    public const VIDEO_2 = self::DASHICON_PREFIX . 'editor-video';
+    case video_2 = self::DASHICON_PREFIX . 'editor-video';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-customchar */
-    public const OMEGA = self::DASHICON_PREFIX . 'editor-customchar';
+    case omega = self::DASHICON_PREFIX . 'editor-customchar';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-outdent */
-    public const UNDO_INDENT = self::DASHICON_PREFIX . 'editor-outdent';
+    case undo_indent = self::DASHICON_PREFIX . 'editor-outdent';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-indent */
-    public const INDENT = self::DASHICON_PREFIX . 'editor-indent';
+    case indent = self::DASHICON_PREFIX . 'editor-indent';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-help */
-    public const HELP = self::DASHICON_PREFIX . 'editor-help';
+    case help = self::DASHICON_PREFIX . 'editor-help';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-strikethrough */
-    public const STRIKETHROUGH = self::DASHICON_PREFIX . 'editor-strikethrough';
+    case strikethrough = self::DASHICON_PREFIX . 'editor-strikethrough';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-unlink */
-    public const UNLINK = self::DASHICON_PREFIX . 'editor-unlink';
+    case unlink = self::DASHICON_PREFIX . 'editor-unlink';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-rtl */
-    public const RTL = self::DASHICON_PREFIX . 'editor-rtl';
+    case rtl = self::DASHICON_PREFIX . 'editor-rtl';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-ltr */
-    public const LTR = self::DASHICON_PREFIX . 'editor-ltr';
+    case ltr = self::DASHICON_PREFIX . 'editor-ltr';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-break */
-    public const ENTER = self::DASHICON_PREFIX . 'editor-break';
+    case enter = self::DASHICON_PREFIX . 'editor-break';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-code */
-    public const CODE = self::DASHICON_PREFIX . 'editor-code';
+    case code = self::DASHICON_PREFIX . 'editor-code';
     /** @var string https://developer.wordpress.org/resource/dashicons/#editor-table */
-    public const TEXT_COLUMNS = self::DASHICON_PREFIX . 'editor-table';
+    case text_columns = self::DASHICON_PREFIX . 'editor-table';
     /** @var string https://developer.wordpress.org/resource/dashicons/#align-left */
-    public const ALIGN_LEFT_TO_TEXT = self::DASHICON_PREFIX . 'align-left';
+    case align_left_to_text = self::DASHICON_PREFIX . 'align-left';
     /** @var string https://developer.wordpress.org/resource/dashicons/#align-right */
-    public const ALIGN_RIGHT_TO_TEXT = self::DASHICON_PREFIX . 'align-right';
+    case align_right_to_text = self::DASHICON_PREFIX . 'align-right';
     /** @var string https://developer.wordpress.org/resource/dashicons/#align-center */
-    public const ALIGN_BLOCK_CENTER_TO_TEXT = self::DASHICON_PREFIX . 'align-center';
+    case align_block_center_to_text = self::DASHICON_PREFIX . 'align-center';
     /** @var string https://developer.wordpress.org/resource/dashicons/#align-none */
-    public const ALIGN_BLOCK_LEFT_TO_TEXT = self::DASHICON_PREFIX . 'align-none';
+    case align_block_left_to_text = self::DASHICON_PREFIX . 'align-none';
     /** @var string https://developer.wordpress.org/resource/dashicons/#lock */
-    public const LOCK = self::DASHICON_PREFIX . 'lock';
+    case lock = self::DASHICON_PREFIX . 'lock';
     /** @var string https://developer.wordpress.org/resource/dashicons/#unlock */
-    public const UNLOCK = self::DASHICON_PREFIX . 'unlock';
+    case unlock = self::DASHICON_PREFIX . 'unlock';
     /** @var string https://developer.wordpress.org/resource/dashicons/#calendar */
-    public const CALENDAR_1 = self::DASHICON_PREFIX . 'calendar';
+    case calendar_1 = self::DASHICON_PREFIX . 'calendar';
     /** @var string https://developer.wordpress.org/resource/dashicons/#calendar-alt */
-    public const CALENDAR_2 = self::DASHICON_PREFIX . 'calendar-alt';
+    case calendar_2 = self::DASHICON_PREFIX . 'calendar-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#visibility */
-    public const VISIBLE = self::DASHICON_PREFIX . 'visibility';
+    case visible = self::DASHICON_PREFIX . 'visibility';
     /** @var string https://developer.wordpress.org/resource/dashicons/#hidden */
-    public const HIDDEN = self::DASHICON_PREFIX . 'hidden';
+    case hidden = self::DASHICON_PREFIX . 'hidden';
     /** @var string https://developer.wordpress.org/resource/dashicons/#post-status */
-    public const KEY_2 = self::DASHICON_PREFIX . 'post-status';
+    case key_2 = self::DASHICON_PREFIX . 'post-status';
     /** @var string https://developer.wordpress.org/resource/dashicons/#edit */
-    public const PENCIL_1 = self::DASHICON_PREFIX . 'edit';
+    case pencil_1 = self::DASHICON_PREFIX . 'edit';
     /** @var string https://developer.wordpress.org/resource/dashicons/#trash */
-    public const TRASH = self::DASHICON_PREFIX . 'trash';
+    case trash = self::DASHICON_PREFIX . 'trash';
     /** @var string https://developer.wordpress.org/resource/dashicons/#sticky */
-    public const PIN_2 = self::DASHICON_PREFIX . 'sticky';
+    case pin_2 = self::DASHICON_PREFIX . 'sticky';
     /** @var string https://developer.wordpress.org/resource/dashicons/#external */
-    public const EXTERNAL_1 = self::DASHICON_PREFIX . 'external';
+    case external_1 = self::DASHICON_PREFIX . 'external';
     /** @var string https://developer.wordpress.org/resource/dashicons/#arrow-up */
-    public const ARROW_UP_1 = self::DASHICON_PREFIX . 'arrow-up';
+    case arrow_up_1 = self::DASHICON_PREFIX . 'arrow-up';
     /** @var string https://developer.wordpress.org/resource/dashicons/#arrow-down */
-    public const ARROW_DOWN_1 = self::DASHICON_PREFIX . 'arrow-down';
+    case arrow_down_1 = self::DASHICON_PREFIX . 'arrow-down';
     /** @var string https://developer.wordpress.org/resource/dashicons/#arrow-right */
-    public const ARROW_RIGHT_1 = self::DASHICON_PREFIX . 'arrow-right';
+    case arrow_right_1 = self::DASHICON_PREFIX . 'arrow-right';
     /** @var string https://developer.wordpress.org/resource/dashicons/#arrow-left */
-    public const ARROW_LEFT_1 = self::DASHICON_PREFIX . 'arrow-left';
+    case arrow_left_1 = self::DASHICON_PREFIX . 'arrow-left';
     /** @var string https://developer.wordpress.org/resource/dashicons/#arrow-up-alt */
-    public const ARROW_UP_2 = self::DASHICON_PREFIX . 'arrow-up-alt';
+    case arrow_up_2 = self::DASHICON_PREFIX . 'arrow-up-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#arrow-down-alt */
-    public const ARROW_DOWN_2 = self::DASHICON_PREFIX . 'arrow-down-alt';
+    case arrow_down_2 = self::DASHICON_PREFIX . 'arrow-down-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#arrow-right-alt */
-    public const ARROW_RIGHT_2 = self::DASHICON_PREFIX . 'arrow-right-alt';
+    case arrow_right_2 = self::DASHICON_PREFIX . 'arrow-right-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#arrow-left-alt */
-    public const ARROW_LEFT_2 = self::DASHICON_PREFIX . 'arrow-left-alt';
+    case arrow_left_2 = self::DASHICON_PREFIX . 'arrow-left-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#arrow-up-alt2 */
-    public const ARROW_UP_3 = self::DASHICON_PREFIX . 'arrow-up-alt2';
+    case arrow_up_3 = self::DASHICON_PREFIX . 'arrow-up-alt2';
     /** @var string https://developer.wordpress.org/resource/dashicons/#arrow-down-alt2 */
-    public const ARROW_DOWN_3 = self::DASHICON_PREFIX . 'arrow-down-alt2';
+    case arrow_down_3 = self::DASHICON_PREFIX . 'arrow-down-alt2';
     /** @var string https://developer.wordpress.org/resource/dashicons/#arrow-right-alt2 */
-    public const ARROW_RIGHT_3 = self::DASHICON_PREFIX . 'arrow-right-alt2';
+    case arrow_right_3 = self::DASHICON_PREFIX . 'arrow-right-alt2';
     /** @var string https://developer.wordpress.org/resource/dashicons/#arrow-left-alt2 */
-    public const ARROW_LEFT_3 = self::DASHICON_PREFIX . 'arrow-left-alt2';
+    case arrow_left_3 = self::DASHICON_PREFIX . 'arrow-left-alt2';
     /** @var string https://developer.wordpress.org/resource/dashicons/#sort */
-    public const UP_DOWN = self::DASHICON_PREFIX . 'sort';
+    case up_down = self::DASHICON_PREFIX . 'sort';
     /** @var string https://developer.wordpress.org/resource/dashicons/#leftright */
-    public const LEFT_RIGHT = self::DASHICON_PREFIX . 'leftright';
+    case left_right = self::DASHICON_PREFIX . 'leftright';
     /** @var string https://developer.wordpress.org/resource/dashicons/#randomize */
-    public const RANDOMIZE = self::DASHICON_PREFIX . 'randomize';
+    case randomize = self::DASHICON_PREFIX . 'randomize';
     /** @var string https://developer.wordpress.org/resource/dashicons/#list-view */
-    public const LIST_VIEW_1 = self::DASHICON_PREFIX . 'list-view';
+    case list_view_1 = self::DASHICON_PREFIX . 'list-view';
     /** @var string https://developer.wordpress.org/resource/dashicons/#excerpt-view */
-    public const LIST_VIEW_2 = self::DASHICON_PREFIX . 'excerpt-view';
+    case list_view_2 = self::DASHICON_PREFIX . 'excerpt-view';
     /** @var string https://developer.wordpress.org/resource/dashicons/#grid-view */
-    public const GRID_VIEW = self::DASHICON_PREFIX . 'grid-view';
+    case grid_view = self::DASHICON_PREFIX . 'grid-view';
     /** @var string https://developer.wordpress.org/resource/dashicons/#move */
-    public const MOVE = self::DASHICON_PREFIX . 'move';
+    case move = self::DASHICON_PREFIX . 'move';
     /** @var string https://developer.wordpress.org/resource/dashicons/#share */
-    public const SHARE_1 = self::DASHICON_PREFIX . 'share';
+    case share_1 = self::DASHICON_PREFIX . 'share';
     /** @var string https://developer.wordpress.org/resource/dashicons/#share-alt */
-    public const TRADE = self::DASHICON_PREFIX . 'share-alt';
+    case trade = self::DASHICON_PREFIX . 'share-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#share-alt2 */
-    public const SHARE_2 = self::DASHICON_PREFIX . 'share-alt2';
+    case share_2 = self::DASHICON_PREFIX . 'share-alt2';
     /** @var string https://developer.wordpress.org/resource/dashicons/#rss */
-    public const RSS = self::DASHICON_PREFIX . 'rss';
+    case rss = self::DASHICON_PREFIX . 'rss';
     /** @var string https://developer.wordpress.org/resource/dashicons/#email */
-    public const EMAIL_1 = self::DASHICON_PREFIX . 'email';
+    case email_1 = self::DASHICON_PREFIX . 'email';
     /** @var string https://developer.wordpress.org/resource/dashicons/#email-alt */
-    public const EMAIL_2 = self::DASHICON_PREFIX . 'email-alt';
+    case email_2 = self::DASHICON_PREFIX . 'email-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#email-alt2 */
-    public const EMAIL_3 = self::DASHICON_PREFIX . 'email-alt2';
+    case email_3 = self::DASHICON_PREFIX . 'email-alt2';
     /** @var string https://developer.wordpress.org/resource/dashicons/#networking */
-    public const NETWORK_1 = self::DASHICON_PREFIX . 'networking';
+    case network_1 = self::DASHICON_PREFIX . 'networking';
     /** @var string https://developer.wordpress.org/resource/dashicons/#amazon */
-    public const LOGO_AMAZON = self::DASHICON_PREFIX . 'amazon';
+    case logo_amazon = self::DASHICON_PREFIX . 'amazon';
     /** @var string https://developer.wordpress.org/resource/dashicons/#facebook */
-    public const LOGO_FACEBOOK_1 = self::DASHICON_PREFIX . 'facebook';
+    case logo_facebook_1 = self::DASHICON_PREFIX . 'facebook';
     /** @var string https://developer.wordpress.org/resource/dashicons/#facebook-alt */
-    public const LOGO_FACEBOOK_2 = self::DASHICON_PREFIX . 'facebook-alt';
+    case logo_facebook_2 = self::DASHICON_PREFIX . 'facebook-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#google */
-    public const LOGO_GOOGLE = self::DASHICON_PREFIX . 'google';
+    case logo_google = self::DASHICON_PREFIX . 'google';
     /** @var string https://developer.wordpress.org/resource/dashicons/#instagram */
-    public const LOGO_INSTAGRAM = self::DASHICON_PREFIX . 'instagram';
+    case logo_instagram = self::DASHICON_PREFIX . 'instagram';
     /** @var string https://developer.wordpress.org/resource/dashicons/#linkedin */
-    public const LOGO_LINKEDIN = self::DASHICON_PREFIX . 'linkedin';
+    case logo_linkedin = self::DASHICON_PREFIX . 'linkedin';
     /** @var string https://developer.wordpress.org/resource/dashicons/#pinterest */
-    public const LOGO_PINTEREST = self::DASHICON_PREFIX . 'pinterest';
+    case logo_pinterest = self::DASHICON_PREFIX . 'pinterest';
     /** @var string https://developer.wordpress.org/resource/dashicons/#podio */
-    public const LOGO_PODIO = self::DASHICON_PREFIX . 'podio';
+    case logo_podio = self::DASHICON_PREFIX . 'podio';
     /** @var string https://developer.wordpress.org/resource/dashicons/#spotify */
-    public const LOGO_SPOTIFY = self::DASHICON_PREFIX . 'spotify';
+    case logo_spotify = self::DASHICON_PREFIX . 'spotify';
     /** @var string https://developer.wordpress.org/resource/dashicons/#twitch */
-    public const LOGO_TWITCH = self::DASHICON_PREFIX . 'twitch';
+    case logo_twitch = self::DASHICON_PREFIX . 'twitch';
     /** @var string https://developer.wordpress.org/resource/dashicons/#twitter */
-    public const LOGO_TWITTER_1 = self::DASHICON_PREFIX . 'twitter';
+    case logo_twitter_1 = self::DASHICON_PREFIX . 'twitter';
     /** @var string https://developer.wordpress.org/resource/dashicons/#twitter-alt */
-    public const LOGO_TWITTER_2 = self::DASHICON_PREFIX . 'twitter-alt';
+    case logo_twitter_2 = self::DASHICON_PREFIX . 'twitter-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#whatsapp */
-    public const LOGO_WHATSAPP = self::DASHICON_PREFIX . 'whatsapp';
+    case logo_whatsapp = self::DASHICON_PREFIX . 'whatsapp';
     /** @var string https://developer.wordpress.org/resource/dashicons/#xing */
-    public const LOGO_XING = self::DASHICON_PREFIX . 'xing';
+    case logo_xing = self::DASHICON_PREFIX . 'xing';
     /** @var string https://developer.wordpress.org/resource/dashicons/#youtube */
-    public const LOGO_YOUTUBE = self::DASHICON_PREFIX . 'youtube';
+    case logo_youtube = self::DASHICON_PREFIX . 'youtube';
     /** @var string https://developer.wordpress.org/resource/dashicons/#hammer */
-    public const HAMMER = self::DASHICON_PREFIX . 'hammer';
+    case hammer = self::DASHICON_PREFIX . 'hammer';
     /** @var string https://developer.wordpress.org/resource/dashicons/#art */
-    public const PALETTE = self::DASHICON_PREFIX . 'art';
+    case palette = self::DASHICON_PREFIX . 'art';
     /** @var string https://developer.wordpress.org/resource/dashicons/#migrate */
-    public const EXTERNAL_2 = self::DASHICON_PREFIX . 'migrate';
+    case external_2 = self::DASHICON_PREFIX . 'migrate';
     /** @var string https://developer.wordpress.org/resource/dashicons/#performance */
-    public const PERFORMANCE = self::DASHICON_PREFIX . 'performance';
+    case performance = self::DASHICON_PREFIX . 'performance';
     /** @var string https://developer.wordpress.org/resource/dashicons/#universal-access */
-    public const ACCESSIBILITY_1 = self::DASHICON_PREFIX . 'universal-access';
+    case accessibility_1 = self::DASHICON_PREFIX . 'universal-access';
     /** @var string https://developer.wordpress.org/resource/dashicons/#universal-access-alt */
-    public const ACCESSIBILITY_2 = self::DASHICON_PREFIX . 'universal-access-alt';
+    case accessibility_2 = self::DASHICON_PREFIX . 'universal-access-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#tickets */
-    public const WORDPRESS_TICKETS = self::DASHICON_PREFIX . 'tickets';
+    case wordpress_tickets = self::DASHICON_PREFIX . 'tickets';
     /** @var string https://developer.wordpress.org/resource/dashicons/#nametag */
-    public const NAME_TAG = self::DASHICON_PREFIX . 'nametag';
+    case name_tag = self::DASHICON_PREFIX . 'nametag';
     /** @var string https://developer.wordpress.org/resource/dashicons/#clipboard */
-    public const CLIPBOARD = self::DASHICON_PREFIX . 'clipboard';
+    case clipboard = self::DASHICON_PREFIX . 'clipboard';
     /** @var string https://developer.wordpress.org/resource/dashicons/#heart */
-    public const HEART = self::DASHICON_PREFIX . 'heart';
+    case heart = self::DASHICON_PREFIX . 'heart';
     /** @var string https://developer.wordpress.org/resource/dashicons/#megaphone */
-    public const MEGAPHONE = self::DASHICON_PREFIX . 'megaphone';
+    case megaphone = self::DASHICON_PREFIX . 'megaphone';
     /** @var string https://developer.wordpress.org/resource/dashicons/#schedule */
-    public const GRID = self::DASHICON_PREFIX . 'schedule';
+    case grid = self::DASHICON_PREFIX . 'schedule';
     /** @var string https://developer.wordpress.org/resource/dashicons/#tide */
-    public const TIDE = self::DASHICON_PREFIX . 'tide';
+    case tide = self::DASHICON_PREFIX . 'tide';
     /** @var string https://developer.wordpress.org/resource/dashicons/#rest-api */
-    public const NETWORK_2 = self::DASHICON_PREFIX . 'rest-api';
+    case network_2 = self::DASHICON_PREFIX . 'rest-api';
     /** @var string https://developer.wordpress.org/resource/dashicons/#code-standards */
-    public const STANDARD_CHECKER = self::DASHICON_PREFIX . 'code-standards';
+    case standard_checker = self::DASHICON_PREFIX . 'code-standards';
     /** @var string https://developer.wordpress.org/resource/dashicons/#buddicons-activity */
-    public const PUPPY = self::DASHICON_PREFIX . 'buddicons-activity';
+    case puppy = self::DASHICON_PREFIX . 'buddicons-activity';
     /** @var string https://developer.wordpress.org/resource/dashicons/#buddicons-bbpress-logo */
-    public const LOGO_BBPRESS = self::DASHICON_PREFIX . 'buddicons-bbpress-logo';
+    case logo_bbpress = self::DASHICON_PREFIX . 'buddicons-bbpress-logo';
     /** @var string https://developer.wordpress.org/resource/dashicons/#buddicons-buddypress-logo */
-    public const LOGO_BUDDYPRESS = self::DASHICON_PREFIX . 'buddicons-buddypress-logo';
+    case logo_buddypress = self::DASHICON_PREFIX . 'buddicons-buddypress-logo';
     /** @var string https://developer.wordpress.org/resource/dashicons/#buddicons-community */
-    public const CAKE = self::DASHICON_PREFIX . 'buddicons-community';
+    case cake = self::DASHICON_PREFIX . 'buddicons-community';
     /** @var string https://developer.wordpress.org/resource/dashicons/#buddicons-forums */
-    public const HIVE = self::DASHICON_PREFIX . 'buddicons-forums';
+    case hive = self::DASHICON_PREFIX . 'buddicons-forums';
     /** @var string https://developer.wordpress.org/resource/dashicons/#buddicons-friends */
-    public const CANDLES = self::DASHICON_PREFIX . 'buddicons-friends';
+    case candles = self::DASHICON_PREFIX . 'buddicons-friends';
     /** @var string https://developer.wordpress.org/resource/dashicons/#buddicons-groups */
-    public const BALLOONS = self::DASHICON_PREFIX . 'buddicons-groups';
+    case balloons = self::DASHICON_PREFIX . 'buddicons-groups';
     /** @var string https://developer.wordpress.org/resource/dashicons/#buddicons-pm */
-    public const OPENED_MAIL = self::DASHICON_PREFIX . 'buddicons-pm';
+    case opened_mail = self::DASHICON_PREFIX . 'buddicons-pm';
     /** @var string https://developer.wordpress.org/resource/dashicons/#buddicons-replies */
-    public const BEE = self::DASHICON_PREFIX . 'buddicons-replies';
+    case bee = self::DASHICON_PREFIX . 'buddicons-replies';
     /** @var string https://developer.wordpress.org/resource/dashicons/#buddicons-topics */
-    public const HONEY_STICK = self::DASHICON_PREFIX . 'buddicons-topics';
+    case honey_stick = self::DASHICON_PREFIX . 'buddicons-topics';
     /** @var string https://developer.wordpress.org/resource/dashicons/#buddicons-tracking */
-    public const PARTY_HAT = self::DASHICON_PREFIX . 'buddicons-tracking';
+    case party_hat = self::DASHICON_PREFIX . 'buddicons-tracking';
     /** @var string https://developer.wordpress.org/resource/dashicons/#wordpress */
-    public const LOGO_WORDPRESS_1 = self::DASHICON_PREFIX . 'wordpress';
+    case logo_wordpress_1 = self::DASHICON_PREFIX . 'wordpress';
     /** @var string https://developer.wordpress.org/resource/dashicons/#wordpress-alt */
-    public const LOGO_WORDPRESS_2 = self::DASHICON_PREFIX . 'wordpress-alt';
+    case logo_wordpress_2 = self::DASHICON_PREFIX . 'wordpress-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#pressthis */
-    public const FILE_DROPPER = self::DASHICON_PREFIX . 'pressthis';
+    case file_dropper = self::DASHICON_PREFIX . 'pressthis';
     /** @var string https://developer.wordpress.org/resource/dashicons/#update */
-    public const UPDATE_1 = self::DASHICON_PREFIX . 'update';
+    case update_1 = self::DASHICON_PREFIX . 'update';
     /** @var string https://developer.wordpress.org/resource/dashicons/#update-alt */
-    public const UPDATE_2 = self::DASHICON_PREFIX . 'update-alt';
+    case update_2 = self::DASHICON_PREFIX . 'update-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#screenoptions */
-    public const BLOCKS_1 = self::DASHICON_PREFIX . 'screenoptions';
+    case blocks_1 = self::DASHICON_PREFIX . 'screenoptions';
     /** @var string https://developer.wordpress.org/resource/dashicons/#info */
-    public const INFO_2 = self::DASHICON_PREFIX . 'info';
+    case info_2 = self::DASHICON_PREFIX . 'info';
     /** @var string https://developer.wordpress.org/resource/dashicons/#cart */
-    public const CART = self::DASHICON_PREFIX . 'cart';
+    case cart = self::DASHICON_PREFIX . 'cart';
     /** @var string https://developer.wordpress.org/resource/dashicons/#feedback */
-    public const FEEDBACK = self::DASHICON_PREFIX . 'feedback';
+    case feedback = self::DASHICON_PREFIX . 'feedback';
     /** @var string https://developer.wordpress.org/resource/dashicons/#cloud */
-    public const CLOUD = self::DASHICON_PREFIX . 'cloud';
+    case cloud = self::DASHICON_PREFIX . 'cloud';
     /** @var string https://developer.wordpress.org/resource/dashicons/#translation */
-    public const TRANSLATION = self::DASHICON_PREFIX . 'translation';
+    case translation = self::DASHICON_PREFIX . 'translation';
     /** @var string https://developer.wordpress.org/resource/dashicons/#tag */
-    public const TAG = self::DASHICON_PREFIX . 'tag';
+    case tag = self::DASHICON_PREFIX . 'tag';
     /** @var string https://developer.wordpress.org/resource/dashicons/#category */
-    public const FOLDER_1 = self::DASHICON_PREFIX . 'category';
+    case folder_1 = self::DASHICON_PREFIX . 'category';
     /** @var string https://developer.wordpress.org/resource/dashicons/#archive */
-    public const ARCHIVE = self::DASHICON_PREFIX . 'archive';
+    case archive = self::DASHICON_PREFIX . 'archive';
     /** @var string https://developer.wordpress.org/resource/dashicons/#tagcloud */
-    public const BLOCKS_2 = self::DASHICON_PREFIX . 'tagcloud';
+    case blocks_2 = self::DASHICON_PREFIX . 'tagcloud';
     /** @var string https://developer.wordpress.org/resource/dashicons/#bell */
-    public const NOTIFICATION_BELL = self::DASHICON_PREFIX . 'bell';
+    case notification_bell = self::DASHICON_PREFIX . 'bell';
     /** @var string https://developer.wordpress.org/resource/dashicons/#yes */
-    public const CHECKED_2 = self::DASHICON_PREFIX . 'yes';
+    case checked_2 = self::DASHICON_PREFIX . 'yes';
     /** @var string https://developer.wordpress.org/resource/dashicons/#yes-alt */
-    public const CHECKED_3 = self::DASHICON_PREFIX . 'yes-alt';
+    case checked_3 = self::DASHICON_PREFIX . 'yes-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#no */
-    public const X_MARK_1 = self::DASHICON_PREFIX . 'no';
+    case x_mark_1 = self::DASHICON_PREFIX . 'no';
     /** @var string https://developer.wordpress.org/resource/dashicons/#no-alt */
-    public const X_MARK_2 = self::DASHICON_PREFIX . 'no-alt';
+    case x_mark_2 = self::DASHICON_PREFIX . 'no-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#plus */
-    public const ADD_2 = self::DASHICON_PREFIX . 'plus';
+    case add_2 = self::DASHICON_PREFIX . 'plus';
     /** @var string https://developer.wordpress.org/resource/dashicons/#plus-alt */
-    public const ADD_3 = self::DASHICON_PREFIX . 'plus-alt';
+    case add_3 = self::DASHICON_PREFIX . 'plus-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#plus-alt2 */
-    public const ADD_4 = self::DASHICON_PREFIX . 'plus-alt2';
+    case add_4 = self::DASHICON_PREFIX . 'plus-alt2';
     /** @var string https://developer.wordpress.org/resource/dashicons/#minus */
-    public const REMOVE_2 = self::DASHICON_PREFIX . 'minus';
+    case remove_2 = self::DASHICON_PREFIX . 'minus';
     /** @var string https://developer.wordpress.org/resource/dashicons/#dismiss */
-    public const X_MARK_3 = self::DASHICON_PREFIX . 'dismiss';
+    case x_mark_3 = self::DASHICON_PREFIX . 'dismiss';
     /** @var string https://developer.wordpress.org/resource/dashicons/#marker */
-    public const CIRCLE = self::DASHICON_PREFIX . 'marker';
+    case circle = self::DASHICON_PREFIX . 'marker';
     /** @var string https://developer.wordpress.org/resource/dashicons/#star-filled */
-    public const STAR_FULL_FILLED = self::DASHICON_PREFIX . 'star-filled';
+    case star_full_filled = self::DASHICON_PREFIX . 'star-filled';
     /** @var string https://developer.wordpress.org/resource/dashicons/#star-half */
-    public const STAR_HALF_FILLED = self::DASHICON_PREFIX . 'star-half';
+    case star_half_filled = self::DASHICON_PREFIX . 'star-half';
     /** @var string https://developer.wordpress.org/resource/dashicons/#star-empty */
-    public const STAR_EMPTY = self::DASHICON_PREFIX . 'star-empty';
+    case star_empty = self::DASHICON_PREFIX . 'star-empty';
     /** @var string https://developer.wordpress.org/resource/dashicons/#flag */
-    public const FLAG = self::DASHICON_PREFIX . 'flag';
+    case flag = self::DASHICON_PREFIX . 'flag';
     /** @var string https://developer.wordpress.org/resource/dashicons/#warning */
-    public const WARNING = self::DASHICON_PREFIX . 'warning';
+    case warning = self::DASHICON_PREFIX . 'warning';
     /** @var string https://developer.wordpress.org/resource/dashicons/#location */
-    public const LOCATION_1 = self::DASHICON_PREFIX . 'location';
+    case location_1 = self::DASHICON_PREFIX . 'location';
     /** @var string https://developer.wordpress.org/resource/dashicons/#location-alt */
-    public const LOCATION_2 = self::DASHICON_PREFIX . 'location-alt';
+    case location_2 = self::DASHICON_PREFIX . 'location-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#vault */
-    public const VAULT = self::DASHICON_PREFIX . 'vault';
+    case vault = self::DASHICON_PREFIX . 'vault';
     /** @var string https://developer.wordpress.org/resource/dashicons/#shield */
-    public const SHIELD_1 = self::DASHICON_PREFIX . 'shield';
+    case shield_1 = self::DASHICON_PREFIX . 'shield';
     /** @var string https://developer.wordpress.org/resource/dashicons/#shield-alt */
-    public const SHIELD_2 = self::DASHICON_PREFIX . 'shield-alt';
+    case shield_2 = self::DASHICON_PREFIX . 'shield-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#sos */
-    public const SOS = self::DASHICON_PREFIX . 'sos';
+    case sos = self::DASHICON_PREFIX . 'sos';
     /** @var string https://developer.wordpress.org/resource/dashicons/#search */
-    public const SEARCH = self::DASHICON_PREFIX . 'search';
+    case search = self::DASHICON_PREFIX . 'search';
     /** @var string https://developer.wordpress.org/resource/dashicons/#slides */
-    public const SLIDES = self::DASHICON_PREFIX . 'slides';
+    case slides = self::DASHICON_PREFIX . 'slides';
     /** @var string https://developer.wordpress.org/resource/dashicons/#text-page */
-    public const FILE_TEXT_2 = self::DASHICON_PREFIX . 'text-page';
+    case file_text_2 = self::DASHICON_PREFIX . 'text-page';
     /** @var string https://developer.wordpress.org/resource/dashicons/#analytics */
-    public const REPORT = self::DASHICON_PREFIX . 'analytics';
+    case report = self::DASHICON_PREFIX . 'analytics';
     /** @var string https://developer.wordpress.org/resource/dashicons/#chart-pie */
-    public const CHART_PIE = self::DASHICON_PREFIX . 'chart-pie';
+    case chart_pie = self::DASHICON_PREFIX . 'chart-pie';
     /** @var string https://developer.wordpress.org/resource/dashicons/#chart-bar */
-    public const CHART_BAR = self::DASHICON_PREFIX . 'chart-bar';
+    case chart_bar = self::DASHICON_PREFIX . 'chart-bar';
     /** @var string https://developer.wordpress.org/resource/dashicons/#chart-line */
-    public const CHART_LINE = self::DASHICON_PREFIX . 'chart-line';
+    case chart_line = self::DASHICON_PREFIX . 'chart-line';
     /** @var string https://developer.wordpress.org/resource/dashicons/#chart-area */
-    public const CHART_AREA = self::DASHICON_PREFIX . 'chart-area';
+    case chart_area = self::DASHICON_PREFIX . 'chart-area';
     /** @var string https://developer.wordpress.org/resource/dashicons/#groups */
-    public const USERS = self::DASHICON_PREFIX . 'groups';
+    case users = self::DASHICON_PREFIX . 'groups';
     /** @var string https://developer.wordpress.org/resource/dashicons/#businessman */
-    public const USER_2 = self::DASHICON_PREFIX . 'businessman';
+    case user_2 = self::DASHICON_PREFIX . 'businessman';
     /** @var string https://developer.wordpress.org/resource/dashicons/#businesswoman */
-    public const USER_3 = self::DASHICON_PREFIX . 'businesswoman';
+    case user_3 = self::DASHICON_PREFIX . 'businesswoman';
     /** @var string https://developer.wordpress.org/resource/dashicons/#businessperson */
-    public const USER_4 = self::DASHICON_PREFIX . 'businessperson';
+    case user_4 = self::DASHICON_PREFIX . 'businessperson';
     /** @var string https://developer.wordpress.org/resource/dashicons/#id */
-    public const ID_CARD_1 = self::DASHICON_PREFIX . 'id';
+    case id_card_1 = self::DASHICON_PREFIX . 'id';
     /** @var string https://developer.wordpress.org/resource/dashicons/#id-alt */
-    public const ID_CARD_2 = self::DASHICON_PREFIX . 'id-alt';
+    case id_card_2 = self::DASHICON_PREFIX . 'id-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#products */
-    public const BAG = self::DASHICON_PREFIX . 'products';
+    case bag = self::DASHICON_PREFIX . 'products';
     /** @var string https://developer.wordpress.org/resource/dashicons/#awards */
-    public const BADGE = self::DASHICON_PREFIX . 'awards';
+    case badge = self::DASHICON_PREFIX . 'awards';
     /** @var string https://developer.wordpress.org/resource/dashicons/#forms */
-    public const CHECKBOXES = self::DASHICON_PREFIX . 'forms';
+    case checkboxes = self::DASHICON_PREFIX . 'forms';
     /** @var string https://developer.wordpress.org/resource/dashicons/#testimonial */
-    public const COMMENT_2 = self::DASHICON_PREFIX . 'testimonial';
+    case comment_2 = self::DASHICON_PREFIX . 'testimonial';
     /** @var string https://developer.wordpress.org/resource/dashicons/#portfolio */
-    public const OPENED_FOLDER_1 = self::DASHICON_PREFIX . 'portfolio';
+    case opened_folder_1 = self::DASHICON_PREFIX . 'portfolio';
     /** @var string https://developer.wordpress.org/resource/dashicons/#book */
-    public const BOOK_1 = self::DASHICON_PREFIX . 'book';
+    case book_1 = self::DASHICON_PREFIX . 'book';
     /** @var string https://developer.wordpress.org/resource/dashicons/#book-alt */
-    public const BOOK_2 = self::DASHICON_PREFIX . 'book-alt';
+    case book_2 = self::DASHICON_PREFIX . 'book-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#download */
-    public const DOWNLOAD = self::DASHICON_PREFIX . 'download';
+    case download = self::DASHICON_PREFIX . 'download';
     /** @var string https://developer.wordpress.org/resource/dashicons/#upload */
-    public const UPLOAD = self::DASHICON_PREFIX . 'upload';
+    case upload = self::DASHICON_PREFIX . 'upload';
     /** @var string https://developer.wordpress.org/resource/dashicons/#backup */
-    public const BACKUP = self::DASHICON_PREFIX . 'backup';
+    case backup = self::DASHICON_PREFIX . 'backup';
     /** @var string https://developer.wordpress.org/resource/dashicons/#clock */
-    public const CLOCK = self::DASHICON_PREFIX . 'clock';
+    case clock = self::DASHICON_PREFIX . 'clock';
     /** @var string https://developer.wordpress.org/resource/dashicons/#lightbulb */
-    public const LIGHT_BULB = self::DASHICON_PREFIX . 'lightbulb';
+    case light_bulb = self::DASHICON_PREFIX . 'lightbulb';
     /** @var string https://developer.wordpress.org/resource/dashicons/#microphone */
-    public const MICROPHONE = self::DASHICON_PREFIX . 'microphone';
+    case microphone = self::DASHICON_PREFIX . 'microphone';
     /** @var string https://developer.wordpress.org/resource/dashicons/#desktop */
-    public const SCREEN_DESKTOP = self::DASHICON_PREFIX . 'desktop';
+    case screen_desktop = self::DASHICON_PREFIX . 'desktop';
     /** @var string https://developer.wordpress.org/resource/dashicons/#tablet */
-    public const SCREEN_TABLET = self::DASHICON_PREFIX . 'tablet';
+    case screen_tablet = self::DASHICON_PREFIX . 'tablet';
     /** @var string https://developer.wordpress.org/resource/dashicons/#phone */
-    public const SCREEN_PHONE = self::DASHICON_PREFIX . 'phone';
+    case screen_phone = self::DASHICON_PREFIX . 'phone';
     /** @var string https://developer.wordpress.org/resource/dashicons/#carrot */
-    public const CARROT = self::DASHICON_PREFIX . 'carrot';
+    case carrot = self::DASHICON_PREFIX . 'carrot';
     /** @var string https://developer.wordpress.org/resource/dashicons/#building */
-    public const BUILDING = self::DASHICON_PREFIX . 'building';
+    case building = self::DASHICON_PREFIX . 'building';
     /** @var string https://developer.wordpress.org/resource/dashicons/#store */
-    public const STORE = self::DASHICON_PREFIX . 'store';
+    case store = self::DASHICON_PREFIX . 'store';
     /** @var string https://developer.wordpress.org/resource/dashicons/#album */
-    public const ALBUM = self::DASHICON_PREFIX . 'album';
+    case album = self::DASHICON_PREFIX . 'album';
     /** @var string https://developer.wordpress.org/resource/dashicons/#palmtree */
-    public const TREE = self::DASHICON_PREFIX . 'palmtree';
+    case tree = self::DASHICON_PREFIX . 'palmtree';
     /** @var string https://developer.wordpress.org/resource/dashicons/#tickets-alt */
-    public const TICKETS = self::DASHICON_PREFIX . 'tickets-alt';
+    case tickets = self::DASHICON_PREFIX . 'tickets-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#money */
-    public const MONEY_1 = self::DASHICON_PREFIX . 'money';
+    case money_1 = self::DASHICON_PREFIX . 'money';
     /** @var string https://developer.wordpress.org/resource/dashicons/#money-alt */
-    public const MONEY_2 = self::DASHICON_PREFIX . 'money-alt';
+    case money_2 = self::DASHICON_PREFIX . 'money-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#smiley */
-    public const SMILEY = self::DASHICON_PREFIX . 'smiley';
+    case smiley = self::DASHICON_PREFIX . 'smiley';
     /** @var string https://developer.wordpress.org/resource/dashicons/#thumbs-up */
-    public const LIKE = self::DASHICON_PREFIX . 'thumbs-up';
+    case like = self::DASHICON_PREFIX . 'thumbs-up';
     /** @var string https://developer.wordpress.org/resource/dashicons/#thumbs-down */
-    public const DISLIKE = self::DASHICON_PREFIX . 'thumbs-down';
+    case dislike = self::DASHICON_PREFIX . 'thumbs-down';
     /** @var string https://developer.wordpress.org/resource/dashicons/#layout */
-    public const LAYOUT = self::DASHICON_PREFIX . 'layout';
+    case layout = self::DASHICON_PREFIX . 'layout';
     /** @var string https://developer.wordpress.org/resource/dashicons/#paperclip */
-    public const PAPERCLIP = self::DASHICON_PREFIX . 'paperclip';
+    case paperclip = self::DASHICON_PREFIX . 'paperclip';
     /** @var string https://developer.wordpress.org/resource/dashicons/#color-picker */
-    public const DROPPER = self::DASHICON_PREFIX . 'color-picker';
+    case dropper = self::DASHICON_PREFIX . 'color-picker';
     /** @var string https://developer.wordpress.org/resource/dashicons/#edit-large */
-    public const PENCIL_2 = self::DASHICON_PREFIX . 'edit-large';
+    case pencil_2 = self::DASHICON_PREFIX . 'edit-large';
     /** @var string https://developer.wordpress.org/resource/dashicons/#edit-page */
-    public const EDIT = self::DASHICON_PREFIX . 'edit-page';
+    case edit = self::DASHICON_PREFIX . 'edit-page';
     /** @var string https://developer.wordpress.org/resource/dashicons/#airplane */
-    public const AIRPLANE = self::DASHICON_PREFIX . 'airplane';
+    case airplane = self::DASHICON_PREFIX . 'airplane';
     /** @var string https://developer.wordpress.org/resource/dashicons/#bank */
-    public const BANK = self::DASHICON_PREFIX . 'bank';
+    case bank = self::DASHICON_PREFIX . 'bank';
     /** @var string https://developer.wordpress.org/resource/dashicons/#beer */
-    public const BEER = self::DASHICON_PREFIX . 'beer';
+    case beer = self::DASHICON_PREFIX . 'beer';
     /** @var string https://developer.wordpress.org/resource/dashicons/#calculator */
-    public const CALCULATOR = self::DASHICON_PREFIX . 'calculator';
+    case calculator = self::DASHICON_PREFIX . 'calculator';
     /** @var string https://developer.wordpress.org/resource/dashicons/#car */
-    public const CAR = self::DASHICON_PREFIX . 'car';
+    case car = self::DASHICON_PREFIX . 'car';
     /** @var string https://developer.wordpress.org/resource/dashicons/#coffee */
-    public const MUG = self::DASHICON_PREFIX . 'coffee';
+    case mug = self::DASHICON_PREFIX . 'coffee';
     /** @var string https://developer.wordpress.org/resource/dashicons/#drumstick */
-    public const FOOD_1 = self::DASHICON_PREFIX . 'drumstick';
+    case food_1 = self::DASHICON_PREFIX . 'drumstick';
     /** @var string https://developer.wordpress.org/resource/dashicons/#food */
-    public const FOOD_2 = self::DASHICON_PREFIX . 'food';
+    case food_2 = self::DASHICON_PREFIX . 'food';
     /** @var string https://developer.wordpress.org/resource/dashicons/#fullscreen-alt */
-    public const FULLSCREEN = self::DASHICON_PREFIX . 'fullscreen-alt';
+    case fullscreen = self::DASHICON_PREFIX . 'fullscreen-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#fullscreen-exit-alt */
-    public const FULLSCREEN_EXIT = self::DASHICON_PREFIX . 'fullscreen-exit-alt';
+    case fullscreen_exit = self::DASHICON_PREFIX . 'fullscreen-exit-alt';
     /** @var string https://developer.wordpress.org/resource/dashicons/#games */
-    public const JOYSTICK = self::DASHICON_PREFIX . 'games';
+    case joystick = self::DASHICON_PREFIX . 'games';
     /** @var string https://developer.wordpress.org/resource/dashicons/#hourglass */
-    public const HOURGLASS = self::DASHICON_PREFIX . 'hourglass';
+    case hourglass = self::DASHICON_PREFIX . 'hourglass';
     /** @var string https://developer.wordpress.org/resource/dashicons/#open-folder */
-    public const OPENED_FOLDER_2 = self::DASHICON_PREFIX . 'open-folder';
+    case opened_folder_2 = self::DASHICON_PREFIX . 'open-folder';
     /** @var string https://developer.wordpress.org/resource/dashicons/#pdf */
-    public const FILE_PDF = self::DASHICON_PREFIX . 'pdf';
+    case file_pdf = self::DASHICON_PREFIX . 'pdf';
     /** @var string https://developer.wordpress.org/resource/dashicons/#pets */
-    public const PETS = self::DASHICON_PREFIX . 'pets';
+    case pets = self::DASHICON_PREFIX . 'pets';
     /** @var string https://developer.wordpress.org/resource/dashicons/#printer */
-    public const PRINTER = self::DASHICON_PREFIX . 'printer';
+    case printer = self::DASHICON_PREFIX . 'printer';
     /** @var string https://developer.wordpress.org/resource/dashicons/#privacy */
-    public const PRIVACY = self::DASHICON_PREFIX . 'privacy';
+    case privacy = self::DASHICON_PREFIX . 'privacy';
     /** @var string https://developer.wordpress.org/resource/dashicons/#superhero */
-    public const SUPERHERO_1 = self::DASHICON_PREFIX . 'superhero';
+    case superhero_1 = self::DASHICON_PREFIX . 'superhero';
     /** @var string https://developer.wordpress.org/resource/dashicons/#superhero-alt */
-    public const SUPERHERO_2 = self::DASHICON_PREFIX . 'superhero-alt';
+    case superhero_2 = self::DASHICON_PREFIX . 'superhero-alt';
 }

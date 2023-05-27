@@ -4,8 +4,8 @@ namespace Wordless\Infrastructure\ApiController\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
 use Wordless\Infrastructure\ApiController;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToGetControllerPathFromCachedData extends Exception
 {

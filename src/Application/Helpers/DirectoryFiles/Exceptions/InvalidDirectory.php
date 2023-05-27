@@ -4,7 +4,7 @@ namespace Wordless\Application\Helpers\DirectoryFiles\Exceptions;
 
 use ErrorException;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class InvalidDirectory extends ErrorException
 {

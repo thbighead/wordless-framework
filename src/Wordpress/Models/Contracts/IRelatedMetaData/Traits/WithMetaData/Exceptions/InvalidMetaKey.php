@@ -1,10 +1,10 @@
 <?php
 
-namespace Wordless\Wordpress\Models\Traits\WithMetaData\Exceptions;
+namespace Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData\Exceptions;
 
 use Exception;
 use Throwable;
-use Wordless\Enums\ExceptionCode;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class InvalidMetaKey extends Exception
 {
