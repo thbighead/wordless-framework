@@ -3,7 +3,7 @@
 namespace Wordless\Application\Guessers;
 
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\Guessers\ControllerGuesser;
+use Wordless\Infrastructure\Guesser\ControllerGuesser;
 
 class ControllerResourceNameGuesser extends ControllerGuesser
 {

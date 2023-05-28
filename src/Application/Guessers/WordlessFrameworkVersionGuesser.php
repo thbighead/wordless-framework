@@ -3,7 +3,7 @@
 namespace Wordless\Application\Guessers;
 
 use Wordless\Core\Composer;
-use Wordless\Infrastructure\Guessers;
+use Wordless\Infrastructure\Guesser;
 
 class WordlessFrameworkVersionGuesser extends Guesser
 {

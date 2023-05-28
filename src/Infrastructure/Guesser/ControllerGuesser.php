@@ -1,8 +1,8 @@
 <?php
 
-namespace Wordless\Infrastructure\Guessers;
+namespace Wordless\Infrastructure\Guesser;
 
-use Wordless\Infrastructure\Guessers;
+use Wordless\Infrastructure\Guesser;
 
 abstract class ControllerGuesser extends Guesser
 {

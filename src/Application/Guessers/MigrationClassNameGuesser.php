@@ -3,7 +3,7 @@
 namespace Wordless\Application\Guessers;
 
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\Guessers;
+use Wordless\Infrastructure\Guesser;
 use Wordless\Infrastructure\Migration\Script;
 
 class MigrationClassNameGuesser extends Guesser
