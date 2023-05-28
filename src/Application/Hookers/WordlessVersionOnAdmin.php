@@ -3,7 +3,7 @@
 namespace Wordless\Application\Hookers;
 
 use Wordless\Application\Guessers\WordlessFrameworkVersionGuesser;
-use Wordless\Infrastructure\Hooker;
+use Wordless\Infrastructure\Wordpress\Hooker;
 
 class WordlessVersionOnAdmin extends Hooker
 {

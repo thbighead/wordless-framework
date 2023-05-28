@@ -4,7 +4,7 @@ namespace Wordless\Application\Hookers;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\Hooker;
+use Wordless\Infrastructure\Wordpress\Hooker;
 use WP_User;
 
 class HideDiagnosticsFromUserRoles extends Hooker

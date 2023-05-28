@@ -5,7 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 use Closure;
 use Wordless\Enums\WpQueryMeta;
 use Wordless\Enums\WpQueryTaxonomy;
-use Wordless\Infrastructure\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 
 class NestedAnd extends MetaSubQueryBuilder
 {

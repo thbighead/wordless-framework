@@ -3,8 +3,8 @@
 namespace Wordless\Application\Guessers;
 
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\CustomPost;
-use Wordless\Infrastructure\Guesser;
+use Wordless\Infrastructure\Guessers;
+use Wordless\Infrastructure\Wordpress\CustomPost;
 
 class CustomPostTypeKeyGuesser extends Guesser
 {

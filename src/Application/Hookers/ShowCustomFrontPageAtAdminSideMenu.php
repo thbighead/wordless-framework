@@ -2,7 +2,7 @@
 
 namespace Wordless\Application\Hookers;
 
-use Wordless\Infrastructure\Hooker;
+use Wordless\Infrastructure\Wordpress\Hooker;
 use Wordless\Wordpress\Enums\AdminMenuItemPosition;
 use Wordless\Wordpress\Enums\DashIcon;
 

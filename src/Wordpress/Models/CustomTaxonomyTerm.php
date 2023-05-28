@@ -2,7 +2,7 @@
 
 namespace Wordless\Wordpress\Models;
 
-use Wordless\Infrastructure\Taxonomy;
+use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;

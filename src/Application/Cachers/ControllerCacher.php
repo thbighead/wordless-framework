@@ -5,8 +5,8 @@ namespace Wordless\Application\Cachers;
 use ReflectionException;
 use ReflectionMethod;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\ApiController;
 use Wordless\Infrastructure\Cacher;
+use Wordless\Infrastructure\Wordpress\ApiController;
 
 class ControllerCacher extends Cacher
 {

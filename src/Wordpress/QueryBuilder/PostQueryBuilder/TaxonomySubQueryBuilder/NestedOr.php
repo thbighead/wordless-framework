@@ -4,7 +4,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuild
 
 use Closure;
 use Wordless\Enums\WpQueryTaxonomy;
-use Wordless\Infrastructure\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
 
 class NestedOr extends TaxonomySubQueryBuilder
 {

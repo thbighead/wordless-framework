@@ -2,7 +2,7 @@
 
 namespace Wordless\Infrastructure\Mounters;
 
-use Wordless\Infrastructure\EnqueueableAsset;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset;
 
 abstract class EnqueueableMounter
 {

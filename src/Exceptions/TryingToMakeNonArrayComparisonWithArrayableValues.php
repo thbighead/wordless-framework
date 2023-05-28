@@ -5,7 +5,7 @@ namespace Wordless\Exceptions;
 use InvalidArgumentException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
-use Wordless\Infrastructure\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 
 class TryingToMakeNonArrayComparisonWithArrayableValues extends InvalidArgumentException
 {

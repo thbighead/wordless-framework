@@ -5,7 +5,7 @@ namespace Wordless\Exceptions;
 use Throwable;
 use UnexpectedValueException;
 use Wordless\Application\Helpers\GetType;
-use Wordless\Infrastructure\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
 
 class UnexpectedTaxonomySubQueryClosureReturn extends UnexpectedValueException
 {

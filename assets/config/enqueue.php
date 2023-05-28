@@ -1,7 +1,7 @@
 <?php
 
-use Wordless\Infrastructure\EnqueueableAsset\EnqueueableScript;
-use Wordless\Infrastructure\EnqueueableAsset\EnqueueableStyle;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
 
 return [
     EnqueueableScript::configKey() => [],

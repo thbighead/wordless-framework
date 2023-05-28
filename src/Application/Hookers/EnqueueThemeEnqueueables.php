@@ -3,9 +3,9 @@
 namespace Wordless\Application\Hookers;
 
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\EnqueueableAsset\EnqueueableScript;
-use Wordless\Infrastructure\EnqueueableAsset\EnqueueableStyle;
-use Wordless\Infrastructure\Hooker;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
+use Wordless\Infrastructure\Wordpress\Hooker;
 
 class EnqueueThemeEnqueueables extends Hooker
 {

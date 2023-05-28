@@ -4,9 +4,9 @@ namespace Wordless\Application\Hookers;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\CustomPost;
-use Wordless\Infrastructure\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
-use Wordless\Infrastructure\Hooker;
+use Wordless\Infrastructure\Wordpress\CustomPost;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
+use Wordless\Infrastructure\Wordpress\Hooker;
 
 class BootCustomPostTypes extends Hooker
 {

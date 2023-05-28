@@ -3,7 +3,7 @@
 namespace Wordless\Tests\Unit;
 
 use Wordless\Enums\WpQueryTaxonomy;
-use Wordless\Infrastructure\QueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder;
 use Wordless\Tests\Contracts\NeedsTestEnvironment;
 use Wordless\Tests\WordlessTestCase;
 use Wordless\Wordpress\Models\Post;

@@ -1,6 +1,6 @@
 <?php
 
-use Wordless\Infrastructure\CustomPost;
+use Wordless\Infrastructure\Wordpress\CustomPost;
 
 /** @var CustomPost[] */
 return [

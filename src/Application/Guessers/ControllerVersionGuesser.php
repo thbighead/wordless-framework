@@ -2,7 +2,7 @@
 
 namespace Wordless\Application\Guessers;
 
-use Wordless\Infrastructure\Guesser\ControllerGuesser;
+use Wordless\Infrastructure\Guessers\ControllerGuesser;
 
 class ControllerVersionGuesser extends ControllerGuesser
 {

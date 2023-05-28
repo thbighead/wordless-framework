@@ -3,9 +3,9 @@
 namespace Wordless\Application\Hookers;
 
 use Wordless\Application\Helpers\Http;
-use Wordless\Infrastructure\Hooker;
 use Wordless\Infrastructure\Http\Request;
 use Wordless\Infrastructure\Http\Response;
+use Wordless\Infrastructure\Wordpress\Hooker;
 use WP_HTTP_Response;
 
 class ManageRestResponseContentTypeHeader extends Hooker

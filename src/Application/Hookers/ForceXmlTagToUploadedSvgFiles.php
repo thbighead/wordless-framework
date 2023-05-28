@@ -3,7 +3,7 @@
 namespace Wordless\Application\Hookers;
 
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\Hooker;
+use Wordless\Infrastructure\Wordpress\Hooker;
 
 class ForceXmlTagToUploadedSvgFiles extends Hooker
 {

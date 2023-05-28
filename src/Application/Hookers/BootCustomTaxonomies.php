@@ -4,8 +4,8 @@ namespace Wordless\Application\Hookers;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\Hooker;
-use Wordless\Infrastructure\Taxonomy;
+use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Taxonomy;
 
 class BootCustomTaxonomies extends Hooker
 {

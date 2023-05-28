@@ -2,9 +2,9 @@
 
 namespace Wordless\Infrastructure\Mounters\EnqueueableMounter;
 
-use Wordless\Infrastructure\EnqueueableAsset\EnqueueableScript;
-use Wordless\Infrastructure\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
 use Wordless\Infrastructure\Mounters\EnqueueableMounter;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
 
 abstract class ScriptMounter extends EnqueueableMounter
 {

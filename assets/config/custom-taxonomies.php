@@ -1,6 +1,6 @@
 <?php
 
-use Wordless\Infrastructure\Taxonomy;
+use Wordless\Infrastructure\Wordpress\Taxonomy;
 
 /** @var Taxonomy[] */
 return [

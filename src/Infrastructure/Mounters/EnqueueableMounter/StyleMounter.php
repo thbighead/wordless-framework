@@ -3,9 +3,9 @@
 namespace Wordless\Infrastructure\Mounters\EnqueueableMounter;
 
 use Wordless\Exceptions\InvalidMediaOption;
-use Wordless\Infrastructure\EnqueueableAsset\EnqueueableStyle;
-use Wordless\Infrastructure\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
 use Wordless\Infrastructure\Mounters\EnqueueableMounter;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
 
 abstract class StyleMounter extends EnqueueableMounter
 {

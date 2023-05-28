@@ -8,7 +8,7 @@ use Wordless\Application\Helpers\Log;
 use Wordless\Enums\WpQueryMeta;
 use Wordless\Exceptions\TryingToMakeNonArrayComparisonWithArrayableValues;
 use Wordless\Exceptions\TryingToMakeOnlyForArrayComparisonWithNonArrayableValues;
-use Wordless\Infrastructure\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\CannotBuild;
 
 class EmptyMetaSubQueryBuilder extends MetaSubQueryBuilder

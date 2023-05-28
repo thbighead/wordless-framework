@@ -8,8 +8,8 @@ use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
-use Wordless\Infrastructure\Hooker;
-use Wordless\Infrastructure\Menu;
+use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Menu;
 
 class Bootstrapper
 {

@@ -4,7 +4,7 @@ namespace Wordless\Application\Hookers;
 
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\Hooker;
+use Wordless\Infrastructure\Wordpress\Hooker;
 use WP_Error;
 use WP_HTTP_Requests_Response;
 

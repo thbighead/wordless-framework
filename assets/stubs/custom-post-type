@@ -2,7 +2,7 @@
 
 namespace App\CustomPostTypes;
 
-use Wordless\Infrastructure\CustomPost;
+use Wordless\Infrastructure\Wordpress\CustomPost;
 
 class DummyCustomPostTypeClass extends CustomPost
 {

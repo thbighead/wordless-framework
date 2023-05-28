@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use Wordless\Infrastructure\ApiController;
+use Wordless\Infrastructure\Wordpress\ApiController;
 
 class DummyController extends ApiController
 {

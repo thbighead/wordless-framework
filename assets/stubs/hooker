@@ -2,7 +2,7 @@
 
 namespace App\Hookers;
 
-use Wordless\Infrastructure\Hooker;
+use Wordless\Infrastructure\Wordpress\Hooker;
 
 class DummyHooker extends Hooker
 {

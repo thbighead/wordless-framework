@@ -3,8 +3,8 @@
 namespace Wordless\Application\Hookers;
 
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\ApiController;
-use Wordless\Infrastructure\Hooker;
+use Wordless\Infrastructure\Wordpress\ApiController;
+use Wordless\Infrastructure\Wordpress\Hooker;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 
 class BootApiControllers extends Hooker

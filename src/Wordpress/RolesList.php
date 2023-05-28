@@ -5,7 +5,7 @@ namespace Wordless\Wordpress;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\ApiController;
+use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Wordpress\Models\CustomTaxonomyTerm;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\Role;
