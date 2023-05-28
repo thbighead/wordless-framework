@@ -21,7 +21,7 @@ abstract class CustomPost extends Post
     private PostType $type;
 
     /**
-     * @param int|WP_Post $post
+     * @param WP_Post|int $post
      * @param bool $with_acfs
      * @throws PostTypeNotRegistered
      */
