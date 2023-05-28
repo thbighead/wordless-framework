@@ -15,6 +15,7 @@ use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQuery
 use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
 use Wordless\Wordpress\Models\Post;
 use Wordless\Wordpress\Models\PostType;
+use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Pagination\Posts;
 use WP_Post;
 use WP_Query;
@@ -35,7 +36,7 @@ class PostQueryBuilder extends QueryBuilder
     /** @var array<string, bool> $search_words */
     private array $search_words = [];
 
-    public function __construct(string $post_type = PostType::POST)
+    public function __construct(StandardType|PostType|null $post_type = null)
     {
         $this->whereType($post_type)
             ->withoutStickyPosts();

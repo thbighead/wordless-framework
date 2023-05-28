@@ -5,6 +5,7 @@ namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits;
 use Wordless\Application\Helpers\Reserved;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
+use Wordless\Wordpress\Models\PostType;
 
 trait Validation
 {
@@ -15,7 +16,7 @@ trait Validation
     private static function validateFormat(): void
     {
         if (preg_match(
-                '/^[\w-]{1,' . self::POST_TYPE_KEY_MAX_LENGTH . '}$/',
+                '/^[\w-]{1,' . PostType::KEY_MAX_LENGTH . '}$/',
                 $type_key = static::getTypeKey()
             ) !== 1) {
             throw new InvalidCustomPostTypeKey($type_key);

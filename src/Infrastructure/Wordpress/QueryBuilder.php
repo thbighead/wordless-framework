@@ -3,6 +3,7 @@
 namespace Wordless\Infrastructure\Wordpress;
 
 use Wordless\Wordpress\Models\PostType;
+use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use WP_Query;
 
@@ -11,7 +12,7 @@ abstract class QueryBuilder
     protected array $arguments = [];
     private mixed $query;
 
-    public static function fromPostEntity(string $post_type = PostType::ANY): PostQueryBuilder
+    public static function fromPostEntity(StandardType|PostType|null $post_type = null): PostQueryBuilder
     {
         return new PostQueryBuilder($post_type);
     }

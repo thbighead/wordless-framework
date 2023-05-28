@@ -13,8 +13,8 @@ abstract class CustomPost extends Post
 {
     use Register, Repository;
 
-    public const POST_TYPE_KEY_MAX_LENGTH = 20;
     protected const TYPE_KEY = null;
+
     /** @var array<static, string> */
     private static array $type_keys = [];
 

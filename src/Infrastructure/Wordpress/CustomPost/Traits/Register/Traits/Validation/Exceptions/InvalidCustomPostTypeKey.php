@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 use Wordless\Infrastructure\Wordpress\CustomPost;
+use Wordless\Wordpress\Models\PostType;
 
 class InvalidCustomPostTypeKey extends InvalidArgumentException
 {
@@ -26,7 +27,7 @@ class InvalidCustomPostTypeKey extends InvalidArgumentException
     protected function justification(): string
     {
         return 'A valid key must not exceed '
-            . CustomPost::POST_TYPE_KEY_MAX_LENGTH
+            . PostType::KEY_MAX_LENGTH
             . ' characters and may only contain lowercase alphanumeric characters, dashes, and underscores.';
     }
 }

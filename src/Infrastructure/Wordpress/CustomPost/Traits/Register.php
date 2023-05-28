@@ -6,10 +6,12 @@ use Wordless\Application\Guessers\CustomPostTypeKeyGuesser;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Enums\CustomPostTypeMenuPosition;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Labels;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Rewrite;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
+use WP_Error;
 
 trait Register
 {
@@ -114,13 +116,19 @@ trait Register
 
     /**
      * @return void
+     * @throws CustomPostTypeRegistrationFailed
      * @throws InvalidCustomPostTypeKey
      */
-    public static function register()
+    public static function register(): void
     {
         self::validateTypeKey();
 
-        register_post_type(static::getTypeKey(), self::mountArguments());
+        if (($registrationResult = register_post_type(
+                static::getTypeKey(),
+                static::mountArguments()
+            )) instanceof WP_Error) {
+            throw new CustomPostTypeRegistrationFailed($registrationResult);
+        }
     }
 
     /**
@@ -198,7 +206,7 @@ trait Register
      * https://developer.wordpress.org/reference/functions/register_post_type/#query_var
      * @return bool|string|null
      */
-    protected static function getUrlQueryParameterName()
+    protected static function getUrlQueryParameterName(): bool|string|null
     {
         return null;
     }

@@ -4,7 +4,7 @@ namespace Wordless\Application\Guessers;
 
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Guesser;
-use Wordless\Infrastructure\Wordpress\CustomPost;
+use Wordless\Wordpress\Models\PostType;
 
 class CustomPostTypeKeyGuesser extends Guesser
 {
@@ -17,9 +17,6 @@ class CustomPostTypeKeyGuesser extends Guesser
 
     protected function guessValue(): string
     {
-        return Str::truncate(
-            Str::slugCase($this->class_name),
-            CustomPost::POST_TYPE_KEY_MAX_LENGTH
-        );
+        return Str::truncate(Str::slugCase($this->class_name), PostType::KEY_MAX_LENGTH);
     }
 }

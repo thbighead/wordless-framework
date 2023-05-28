@@ -11,7 +11,7 @@ trait Repository
     public static function getPermissions(): array
     {
         try {
-            return (array)((new PostType(self::getTypeKey()))->cap ?? new stdClass);
+            return (array)((new PostType(static::getTypeKey()))->cap ?? new stdClass);
         } catch (PostTypeNotRegistered) {
             return [];
         }

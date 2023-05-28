@@ -10,13 +10,8 @@ use WP_Post_Type;
  */
 class PostType
 {
-    public const ANY = 'any';
-    public const ATTACHMENT = 'attachment';
-    public const NAVIGATION_MENU_ITEM = 'nav_menu_item';
-    public const PAGE = 'page';
-    public const POST = 'post';
-    public const QUERY_TYPE_KEY = 'post_type';
-    public const REVISION = 'revision';
+    final public const KEY_MAX_LENGTH = 20;
+    final public const QUERY_TYPE_KEY = 'post_type';
 
     private WP_Post_Type $wpPostType;
 
@@ -30,7 +25,7 @@ class PostType
         foreach (get_post_types(['_builtin' => false]) as $custom_post_type_key) {
             try {
                 $customPostTypes[] = new static($custom_post_type_key);
-            } catch (PostTypeNotRegistered $exception) {
+            } catch (PostTypeNotRegistered) {
                 continue;
             }
         }
