@@ -1,8 +1,8 @@
 <?php
 
-use Wordless\Infrastructure\Wordpress\Taxonomy;
+use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
 
-/** @var Taxonomy[] */
+/** @var CustomTaxonomy[] */
 return [
     //
 ];

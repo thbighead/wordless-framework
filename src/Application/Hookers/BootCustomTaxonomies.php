@@ -5,7 +5,7 @@ namespace Wordless\Application\Hookers;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Wordpress\Hooker;
-use Wordless\Infrastructure\Wordpress\Taxonomy;
+use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
 
 class BootCustomTaxonomies extends Hooker
 {
@@ -25,7 +25,7 @@ class BootCustomTaxonomies extends Hooker
     public static function register()
     {
         foreach (Config::tryToGetOrDefault('custom-taxonomies', []) as $customTaxonomyClassNamespace) {
-            /** @var Taxonomy $customTaxonomyClassNamespace */
+            /** @var CustomTaxonomy $customTaxonomyClassNamespace */
             $customTaxonomyClassNamespace::register();
         }
     }

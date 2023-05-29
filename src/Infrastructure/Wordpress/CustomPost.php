@@ -15,9 +15,6 @@ abstract class CustomPost extends Post
 
     protected const TYPE_KEY = null;
 
-    /** @var array<static, string> */
-    private static array $type_keys = [];
-
     private PostType $type;
 
     /**

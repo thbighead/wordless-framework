@@ -37,6 +37,7 @@ trait Validation
     /**
      * @return void
      * @throws InvalidCustomPostTypeKey
+     * @throws ReservedCustomPostTypeKey
      */
     private static function validateTypeKey(): void
     {

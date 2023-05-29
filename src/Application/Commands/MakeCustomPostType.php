@@ -3,6 +3,7 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -15,7 +16,7 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO\Enums\OptionMode;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 use Wordless\Infrastructure\Wordpress\CustomPost;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 use Wordless\Wordpress\RolesList;
@@ -76,11 +77,12 @@ class MakeCustomPostType extends ConsoleCommand
 
     /**
      * @return int
+     * @throws CustomPostTypeRegistrationFailed
      * @throws FailedToCopyStub
      * @throws FailedToCreateRole
-     * @throws InvalidCustomPostTypeKey
-     * @throws PathNotFoundException
      * @throws FailedToFindRole
+     * @throws InvalidArgumentException
+     * @throws PathNotFoundException
      */
     protected function runIt(): int
     {
@@ -106,14 +108,22 @@ class MakeCustomPostType extends ConsoleCommand
 
     private function getCustomControllerMode(): ?string
     {
-        $custom_controller_class_name = $this->input->getOption(self::CONTROLLER_OPTION);
+        try {
+            $custom_controller_class_name = $this->input->getOption(self::CONTROLLER_OPTION);
+        } catch (InvalidArgumentException) {
+            return null;
+        }
 
         return $custom_controller_class_name ?: null;
     }
 
     private function isNoPermissionsMode(): bool
     {
-        return (bool)$this->input->getOption(self::NO_PERMISSIONS_MODE);
+        try {
+            return (bool)$this->input->getOption(self::NO_PERMISSIONS_MODE);
+        } catch (InvalidArgumentException) {
+            return false;
+        }
     }
 
     private function mountStubContentReplacementDictionary(string $custom_post_type_class_name): array
@@ -140,10 +150,10 @@ class MakeCustomPostType extends ConsoleCommand
     /**
      * @param string $custom_post_type_class_name
      * @return void
+     * @throws CustomPostTypeRegistrationFailed
      * @throws FailedToCreateRole
-     * @throws InvalidCustomPostTypeKey
-     * @throws PathNotFoundException
      * @throws FailedToFindRole
+     * @throws PathNotFoundException
      */
     private function resolveNoPermissionsMode(string $custom_post_type_class_name): void
     {

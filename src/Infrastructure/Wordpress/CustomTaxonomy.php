@@ -12,7 +12,7 @@ use WP_Taxonomy;
 /**
  * @mixin WP_Taxonomy
  */
-abstract class Taxonomy
+abstract class CustomTaxonomy
 {
     use Register, Repository;
 

@@ -5,7 +5,7 @@ namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Validation\
 use InvalidArgumentException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
-use Wordless\Infrastructure\Wordpress\Taxonomy;
+use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
 
 class InvalidCustomTaxonomyName extends InvalidArgumentException
 {
@@ -26,7 +26,7 @@ class InvalidCustomTaxonomyName extends InvalidArgumentException
     protected function justification(): string
     {
         return 'A valid name must not exceed '
-            . Taxonomy::TAXONOMY_NAME_MAX_LENGTH
+            . CustomTaxonomy::TAXONOMY_NAME_MAX_LENGTH
             . ' characters and may only contain lowercase non-numeric characters and underscores.';
     }
 }

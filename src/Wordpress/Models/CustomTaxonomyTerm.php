@@ -2,7 +2,7 @@
 
 namespace Wordless\Wordpress\Models;
 
-use Wordless\Infrastructure\Wordpress\Taxonomy;
+use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
@@ -13,7 +13,7 @@ class CustomTaxonomyTerm implements IRelatedMetaData
 {
     use WithAcfs, WithMetaData;
 
-    protected Taxonomy $taxonomy;
+    protected CustomTaxonomy $taxonomy;
     private WP_Term $wpTaxonomyTerm;
 
     public static function objectType(): MetableObjectType
@@ -24,7 +24,7 @@ class CustomTaxonomyTerm implements IRelatedMetaData
     public function __construct(WP_Term|int $taxonomyTerm, bool $with_acfs = true)
     {
         $this->wpTaxonomyTerm = $taxonomyTerm instanceof WP_Term ? $taxonomyTerm : get_term($taxonomyTerm);
-        $this->taxonomy = Taxonomy::find($this->wpTaxonomyTerm->taxonomy);
+        $this->taxonomy = CustomTaxonomy::find($this->wpTaxonomyTerm->taxonomy);
 
         if ($with_acfs) {
             $this->loadTaxonomyAcfs($this->wpTaxonomyTerm->term_id);
@@ -36,7 +36,7 @@ class CustomTaxonomyTerm implements IRelatedMetaData
         return $this->wpTaxonomyTerm;
     }
 
-    public function getTaxonomy(): Taxonomy
+    public function getTaxonomy(): CustomTaxonomy
     {
         return $this->taxonomy;
     }

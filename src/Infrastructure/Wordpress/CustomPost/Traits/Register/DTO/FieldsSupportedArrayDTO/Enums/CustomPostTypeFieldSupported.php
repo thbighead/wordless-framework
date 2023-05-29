@@ -14,5 +14,5 @@ enum CustomPostTypeFieldSupported: string
     case comments = 'comments';
     case revisions = 'revisions';
     case hierarchical_fields = 'page-attributes';
-    case post_formats = 'post-formats';
+    case formats = 'post-formats';
 }

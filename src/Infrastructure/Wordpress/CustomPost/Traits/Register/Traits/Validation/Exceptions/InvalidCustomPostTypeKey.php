@@ -5,7 +5,6 @@ namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Va
 use InvalidArgumentException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
-use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Wordpress\Models\PostType;
 
 class InvalidCustomPostTypeKey extends InvalidArgumentException

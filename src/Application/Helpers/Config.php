@@ -39,7 +39,7 @@ class Config
      * @return array|mixed|null
      * @throws PathNotFoundException
      */
-    public static function tryToGetOrDefault(string $key, $default = null)
+    public static function tryToGetOrDefault(string $key, $default = null): mixed
     {
         try {
             return self::get($key);

@@ -7,13 +7,20 @@ use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO\FieldsSuppo
 
 final class FieldsSupportedArrayDTO extends ArrayDTO
 {
-    /** @var string[] $data */
+    /** @var CustomPostTypeFieldSupported[] $data */
     protected ?array $data = [];
-    /** @var CustomPostTypeFieldSupported[] $supported */
+    /** @var string[] $supported */
     private array $supported = [];
 
-    public function getData(): ?array
+    /**
+     * @return string[]
+     */
+    public function getSupported(): array
     {
+        if (isset($this->supported)) {
+            return $this->supported;
+        }
+
         $this->supported = [];
 
         foreach ($this->data as $fieldSupported) {
@@ -21,19 +28,7 @@ final class FieldsSupportedArrayDTO extends ArrayDTO
             $this->supported[] = $fieldSupported->value;
         }
 
-        return empty($this->supported) ? null : $this->supported;
-    }
-
-    /**
-     * @return CustomPostTypeFieldSupported[]|null
-     */
-    public function getSupported(): ?array
-    {
-        if (!empty($this->supported)) {
-            return $this->supported;
-        }
-
-        return $this->supported = $this->getData() ?? [];
+        return $this->supported;
     }
 
     public function supportAuthor(): FieldsSupportedArrayDTO
@@ -119,8 +114,8 @@ final class FieldsSupportedArrayDTO extends ArrayDTO
 
     public function supportPostFormats(): FieldsSupportedArrayDTO
     {
-        $this->data[CustomPostTypeFieldSupported::post_formats->name] =
-            CustomPostTypeFieldSupported::post_formats;
+        $this->data[CustomPostTypeFieldSupported::formats->name] =
+            CustomPostTypeFieldSupported::formats;
 
         return $this;
     }

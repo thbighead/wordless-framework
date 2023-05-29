@@ -6,7 +6,10 @@ abstract class ArrayDTO
 {
     protected ?array $data = null;
 
-    abstract public function getData(): ?array;
+    public function getData(): ?array
+    {
+        return $this->data;
+    }
 
     public static function make(): static
     {

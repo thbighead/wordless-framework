@@ -11,22 +11,17 @@ use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Labels;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Rewrite;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
 use WP_Error;
 
 trait Register
 {
     use Labels, Rewrite, Validation;
 
-    /**
-     * https://developer.wordpress.org/reference/functions/register_post_type/#description-2
-     * @return string|null
-     */
-    public static function description(): ?string
-    {
-        return null;
-    }
+    /** @var array<static, string> */
+    private static array $type_keys = [];
 
-    public static function getTypeKey(): string
+    final public static function getTypeKey(): string
     {
         return self::$type_keys[static::class] ??
             self::$type_keys[static::class] = static::TYPE_KEY ??
@@ -34,92 +29,12 @@ trait Register
     }
 
     /**
-     * https://developer.wordpress.org/reference/functions/register_post_type/#has_archive
-     * @return bool
-     */
-    public static function hasArchive(): bool
-    {
-        return false;
-    }
-
-    /**
-     * https://developer.wordpress.org/reference/functions/register_post_type/#exclude_from_search
-     * @return bool
-     */
-    public static function isExcludedFromSearch(): bool
-    {
-        return !static::isPublic();
-    }
-
-    /**
-     * https://developer.wordpress.org/reference/functions/register_post_type/#hierarchical
-     * @return bool
-     */
-    public static function isHierarchical(): bool
-    {
-        return false;
-    }
-
-    /**
-     * https://developer.wordpress.org/reference/functions/register_post_type/#public
-     * @return bool
-     */
-    public static function isPublic(): bool
-    {
-        return false;
-    }
-
-    /**
-     * https://developer.wordpress.org/reference/functions/register_post_type/#publicly_queryable
-     * @return bool
-     */
-    public static function isPubliclyUrlQueryable(): bool
-    {
-        return static::isPublic();
-    }
-
-    /**
-     * https://developer.wordpress.org/reference/functions/register_post_type/#show_ui
-     * @return bool
-     */
-    public static function isShownInAdminPanel(): bool
-    {
-        return static::isPublic();
-    }
-
-    /**
-     * https://developer.wordpress.org/reference/functions/register_post_type/#show_in_menu
-     * @return bool
-     */
-    public static function isListedInAdminPanelMenu(): bool
-    {
-        return static::isShownInAdminPanel();
-    }
-
-    /**
-     * https://developer.wordpress.org/reference/functions/register_post_type/#show_in_admin_bar
-     * @return bool
-     */
-    public static function isVisibleInAdminPanelMenuBar(): bool
-    {
-        return static::isShownInAdminPanel();
-    }
-
-    /**
-     * https://developer.wordpress.org/reference/functions/register_post_type/#show_in_nav_menus
-     * @return bool
-     */
-    public static function isVisibleInAdminPanelNavigationMenuSelection(): bool
-    {
-        return static::isShownInAdminPanel();
-    }
-
-    /**
      * @return void
      * @throws CustomPostTypeRegistrationFailed
      * @throws InvalidCustomPostTypeKey
+     * @throws ReservedCustomPostTypeKey
      */
-    public static function register(): void
+    final public static function register(): void
     {
         self::validateTypeKey();
 
@@ -156,6 +71,15 @@ trait Register
     protected static function controller(): ?string
     {
         return null; // automagically controlled by WP
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#description-2
+     * @return string|null
+     */
+    protected static function description(): ?string
+    {
+        return null;
     }
 
     /**
@@ -209,6 +133,87 @@ trait Register
     protected static function getUrlQueryParameterName(): bool|string|null
     {
         return null;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#has_archive
+     * @return bool
+     */
+    protected static function hasArchive(): bool
+    {
+        return false;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#exclude_from_search
+     * @return bool
+     */
+    protected static function isExcludedFromSearch(): bool
+    {
+        return !static::isPublic();
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#hierarchical
+     * @return bool
+     */
+    protected static function isHierarchical(): bool
+    {
+        return false;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#public
+     * @return bool
+     */
+    protected static function isPublic(): bool
+    {
+        return false;
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#publicly_queryable
+     * @return bool
+     */
+    protected static function isPubliclyUrlQueryable(): bool
+    {
+        return static::isPublic();
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#show_ui
+     * @return bool
+     */
+    protected static function isShownInAdminPanel(): bool
+    {
+        return static::isPublic();
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#show_in_menu
+     * @return bool
+     */
+    protected static function isListedInAdminPanelMenu(): bool
+    {
+        return static::isShownInAdminPanel();
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#show_in_admin_bar
+     * @return bool
+     */
+    protected static function isVisibleInAdminPanelMenuBar(): bool
+    {
+        return static::isShownInAdminPanel();
+    }
+
+    /**
+     * https://developer.wordpress.org/reference/functions/register_post_type/#show_in_nav_menus
+     * @return bool
+     */
+    protected static function isVisibleInAdminPanelNavigationMenuSelection(): bool
+    {
+        return static::isShownInAdminPanel();
     }
 
     protected static function mountArguments(): array

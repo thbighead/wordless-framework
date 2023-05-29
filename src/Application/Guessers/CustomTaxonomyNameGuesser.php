@@ -4,7 +4,7 @@ namespace Wordless\Application\Guessers;
 
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Guesser;
-use Wordless\Infrastructure\Wordpress\Taxonomy;
+use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
 
 class CustomTaxonomyNameGuesser extends Guesser
 {
@@ -19,7 +19,7 @@ class CustomTaxonomyNameGuesser extends Guesser
     {
         return Str::truncate(
             Str::slugCase($this->class_name),
-            Taxonomy::TAXONOMY_NAME_MAX_LENGTH
+            CustomTaxonomy::TAXONOMY_NAME_MAX_LENGTH
         );
     }
 }
