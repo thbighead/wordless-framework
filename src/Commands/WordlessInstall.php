@@ -42,14 +42,14 @@ class WordlessInstall extends ConsoleCommand
     private const NO_ASK_MODE = 'no-ask';
     private const NO_DB_CREATION_MODE = 'no-db-creation';
     private const WORDPRESS_SALT_FILLABLE_VALUES = [
-        '$AUTH_KEY',
-        '$SECURE_AUTH_KEY',
-        '$LOGGED_IN_KEY',
-        '$NONCE_KEY',
-        '$AUTH_SALT',
-        '$SECURE_AUTH_SALT',
-        '$LOGGED_IN_SALT',
-        '$NONCE_SALT',
+        '#AUTH_KEY',
+        '#SECURE_AUTH_KEY',
+        '#LOGGED_IN_KEY',
+        '#NONCE_KEY',
+        '#AUTH_SALT',
+        '#SECURE_AUTH_SALT',
+        '#LOGGED_IN_SALT',
+        '#NONCE_SALT',
     ];
     private const WORDPRESS_SALT_URL_GETTER = 'https://api.wordpress.org/secret-key/1.1/salt/';
 
