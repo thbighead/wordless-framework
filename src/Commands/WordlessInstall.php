@@ -276,7 +276,15 @@ class WordlessInstall extends ConsoleCommand
      */
     private function fillDotEnv(string $dot_env_filepath)
     {
-        $dot_env_content = $this->guessAndResolveDotEnvWpSaltVariables(file_get_contents($dot_env_filepath));
+        $dot_env_content = $this->guessAndResolveDotEnvWpSaltVariables(
+            $dot_env_original_content = file_get_contents($dot_env_filepath)
+        );
+
+        if ($dot_env_original_content !== $dot_env_content) {
+            if (file_put_contents($dot_env_filepath, $dot_env_content) === false) {
+                throw new FailedToRewriteDotEnvFile($dot_env_filepath, $dot_env_content);
+            }
+        }
 
         if (empty($not_filled_variables = $this->getDotEnvNotFilledVariables($dot_env_content))) {
             return;
