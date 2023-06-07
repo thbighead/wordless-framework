@@ -98,13 +98,9 @@ abstract class ConsoleCommand extends Command
             exec($full_command, $output, $result_code);
             $this->output->writeln($output);
         } else {
-            $result_code = Process::fromShellCommandline(
-                $full_command,
-                null,
-                null,
-                null,
-                null
-            )->setTty(true)
+            $result_code = Process::fromShellCommandline($full_command)
+                ->setTty(true)
+                ->setTimeout(null)
                 ->run(function ($type, $buffer) {
                     echo $buffer;
                 });
