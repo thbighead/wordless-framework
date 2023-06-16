@@ -5,6 +5,7 @@ namespace Wordless\Hookers;
 use Wordless\Abstractions\Hooker;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
+use Wordless\Helpers\Environment;
 
 class ChooseImageEditor extends Hooker
 {
@@ -39,7 +40,7 @@ class ChooseImageEditor extends Hooker
      */
     public static function useGdInsteadImagick(array $image_editors): array
     {
-        if (Config::tryToGetOrDefault(
+        if (Environment::get('INSTALL_IMAGEMAGICK') === false || Config::tryToGetOrDefault(
                 'admin.' . static::IMAGE_LIBRARY_CONFIG_KEY,
                 self::IMAGE_LIBRARY_CONFIG_VALUE_IMAGICK
             ) === self::IMAGE_LIBRARY_CONFIG_VALUE_GD) {
