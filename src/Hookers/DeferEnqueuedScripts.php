@@ -7,7 +7,7 @@ use Wordless\Helpers\Str;
 
 class DeferEnqueuedScripts extends AbstractHooker
 {
-    private const DEFER_ATTRIBUTE = 'defer=\'true';
+    private const DEFER_ATTRIBUTE = 'defer="true" ';
     /**
      * WordPress action|filter number of arguments accepted by function
      */
@@ -19,26 +19,24 @@ class DeferEnqueuedScripts extends AbstractHooker
     /**
      * WordPress action|filter hook identification
      */
-    protected const HOOK = 'clean_url';
-    /**
-     * WordPress action|filter hook priority
-     */
-    protected const HOOK_PRIORITY = 20;
+    protected const HOOK = 'script_loader_tag';
     /**
      * action or filter type (defines which method will be called: add_action or add_filter)
      */
     protected const TYPE = 'filter';
 
-    public static function addReferToScriptTag(string $url): string
+    public static function addReferToScriptTag(string $tag): string
     {
-        if (is_admin() || is_login() || !Str::endsWith(Str::beforeLast($url, '?'), '.js')) {
-            return $url;
+        if ((isset($_SERVER['SCRIPT_NAME']) && stripos(wp_login_url(), $_SERVER['SCRIPT_NAME']) !== false) || is_admin()) {
+            return $tag;
         }
 
-        if (!Str::contains($url, self::DEFER_ATTRIBUTE)) {
-            return "$url' " . self::DEFER_ATTRIBUTE;
+        if (!Str::contains($tag, self::DEFER_ATTRIBUTE)) {
+            $search = '<script ';
+
+            return Str::replace($tag, $search, $search . self::DEFER_ATTRIBUTE);
         }
 
-        return $url;
+        return $tag;
     }
 }
