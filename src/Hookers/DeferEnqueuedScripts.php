@@ -31,7 +31,7 @@ class DeferEnqueuedScripts extends Hooker
 
     public static function addReferToScriptTag(string $url): string
     {
-        if (is_admin() || !Str::endsWith(Str::beforeLast($url, '?'), '.js')) {
+        if (is_admin() || is_login() || !Str::endsWith(Str::beforeLast($url, '?'), '.js')) {
             return $url;
         }
 
