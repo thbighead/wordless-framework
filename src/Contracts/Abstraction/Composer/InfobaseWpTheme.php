@@ -78,10 +78,13 @@ trait InfobaseWpTheme
     ): string
     {
         $vendor_theme_path = "$vendor_path/$theme_name";
+        $wp_path = "$vendor_theme_path/setup/wp";
+        $extra_classes = "$vendor_theme_path/setup/packages";
         $setup_path = "$vendor_theme_path/setup";
 
         DirectoryFiles::recursiveCopy($vendor_theme_path, $wp_theme_path, [$setup_path]);
-        DirectoryFiles::recursiveCopy($setup_path, $root_path);
+        DirectoryFiles::recursiveCopy($wp_path, $root_path."/wp");
+        DirectoryFiles::recursiveCopy($extra_classes, "$root_path/packages");
 
         return $wp_theme_path;
     }
