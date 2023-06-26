@@ -56,7 +56,7 @@ class MakeCommand extends ConsoleCommand
         $this->wrapScriptWithMessages(
             "Creating $command_class_name...",
             function () use ($command_class_name) {
-                (new CommandStubMounter(ProjectPath::app() . "Commands/$command_class_name.php"))
+                (new CommandStubMounter(ProjectPath::app() . "/Commands/$command_class_name.php"))
                     ->setReplaceContentDictionary(['DummyCommand' => $command_class_name])
                     ->mountNewFile();
             }
