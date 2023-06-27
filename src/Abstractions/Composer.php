@@ -10,6 +10,7 @@ use Composer\Installer\PackageEvent;
 use Composer\Package\CompletePackage;
 use Composer\Package\RootPackage;
 use Composer\Script\Event;
+use Wordless\Contracts\Abstraction\Composer\InfobaseAdvancedClassicEditor;
 use Wordless\Contracts\Abstraction\Composer\InfobaseWpTheme;
 use Wordless\Contracts\Abstraction\Composer\ManagePlugin;
 use Wordless\Contracts\Abstraction\Composer\PackageDiscovery;
@@ -20,7 +21,7 @@ use Wordless\Helpers\Str;
 
 class Composer
 {
-    use InfobaseWpTheme, ManagePlugin, PackageDiscovery, SetHostFromNginx;
+    use InfobaseWpTheme, InfobaseAdvancedClassicEditor, ManagePlugin, PackageDiscovery, SetHostFromNginx;
 
     /** @var string WORDLESS_EXTRA_KEY final */
     protected const WORDLESS_EXTRA_KEY = 'wordless';
