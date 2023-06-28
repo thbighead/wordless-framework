@@ -32,6 +32,7 @@ abstract class ConsoleCommand extends Command
     protected const OPTION_NAME_FIELD = 'name';
     protected const OPTION_SHORTCUT_FIELD = 'shortcut';
 
+    public ?string $available_environment = null;
     protected InputInterface $input;
     protected OutputInterface $output;
     private array $wordlessCommandsCache = [];
