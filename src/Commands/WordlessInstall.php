@@ -90,6 +90,7 @@ class WordlessInstall extends ConsoleCommand
         $this->loadWpLanguages();
 
         $this->downloadWpCore();
+        $this->deleteWpContentInsideWpCore();
         $this->createWpConfigFromStub();
         $this->createRobotsTxtFromStub();
         $this->createWpDatabase();
@@ -248,6 +249,25 @@ class WordlessInstall extends ConsoleCommand
         $this->runWpCliCommand("db create --dbuser=$database_username --dbpass=$database_password");
     }
 
+    /**
+     * @return void
+     * @throws FailedToDeletePath
+     */
+    private function deleteWpContentInsideWpCore()
+    {
+        $this->writeln('Check wp/wp-core/wp-content');
+
+        try {
+            DirectoryFiles::recursiveDelete(ProjectPath::wpCore('wp-content'));
+            $this->writeSuccess('Success: ');
+            $this->writeln('"wp/wp-core/wp-content" directory deleted!');
+        } catch (PathNotFoundException $exception) {
+            $this->writeInfo('Success: ');
+            $this->writeln(
+                '"wp/wp-core/wp-content" directory not created on Wordpress install, skipping delete...'
+            );
+        }
+    }
     /**
      * @return void
      * @throws ExceptionInterface
