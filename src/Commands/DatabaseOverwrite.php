@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Commands;
+namespace App\Commands;
 
 use Faker\Factory;
 use Faker\Generator;
@@ -23,7 +23,6 @@ class DatabaseOverwrite extends ConsoleCommand
 
     public const DATABASE_OVERWRITE_KEY = 'database_overwrite_command_parameters';
     public const USER_DEFAULT_PASSWORD = 'default_password';
-    private const USER_META_TABLE_META_KEYS_COLUMN_VALUES = ['first_name', 'last_name', 'nickname'];
 
     private wpdb $databaseConnection;
     private Generator $faker;
@@ -103,10 +102,12 @@ class DatabaseOverwrite extends ConsoleCommand
             do {
                 $user_fake_data = $this->mountUserFakeData($users[$i]);
                 $response = $this->updateWpUsersTable($user_fake_data, $hashed_password);
-                $this->updateWpUsersMetaTable($user_fake_data);
 
                 if (!$response) {
-                    $this->writelnDanger("\nThe process of update User N°$i get an error!");
+                    $this->writelnDanger(
+                        "\nThe process of update User with ID = {$user_fake_data['id']} get an error!"
+                    );
+
                     $question_response = $helper->ask($this->input, $this->output, $question);
 
                     if (!$question_response) {
@@ -125,14 +126,11 @@ class DatabaseOverwrite extends ConsoleCommand
         return $this->databaseConnection->update(
             'wp_users',
             [
-                'user_login' => $user_fake_data['full_dotted_name'],
                 'user_pass' => $hashed_password,
-                'user_nicename' => $user_fake_data['nickname'],
                 'user_email' => $user_fake_data['safe_email'],
                 'user_activation_key' => $user_fake_data['has_activation_key']
                     ? $this->generateHashedActivationKey()
                     : '',
-                'display_name' => $user_fake_data['first_name'] . ' ' . $user_fake_data['last_name'],
             ],
             ['ID' => $user_fake_data['id']]
         );
@@ -140,36 +138,20 @@ class DatabaseOverwrite extends ConsoleCommand
 
     private function generateHashedActivationKey(): string
     {
-        return time() . ':' . (new PasswordHash(8, true))->HashPassword(wp_generate_password(20, false));
+        $key = wp_generate_password(20, false);
+        $wp_base_hash = new PasswordHash(8, true);
+
+        return time() . ':' . $wp_base_hash->HashPassword($key);
     }
 
     private function mountUserFakeData(object $user_data): array
     {
-        $fake_first_name = $this->faker->firstName;
-        $fake_last_name = $this->faker->lastName;
-        $full_dotted_name = "$fake_first_name.$fake_last_name";
-
         return [
             'id' => $user_data->ID,
-            'first_name' => $fake_first_name,
-            'last_name' => $fake_last_name,
-            'full_dotted_name' => $full_dotted_name,
-            'nickname' => "{$fake_first_name}_$fake_last_name",
-            'safe_email' => strtolower($full_dotted_name)
+            'safe_email' => strtolower("{$this->faker->firstName}.{$this->faker->lastName}")
                 . '@'
                 . explode('@', $this->faker->safeEmail)[1],
             'has_activation_key' => $user_data->user_activation_key !== '',
         ];
-    }
-
-    private function updateWpUsersMetaTable(array $user_fake_data): void
-    {
-        foreach (self::USER_META_TABLE_META_KEYS_COLUMN_VALUES as $meta_key_value) {
-            $this->databaseConnection->update(
-                'wp_usermeta',
-                ['meta_value' => $user_fake_data[$meta_key_value]],
-                ['user_id' => $user_fake_data['id'], 'meta_key' => $meta_key_value]
-            );
-        }
     }
 }
