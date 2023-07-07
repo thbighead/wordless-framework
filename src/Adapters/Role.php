@@ -2,6 +2,7 @@
 
 namespace Wordless\Adapters;
 
+use Wordless\Abstractions\Enums\Role as RoleEnum;
 use Wordless\Abstractions\RolesList;
 use Wordless\Exceptions\FailedToCreateRole;
 use Wordless\Exceptions\WordPressFailedToFindRole;
@@ -10,19 +11,8 @@ use WP_Role;
 
 class Role extends WP_Role
 {
-    public const ADMIN = 'administrator';
-    public const AUTHOR = 'author';
-    public const CONTRIBUTOR = 'contributor';
-    public const EDITOR = 'editor';
     public const KEY = 'role';
-    public const SUBSCRIBER = 'subscriber';
-    private const DEFAULT = [
-        self::ADMIN => self::ADMIN,
-        self::AUTHOR => self::AUTHOR,
-        self::CONTRIBUTOR => self::CONTRIBUTOR,
-        self::EDITOR => self::EDITOR,
-        self::SUBSCRIBER => self::SUBSCRIBER,
-    ];
+
 
     private static RolesList $wpRolesRepository;
     private bool $is_default;
@@ -100,7 +90,7 @@ class Role extends WP_Role
 
     public static function isDefaultByName(string $role): bool
     {
-        return (bool)(self::DEFAULT[Str::slugCase($role)] ?? false);
+        return (bool)(RoleEnum::DEFAULT[Str::slugCase($role)] ?? false);
     }
 
     private static function getRepository(): RolesList
