@@ -1,8 +1,8 @@
 <?php
 
 use Wordless\Abstractions\Bootstrapper;
+use Wordless\Abstractions\Enums\Role;
 use Wordless\Abstractions\WpSpeedUp;
-use Wordless\Adapters\Role;
 use Wordless\Hookers\ChooseImageEditor;
 use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Hookers\HideDiagnosticsFromUserRoles;
@@ -13,7 +13,7 @@ return [
     DoNotLoadWpAdminBarOutsidePanel::SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY => true,
     ChooseImageEditor::IMAGE_LIBRARY_CONFIG_KEY => ChooseImageEditor::IMAGE_LIBRARY_CONFIG_VALUE_IMAGICK,
     HideDiagnosticsFromUserRoles::SHOW_DIAGNOSTICS_CONFIG_KEY => [
-        Role::ADMIN => true,
+        Role::ADMINISTRATOR => true,
         Role::AUTHOR => false,
     ],
     Bootstrapper::MENUS_CONFIG_KEY => [],
