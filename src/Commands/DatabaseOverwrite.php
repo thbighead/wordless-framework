@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Commands;
+namespace Wordless\Commands;
 
 use Faker\Factory;
 use Faker\Generator;
