@@ -106,6 +106,12 @@ abstract class EnqueueableElement
 
     private function setFilePath()
     {
+        if (filter_var($this->relative_file_path, FILTER_VALIDATE_URL)) {
+            $this->file_path = $this->relative_file_path;
+
+            return;
+        }
+
         $this->file_path = get_stylesheet_directory_uri() . Str::startWith($this->relative_file_path, '/');
     }
 }
