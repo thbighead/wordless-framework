@@ -4,6 +4,7 @@ use Wordless\Abstractions\Bootstrapper;
 use Wordless\Abstractions\Enums\Role;
 use Wordless\Abstractions\WpSpeedUp;
 use Wordless\Hookers\ChooseImageEditor;
+use Wordless\Hookers\CustomLoginUrl\CustomLoginUrlHooker;
 use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Hookers\HideDiagnosticsFromUserRoles;
 
@@ -17,4 +18,6 @@ return [
         Role::AUTHOR => false,
     ],
     Bootstrapper::MENUS_CONFIG_KEY => [],
+    CustomLoginUrlHooker::WP_REDIRECT_URL => null,
+    CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL => null,
 ];
