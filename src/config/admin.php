@@ -18,6 +18,6 @@ return [
         Role::AUTHOR => false,
     ],
     Bootstrapper::MENUS_CONFIG_KEY => [],
-    CustomLoginUrlHooker::WP_REDIRECT_URL => null,
-    CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL => null,
+    CustomLoginUrlHooker::WP_REDIRECT_URL => false,
+    CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL => false,
 ];
