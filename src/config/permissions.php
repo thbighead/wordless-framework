@@ -1,6 +1,6 @@
 <?php
 
-//use Wordless\Adapters\Role;
+//use Wordless\Abstractions\Enums\Role;
 
 return [
 //    'custom-admin' => [
