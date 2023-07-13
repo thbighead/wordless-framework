@@ -4,6 +4,7 @@ namespace Wordless\Abstractions;
 
 use Wordless\Adapters\PostType;
 use Wordless\Adapters\Role;
+use Wordless\Abstractions\Enums\Role as RolesEnum;
 use Wordless\Adapters\ApiController;
 use Wordless\Exceptions\FailedToCreateRole;
 use Wordless\Exceptions\PathNotFoundException;
@@ -89,7 +90,7 @@ class RolesList extends WP_Roles
      */
     public static function syncPermissionsToAdminAsDefault()
     {
-        self::syncCustomPostTypesPermissionsToRole($adminRole = Role::find(Role::ADMIN));
+        self::syncCustomPostTypesPermissionsToRole($adminRole = Role::find(RolesEnum::ADMINISTRATOR));
         self::syncRestResourcesPermissionsToRole($adminRole);
     }
 

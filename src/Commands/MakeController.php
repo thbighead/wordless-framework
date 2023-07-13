@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Wordless\Abstractions\StubMounters\ControllerStubMounter;
 use Wordless\Adapters\Role;
+use Wordless\Abstractions\Enums\Role as RolesEnum;
 use Wordless\Adapters\ConsoleCommand;
 use Wordless\Adapters\ApiController;
 use Wordless\Exceptions\FailedToCopyStub;
@@ -102,7 +103,7 @@ class MakeController extends ConsoleCommand
                 /** @var ApiController $controller_class_guessed_namespace */
                 $controller_class_guessed_namespace = "App\\Controllers\\$controller_class_name";
                 $controller_class_guessed_namespace::getInstance()
-                    ->registerCapabilitiesToRole(Role::find(Role::ADMIN));
+                    ->registerCapabilitiesToRole(Role::find(RolesEnum::ADMINISTRATOR));
             }
         );
     }
