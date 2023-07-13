@@ -12,8 +12,7 @@ use WP_Role;
 class Role extends WP_Role
 {
     public const KEY = 'role';
-
-
+    
     private static RolesList $wpRolesRepository;
     private bool $is_default;
 
