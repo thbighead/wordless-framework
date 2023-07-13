@@ -1,6 +1,7 @@
 <?php /** @noinspection PhpUnhandledExceptionInspection */
 
 use Wordless\Abstractions\Bootstrapper;
+use Wordless\Abstractions\LoginRedirect;
 use Wordless\Abstractions\WpSpeedUp;
 use Wordless\Helpers\Config;
 use Wordless\Hookers\AllowSvgUpload;
@@ -9,12 +10,6 @@ use Wordless\Hookers\BootCustomPostTypes;
 use Wordless\Hookers\BootHttpRemoteCallsLog;
 use Wordless\Hookers\ChooseImageEditor;
 use Wordless\Hookers\CustomLoginUrl\CustomLoginUrlHooker;
-use Wordless\Hookers\CustomLoginUrl\LoadCustomLoginUrlHooker;
-use Wordless\Hookers\CustomLoginUrl\NetworkSiteUrlCustomLoginUrlHooker;
-use Wordless\Hookers\CustomLoginUrl\RedirectCustomLoginUrlHooker;
-use Wordless\Hookers\CustomLoginUrl\SiteUrlCustomLoginUrlHooker;
-use Wordless\Hookers\CustomLoginUrl\WelcomeEmailWithCustomLoginUrlHooker;
-use Wordless\Hookers\CustomLoginUrl\WpLoadedCustomLoginUrlHooker;
 use Wordless\Hookers\DeferEnqueuedScripts;
 use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Hookers\EnqueueThemeEnqueueables;
@@ -38,12 +33,7 @@ $hookers = [
         HideDiagnosticsFromUserRoles::class,
         HooksDebugLog::class,
         WordlessVersionOnAdmin::class,
-        LoadCustomLoginUrlHooker::class,
-        WpLoadedCustomLoginUrlHooker::class,
-        SiteUrlCustomLoginUrlHooker::class,
-        NetworkSiteUrlCustomLoginUrlHooker::class,
-        RedirectCustomLoginUrlHooker::class,
-        WelcomeEmailWithCustomLoginUrlHooker::class
+        ...LoginRedirect::addAdditionalHooks(),
     ],
 
     /**

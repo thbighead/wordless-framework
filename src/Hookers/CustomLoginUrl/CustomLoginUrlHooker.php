@@ -3,10 +3,8 @@
 namespace Wordless\Hookers\CustomLoginUrl;
 
 use Wordless\Abstractions\Hooker;
-use Wordless\Exceptions\InvalidConfigKey;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
-use Wordless\Helpers\Environment;
 
 class CustomLoginUrlHooker extends Hooker
 {
@@ -20,11 +18,11 @@ class CustomLoginUrlHooker extends Hooker
     protected const HOOK_PRIORITY = 10;
 
     /**
-     * @throws PathNotFoundException|InvalidConfigKey
+     * @throws PathNotFoundException
      */
     protected static function canHook()
     {
-        return Config::get('admin.' . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL, false);
+        return Config::tryToGetOrDefault('admin.' . self::WP_CUSTOM_LOGIN_URL, false);
     }
 
     protected static function filterWpLoginPhp($url, $scheme = null): string
@@ -51,7 +49,7 @@ class CustomLoginUrlHooker extends Hooker
      */
     protected static function newLoginSlug()
     {
-        return Config::tryToGetOrDefault('admin.' . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL, false);
+        return Config::tryToGetOrDefault('admin.' . self::WP_CUSTOM_LOGIN_URL, false);
     }
 
     protected static function newLoginUrl($scheme = null): string
@@ -68,6 +66,6 @@ class CustomLoginUrlHooker extends Hooker
      */
     protected static function newRedirectUrl()
     {
-        return Config::tryToGetOrDefault('admin.' . CustomLoginUrlHooker::WP_REDIRECT_URL, false);
+        return Config::tryToGetOrDefault('admin.' . self::WP_REDIRECT_URL, false);
     }
 }
