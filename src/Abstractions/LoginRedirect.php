@@ -15,6 +15,9 @@ use Wordless\Hookers\CustomLoginUrl\WpLoadedCustomLoginUrlHooker;
 class LoginRedirect
 {
     private const CONFIG_PREFIX = 'admin.';
+    private const HOOK_TO_REMOVE = 'template_redirect';
+    private const REMOVAL_ACTION = 'wp_redirect_admin_locations';
+    private const REMOVAL_ACTION_PRIORITY = 1000;
 
     /**
      * @throws PathNotFoundException
@@ -33,5 +36,22 @@ class LoginRedirect
         }
 
         return $additional_hooks_configs;
+    }
+
+    /**
+     * @throws PathNotFoundException
+     */
+    public static function removeLoginTemplateHook(): array
+    {
+        $hooks_to_remove = [];
+
+        if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL, false)) {
+            $hooks_to_remove[self::HOOK_TO_REMOVE] = [
+                Bootstrapper::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => self::REMOVAL_ACTION,
+                Bootstrapper::HOOKERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY => self::REMOVAL_ACTION_PRIORITY,
+            ];
+        }
+
+        return $hooks_to_remove;
     }
 }

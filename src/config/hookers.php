@@ -3,13 +3,11 @@
 use Wordless\Abstractions\Bootstrapper;
 use Wordless\Abstractions\LoginRedirect;
 use Wordless\Abstractions\WpSpeedUp;
-use Wordless\Helpers\Config;
 use Wordless\Hookers\AllowSvgUpload;
 use Wordless\Hookers\BootApiControllers;
 use Wordless\Hookers\BootCustomPostTypes;
 use Wordless\Hookers\BootHttpRemoteCallsLog;
 use Wordless\Hookers\ChooseImageEditor;
-use Wordless\Hookers\CustomLoginUrl\CustomLoginUrlHooker;
 use Wordless\Hookers\DeferEnqueuedScripts;
 use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Hookers\EnqueueThemeEnqueueables;
@@ -18,7 +16,7 @@ use Wordless\Hookers\HideDiagnosticsFromUserRoles;
 use Wordless\Hookers\HooksDebugLog;
 use Wordless\Hookers\WordlessVersionOnAdmin;
 
-$hookers = [
+return [
     Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [
         ...WpSpeedUp::addAdditionalHooks(),
         AllowSvgUpload::class,
@@ -83,18 +81,9 @@ $hookers = [
     Bootstrapper::HOOKERS_REMOVE_CONFIG_KEY => [
         Bootstrapper::HOOKERS_REMOVE_ACTION_CONFIG_KEY => array_merge_recursive([
             //
-        ], WpSpeedUp::removeActionsConfigToSpeedUp()),
+        ], WpSpeedUp::removeActionsConfigToSpeedUp(), LoginRedirect::removeLoginTemplateHook()),
         Bootstrapper::HOOKERS_REMOVE_FILTER_CONFIG_KEY => array_merge_recursive([
             //
         ], WpSpeedUp::removeFiltersConfigToSpeedUp()),
     ],
 ];
-
-if (Config::get('admin.' . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL)) {
-    $hookers[Bootstrapper::HOOKERS_REMOVE_CONFIG_KEY][Bootstrapper::HOOKERS_REMOVE_ACTION_CONFIG_KEY]['template_redirect'] = [
-        Bootstrapper::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => 'wp_redirect_admin_locations',
-        Bootstrapper::HOOKERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY => 1000,
-    ];
-}
-
-return $hookers;
