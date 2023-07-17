@@ -28,7 +28,6 @@ class DatabaseOverwrite extends ConsoleCommand
     private Generator $faker;
     private ?array $configurations;
     protected static $defaultName = 'db:overwrite';
-    public ?string $available_environment = Environment::LOCAL;
 
     /**
      * @throws PathNotFoundException
@@ -40,6 +39,11 @@ class DatabaseOverwrite extends ConsoleCommand
 
         $this->configurations = Config::get('commands')[self::DATABASE_OVERWRITE_KEY];
         $this->faker = Factory::create();
+    }
+
+    public function canRun(): bool
+    {
+        return Environment::get('APP_ENV') === Environment::LOCAL;
     }
 
     protected function arguments(): array
