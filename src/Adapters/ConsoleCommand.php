@@ -46,7 +46,7 @@ abstract class ConsoleCommand extends Command
 
     abstract protected function runIt(): int;
 
-    protected function canRun(): bool
+    public function canRun(): bool
     {
         return true;
     }

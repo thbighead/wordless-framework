@@ -41,14 +41,14 @@ class DatabaseOverwrite extends ConsoleCommand
         $this->faker = Factory::create();
     }
 
+    public function canRun(): bool
+    {
+        return Environment::get('APP_ENV') === Environment::LOCAL;
+    }
+
     protected function arguments(): array
     {
         return [];
-    }
-
-    protected function canRun(): bool
-    {
-        return Environment::get('APP_ENV') === Environment::LOCAL;
     }
 
     protected function description(): string
