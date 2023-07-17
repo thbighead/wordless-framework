@@ -32,7 +32,6 @@ abstract class ConsoleCommand extends Command
     protected const OPTION_NAME_FIELD = 'name';
     protected const OPTION_SHORTCUT_FIELD = 'shortcut';
 
-    public ?string $available_environment = null;
     protected InputInterface $input;
     protected OutputInterface $output;
     private array $wordlessCommandsCache = [];
@@ -46,6 +45,11 @@ abstract class ConsoleCommand extends Command
     abstract protected function options(): array;
 
     abstract protected function runIt(): int;
+
+    protected function canRun(): bool
+    {
+        return true;
+    }
 
     protected function configure(): void
     {
