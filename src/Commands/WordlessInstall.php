@@ -15,24 +15,26 @@ use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Wordless\Abstractions\StubMounters\RobotsTxtStubMounter;
 use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\ForceMode;
 use Wordless\Contracts\Command\RunWpCliCommand;
-use Wordless\Contracts\Command\WriteRobotsTxt;
 use Wordless\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\FailedToDeletePath;
 use Wordless\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Helpers\Config;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
 use Wordless\Helpers\Str;
+use Wordless\Hookers\CustomLoginUrl\CustomLoginUrlHooker;
 
 class WordlessInstall extends ConsoleCommand
 {
-    use ForceMode, RunWpCliCommand, WriteRobotsTxt;
+    use ForceMode, RunWpCliCommand;
 
     protected static $defaultName = 'wordless:install';
 
@@ -178,22 +180,22 @@ class WordlessInstall extends ConsoleCommand
     }
 
     /**
-     * @throws PathNotFoundException
+     * @throws PathNotFoundException|FailedToCopyStub
      */
     private function createRobotsTxtFromStub()
     {
-        $filename = 'robots.txt';
-        $new_robots_txt_filepath = ProjectPath::public() . "/$filename";
+        $new_robots_txt_filepath = ProjectPath::public() . "/" . RobotsTxtStubMounter::STUB_FINAL_FILENAME;
 
-        if (($supposed_already_existing_robots_txt_filepath = realpath($new_robots_txt_filepath)) !== false) {
-            $this->writelnInfoWhenVerbose(
-                "$supposed_already_existing_robots_txt_filepath already exists, skipping."
-            );
+        $robotStubMounter = (new RobotsTxtStubMounter($new_robots_txt_filepath));
 
-            return;
-        }
-
-        $this->mountRobotsTxtFromStub($filename, $new_robots_txt_filepath);
+        $custom_login_url = Config::tryToGetOrDefault('admin.' . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL, false);
+        $robotStubMounter->setReplaceContentDictionary(
+            [
+                '{APP_URL}' => Str::finishWith($this->getEnvVariableByKey('APP_URL', ''), '/'),
+                '#custom_login_url' => $custom_login_url ? "Disallow: /$custom_login_url/" : ''
+            ]
+        )
+            ->mountNewFile();
     }
 
     /**
@@ -268,6 +270,7 @@ class WordlessInstall extends ConsoleCommand
             );
         }
     }
+
     /**
      * @return void
      * @throws ExceptionInterface
