@@ -6,18 +6,21 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Wordless\Abstractions\StubMounters\RobotsTxtStubMounter;
 use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\RunWpCliCommand;
-use Wordless\Contracts\Command\WriteRobotsTxt;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Helpers\Config;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Str;
+use Wordless\Hookers\CustomLoginUrl\CustomLoginUrlHooker;
 
 class WordlessDeploy extends ConsoleCommand
 {
-    use RunWpCliCommand, WriteRobotsTxt;
+    use RunWpCliCommand;
 
     protected static $defaultName = 'wordless:deploy';
 
@@ -217,13 +220,22 @@ class WordlessDeploy extends ConsoleCommand
 
     /**
      * @throws PathNotFoundException
+     * @throws FailedToCopyStub
      */
     private function overwriteRobotsTxtFromStub()
     {
-        $filename = 'robots.txt';
-        $new_robots_txt_filepath = ProjectPath::public($filename);
+        $new_robots_txt_filepath = ProjectPath::public() . "/" . RobotsTxtStubMounter::STUB_FINAL_FILENAME;
 
-        $this->mountRobotsTxtFromStub($filename, $new_robots_txt_filepath);
+        $robotStubMounter = (new RobotsTxtStubMounter($new_robots_txt_filepath));
+
+        $custom_login_url = Config::tryToGetOrDefault('admin.' . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL, false);
+        $robotStubMounter->setReplaceContentDictionary(
+            [
+                '{APP_URL}' => Str::finishWith($this->getEnvVariableByKey('APP_URL', ''), '/'),
+                '#custom_login_url' => $custom_login_url ? "Disallow: /$custom_login_url/" : ''
+            ]
+        )
+            ->mountNewFile();
     }
 
     /**
