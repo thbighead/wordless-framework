@@ -103,7 +103,10 @@ class ReplaceBaseUrls extends ConsoleCommand
     private function runDatabaseSearchReplace()
     {
         foreach ($this->base_urls_to_search as $base_url_to_search) {
-            $this->runWpCliCommand("search-replace '$base_url_to_search' '$this->app_url'");
+            $this->runWpCliCommand('search-replace '
+                . ($this->input->getOption('quiet') ? '' : '--verbose')
+                . " '$base_url_to_search' '$this->app_url'"
+            );
         }
     }
 
