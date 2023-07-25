@@ -1,10 +1,14 @@
 <?php
 
-namespace App\Hookers;
+namespace Wordless\Hookers;
 
+use Wordless\Abstractions\Enums\RestApiPolicy;
 use Wordless\Abstractions\Hooker;
+use Wordless\Exceptions\InvalidConfigKey;
+use Wordless\Exceptions\InvalidRestApiPolicy;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
+use Wordless\Helpers\Environment;
 
 class SyncRestApiConfigEndpoints extends Hooker
 {
@@ -32,38 +36,33 @@ class SyncRestApiConfigEndpoints extends Hooker
     /**
      * @param array $endpoints
      * @return array
+     * @throws InvalidConfigKey
+     * @throws InvalidRestApiPolicy
      * @throws PathNotFoundException
      */
     public static function setRestApiRoutes(array $endpoints): array
     {
-        $rest_config = Config::tryToGetOrDefault('rest-api');
-
-        if (isset($rest_config['enable']) && $rest_config['enable'] === false) {
-            return [];
+        if (Environment::get('APP_ENV') === Environment::LOCAL) {
+            return $endpoints;
         }
 
-        if (!isset($rest_config['endpoints']['policy']) || !isset($rest_config['endpoints']['routes'])) {
-            throw new \Exception('Missing Rest API configuration file parameters.');
+        switch ($policy = Config::get('rest-api.endpoints.policy')) {
+            case RestApiPolicy::ALLOW:
+                return self::allowEndpoints($endpoints, Config::get('rest-api.endpoints.routes'));
+            case RestApiPolicy::DISALLOW:
+                return self::disallowEndpoints($endpoints, Config::get('rest-api.endpoints.routes'));
+            default:
+                throw new InvalidRestApiPolicy($policy);
         }
-
-        if ($rest_config['endpoints']['policy'] === 'allow') {
-            $endpoints = self::allowEndpoints($endpoints, $rest_config['endpoints']['routes']);
-        }
-
-        if ($rest_config['endpoints']['policy'] === 'disallow') {
-            $endpoints = self::disallowEndpoints($endpoints, $rest_config['endpoints']['routes']);
-        }
-
-        return $endpoints;
     }
 
     private static function allowEndpoints(array $endpoints, array $config_routes): array
     {
         $final_routes = [];
 
-        foreach ($config_routes as $route => $parameter) {
-            if (is_int($route)) {
-                $route = $parameter;
+        foreach ($config_routes as $index => $route) {
+            if (is_string($index)) {
+                $route = $index;
             }
 
             $final_routes[$route] = $endpoints[$route];
@@ -74,9 +73,9 @@ class SyncRestApiConfigEndpoints extends Hooker
 
     private static function disallowEndpoints(array $endpoints, array $config_routes): array
     {
-        foreach ($config_routes as $route => $parameters) {
-            if (is_int($route)) {
-                $route = $parameters;
+        foreach ($config_routes as $index => $route) {
+            if (is_string($index)) {
+                $route = $index;
             }
 
             unset($endpoints[$route]);

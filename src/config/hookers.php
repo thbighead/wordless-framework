@@ -1,7 +1,5 @@
 <?php /** @noinspection PhpUnhandledExceptionInspection */
 
-use App\Hookers\SetRestApiIsAllowed;
-use App\Hookers\SyncRestApiConfigEndpoints;
 use Wordless\Abstractions\Bootstrapper;
 use Wordless\Abstractions\LoginRedirect;
 use Wordless\Abstractions\WpSpeedUp;
@@ -16,6 +14,8 @@ use Wordless\Hookers\EnqueueThemeEnqueueables;
 use Wordless\Hookers\ForceXmlTagToUploadedSvgFiles;
 use Wordless\Hookers\HideDiagnosticsFromUserRoles;
 use Wordless\Hookers\HooksDebugLog;
+use Wordless\Hookers\RestApiAuthentication;
+use Wordless\Hookers\SyncRestApiConfigEndpoints;
 use Wordless\Hookers\WordlessVersionOnAdmin;
 
 return [
@@ -33,7 +33,7 @@ return [
         ForceXmlTagToUploadedSvgFiles::class,
         HideDiagnosticsFromUserRoles::class,
         HooksDebugLog::class,
-        SetRestApiIsAllowed::class,
+        RestApiAuthentication::class,
         SyncRestApiConfigEndpoints::class,
         WordlessVersionOnAdmin::class,
     ],
