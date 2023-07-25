@@ -1,5 +1,7 @@
 <?php /** @noinspection PhpUnhandledExceptionInspection */
 
+use App\Hookers\SetRestApiIsAllowed;
+use App\Hookers\SyncRestApiConfigEndpoints;
 use Wordless\Abstractions\Bootstrapper;
 use Wordless\Abstractions\LoginRedirect;
 use Wordless\Abstractions\WpSpeedUp;
@@ -18,6 +20,7 @@ use Wordless\Hookers\WordlessVersionOnAdmin;
 
 return [
     Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [
+        ...LoginRedirect::addAdditionalHooks(),
         ...WpSpeedUp::addAdditionalHooks(),
         AllowSvgUpload::class,
         BootApiControllers::class,
@@ -30,8 +33,9 @@ return [
         ForceXmlTagToUploadedSvgFiles::class,
         HideDiagnosticsFromUserRoles::class,
         HooksDebugLog::class,
+        SetRestApiIsAllowed::class,
+        SyncRestApiConfigEndpoints::class,
         WordlessVersionOnAdmin::class,
-        ...LoginRedirect::addAdditionalHooks(),
     ],
 
     /**
