@@ -2,6 +2,7 @@
 
 use Wordless\Abstractions\Bootstrapper;
 use Wordless\Abstractions\LoginRedirect;
+use Wordless\Abstractions\RestApi;
 use Wordless\Abstractions\WpSpeedUp;
 use Wordless\Hookers\AllowSvgUpload;
 use Wordless\Hookers\BootApiControllers;
@@ -21,6 +22,7 @@ use Wordless\Hookers\WordlessVersionOnAdmin;
 return [
     Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [
         ...LoginRedirect::addAdditionalHooks(),
+        ...RestApi::addAdditionalHooks(),
         ...WpSpeedUp::addAdditionalHooks(),
         AllowSvgUpload::class,
         BootApiControllers::class,
