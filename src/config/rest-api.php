@@ -4,7 +4,7 @@ use Wordless\Abstractions\Enums\RestApiPolicy;
 use Wordless\Abstractions\Enums\RestApiRoutes;
 
 return [
-    'enable' => false,
+    'enabled' => false,
     'endpoints' => [
         RestApiPolicy::KEY => RestApiPolicy::ALLOW,
         RestApiRoutes::KEY => [
