@@ -14,10 +14,13 @@ use Wordless\Hookers\EnqueueThemeEnqueueables;
 use Wordless\Hookers\ForceXmlTagToUploadedSvgFiles;
 use Wordless\Hookers\HideDiagnosticsFromUserRoles;
 use Wordless\Hookers\HooksDebugLog;
+use Wordless\Hookers\RestApiAuthentication;
+use Wordless\Hookers\SyncRestApiConfigEndpoints;
 use Wordless\Hookers\WordlessVersionOnAdmin;
 
 return [
     Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [
+        ...LoginRedirect::addAdditionalHooks(),
         ...WpSpeedUp::addAdditionalHooks(),
         AllowSvgUpload::class,
         BootApiControllers::class,
@@ -30,8 +33,9 @@ return [
         ForceXmlTagToUploadedSvgFiles::class,
         HideDiagnosticsFromUserRoles::class,
         HooksDebugLog::class,
+        RestApiAuthentication::class,
+        SyncRestApiConfigEndpoints::class,
         WordlessVersionOnAdmin::class,
-        ...LoginRedirect::addAdditionalHooks(),
     ],
 
     /**
