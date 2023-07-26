@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Hookers;
+namespace Wordless\Hookers\RestApi;
 
 use Wordless\Abstractions\Enums\RestApiPolicy;
 use Wordless\Abstractions\Hooker;
@@ -10,7 +10,7 @@ use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
 use Wordless\Helpers\Environment;
 
-class SyncRestApiConfigEndpoints extends Hooker
+class DefineEndpoints extends Hooker
 {
     /**
      * WordPress action|filter number of arguments accepted by function

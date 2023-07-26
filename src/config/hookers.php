@@ -15,8 +15,8 @@ use Wordless\Hookers\EnqueueThemeEnqueueables;
 use Wordless\Hookers\ForceXmlTagToUploadedSvgFiles;
 use Wordless\Hookers\HideDiagnosticsFromUserRoles;
 use Wordless\Hookers\HooksDebugLog;
-use Wordless\Hookers\RestApiAuthentication;
-use Wordless\Hookers\SyncRestApiConfigEndpoints;
+use Wordless\Hookers\RestApi\Authentication;
+use Wordless\Hookers\RestApi\DefineEndpoints;
 use Wordless\Hookers\WordlessVersionOnAdmin;
 
 return [
@@ -35,8 +35,8 @@ return [
         ForceXmlTagToUploadedSvgFiles::class,
         HideDiagnosticsFromUserRoles::class,
         HooksDebugLog::class,
-        RestApiAuthentication::class,
-        SyncRestApiConfigEndpoints::class,
+        Authentication::class,
+        DefineEndpoints::class,
         WordlessVersionOnAdmin::class,
     ],
 
