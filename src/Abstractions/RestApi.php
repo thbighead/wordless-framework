@@ -2,16 +2,16 @@
 
 namespace Wordless\Abstractions;
 
-use Wordless\Hookers\RestApiAuthentication;
-use Wordless\Hookers\SyncRestApiConfigEndpoints;
+use Wordless\Hookers\RestApi\Authentication;
+use Wordless\Hookers\RestApi\DefineEndpoints;
 
 class RestApi
 {
     public static function addAdditionalHooks(): array
     {
         return [
-            RestApiAuthentication::class,
-            SyncRestApiConfigEndpoints::class,
+            Authentication::class,
+            DefineEndpoints::class,
         ];
     }
 }

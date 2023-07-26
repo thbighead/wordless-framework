@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Hookers;
+namespace Wordless\Hookers\RestApi;
 
 use Symfony\Component\HttpFoundation\Response;
 use Wordless\Abstractions\Enums\RestApiRoutes;
@@ -13,7 +13,7 @@ use Wordless\Helpers\Str;
 use Wordless\Helpers\Url;
 use WP_Error;
 
-class RestApiAuthentication extends Hooker
+class Authentication extends Hooker
 {
     /**
      * WordPress action|filter number of arguments accepted by function
@@ -48,7 +48,7 @@ class RestApiAuthentication extends Hooker
             return $errors;
         }
 
-        if (Config::tryToGetOrDefault('rest-api.enabled') === false) {
+        if (Config::tryToGetOrDefault('rest-api.enabled') === false && is_user_logged_in()) {
             return new WP_Error(Response::HTTP_NOT_FOUND, __('The WordPress REST API has been disabled.'));
         }
 
