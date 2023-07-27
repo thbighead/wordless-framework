@@ -8,7 +8,6 @@ use Wordless\Abstractions\Hooker;
 use Wordless\Exceptions\InvalidRoutePermission;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
-use Wordless\Helpers\Environment;
 use Wordless\Helpers\Str;
 use Wordless\Helpers\Url;
 use WP_Error;
@@ -44,15 +43,7 @@ class Authentication extends Hooker
      */
     public static function restApiIsEnabled($errors): ?WP_Error
     {
-        if (Environment::get('APP_ENV') === Environment::LOCAL) {
-            return $errors;
-        }
-
-        if (Config::tryToGetOrDefault('rest-api.enabled') === false && !is_user_logged_in()) {
-            return new WP_Error(Response::HTTP_NOT_FOUND, __('The WordPress REST API has been disabled.'));
-        }
-
-        if (Url::isUserRestApiRoute() && !is_user_logged_in()) {
+        if (self::isUnauthorized()) {
             return new WP_Error(Response::HTTP_UNAUTHORIZED, __('Unauthorized to access route.'));
         }
 
@@ -89,5 +80,18 @@ class Authentication extends Hooker
         }
 
         return null;
+    }
+
+    private static function isUnauthorized(): bool
+    {
+        if (Config::tryToGetOrDefault('rest-api.enabled') === false && !is_user_logged_in()) {
+            return true;
+        }
+
+        if (Url::isUserRestApiRoute() && !is_user_logged_in()) {
+            return true;
+        }
+
+        return false;
     }
 }

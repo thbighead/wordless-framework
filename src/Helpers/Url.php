@@ -4,6 +4,8 @@ namespace Wordless\Helpers;
 
 class Url
 {
+    public const REST_API_ROUTE_QUERY_PARAMETER = 'rest_route';
+
     public static function current(bool $with_parameters = false): ?string
     {
         if (($current_uri = self::currentUri($with_parameters)) === null) {
@@ -22,13 +24,52 @@ class Url
         return $with_parameters ? $request_uri : Str::before($request_uri, '?');
     }
 
-    public static function isUserRestApiRoute(): bool
+    public static function getCurrentRestApiEndpoint(): ?string
     {
-        return preg_match('/\/users?(\/|$)/', Str::after(self::current(), self::restApiBaseUrl())) === 1;
+        if (self::isCurrentRestApiUsingWpJsonRoute()) {
+            return Str::after(self::currentUri(), rest_get_url_prefix());
+        }
+
+        if (self::isCurrentRestApiUsingQueryParameter()) {
+            return $_REQUEST[self::REST_API_ROUTE_QUERY_PARAMETER] ?? null;
+        }
+
+        return null;
     }
 
-    public static function restApiBaseUrl(): string
+    public static function isCurrentRestApi(): bool
     {
-        return home_url(rest_get_url_prefix());
+        return self::isCurrentRestApiUsingWpJsonRoute() || self::isCurrentRestApiUsingQueryParameter();
+    }
+
+    public static function isCurrentRestApiUsingQueryParameter(): bool
+    {
+        return isset($_REQUEST[self::REST_API_ROUTE_QUERY_PARAMETER]);
+    }
+
+    public static function isCurrentRestApiUsingWpJsonRoute(): bool
+    {
+        return Str::beginsWith(self::currentUri(), '/' . rest_get_url_prefix());
+    }
+
+    public static function isUserRestApiRoute(): bool
+    {
+        return self::isRestApiRoute('users?');
+    }
+
+    public static function isRestApiRoute(string $uri_pattern): bool
+    {
+        if (($uri = self::getCurrentRestApiEndpoint()) === null) {
+            return false;
+        }
+
+        $is_regex = Str::isSurroundedBy($uri_pattern, '/', '/');
+
+        return preg_match($is_regex ? $uri_pattern : "/\/$uri_pattern(\/|$)/", $uri) === 1;
+    }
+
+    public static function mountRestApiEndpointUrl(string $uri = '/'): string
+    {
+        return get_rest_url(null, $uri);
     }
 }
