@@ -48,7 +48,7 @@ class Authentication extends Hooker
             return $errors;
         }
 
-        if (Config::tryToGetOrDefault('rest-api.enabled') === false && is_user_logged_in()) {
+        if (Config::tryToGetOrDefault('rest-api.enabled') === false && !is_user_logged_in()) {
             return new WP_Error(Response::HTTP_NOT_FOUND, __('The WordPress REST API has been disabled.'));
         }
 
