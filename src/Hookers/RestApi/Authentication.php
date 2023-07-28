@@ -3,12 +3,9 @@
 namespace Wordless\Hookers\RestApi;
 
 use Symfony\Component\HttpFoundation\Response;
-use Wordless\Abstractions\Enums\RestApiRoutes;
 use Wordless\Abstractions\Hooker;
-use Wordless\Exceptions\InvalidRoutePermission;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
-use Wordless\Helpers\Str;
 use Wordless\Helpers\Url;
 use WP_Error;
 
@@ -21,7 +18,7 @@ class Authentication extends Hooker
     /**
      * The function which shall be executed during hook
      */
-    protected const FUNCTION = 'restApiIsEnabled';
+    protected const FUNCTION = 'checkUserAuthorization';
     /**
      * WordPress action|filter hook identification
      */
@@ -38,60 +35,31 @@ class Authentication extends Hooker
     /**
      * @param $errors
      * @return WP_Error|null
-     * @throws InvalidRoutePermission
      * @throws PathNotFoundException
      */
-    public static function restApiIsEnabled($errors): ?WP_Error
+    public static function checkUserAuthorization($errors): ?WP_Error
     {
         if (self::isUnauthorized()) {
             return new WP_Error(Response::HTTP_UNAUTHORIZED, __('Unauthorized to access route.'));
-        }
-
-        if (($error = self::checkForAuthRoutes()) instanceof WP_Error) {
-            return $error;
         }
 
         return $errors;
     }
 
     /**
-     * @return WP_Error|null
-     * @throws InvalidRoutePermission
+     * @return bool
      * @throws PathNotFoundException
      */
-    private static function checkForAuthRoutes(): ?WP_Error
-    {
-        foreach (Config::tryToGetOrDefault('rest-api.endpoints.routes', []) as $index => $value) {
-            if (!is_string($index)) {
-                continue;
-            }
-
-            if (Str::after(Url::currentUri(), rest_get_url_prefix()) !== $index) {
-                continue;
-            }
-
-            if (!in_array($value, [RestApiRoutes::AUTH, RestApiRoutes::PUBLIC])) {
-                throw new InvalidRoutePermission($index, $value);
-            }
-
-            if ($value === RestApiRoutes::AUTH && !is_user_logged_in()) {
-                return new WP_Error(Response::HTTP_UNAUTHORIZED, __('Unauthorized to access route.'));
-            }
-        }
-
-        return null;
-    }
-
     private static function isUnauthorized(): bool
     {
-        if (Config::tryToGetOrDefault('rest-api.enabled') === false && !is_user_logged_in()) {
-            return true;
+        if (in_array(Url::getCurrentRestApiEndpoint(), Config::tryToGetOrDefault('rest-api.routes.public', []))) {
+            return false;
         }
 
-        if (Url::isUserRestApiRoute() && !is_user_logged_in()) {
-            return true;
+        if (is_user_logged_in()) {
+            return false;
         }
 
-        return false;
+        return true;
     }
 }
