@@ -4,11 +4,9 @@ namespace Wordless\Hookers\RestApi;
 
 use Wordless\Abstractions\Enums\RestApiPolicy;
 use Wordless\Abstractions\Hooker;
-use Wordless\Exceptions\InvalidConfigKey;
-use Wordless\Exceptions\InvalidRestApiPolicy;
+use Wordless\Exceptions\InvalidRestApiMultipleConfigKey;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
-use Wordless\Helpers\Environment;
 
 class DefineEndpoints extends Hooker
 {
@@ -36,24 +34,27 @@ class DefineEndpoints extends Hooker
     /**
      * @param array $endpoints
      * @return array
-     * @throws InvalidConfigKey
-     * @throws InvalidRestApiPolicy
+     * @throws InvalidRestApiMultipleConfigKey
      * @throws PathNotFoundException
      */
     public static function setRestApiRoutes(array $endpoints): array
     {
-        if (Environment::get('APP_ENV') === Environment::LOCAL) {
-            return $endpoints;
+        $routes_configuration = Config::tryToGetOrDefault('rest-api.routes');
+
+        if (isset($routes_configuration[RestApiPolicy::ALLOW])
+            && isset($routes_configuration[RestApiPolicy::DISALLOW])) {
+            throw new InvalidRestApiMultipleConfigKey();
         }
 
-        switch ($policy = Config::get('rest-api.endpoints.policy')) {
-            case RestApiPolicy::ALLOW:
-                return self::allowEndpoints($endpoints, Config::get('rest-api.endpoints.routes'));
-            case RestApiPolicy::DISALLOW:
-                return self::disallowEndpoints($endpoints, Config::get('rest-api.endpoints.routes'));
-            default:
-                throw new InvalidRestApiPolicy($policy);
+        if (isset($routes_configuration[RestApiPolicy::ALLOW])) {
+            return self::allowEndpoints($endpoints, $routes_configuration[RestApiPolicy::ALLOW]);
         }
+
+        if (isset($routes_configuration[RestApiPolicy::DISALLOW])) {
+            return self::disallowEndpoints($endpoints, $routes_configuration[RestApiPolicy::DISALLOW]);
+        }
+
+        return $endpoints;
     }
 
     private static function allowEndpoints(array $endpoints, array $config_routes): array
