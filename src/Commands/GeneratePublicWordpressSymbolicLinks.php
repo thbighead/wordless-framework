@@ -60,6 +60,7 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
     {
         $this->wrapScriptWithMessages('Removing old symlinks...', function () {
             DirectoryFiles::recursiveRemoveSymbolicLinks(ProjectPath::public());
+            DirectoryFiles::recursiveDeleteEmptyDirectories(ProjectPath::public(), false);
         });
 
         $this->wrapScriptWithMessages('Generating public symbolic links...', function () {
