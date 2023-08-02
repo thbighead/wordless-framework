@@ -213,6 +213,38 @@ class DirectoryFiles
 
     /**
      * @param string $path
+     * @param bool $delete_root
+     * @return void
+     * @throws FailedToDeletePath
+     * @throws InvalidDirectory
+     * @throws PathNotFoundException
+     */
+    public static function recursiveDeleteEmptyDirectories(string $path, bool $delete_root = true)
+    {
+        if (!is_dir($real_path = ProjectPath::realpath($path))) {
+            return;
+        }
+
+        if (empty($paths = self::listFromDirectory($real_path))) {
+            self::delete($real_path);
+            return;
+        }
+
+        foreach ($paths as $relative_path) {
+            self::recursiveDeleteEmptyDirectories("$real_path/$relative_path");
+        }
+
+        if (!$delete_root) {
+            return;
+        }
+
+        if (!rmdir($real_path)) {
+            throw new FailedToDeletePath($real_path);
+        }
+    }
+
+    /**
+     * @param string $path
      * @return Generator|void
      * @throws PathNotFoundException
      */
