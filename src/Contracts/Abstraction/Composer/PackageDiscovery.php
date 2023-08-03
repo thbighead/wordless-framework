@@ -17,7 +17,7 @@ trait PackageDiscovery
                 continue;
             }
 
-            self::resolveWordlessOptions($wordless_extra_options);
+            self::resolveWordlessOptions($wordless_extra_options, $package, $event);
 
             $event->getIO()->write("{$package->getName()} discovered as a Wordless package");
         }
@@ -33,10 +33,10 @@ trait PackageDiscovery
             $wordless_extra_options : false;
     }
 
-    private static function resolveWordlessOptions(array $wordless_extra_options)
+    private static function resolveWordlessOptions(array $wordless_extra_options, CompletePackage $package, Event $event)
     {
         foreach ($wordless_extra_options['scripts'] ?? [] as $wordless_script) {
-            $wordless_script();
+            $wordless_script($package, $event);
         }
     }
 }
