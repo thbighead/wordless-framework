@@ -117,7 +117,6 @@ class WordlessInstall extends ConsoleCommand
         );
         $this->executeWordlessCommand(Migrate::COMMAND_NAME, [], $this->output);
         $this->executeWordlessCommand(SyncRoles::COMMAND_NAME, [], $this->output);
-        $this->executeWordlessCommand(CreateInternalCache::COMMAND_NAME, [], $this->output);
 
         return Command::SUCCESS;
     }
@@ -416,7 +415,7 @@ class WordlessInstall extends ConsoleCommand
                 return "#$env_variable_name";
             }, $parse_wp_salt_response_regex_result[1] ?? []),
             array_map(function ($salt_value) {
-                return "\"$salt_value\"";
+                return Str::replace("\"$salt_value\"", '$', 'S');
             }, $parse_wp_salt_response_regex_result[2] ?? []),
             $dot_env_content
         );
