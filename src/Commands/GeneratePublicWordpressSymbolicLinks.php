@@ -74,6 +74,7 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
                 ->resolveTargetsExceptions()
                 ->resolveWlsymlinks()
                 ->cleanSymlinksPointingToDirectoriesWithWlsymlinks()
+                ->cleanSymlinksRetroReferences()
                 ->generateSymbolicLinks();
         });
 
@@ -118,6 +119,34 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
         return $this;
     }
 
+    private function cleanSymlinksRetroReferences(): GeneratePublicWordpressSymbolicLinks
+    {
+        $links_relative_paths = array_keys($this->symlinks);
+
+        $this->sortPathsListByDepthAscending($links_relative_paths);
+
+        $initial_paths_count = count($links_relative_paths);
+
+        for ($i = 0; $i < $initial_paths_count - 1; $i++) {
+            if (!isset($links_relative_paths[$i])) {
+                continue;
+            }
+
+            for ($j = $i + 1; $j < $initial_paths_count; $j++) {
+                if (!isset($links_relative_paths[$j])) {
+                    continue;
+                }
+
+                if (Str::beginsWith($links_relative_paths[$j], $links_relative_paths[$i])) {
+                    unset($this->symlinks[$links_relative_paths[$j]]);
+                    unset($links_relative_paths[$j]);
+                }
+            }
+        }
+
+        return $this;
+    }
+
     /**
      * @param string[] $directory_paths_list
      * @return string[]
@@ -125,6 +154,8 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
      */
     private function cleanWlsymlinksDirectoryPathsList(array $directory_paths_list): array
     {
+        $this->sortPathsListByDepthAscending($directory_paths_list);
+
         $initial_paths_count = count($directory_paths_list);
 
         for ($i = 0; $i < $initial_paths_count - 1; $i++) {
@@ -210,6 +241,13 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
             if ($this->executeCommand($command) !== self::SUCCESS) {
                 throw new FailedToCreateSymlink($command);
             }
+
+            $absolute_link_path = ProjectPath::public(Str::beforeLast($link_name, self::SLASH))
+                . self::SLASH
+                . Str::afterLast($link_name, self::SLASH);
+            $absolute_target_path = $this->targetRealpath($target);
+
+            $this->writelnSuccessWhenVerbose("\"$absolute_link_path\" pointing to \"$absolute_target_path\" created.");
         }
     }
 
@@ -237,6 +275,34 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
         }
 
         return array_filter(explode(PHP_EOL, $wlsymlinks_content));
+    }
+
+    /**
+     * @param string $path_to_include
+     * @return bool
+     * @throws PathNotFoundException
+     */
+    private function isGeneratedPathAnException(string $path_to_include): bool
+    {
+        foreach ($this->exceptions as $base_target => $relative_filepaths) {
+            foreach ($relative_filepaths as $relative_filepath) {
+                if ($path_to_include === $this->targetRealpath("$base_target/$relative_filepath")) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private function isWlsymlinkInsidePath(string $path): bool
+    {
+        try {
+            ProjectPath::realpath("$path/" . self::WLSYMLINKS_FILENAME);
+            return true;
+        } catch (PathNotFoundException $exception) {
+            return false;
+        }
     }
 
     /**
@@ -275,96 +341,6 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
             $resolved_symlinks["$original_link_name/$filtered_target_relative_subpath"] =
                 "{$this->trimSlashes($target_without_exceptions)}/$filtered_target_relative_subpath";
         }
-    }
-
-    /**
-     * @param string $directory_path
-     * @return string[]
-     * @throws FailedToGetFileContent
-     * @throws PathNotFoundException
-     */
-    private function recursiveSearchDirectoriesWithWlsymlinks(string $directory_path): array
-    {
-        $absolute_directory_paths_found = [];
-
-        foreach (DirectoryFiles::recursiveRead($directory_path) as $absolute_filepath) {
-            if (basename($absolute_filepath) === self::WLSYMLINKS_FILENAME) {
-                $wlsymlinks_absolute_directory_path = dirname($absolute_filepath);
-                $absolute_directory_paths_found[$wlsymlinks_absolute_directory_path] =
-                    $wlsymlinks_absolute_directory_path;
-            }
-        }
-
-        usort($absolute_directory_paths_found, function ($a, $b): int {
-            return Str::countSubstring($a, self::SLASH) - Str::countSubstring($b, self::SLASH);
-        });
-
-        return $this->cleanWlsymlinksDirectoryPathsList($absolute_directory_paths_found);
-    }
-
-    /**
-     * @return GeneratePublicWordpressSymbolicLinks
-     * @throws InvalidDirectory
-     * @throws InvalidSymlinkTargetException
-     * @throws PathNotFoundException
-     */
-    private function resolveTargetsExceptions(): GeneratePublicWordpressSymbolicLinks
-    {
-        $resolved_symlinks = [];
-
-        foreach ($this->symlinks as $link_name => $target) {
-            if (!$this->targetHasExceptions($target)) {
-                $resolved_symlinks[$link_name] = $this->trimSlashes($target);
-                continue;
-            }
-
-            $this->mountSymlinksToExceptInto($resolved_symlinks, $link_name, $target);
-        }
-
-        $this->symlinks = $resolved_symlinks;
-
-        return $this;
-    }
-
-    /**
-     * @return GeneratePublicWordpressSymbolicLinks
-     * @throws FailedToGetFileContent
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
-     */
-    private function resolveWlsymlinks(): GeneratePublicWordpressSymbolicLinks
-    {
-        $resolved_symlinks = [];
-
-        foreach ($this->symlinks as $link_name => $target) {
-            if (!is_dir($target_realpath = $this->targetRealpath($target))) {
-                $resolved_symlinks[$link_name] = $this->trimSlashes($target);
-                continue;
-            }
-
-            if (empty($wlsymlinks_absolute_directory_paths =
-                $this->recursiveSearchDirectoriesWithWlsymlinks($target_realpath))) {
-                $resolved_symlinks[$link_name] = $this->trimSlashes($target);
-
-                continue;
-            }
-
-            $this->pushPathsGeneratedByWlsymlinksParsingInto(
-                $resolved_symlinks,
-                $this->parseWlsymlinksPathsToIncludeInto(
-                    $resolved_symlinks,
-                    $wlsymlinks_absolute_directory_paths,
-                    $link_name,
-                    $target
-                ),
-                $link_name,
-                $target
-            );
-        }
-
-        $this->symlinks = $resolved_symlinks;
-
-        return $this;
     }
 
     /**
@@ -445,32 +421,97 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
         }
     }
 
-    private function isWlsymlinkInsidePath(string $path): bool
-    {
-        try {
-            ProjectPath::realpath("$path/" . self::WLSYMLINKS_FILENAME);
-            return true;
-        } catch (PathNotFoundException $exception) {
-            return false;
-        }
-    }
-
     /**
-     * @param string $path_to_include
-     * @return bool
+     * @param string $directory_path
+     * @return string[]
+     * @throws FailedToGetFileContent
      * @throws PathNotFoundException
      */
-    private function isGeneratedPathAnException(string $path_to_include): bool
+    private function recursiveSearchDirectoriesWithWlsymlinks(string $directory_path): array
     {
-        foreach ($this->exceptions as $base_target => $relative_filepaths) {
-            foreach ($relative_filepaths as $relative_filepath) {
-                if ($path_to_include === $this->targetRealpath("$base_target/$relative_filepath")) {
-                    return true;
-                }
+        $absolute_directory_paths_found = [];
+
+        foreach (DirectoryFiles::recursiveRead($directory_path) as $absolute_filepath) {
+            if (basename($absolute_filepath) === self::WLSYMLINKS_FILENAME) {
+                $wlsymlinks_absolute_directory_path = dirname($absolute_filepath);
+                $absolute_directory_paths_found[$wlsymlinks_absolute_directory_path] =
+                    $wlsymlinks_absolute_directory_path;
             }
         }
 
-        return false;
+        return $this->cleanWlsymlinksDirectoryPathsList($absolute_directory_paths_found);
+    }
+
+    /**
+     * @return GeneratePublicWordpressSymbolicLinks
+     * @throws InvalidDirectory
+     * @throws InvalidSymlinkTargetException
+     * @throws PathNotFoundException
+     */
+    private function resolveTargetsExceptions(): GeneratePublicWordpressSymbolicLinks
+    {
+        $resolved_symlinks = [];
+
+        foreach ($this->symlinks as $link_name => $target) {
+            if (!$this->targetHasExceptions($target)) {
+                $resolved_symlinks[$link_name] = $this->trimSlashes($target);
+                continue;
+            }
+
+            $this->mountSymlinksToExceptInto($resolved_symlinks, $link_name, $target);
+        }
+
+        $this->symlinks = $resolved_symlinks;
+
+        return $this;
+    }
+
+    /**
+     * @return GeneratePublicWordpressSymbolicLinks
+     * @throws FailedToGetFileContent
+     * @throws InvalidDirectory
+     * @throws PathNotFoundException
+     */
+    private function resolveWlsymlinks(): GeneratePublicWordpressSymbolicLinks
+    {
+        $resolved_symlinks = [];
+
+        foreach ($this->symlinks as $link_name => $target) {
+            if (!is_dir($target_realpath = $this->targetRealpath($target))) {
+                $resolved_symlinks[$link_name] = $this->trimSlashes($target);
+                continue;
+            }
+
+            if (empty($wlsymlinks_absolute_directory_paths =
+                $this->recursiveSearchDirectoriesWithWlsymlinks($target_realpath))) {
+                $resolved_symlinks[$link_name] = $this->trimSlashes($target);
+
+                continue;
+            }
+
+            $this->pushPathsGeneratedByWlsymlinksParsingInto(
+                $resolved_symlinks,
+                $this->parseWlsymlinksPathsToIncludeInto(
+                    $resolved_symlinks,
+                    $wlsymlinks_absolute_directory_paths,
+                    $link_name,
+                    $target
+                ),
+                $link_name,
+                $target
+            );
+        }
+
+        $this->symlinks = $resolved_symlinks;
+
+        return $this;
+    }
+
+    private function sortPathsListByDepthAscending(array &$paths_list)
+    {
+        usort($paths_list, function ($a, $b): int {
+            return Str::countSubstring($a, self::SLASH) - Str::countSubstring($b, self::SLASH);
+        });
     }
 
     /**
