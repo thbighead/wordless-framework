@@ -2,7 +2,8 @@
 
 namespace Wordless\Commands;
 
-use InvalidArgumentException;
+use App\Exceptions\FailedToGetFileContent;
+use App\Exceptions\InvalidSymlinkTargetException;
 use Symfony\Component\Console\Command\Command;
 use Wordless\Adapters\ConsoleCommand;
 use Wordless\Exceptions\FailedToCreateDirectory;
