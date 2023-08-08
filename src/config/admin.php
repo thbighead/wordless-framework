@@ -20,4 +20,5 @@ return [
     Bootstrapper::MENUS_CONFIG_KEY => [],
     CustomLoginUrlHooker::WP_REDIRECT_URL => false,
     CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL => false,
+    'enable_comments' => false
 ];
