@@ -10,6 +10,8 @@ use Wordless\Hookers\BootCustomPostTypes;
 use Wordless\Hookers\BootHttpRemoteCallsLog;
 use Wordless\Hookers\ChooseImageEditor;
 use Wordless\Hookers\DeferEnqueuedScripts;
+use Wordless\Hookers\DisableCptComments;
+use Wordless\Hookers\DisableDefaultComments;
 use Wordless\Hookers\DisableXmlrpc;
 use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Hookers\EnqueueThemeEnqueueables;
@@ -31,6 +33,8 @@ return [
         BootHttpRemoteCallsLog::class,
         ChooseImageEditor::class,
         DeferEnqueuedScripts::class,
+        DisableCptComments::class,
+        DisableDefaultComments::class,
         DisableXmlrpc::class,
         DoNotLoadWpAdminBarOutsidePanel::class,
         EnqueueThemeEnqueueables::class,
