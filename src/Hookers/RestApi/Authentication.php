@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Wordless\Abstractions\Hooker;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Config;
+use Wordless\Helpers\Str;
 use Wordless\Helpers\Url;
 use WP_Error;
 
@@ -40,7 +41,11 @@ class Authentication extends Hooker
     public static function checkUserAuthorization($errors): ?WP_Error
     {
         if (self::isUnauthorized()) {
-            return new WP_Error(Response::HTTP_UNAUTHORIZED, __('Unauthorized to access route.'));
+            return new WP_Error(
+                $code = Response::HTTP_UNAUTHORIZED,
+                __('Unauthorized to access route.'),
+                ['status' => $code]
+            );
         }
 
         return $errors;
@@ -52,7 +57,7 @@ class Authentication extends Hooker
      */
     private static function isUnauthorized(): bool
     {
-        if (in_array(Url::getCurrentRestApiEndpoint(), Config::tryToGetOrDefault('rest-api.routes.public', []))) {
+        if (self::isCurrentApiEndpointPublic()) {
             return false;
         }
 
@@ -61,5 +66,21 @@ class Authentication extends Hooker
         }
 
         return true;
+    }
+
+    private static function isCurrentApiEndpointPublic(): bool
+    {
+        $public_endpoints = Config::tryToGetOrDefault('rest-api.routes.public', []);
+        $current_endpoint = Url::getCurrentRestApiEndpoint();
+
+        foreach ($public_endpoints as $public_endpoint) {
+            $regex = Str::replace($public_endpoint, '/', '\/');
+
+            if (preg_match("/$regex/", $current_endpoint)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
