@@ -36,7 +36,9 @@ if (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null) === 'https') {
 
 require_once ROOT_PROJECT_PATH . '/vendor/autoload.php';
 
+use ParagonIE\CSPBuilder\CSPBuilder;
 use Wordless\Abstractions\InternalCache;
+use Wordless\Helpers\Config;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\Str;
 
@@ -166,7 +168,11 @@ if (Environment::get('WORDLESS_CSP', false)) {
     @ini_set('session.use_only_cookies', true);
 
     if (!headers_sent()) {
-        header('X-Frame-Options: SAMEORIGIN');
+        header('Referrer-Policy: no-referrer-when-downgrade');
+        header('Strict-Transport-Security: max-age=63072000; includeSubDomains; preload');
+        header('X-Content-Type-Options: nosniff');
+        header('X-XSS-Protection: 1; mode=block');
+        (new CSPBuilder(Config::get('csp')))->sendCSPHeader();
     }
 }
 
