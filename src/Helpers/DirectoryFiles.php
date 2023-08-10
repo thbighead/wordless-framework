@@ -55,13 +55,22 @@ class DirectoryFiles
      * @return void
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
+     * @throws PathNotFoundException
      */
     public static function createDirectoryAt(string $path, $permissions = null, bool $recursive = true)
     {
-        $parent_path = dirname($path);
+        $ancestor_path = dirname($path);
 
-        if (($permissions = $permissions ?? fileperms($parent_path)) === false) {
-            throw new FailedToGetDirectoryPermissions($parent_path);
+        while (!is_dir($ancestor_path)){
+            $ancestor_path = dirname($ancestor_path);
+
+            if (strlen($ancestor_path) < 2) {
+                throw new PathNotFoundException($path);
+            }
+        }
+
+        if (($permissions = $permissions ?? fileperms($ancestor_path)) === false) {
+            throw new FailedToGetDirectoryPermissions($ancestor_path);
         }
 
         if (!mkdir($path, $permissions, $recursive)) {
