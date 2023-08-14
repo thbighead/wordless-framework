@@ -19,7 +19,7 @@ use Wordless\Helpers\ProjectPath;
 use Wordless\Services\PublicSymlink;
 use Wordless\Services\PublicSymlink\Exceptions\InvalidPublicSymlinkTargetWithExceptions;
 use Wordless\Services\PublicSymlinksResolver;
-use Wordless\Services\Wlsymlinks\Exceptions\EmptyWlsymlinks;
+use Wordless\Services\Wlsymlink\Exceptions\EmptyWlsymlinks;
 
 class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
 {
