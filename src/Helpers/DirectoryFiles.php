@@ -6,6 +6,7 @@ use Generator;
 use Wordless\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Exceptions\FailedToCopyFile;
 use Wordless\Exceptions\FailedToCreateDirectory;
+use Wordless\Exceptions\FailedToCreateSymlink;
 use Wordless\Exceptions\FailedToDeletePath;
 use Wordless\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Exceptions\FailedToGetDirectoryPermissions;
@@ -55,18 +56,56 @@ class DirectoryFiles
      * @return void
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
+     * @throws PathNotFoundException
      */
     public static function createDirectoryAt(string $path, $permissions = null, bool $recursive = true)
     {
-        $parent_path = dirname($path);
+        $ancestor_path = dirname($path);
 
-        if (($permissions = $permissions ?? fileperms($parent_path)) === false) {
-            throw new FailedToGetDirectoryPermissions($parent_path);
+        while (!is_dir($ancestor_path)) {
+            $ancestor_path = dirname($ancestor_path);
+
+            if (strlen($ancestor_path) < 2) {
+                throw new PathNotFoundException($path);
+            }
+        }
+
+        if (($permissions = $permissions ?? fileperms($ancestor_path)) === false) {
+            throw new FailedToGetDirectoryPermissions($ancestor_path);
         }
 
         if (!mkdir($path, $permissions, $recursive)) {
             throw new FailedToCreateDirectory($path);
         }
+    }
+
+    /**
+     * @param string $link_relative_path
+     * @param string $target_relative_path
+     * @param string|null $from_absolute_path
+     * @return void
+     * @throws FailedToCreateSymlink
+     * @throws FailedToChangeDirectoryTo
+     * @throws FailedToGetCurrentWorkingDirectory
+     * @throws PathNotFoundException
+     */
+    public static function createSymlink(
+        string  $link_relative_path,
+        string  $target_relative_path,
+        ?string $from_absolute_path = null
+    )
+    {
+        $from_absolute_path = $from_absolute_path ?? ProjectPath::root();
+
+        self::changeWorkingDirectoryDoAndGoBack($from_absolute_path, function () use (
+            $link_relative_path,
+            $target_relative_path,
+            $from_absolute_path
+        ) {
+            if (!symlink($target_relative_path, $link_relative_path)) {
+                throw new FailedToCreateSymlink($link_relative_path, $target_relative_path, $from_absolute_path);
+            }
+        });
     }
 
     /**
