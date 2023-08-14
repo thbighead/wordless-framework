@@ -148,8 +148,7 @@ class Wlsymlink
     }
 
     /**
-     * @return $this
-     * @throws EmptyWlsymlinks
+     * @return Wlsymlink
      * @throws FailedToGetFileContent
      */
     private function loadFileContentLines(): Wlsymlink
@@ -159,10 +158,6 @@ class Wlsymlink
         }
 
         $relative_paths = array_filter(explode(PHP_EOL, $wlsymlinks_content));
-
-        if (empty($relative_paths)) {
-            throw new EmptyWlsymlinks($this->absolute_filepath, $wlsymlinks_content);
-        }
 
         $this->file_content_lines = $relative_paths;
 
