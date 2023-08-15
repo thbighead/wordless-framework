@@ -102,7 +102,12 @@ class DirectoryFiles
             $target_relative_path,
             $from_absolute_path
         ) {
-            if (!symlink($target_relative_path, $link_relative_path)) {
+            $target_relative_path_from_link_parent_directory = str_repeat(
+                    '../',
+                    Str::countSubstring($link_relative_path, '/')
+                ) . $target_relative_path;
+
+            if (!symlink($target_relative_path_from_link_parent_directory, $link_relative_path)) {
                 throw new FailedToCreateSymlink($link_relative_path, $target_relative_path, $from_absolute_path);
             }
         });
