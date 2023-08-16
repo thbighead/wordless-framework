@@ -43,7 +43,7 @@ class DatabaseOverwrite extends ConsoleCommand
 
     public function canRun(): bool
     {
-        return Environment::get('APP_ENV') === Environment::LOCAL;
+        return Environment::isLocal();
     }
 
     protected function arguments(): array

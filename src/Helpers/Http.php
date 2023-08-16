@@ -101,7 +101,7 @@ class Http
             'body' => str_contains(($headers[self::CONTENT_TYPE] ?? ''), self::CONTENT_TYPE_APPLICATION_JSON) ?
                 json_encode($body) : $body,
             'timeout' => self::TIMEOUT,
-            'sslverify' => Environment::get('APP_ENV') === Environment::PRODUCTION,
+            'sslverify' => Environment::isProduction(),
         ]));
 
         if ($response instanceof WP_Error) {
