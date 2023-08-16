@@ -118,7 +118,7 @@ class WordlessInstall extends ConsoleCommand
         $this->executeWordlessCommand(Migrate::COMMAND_NAME, [], $this->output);
         $this->executeWordlessCommand(SyncRoles::COMMAND_NAME, [], $this->output);
 
-        if (Environment::get('APP_ENV') !== Environment::LOCAL) {
+        if (Environment::isNotLocal()) {
             $this->executeWordlessCommand(CreateInternalCache::COMMAND_NAME, [], $this->output);
         }
 

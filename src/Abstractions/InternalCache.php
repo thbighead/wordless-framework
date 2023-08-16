@@ -84,7 +84,7 @@ class InternalCache
      */
     public static function load()
     {
-        if (Environment::get('APP_ENV') !== Environment::LOCAL && !self::isLoaded()) {
+        if (Environment::isNotLocal() && !self::isLoaded()) {
             define(self::INTERNAL_WORDLESS_CACHE_CONSTANT_NAME, self::retrieveCachedValues());
         }
     }
