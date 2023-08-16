@@ -89,6 +89,36 @@ STRING;
         (new Dotenv)->load(ProjectPath::root('.env'));
     }
 
+    public static function isLocal(): bool
+    {
+        return self::get('APP_ENV') === Environment::LOCAL;
+    }
+
+    public static function isNotLocal(): bool
+    {
+        return !self::isLocal();
+    }
+
+    public static function isNotProduction(): bool
+    {
+        return !self::isProduction();
+    }
+
+    public static function isNotStaging(): bool
+    {
+        return !self::isStaging();
+    }
+
+    public static function isProduction(): bool
+    {
+        return self::get('APP_ENV') === Environment::PRODUCTION;
+    }
+
+    public static function isStaging(): bool
+    {
+        return self::get('APP_ENV') === Environment::STAGING;
+    }
+
     /**
      * @param string $package_name
      * @param array<string|int, ?string> $variables
