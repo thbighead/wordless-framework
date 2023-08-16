@@ -13,7 +13,7 @@ class RobotsTxtStubMounter extends BaseStubMounter
 
     protected function relativeStubFilename(): string
     {
-        return Environment::get('APP_ENV') === Environment::PRODUCTION
+        return Environment::isProduction()
             ? self::STUB_PROD_FILENAME
             : self::STUB_NON_PROD_FILENAME;
     }
