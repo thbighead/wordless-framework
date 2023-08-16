@@ -19,18 +19,18 @@ abstract class AjaxHooker extends Hooker
     {
         $hook_addition_function = 'add_' . static::TYPE;
 
-        if (self::AVAILABLE_TO_FRONTEND) {
+        if (static::AVAILABLE_TO_FRONTEND) {
             $hook_addition_function(
-                self::WP_AJAX_NOPRIV_PREFIX . static::HOOK,
+                self::WP_AJAX_PREFIX . static::HOOK,
                 [static::class, static::FUNCTION],
                 static::HOOK_PRIORITY,
                 static::ACCEPTED_NUMBER_OF_ARGUMENTS
             );
         }
 
-        if (self::AVAILABLE_TO_ADMIN_PANEL) {
+        if (static::AVAILABLE_TO_ADMIN_PANEL) {
             $hook_addition_function(
-                self::WP_AJAX_PREFIX . static::HOOK,
+                self::WP_AJAX_NOPRIV_PREFIX . static::HOOK,
                 [static::class, static::FUNCTION],
                 static::HOOK_PRIORITY,
                 static::ACCEPTED_NUMBER_OF_ARGUMENTS
