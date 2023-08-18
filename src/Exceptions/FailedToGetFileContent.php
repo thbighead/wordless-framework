@@ -15,4 +15,9 @@ class FailedToGetFileContent extends Exception
 
         parent::__construct("Failed to get contents from file at $this->filepath", 0, $previous);
     }
+
+    public function getFilepath(): string
+    {
+        return $this->filepath;
+    }
 }
