@@ -10,6 +10,8 @@ use Wordless\Exceptions\FailedToCreateSymlink;
 use Wordless\Exceptions\FailedToDeletePath;
 use Wordless\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Exceptions\FailedToGetDirectoryPermissions;
+use Wordless\Exceptions\FailedToGetFileContent;
+use Wordless\Exceptions\FailedToPutFileContent;
 use Wordless\Exceptions\InvalidDirectory;
 use Wordless\Exceptions\PathNotFoundException;
 
@@ -51,14 +53,13 @@ class DirectoryFiles
 
     /**
      * @param string $path
-     * @param $permissions
-     * @param bool $recursive
+     * @param int|null $permissions
      * @return void
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
      * @throws PathNotFoundException
      */
-    public static function createDirectoryAt(string $path, $permissions = null, bool $recursive = true)
+    public static function createDirectoryAt(string $path, ?int $permissions = null)
     {
         $ancestor_path = dirname($path);
 
@@ -74,8 +75,27 @@ class DirectoryFiles
             throw new FailedToGetDirectoryPermissions($ancestor_path);
         }
 
-        if (!mkdir($path, $permissions, $recursive)) {
+        if (!mkdir($path, $permissions, true)) {
             throw new FailedToCreateDirectory($path);
+        }
+    }
+
+    /**
+     * @param string $filepath
+     * @param string $file_content
+     * @param int|null $permissions
+     * @return void
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
+     * @throws FailedToPutFileContent
+     * @throws PathNotFoundException
+     */
+    public static function createFileAt(string $filepath, string $file_content = '', ?int $permissions = null)
+    {
+        self::createDirectoryAt(dirname($filepath), $permissions);
+
+        if (file_put_contents($filepath, $file_content) === false) {
+            throw new FailedToPutFileContent($filepath);
         }
     }
 
