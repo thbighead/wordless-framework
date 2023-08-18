@@ -92,7 +92,9 @@ class DirectoryFiles
      */
     public static function createFileAt(string $filepath, string $file_content = '', ?int $permissions = null)
     {
-        self::createDirectoryAt(dirname($filepath), $permissions);
+        if (!is_dir($file_directory_path = dirname($filepath))) {
+            self::createDirectoryAt($file_directory_path, $permissions);
+        }
 
         if (file_put_contents($filepath, $file_content) === false) {
             throw new FailedToPutFileContent($filepath);
