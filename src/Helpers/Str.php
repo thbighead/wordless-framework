@@ -151,6 +151,11 @@ class Str
         return self::getInflector($language)->pluralize($string);
     }
 
+    public static function random(int $size = 16)
+    {
+        return wp_generate_password($size, false);
+    }
+
     public static function removeSuffix(string $string, string $suffix): string
     {
         return !self::endsWith($string, $suffix) ? $string : substr($string, 0, -strlen($suffix));
