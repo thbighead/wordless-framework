@@ -8,9 +8,11 @@ use Wordless\Exceptions\InvalidMenuClass;
 use Wordless\Exceptions\PathNotFoundException;
 use Wordless\Helpers\Arr;
 use Wordless\Helpers\Config;
+use Wordless\Helpers\Environment;
 
 class Bootstrapper
 {
+    public const ERROR_REPORTING_KEY = 'error_reporting';
     public const HOOKERS_BOOT_CONFIG_KEY = 'boot';
     public const HOOKERS_REMOVE_ACTION_CONFIG_KEY = 'action';
     public const HOOKERS_REMOVE_CONFIG_KEY = 'remove';
@@ -20,6 +22,19 @@ class Bootstrapper
     public const MENUS_CONFIG_KEY = 'menus';
     private const ADMIN_CONFIG_FILENAME = 'admin';
     private const HOOKERS_CONFIG_FILENAME = 'hookers';
+
+    /**
+     * @throws PathNotFoundException
+     */
+    public static function bootCoreConfigs(): void
+    {
+        $config_prefix = self::ADMIN_CONFIG_FILENAME . '.' . self::ERROR_REPORTING_KEY;
+        $default_error_value = Environment::isProduction()
+            ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
+            : E_ALL;
+
+        error_reporting(Config::tryToGetOrDefault($config_prefix, $default_error_value));
+    }
 
     /**
      * @return void
