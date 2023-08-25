@@ -3,6 +3,7 @@
 use Wordless\Abstractions\Bootstrapper;
 use Wordless\Abstractions\Enums\Role;
 use Wordless\Abstractions\WpSpeedUp;
+use Wordless\Helpers\Environment;
 use Wordless\Hookers\ChooseImageEditor;
 use Wordless\Hookers\CustomLoginUrl\CustomLoginUrlHooker;
 use Wordless\Hookers\DoNotLoadWpAdminBarOutsidePanel;
@@ -20,5 +21,8 @@ return [
     Bootstrapper::MENUS_CONFIG_KEY => [],
     CustomLoginUrlHooker::WP_REDIRECT_URL => false,
     CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL => false,
-    'enable_comments' => false
+    'enable_comments' => false,
+    Bootstrapper::ERROR_REPORTING_KEY => Environment::isProduction()
+        ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
+        : E_ALL,
 ];

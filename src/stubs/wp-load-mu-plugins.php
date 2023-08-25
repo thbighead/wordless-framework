@@ -12,6 +12,7 @@
 
 use Wordless\Abstractions\Bootstrapper;
 
+Bootstrapper::bootCoreConfigs();
 Bootstrapper::bootMenus();
 Bootstrapper::bootHookers();
 
