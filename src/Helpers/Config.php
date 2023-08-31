@@ -26,11 +26,22 @@ class Config
         try {
             return InternalCache::getValueOrFail("config.$key");
         } catch (InternalCacheNotLoaded|FailedToFindCachedKey $exception) {
-            $keys = self::mountKeys($key);
-            $config = self::retrieveConfig($keys);
-
-            return self::searchKeysIntoConfig($keys, $config, $key);
+            return self::getFresh($key);
         }
+    }
+
+    /**
+     * @param string $key
+     * @return array|mixed
+     * @throws InvalidConfigKey
+     * @throws PathNotFoundException
+     */
+    public static function getFresh(string $key)
+    {
+        $keys = self::mountKeys($key);
+        $config = self::retrieveConfig($keys);
+
+        return self::searchKeysIntoConfig($keys, $config, $key);
     }
 
     /**
