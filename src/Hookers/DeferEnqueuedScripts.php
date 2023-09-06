@@ -3,7 +3,11 @@
 namespace Wordless\Hookers;
 
 use Wordless\Abstractions\Hooker;
+use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Helpers\Config;
 use Wordless\Helpers\Str;
+use Wordless\Helpers\Url;
+use Wordless\Hookers\CustomLoginUrl\CustomLoginUrlHooker;
 
 class DeferEnqueuedScripts extends Hooker
 {
@@ -25,9 +29,14 @@ class DeferEnqueuedScripts extends Hooker
      */
     protected const TYPE = 'filter';
 
+    /**
+     * @param string $tag
+     * @return string
+     * @throws PathNotFoundException
+     */
     public static function addReferToScriptTag(string $tag): string
     {
-        if ((isset($_SERVER['SCRIPT_NAME']) && stripos(wp_login_url(), $_SERVER['SCRIPT_NAME']) !== false) || is_admin()) {
+        if (Url::isCurrentAdminLogin() || is_admin()) {
             return $tag;
         }
 

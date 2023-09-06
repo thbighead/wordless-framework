@@ -2,13 +2,16 @@
 
 namespace Wordless\Helpers;
 
+use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Hookers\CustomLoginUrl\CustomLoginUrlHooker;
+
 class Url
 {
     public const REST_API_ROUTE_QUERY_PARAMETER = 'rest_route';
 
     public static function current(bool $with_parameters = false): ?string
     {
-        if (($current_uri = self::currentUri($with_parameters)) === null) {
+        if (($current_uri = static::currentUri($with_parameters)) === null) {
             return null;
         }
 
@@ -26,20 +29,35 @@ class Url
 
     public static function getCurrentRestApiEndpoint(): ?string
     {
-        if (self::isCurrentRestApiUsingWpJsonRoute()) {
-            return Str::after(self::currentUri(), rest_get_url_prefix());
+        if (static::isCurrentRestApiUsingWpJsonRoute()) {
+            return Str::after(static::currentUri(), rest_get_url_prefix());
         }
 
-        if (self::isCurrentRestApiUsingQueryParameter()) {
+        if (static::isCurrentRestApiUsingQueryParameter()) {
             return $_REQUEST[self::REST_API_ROUTE_QUERY_PARAMETER] ?? null;
         }
 
         return null;
     }
 
+    /**
+     * @return bool
+     * @throws PathNotFoundException
+     */
+    public static function isCurrentAdminLogin(): bool
+    {
+        $custom_admin_login_uri = Config::tryToGetOrDefault('admin.' . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL);
+
+        if (empty($custom_admin_login_uri)) {
+            return isset($_SERVER['SCRIPT_NAME']) && stripos(wp_login_url(), $_SERVER['SCRIPT_NAME']) !== false;
+        }
+
+        return static::isCurrentUri($custom_admin_login_uri);
+    }
+
     public static function isCurrentRestApi(): bool
     {
-        return self::isCurrentRestApiUsingWpJsonRoute() || self::isCurrentRestApiUsingQueryParameter();
+        return static::isCurrentRestApiUsingWpJsonRoute() || static::isCurrentRestApiUsingQueryParameter();
     }
 
     public static function isCurrentRestApiUsingQueryParameter(): bool
@@ -49,17 +67,22 @@ class Url
 
     public static function isCurrentRestApiUsingWpJsonRoute(): bool
     {
-        return Str::beginsWith(self::currentUri(), '/' . rest_get_url_prefix());
+        return Str::beginsWith(static::currentUri(), '/' . rest_get_url_prefix());
+    }
+
+    public static function isCurrentUri(string $uri):bool
+    {
+        return trim(Url::currentUri(), '/') === trim($uri, '/');
     }
 
     public static function isUserRestApiRoute(): bool
     {
-        return self::isRestApiRoute('users?');
+        return static::isRestApiRoute('users?');
     }
 
     public static function isRestApiRoute(string $uri_pattern): bool
     {
-        if (($uri = self::getCurrentRestApiEndpoint()) === null) {
+        if (($uri = static::getCurrentRestApiEndpoint()) === null) {
             return false;
         }
 
