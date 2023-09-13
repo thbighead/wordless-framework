@@ -7,6 +7,7 @@ use Wordless\Abstractions\InternalCache;
 use Wordless\Adapters\ConsoleCommand;
 use Wordless\Contracts\Command\LoadWpConfig;
 use Wordless\Exceptions\FailedToCopyStub;
+use Wordless\Exceptions\FailedToDeletePath;
 use Wordless\Exceptions\PathNotFoundException;
 
 class CreateInternalCache extends ConsoleCommand
@@ -16,6 +17,16 @@ class CreateInternalCache extends ConsoleCommand
     protected static $defaultName = self::COMMAND_NAME;
 
     public const COMMAND_NAME = 'cache:create';
+
+    /**
+     * @throws PathNotFoundException
+     * @throws FailedToDeletePath
+     */
+    public function __construct(string $name = null)
+    {
+        parent::__construct($name);
+        InternalCache::clean();
+    }
 
     protected function arguments(): array
     {
