@@ -6,6 +6,7 @@ use Wordless\Abstractions\Cachers\ConfigCacher;
 use Wordless\Abstractions\Cachers\ControllerCacher;
 use Wordless\Abstractions\Cachers\EnvironmentCacher;
 use Wordless\Exceptions\FailedToCopyStub;
+use Wordless\Exceptions\FailedToDeletePath;
 use Wordless\Exceptions\FailedToFindCachedKey;
 use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\InvalidCache;
@@ -19,6 +20,19 @@ class InternalCache
 {
     private const INTERNAL_WORDLESS_CACHE_CONSTANT_NAME = 'INTERNAL_WORDLESS_CACHE';
     private const PHP_EXTENSION = '.php';
+
+    /**
+     * @throws PathNotFoundException
+     * @throws FailedToDeletePath
+     */
+    public static function clean()
+    {
+        DirectoryFiles::recursiveDelete(
+            ProjectPath::cache(),
+            [ProjectPath::cache('.gitignore')],
+            false
+        );
+    }
 
     /**
      * @throws FailedToCopyStub
