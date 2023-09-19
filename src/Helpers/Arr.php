@@ -2,6 +2,8 @@
 
 namespace Wordless\Helpers;
 
+use Wordless\Exceptions\FailedToFindArrayKey;
+
 class Arr
 {
     public static function except(array $array, array $except_keys): array
@@ -26,7 +28,39 @@ class Arr
      */
     public static function get(array $array, $key, $default = null)
     {
-        return $array[$key] ?? $default;
+        try {
+            return static::getOrFail($array, $key);
+        } catch (FailedToFindArrayKey $exception) {
+            return $default;
+        }
+    }
+
+    /**
+     * @param array $array
+     * @param mixed $key
+     * @return mixed|null
+     * @throws FailedToFindArrayKey
+     */
+    public static function getOrFail(array $array, $key)
+    {
+        $key_pathing = explode('.', $key);
+        $first_key = array_shift($key_pathing);
+
+        if (!isset($array[$first_key])) {
+            throw new FailedToFindArrayKey($array, $key, $first_key);
+        }
+
+        $pointer = $array[$first_key];
+
+        foreach ($key_pathing as $key_path) {
+            if (!isset($pointer[$key_path])) {
+                throw new FailedToFindArrayKey($array, $key, $key_path);
+            }
+
+            $pointer = $pointer[$key_path];
+        }
+
+        return $pointer;
     }
 
     public static function isAssociative(array $array): bool
