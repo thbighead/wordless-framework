@@ -7,10 +7,12 @@ use Wordless\Abstractions\Cachers\ControllerCacher;
 use Wordless\Abstractions\Cachers\EnvironmentCacher;
 use Wordless\Exceptions\FailedToCopyStub;
 use Wordless\Exceptions\FailedToDeletePath;
+use Wordless\Exceptions\FailedToFindArrayKey;
 use Wordless\Exceptions\FailedToFindCachedKey;
 use Wordless\Exceptions\InternalCacheNotLoaded;
 use Wordless\Exceptions\InvalidCache;
 use Wordless\Exceptions\PathNotFoundException;
+use Wordless\Helpers\Arr;
 use Wordless\Helpers\DirectoryFiles;
 use Wordless\Helpers\Environment;
 use Wordless\Helpers\ProjectPath;
@@ -72,24 +74,11 @@ class InternalCache
             throw new InternalCacheNotLoaded($key_pathing_string);
         }
 
-        $key_pathing = explode('.', $key_pathing_string);
-        $first_key = array_shift($key_pathing);
-
-        if (!isset(INTERNAL_WORDLESS_CACHE[$first_key])) {
-            throw new FailedToFindCachedKey($key_pathing_string, $first_key);
+        try {
+            return Arr::getOrFail(INTERNAL_WORDLESS_CACHE, $key_pathing_string);
+        } catch (FailedToFindArrayKey $exception) {
+            throw new FailedToFindCachedKey($key_pathing_string, $exception->getPartialKeyWhichFailed());
         }
-
-        $pointer = INTERNAL_WORDLESS_CACHE[$first_key];
-
-        foreach ($key_pathing as $key) {
-            if (!isset($pointer[$key])) {
-                throw new FailedToFindCachedKey($key_pathing_string, $key);
-            }
-
-            $pointer = $pointer[$key];
-        }
-
-        return $pointer;
     }
 
     /**
