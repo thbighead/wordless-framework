@@ -18,6 +18,17 @@ class Arr
         return array_diff_key($array, $except_array);
     }
 
+    /**
+     * @param array $array
+     * @param mixed $key
+     * @param mixed|null $default
+     * @return mixed|null
+     */
+    public static function get(array $array, $key, $default = null)
+    {
+        return $array[$key] ?? $default;
+    }
+
     public static function isAssociative(array $array): bool
     {
         return array_keys($array) !== range(0, count($array) - 1);
