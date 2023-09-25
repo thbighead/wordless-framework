@@ -96,6 +96,21 @@ class Arr
         return $joined_array;
     }
 
+    public static function only(array $array, array $only_keys): array
+    {
+        $filtered_array = [];
+
+        foreach ($only_keys as $key_to_filter) {
+            try {
+                $filtered_array[$key_to_filter] = static::getOrFail($array, $key_to_filter);
+            } catch (FailedToFindArrayKey $exception) {
+                continue;
+            }
+        }
+
+        return $filtered_array;
+    }
+
     public static function wrap($something): array
     {
         if (is_array($something)) {
