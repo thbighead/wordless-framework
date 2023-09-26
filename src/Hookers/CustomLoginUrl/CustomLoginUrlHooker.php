@@ -22,7 +22,7 @@ class CustomLoginUrlHooker extends Hooker
      */
     protected static function canHook()
     {
-        return Config::tryToGetOrDefault('admin.' . self::WP_CUSTOM_LOGIN_URL, false);
+        return Config::tryToGetOrDefault('wordpress.admin.' . self::WP_CUSTOM_LOGIN_URL, false);
     }
 
     protected static function filterWpLoginPhp($url, $scheme = null): string
@@ -49,7 +49,7 @@ class CustomLoginUrlHooker extends Hooker
      */
     protected static function newLoginSlug()
     {
-        return Config::tryToGetOrDefault('admin.' . self::WP_CUSTOM_LOGIN_URL, false);
+        return Config::tryToGetOrDefault('wordpress.admin.' . self::WP_CUSTOM_LOGIN_URL, false);
     }
 
     protected static function newLoginUrl($scheme = null): string
@@ -66,6 +66,6 @@ class CustomLoginUrlHooker extends Hooker
      */
     protected static function newRedirectUrl()
     {
-        return Config::tryToGetOrDefault('admin.' . self::WP_REDIRECT_URL, false);
+        return Config::tryToGetOrDefault('wordpress.admin.' . self::WP_REDIRECT_URL, false);
     }
 }

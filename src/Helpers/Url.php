@@ -46,7 +46,7 @@ class Url
      */
     public static function isCurrentAdminLogin(): bool
     {
-        $custom_admin_login_uri = Config::tryToGetOrDefault('admin.' . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL);
+        $custom_admin_login_uri = Config::tryToGetOrDefault('wordpress.admin.' . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL);
 
         if (empty($custom_admin_login_uri)) {
             return isset($_SERVER['SCRIPT_NAME']) && stripos(wp_login_url(), $_SERVER['SCRIPT_NAME']) !== false;
