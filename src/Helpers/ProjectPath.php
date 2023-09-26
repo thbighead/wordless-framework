@@ -257,7 +257,8 @@ class ProjectPath
      */
     public static function theme(string $additional_path = ''): string
     {
-        return self::wpThemes(Environment::get('WP_THEME', 'wordless') . "/$additional_path");
+        return self::wpThemes(Config::tryToGetOrDefault('wordpress.theme', 'wordless')
+            . "/$additional_path");
     }
 
     /**

@@ -13,7 +13,7 @@ class WpSpeedUp
 {
     public const REMOVE_WP_EMOJIS_CONFIG_KEY = 'remove_wp_emojis';
     public const SPEED_UP_WP_CONFIG_KEY = 'speed_up_wp';
-    private const CONFIG_PREFIX = 'admin.';
+    private const CONFIG_PREFIX = 'wordpress.admin.';
     private const WP_FUNCTION_PRINT_EMOJI_DETECTION_SCRIPT = 'print_emoji_detection_script';
     private const WP_FUNCTION_PRINT_EMOJI_STYLES = 'print_emoji_styles';
     private const WP_FUNCTION_WP_STATICIZE_EMOJI = 'wp_staticize_emoji';

@@ -1,8 +1,8 @@
 <?php
 
-use Wordless\Helpers\Environment;
+use Wordless\Helpers\Config;
 
-$current_wp_theme = Environment::get('WP_THEME', 'wordless');
+$current_wp_theme = Config::tryToGetOrDefault('wordpress.theme', 'wordless');
 
 return [
     'index.php' => '../wp/index.php',

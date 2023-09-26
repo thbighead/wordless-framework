@@ -26,7 +26,7 @@ class DisableDefaultComments extends Hooker
      */
     public static function removeCommentsSupport()
     {
-        if (Config::tryToGetOrDefault('admin.enable_comments', false) === true) {
+        if (Config::tryToGetOrDefault('wordpress.admin.enable_comments', false) === true) {
             return;
         }
 
