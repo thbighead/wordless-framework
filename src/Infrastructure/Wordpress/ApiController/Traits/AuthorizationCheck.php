@@ -58,7 +58,7 @@ trait AuthorizationCheck
      * @param Role|Role[] $roles
      * @return void
      */
-    final public function registerCapabilitiesToRole($roles)
+    final public function registerCapabilitiesToRole(Role|array $roles): void
     {
         if (static::HAS_PERMISSIONS) {
             $this->syncPermissionsTo($roles);
@@ -128,9 +128,10 @@ trait AuthorizationCheck
      * @param Role|Role[] $roles
      * @return void
      */
-    protected function syncPermissionsTo($roles)
+    protected function syncPermissionsTo(Role|array $roles): void
     {
         foreach (Arr::wrap($roles) as $role) {
+            /** @var Role $role */
             $role->syncCapabilities([
                 $this->deletePermissionName() => true,
                 $this->getItemsPermissionName() => true,

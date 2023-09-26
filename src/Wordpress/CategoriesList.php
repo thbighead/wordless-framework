@@ -22,7 +22,7 @@ class CategoriesList
 
     public function __construct()
     {
-        static::init();
+        self::init();
     }
 
     private static function init(): void

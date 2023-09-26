@@ -4,11 +4,14 @@ namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\ExceptionInterface;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -82,6 +85,8 @@ class WordlessInstall extends ConsoleCommand
      * @throws FailedToCopyStub
      * @throws FailedToDeletePath
      * @throws FailedToRewriteDotEnvFile
+     * @throws FormatException
+     * @throws InvalidArgumentException
      * @throws PathNotFoundException
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
@@ -147,6 +152,13 @@ class WordlessInstall extends ConsoleCommand
         ];
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws LogicException
+     */
     protected function setup(InputInterface $input, OutputInterface $output): void
     {
         parent::setup($input, $output);
@@ -276,15 +288,22 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @param string $dot_env_filepath
+     * @return void
      * @throws ClientExceptionInterface
      * @throws FailedToRewriteDotEnvFile
+     * @throws FormatException
+     * @throws InvalidArgumentException
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
     private function fillDotEnv(string $dot_env_filepath): void
     {
-        $dot_env_content = $this->guessAndResolveDotEnvWpSaltVariables(file_get_contents($dot_env_filepath));
+        if (($dot_env_content = $this->guessAndResolveDotEnvWpSaltVariables(
+                $dot_env_original_content = file_get_contents($dot_env_filepath)
+            )) !== $dot_env_original_content) {
+            Environment::rewriteDotEnvFile($dot_env_filepath, $dot_env_content);
+        }
 
         if (empty($not_filled_variables = $this->getDotEnvNotFilledVariables($dot_env_content))) {
             return;
@@ -396,7 +415,12 @@ class WordlessInstall extends ConsoleCommand
         );
     }
 
-    private function guessOrAskDotEnvVariableValue(string $variable_marked_as_not_filled)
+    /**
+     * @param string $variable_marked_as_not_filled
+     * @return false|mixed|string|null
+     * @throws InvalidArgumentException
+     */
+    private function guessOrAskDotEnvVariableValue(string $variable_marked_as_not_filled): mixed
     {
         $variable_default = $_ENV[$variable_marked_as_not_filled] ?? '';
 
@@ -512,6 +536,11 @@ class WordlessInstall extends ConsoleCommand
         $this->runWpCliCommand("option update blog_public $blog_public");
     }
 
+    /**
+     * @param array $not_filled_variables
+     * @return array
+     * @throws InvalidArgumentException
+     */
     private function mountDotEnvFillerDictionary(array $not_filled_variables): array
     {
         $filler_dictionary = [];
@@ -567,6 +596,8 @@ class WordlessInstall extends ConsoleCommand
      * @throws ClientExceptionInterface
      * @throws FailedToCopyDotEnvExampleIntoNewDotEnv
      * @throws FailedToRewriteDotEnvFile
+     * @throws FormatException
+     * @throws InvalidArgumentException
      * @throws PathNotFoundException
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface

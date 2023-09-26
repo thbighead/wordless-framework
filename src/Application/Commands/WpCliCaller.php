@@ -2,6 +2,9 @@
 
 namespace Wordless\Application\Commands;
 
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Process\Exception\InvalidArgumentException as SymfonyProcessInvalidArgumentException;
+use Symfony\Component\Process\Exception\LogicException;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -44,7 +47,10 @@ class WpCliCaller extends ConsoleCommand
 
     /**
      * @return int
+     * @throws InvalidArgumentException
      * @throws PathNotFoundException
+     * @throws SymfonyProcessInvalidArgumentException
+     * @throws LogicException
      */
     protected function runIt(): int
     {

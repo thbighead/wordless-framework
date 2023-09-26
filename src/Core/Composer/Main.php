@@ -1,6 +1,6 @@
 <?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
-namespace Wordless\Core;
+namespace Wordless\Core\Composer;
 
 use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UninstallOperation;
@@ -18,7 +18,7 @@ use Wordless\Core\Composer\Traits\ManagePlugin;
 use Wordless\Core\Composer\Traits\PackageDiscovery;
 use Wordless\Core\Composer\Traits\SetHostFromNginx;
 
-class Composer
+class Main
 {
     use InputOutput, ManagePlugin, PackageDiscovery, SetHostFromNginx;
 

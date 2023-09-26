@@ -8,7 +8,7 @@ use WP_Term;
 
 trait Repository
 {
-    public static function find(string $taxonomy): ?self
+    public static function find(string $taxonomy): ?static
     {
         return self::$taxonomies[$taxonomy] ?? null;
     }

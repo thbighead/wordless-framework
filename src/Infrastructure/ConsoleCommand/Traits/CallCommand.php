@@ -6,10 +6,18 @@ use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Exception\InvalidArgumentException;
+use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Process;
 
 trait CallCommand
 {
+    /**
+     * @param string $full_command
+     * @return int
+     * @throws InvalidArgumentException
+     * @throws LogicException
+     */
     protected function callExternalCommand(string $full_command): int
     {
         if ($this->output instanceof BufferedOutput) {
@@ -20,6 +28,7 @@ trait CallCommand
         }
 
         return Process::fromShellCommandline($full_command)
+            ->setTimeout(null)
             ->setTty(true)
             ->run(function ($type, $buffer) {
                 echo $buffer;

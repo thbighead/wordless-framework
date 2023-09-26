@@ -43,7 +43,7 @@ class RolesList extends WP_Roles
      * @throws PathNotFoundException
      * @throws FailedToFindRole
      */
-    public static function sync()
+    public static function sync(): void
     {
         self::syncPermissionsToAdminAsDefault();
         self::syncConfiguredPermissions();
@@ -54,7 +54,7 @@ class RolesList extends WP_Roles
      * @throws FailedToCreateRole
      * @throws PathNotFoundException
      */
-    public static function syncConfiguredPermissions()
+    public static function syncConfiguredPermissions(): void
     {
         foreach (Config::tryToGetOrDefault('permissions', []) as $role_key => $permissions) {
             try {
@@ -73,7 +73,7 @@ class RolesList extends WP_Roles
         }
     }
 
-    public static function syncCustomPostTypesPermissionsToRole(Role $role)
+    public static function syncCustomPostTypesPermissionsToRole(Role $role): void
     {
         foreach (PostType::getAllCustom() as $customPostType) {
             $role->syncCapabilities(array_combine(
@@ -83,7 +83,7 @@ class RolesList extends WP_Roles
         }
     }
 
-    public static function syncCustomTaxonomiesPermissionsToRole(Role $role)
+    public static function syncCustomTaxonomiesPermissionsToRole(Role $role): void
     {
         foreach (CustomTaxonomyTerm::getAllCustom() as $customPostType) {
             $role->syncCapabilities(array_combine(
@@ -98,7 +98,7 @@ class RolesList extends WP_Roles
      * @throws PathNotFoundException
      * @throws FailedToFindRole
      */
-    public static function syncPermissionsToAdminAsDefault()
+    public static function syncPermissionsToAdminAsDefault(): void
     {
         self::syncCustomPostTypesPermissionsToRole($adminRole = Role::find(Role::ADMIN));
         self::syncRestResourcesPermissionsToRole($adminRole);
@@ -108,9 +108,8 @@ class RolesList extends WP_Roles
      * @param Role $role
      * @return void
      * @throws PathNotFoundException
-     * @throws FailedToFindRole
      */
-    public static function syncRestResourcesPermissionsToRole(Role $role)
+    public static function syncRestResourcesPermissionsToRole(Role $role): void
     {
         foreach (ApiController::all() as $controller_path_and_namespace) {
             self::requireAndRegisterControllersPermissions(
@@ -137,9 +136,12 @@ class RolesList extends WP_Roles
      * @param string $controller_full_namespace
      * @param Role $role
      * @return void
-     * @throws FailedToFindRole
      */
-    private static function requireAndRegisterControllersPermissions(string $controller_pathing, string $controller_full_namespace, Role $role)
+    private static function requireAndRegisterControllersPermissions(
+        string $controller_pathing,
+        string $controller_full_namespace,
+        Role   $role
+    ): void
     {
         /** @var ApiController $controller_full_namespace */
         require_once $controller_pathing;

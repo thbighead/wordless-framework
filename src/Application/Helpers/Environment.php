@@ -3,6 +3,7 @@
 namespace Wordless\Application\Helpers;
 
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCopyFile;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey;
@@ -118,6 +119,7 @@ STRING;
     /**
      * @return void
      * @throws DotEnvNotSetException
+     * @throws FormatException
      */
     public static function loadDotEnv(): void
     {
