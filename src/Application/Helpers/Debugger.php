@@ -2,10 +2,12 @@
 
 namespace Wordless\Application\Helpers;
 
-use const PHP_SAPI;
+use Wordless\Application\Helpers\Debugger\Traits\Internal;
 
 class Debugger
 {
+    use Internal;
+
     public static function calledFrom(): string
     {
         $where_it_was_called_info = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3)[2];
@@ -23,29 +25,22 @@ class Debugger
             "$where_it_was_called$unknown_result";
     }
 
-    public static function dd(...$vars)
+    public static function dd(mixed ...$vars): void
     {
         self::setContentTypeHeaderToTextHtml();
 
         dd(...$vars);
     }
 
-    public static function dump(...$vars)
+    public static function dump(mixed ...$vars): void
     {
         self::setContentTypeHeaderToTextHtml();
 
         dump(...$vars);
     }
 
-    public static function variableExport($variable): string
+    public static function variableExport(mixed $variable): string
     {
         return var_export($variable, true);
-    }
-
-    private static function setContentTypeHeaderToTextHtml()
-    {
-        if (!in_array(PHP_SAPI, ['cli', 'phpdbg'], true) && !headers_sent()) {
-            header('Content-Type: text/html');
-        }
     }
 }

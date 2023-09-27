@@ -10,7 +10,7 @@ class Arr
     {
         $except_array = $except_keys;
 
-        if (!self::isAssociative($except_array)) {
+        if (!static::isAssociative($except_array)) {
             $except_array = [];
             foreach ($except_keys as $key) {
                 $except_array[$key] = $key;
@@ -56,6 +56,17 @@ class Arr
     public static function isAssociative(array $array): bool
     {
         return array_keys($array) !== range(0, count($array) - 1);
+    }
+
+    public static function searchValueKey(array $array, $value): int|string|null
+    {
+        foreach ($array as $key => $item) {
+            if ($item === $value) {
+                return $key;
+            }
+        }
+
+        return null;
     }
 
     public static function recursiveJoin(array ...$arrays): array

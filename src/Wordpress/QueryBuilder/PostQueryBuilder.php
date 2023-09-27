@@ -619,7 +619,7 @@ class PostQueryBuilder extends QueryBuilder
     private function isForTypeAttachment(array|string $types): bool
     {
         return is_array($types) ?
-            Arr::searchValue($types, PostType::ATTACHMENT) : $types === PostType::ATTACHMENT;
+            Arr::searchValueKey($types, PostType::ATTACHMENT) : $types === PostType::ATTACHMENT;
     }
 
     private function query(): array

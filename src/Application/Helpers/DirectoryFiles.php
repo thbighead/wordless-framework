@@ -3,6 +3,7 @@
 namespace Wordless\Application\Helpers;
 
 use Generator;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangePathPermissions;
@@ -13,6 +14,8 @@ use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Helpers\ProjectPath;
+use Wordless\Helpers\Str;
 
 class DirectoryFiles
 {
@@ -52,13 +55,13 @@ class DirectoryFiles
      */
     public static function changeWorkingDirectoryDoAndGoBack(string $to, callable $do, ?string $back_to = null): mixed
     {
-        $back_to = $back_to ?? self::getCurrentWorkingDirectory();
+        $back_to = $back_to ?? static::getCurrentWorkingDirectory();
 
-        self::changeWorkingDirectory($to);
+        static::changeWorkingDirectory($to);
 
         $result = $do();
 
-        self::changeWorkingDirectory($back_to);
+        static::changeWorkingDirectory($back_to);
 
         return $result;
     }
@@ -80,31 +83,85 @@ class DirectoryFiles
     /**
      * @param string $path
      * @param int|null $permissions
-     * @param bool $recursive
      * @return void
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
+     * @throws PathNotFoundException
      */
-    public static function createDirectoryAt(string $path, ?int $permissions = null, bool $recursive = true): void
+    public static function createDirectoryAt(string $path, ?int $permissions = null): void
     {
-        $permissions = $permissions ?? self::getPermissions(dirname($path));
+        $ancestor_path = dirname($path);
 
-        if (!mkdir($path, $permissions, $recursive)) {
+        while (!is_dir($ancestor_path)) {
+            $ancestor_path = dirname($ancestor_path);
+
+            if (strlen($ancestor_path) < 2) {
+                throw new PathNotFoundException($path);
+            }
+        }
+
+        if (($permissions = $permissions ?? fileperms($ancestor_path)) === false) {
+            throw new FailedToGetDirectoryPermissions($ancestor_path);
+        }
+
+        if (!mkdir($path, $permissions, true)) {
             throw new FailedToCreateDirectory($path);
         }
     }
 
     /**
-     * @param string $link_name
-     * @param string $target_path
+     * @param string $filepath
+     * @param string $file_content
+     * @param int|null $permissions
      * @return void
-     * @throws FailedToCreateSymlink
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
+     * @throws FailedToPutFileContent
+     * @throws PathNotFoundException
      */
-    public static function createSymbolicLink(string $link_name, string $target_path): void
+    public static function createFileAt(string $filepath, string $file_content = '', ?int $permissions = null): void
     {
-        if (!symlink($target_path, $link_name)) {
-            throw new FailedToCreateSymlink($link_name, $target_path);
+        if (!is_dir($file_directory_path = dirname($filepath))) {
+            static::createDirectoryAt($file_directory_path, $permissions);
         }
+
+        if (file_put_contents($filepath, $file_content) === false) {
+            throw new FailedToPutFileContent($filepath);
+        }
+    }
+
+    /**
+     * @param string $link_relative_path
+     * @param string $target_relative_path
+     * @param string|null $from_absolute_path
+     * @return void
+     * @throws FailedToChangeDirectoryTo
+     * @throws FailedToCreateSymlink
+     * @throws FailedToGetCurrentWorkingDirectory
+     * @throws PathNotFoundException
+     */
+    public static function createSymbolicLink(
+        string  $link_relative_path,
+        string  $target_relative_path,
+        ?string $from_absolute_path = null
+    )
+    {
+        $from_absolute_path = $from_absolute_path ?? ProjectPath::root();
+
+        static::changeWorkingDirectoryDoAndGoBack($from_absolute_path, function () use (
+            $link_relative_path,
+            $target_relative_path,
+            $from_absolute_path
+        ) {
+            $target_relative_path_from_link_parent_directory = str_repeat(
+                    '../',
+                    Str::countSubstring($link_relative_path, '/')
+                ) . $target_relative_path;
+
+            if (!symlink($target_relative_path_from_link_parent_directory, $link_relative_path)) {
+                throw new FailedToCreateSymlink($link_relative_path, $target_relative_path, $from_absolute_path);
+            }
+        });
     }
 
     /**
