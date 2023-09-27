@@ -1,22 +1,22 @@
 <?php /** @noinspection PhpUnhandledExceptionInspection */
 
-use Wordless\Application\Hookers\AllowSvgUpload;
-use Wordless\Application\Hookers\BootApiControllers;
-use Wordless\Application\Hookers\BootCustomPostTypes;
-use Wordless\Application\Hookers\BootCustomTaxonomies;
-use Wordless\Application\Hookers\BootHttpRemoteCallsLog;
-use Wordless\Application\Hookers\ChooseImageEditor;
-use Wordless\Application\Hookers\DeferEnqueuedScripts;
-use Wordless\Application\Hookers\DoNotLoadWpAdminBarOutsidePanel;
-use Wordless\Application\Hookers\EnqueueThemeEnqueueables;
-use Wordless\Application\Hookers\ForceXmlTagToUploadedSvgFiles;
-use Wordless\Application\Hookers\HideContentEditorForCustomFrontPageAtAdmin;
-use Wordless\Application\Hookers\HideDiagnosticsFromUserRoles;
-use Wordless\Application\Hookers\HooksDebugLog;
-use Wordless\Application\Hookers\ShowCustomFrontPageAtAdminSideMenu;
-use Wordless\Application\Hookers\WordlessVersionOnAdmin;
+use Wordless\Application\Listeners\AllowSvgUpload;
+use Wordless\Application\Listeners\BootApiControllers;
+use Wordless\Application\Listeners\BootCustomPostTypes;
+use Wordless\Application\Listeners\BootCustomTaxonomies;
+use Wordless\Application\Listeners\BootHttpRemoteCallsLog;
+use Wordless\Application\Listeners\ChooseImageEditor;
+use Wordless\Application\Listeners\DeferEnqueuedScripts;
+use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
+use Wordless\Application\Listeners\EnqueueThemeEnqueueables;
+use Wordless\Application\Listeners\ForceXmlTagToUploadedSvgFiles;
+use Wordless\Application\Listeners\HideContentEditorForCustomFrontPageAtAdmin;
+use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
+use Wordless\Application\Listeners\HooksDebugLog;
+use Wordless\Application\Listeners\ShowCustomFrontPageAtAdminSideMenu;
+use Wordless\Application\Listeners\WordlessVersionOnAdmin;
+use Wordless\Application\Providers\WpSpeedUp;
 use Wordless\Core\Bootstrapper;
-use Wordless\Core\WpSpeedUp;
 
 return [
     Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [

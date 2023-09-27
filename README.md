@@ -4,26 +4,47 @@ The [Wordless](https://github.com/thbighead/Wordless) project framework.
 
 ## Directory and files organization
 
+### Main directories and files
+
 ```
+| assets (Publishable directories)
+| \
+|  | config (Keep base configuration files)
+|  | stubs (Keep files stubs to generate new ones)
 | src
 | \
-|  | Abstractions (Keep all classes abstractions)
+|  | Application (Classes implementation, just like in project app directory)
 |  | \
 |  |  | Cachers (Classes to keep internal caches)
+|  |  | Commands (Wordless CLI commands. Make new as you wish, customize carefully)
 |  |  | Guessers (Classes to guess values)
-|  |  | StubMounters (Classes to mount stub contents into new files)
-|  | Adapters (Keep all classes adapted from vendor classes)
-|  | Bootables (Keep boot classes)
-|  | Commands (Wordless CLI commands. Make new as you wish, customize carefully)
-|  | Contracts (Useful classes to contract Wordless Classes)
-|  | config (Keep base configuration files)
-|  | Exception (Keep custom Exceptions. Better then if-else)
-|  | Helpers (Keep helper classes)
-|  | stubs (Keep files stubs to generate new ones)
+|  |  | Helpers (Keep helper classes)
+|  |  | Libraries (Library directories with useful abstractions)
+|  |  | Listeners (Keep listener classes for Wordpress hooks (Events))
+|  |  | Mounters (Class implementations which mount files with dynamic contents from stubs)
+|  |  | Providers (Classes which register any Application class as a group)
+|  | Core (Core Wordless classes, they raise all framework functionalities)
+|  | Infrastructure (Abstract classes used by Application and Wordpress)
+|  | Wordpress (Wordpress adapted class abstractions)
+| tests (Automated tests)
+| \
+|  | Feature (Application endpoint tests)
+|  | Unit (Class methods unitary tests)
 |>.env.example (Used to create new .env files)
 |>composer.json (Composer)
 |>console (Wordless CLI file)
-|>wp-cli.yml (WP-CLI config file)
+|>phpunit.xml (PHP Unit configuration)
+```
+
+### Relative directories
+
+Inside any [main directory](#main-directories-and-files) we may have the following directories:
+
+```
+| Contracts (Useful Interfaces or abstract classes with abstract methods)
+| DTO (Useful DTO implementations to avoid complex array data configuration)
+| Enums (Useful Enums to avoid magic values)
+| Exceptions (Keep custom Exceptions. Better then if-else)
 ```
 
 ## Test environment

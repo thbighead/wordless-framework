@@ -1,10 +1,10 @@
 <?php
 
-use Wordless\Application\Hookers\ChooseImageEditor;
-use Wordless\Application\Hookers\DoNotLoadWpAdminBarOutsidePanel;
-use Wordless\Application\Hookers\HideDiagnosticsFromUserRoles;
+use Wordless\Application\Listeners\ChooseImageEditor;
+use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
+use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
+use Wordless\Application\Providers\WpSpeedUp;
 use Wordless\Core\Bootstrapper;
-use Wordless\Core\WpSpeedUp;
 use Wordless\Wordpress\Enums\StartOfWeek;
 use Wordless\Wordpress\Models\Role;
 

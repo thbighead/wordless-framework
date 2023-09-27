@@ -2,7 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO;
 
-use Wordless\Contracts\ArrayDTO;
+use Wordless\Application\Libraries\DesignPattern\DataTransferObject\ArrayDTO;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO\Enums\CustomPostTypeFieldSupported;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO\Traits\DataSetter;
 

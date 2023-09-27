@@ -3,7 +3,7 @@
 namespace Wordless\Infrastructure\Wordpress\ApiController\Traits;
 
 use Symfony\Component\Validator\Constraint;
-use Wordless\Application\Validator;
+use Wordless\Application\Libraries\Validation\Validator;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\ResourceValidation\Exceptions\ValidationError;
 
 trait ResourceValidation

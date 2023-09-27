@@ -6,9 +6,9 @@ use DateTimeImmutable;
 use Exception;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\JWT\Enums\CryptoAlgorithm;
-use Wordless\Application\JWT\Exceptions\InvalidJwtCryptoAlgorithmId;
-use Wordless\Application\JWT\Token;
+use Wordless\Application\Libraries\JWT\Enums\CryptoAlgorithm;
+use Wordless\Application\Libraries\JWT\Exceptions\InvalidJwtCryptoAlgorithmId;
+use Wordless\Application\Libraries\JWT\Token;
 use Wordless\Tests\WordlessTestCase;
 
 class JwtTest extends WordlessTestCase

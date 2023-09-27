@@ -1,9 +1,8 @@
 <?php
 
-use Wordless\Application\Helpers\Crypto;
 use Wordless\Application\Helpers\Environment;
-use Wordless\Application\JWT\Enums\CryptoAlgorithm;
-use Wordless\Application\JWT\Token;
+use Wordless\Application\Libraries\JWT\Enums\CryptoAlgorithm;
+use Wordless\Application\Libraries\JWT\Token;
 
 return [
     Token::CONFIG_DEFAULT_CRYPTO => CryptoAlgorithm::SYMMETRIC_HMAC_SHA256,
