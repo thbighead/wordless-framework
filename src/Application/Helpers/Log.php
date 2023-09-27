@@ -3,9 +3,12 @@
 namespace Wordless\Application\Helpers;
 
 use Wordless\Application\Helpers\Log\Enums\Type;
+use Wordless\Application\Helpers\Log\Traits\Internal;
 
 class Log
 {
+    use Internal;
+
     final public static function error(string $message): void
     {
         self::write($message, Type::ERROR);
@@ -19,15 +22,5 @@ class Log
     final public static function warning(string $message): void
     {
         self::write($message, Type::WARNING);
-    }
-
-    private static function write(string $message, ?Type $type = null): void
-    {
-        if ($type !== null) {
-            $type = Str::upper($type->value);
-            $message = "[$type] $message";
-        }
-
-        error_log($message);
     }
 }

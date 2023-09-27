@@ -2,11 +2,12 @@
 
 namespace Wordless\Application\Helpers;
 
+use Wordless\Application\Helpers\Link\Traits\Internal;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 
 class Link
 {
-    private static ?string $base_assets_uri = null;
+    use Internal;
 
     /**
      * @param string $css_filename
@@ -15,7 +16,7 @@ class Link
      */
     public static function css(string $css_filename): string
     {
-        return self::themePublic("css/$css_filename");
+        return static::themePublic("css/$css_filename");
     }
 
     /**
@@ -25,7 +26,7 @@ class Link
      */
     public static function img(string $img_filename): string
     {
-        return self::themePublic("img/$img_filename");
+        return static::themePublic("img/$img_filename");
     }
 
     /**
@@ -35,7 +36,7 @@ class Link
      */
     public static function js(string $js_filename): string
     {
-        return self::themePublic("js/$js_filename");
+        return static::themePublic("js/$js_filename");
     }
 
     /**
@@ -46,34 +47,5 @@ class Link
     public static function themePublic(string $additional_path = ''): string
     {
         return self::getBaseAssetsUri() . "/public/$additional_path";
-    }
-
-    /**
-     * @return string
-     * @throws PathNotFoundException
-     */
-    private static function getBaseAssetsUri(): string
-    {
-        if (static::$base_assets_uri !== null) {
-            return static::$base_assets_uri;
-        }
-
-        if (function_exists('get_stylesheet_directory_uri')) {
-            return static::$base_assets_uri = get_stylesheet_directory_uri();
-        }
-
-        return static::$base_assets_uri = self::guessBaseAssetsUri();
-    }
-
-    /**
-     * @return string
-     * @throws PathNotFoundException
-     */
-    private static function guessBaseAssetsUri(): string
-    {
-        $base_assets_uri = Environment::get('FRONT_END_URL', '');
-        $assets_uri_path = Str::after(ProjectPath::theme(), ProjectPath::wp());
-
-        return "$base_assets_uri$assets_uri_path";
     }
 }

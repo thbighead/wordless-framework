@@ -14,8 +14,6 @@ use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Helpers\ProjectPath;
-use Wordless\Helpers\Str;
 
 class DirectoryFiles
 {
@@ -144,7 +142,7 @@ class DirectoryFiles
         string  $link_relative_path,
         string  $target_relative_path,
         ?string $from_absolute_path = null
-    )
+    ): void
     {
         $from_absolute_path = $from_absolute_path ?? ProjectPath::root();
 
@@ -255,36 +253,34 @@ class DirectoryFiles
 
         if (is_link($from) || is_file($from)) {
             if (!file_exists($directory_destination = dirname($to))) {
-                self::createDirectoryAt($directory_destination);
+                static::createDirectoryAt($directory_destination);
             }
 
             if ($secure_mode && file_exists($to)) {
                 return;
             }
 
-            if (!copy($from, $to)) {
-                throw new FailedToCopyFile($from, $to, $secure_mode);
-            }
+            static::copyFile($from, $to, $secure_mode);
 
             return;
         }
 
         if (!file_exists($to)) {
-            self::createDirectoryAt($to);
+            static::createDirectoryAt($to);
         }
 
-        $files = self::listFromDirectory($from);
-
-        foreach ($files as $file) {
-            self::recursiveCopy("$from_real_path/$file", "$to/$file", $except, $secure_mode);
+        foreach (static::listFromDirectory($from) as $file) {
+            static::recursiveCopy("$from_real_path/$file", "$to/$file", $except, $secure_mode);
         }
     }
 
     /**
      * @param string $path
-     * @param string[] $except
+     * @param array $except
      * @param bool $delete_root
+     * @return void
      * @throws FailedToDeletePath
+     * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
     public static function recursiveDelete(string $path, array $except = [], bool $delete_root = true): void
@@ -303,10 +299,40 @@ class DirectoryFiles
             return;
         }
 
-        $files = array_diff(scandir($real_path), ['.', '..']);
+        foreach (static::listFromDirectory($real_path) as $file) {
+            static::recursiveDelete("$real_path/$file", $except);
+        }
 
-        foreach ($files as $file) {
-            self::recursiveDelete("$real_path/$file", $except);
+        if (!$delete_root) {
+            return;
+        }
+
+        if (!rmdir($real_path)) {
+            throw new FailedToDeletePath($real_path);
+        }
+    }
+
+    /**
+     * @param string $path
+     * @param bool $delete_root
+     * @return void
+     * @throws FailedToDeletePath
+     * @throws InvalidDirectory
+     * @throws PathNotFoundException
+     */
+    public static function recursiveDeleteEmptyDirectories(string $path, bool $delete_root = true): void
+    {
+        if (!is_dir($real_path = ProjectPath::realpath($path))) {
+            return;
+        }
+
+        if (empty($paths = static::listFromDirectory($real_path))) {
+            static::delete($real_path);
+            return;
+        }
+
+        foreach ($paths as $relative_path) {
+            static::recursiveDeleteEmptyDirectories("$real_path/$relative_path");
         }
 
         if (!$delete_root) {
@@ -321,16 +347,13 @@ class DirectoryFiles
     /**
      * @param string $path
      * @return Generator|void
+     * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
     public static function recursiveRead(string $path)
     {
-        $real_path = ProjectPath::realpath($path);
-
-        if (is_dir($real_path)) {
-            $files = array_diff(scandir($real_path), ['.', '..']);
-
-            foreach ($files as $file) {
+        if (is_dir($real_path = ProjectPath::realpath($path))) {
+            foreach (static::listFromDirectory($real_path) as $file) {
                 yield from static::recursiveRead("$real_path/$file");
             }
 
@@ -344,6 +367,7 @@ class DirectoryFiles
      * @param string $path
      * @return void
      * @throws FailedToDeletePath
+     * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
     public static function recursiveRemoveSymbolicLinks(string $path): void
@@ -362,10 +386,8 @@ class DirectoryFiles
             return;
         }
 
-        $files = array_diff(scandir($real_path), ['.', '..']);
-
-        foreach ($files as $file) {
-            self::recursiveRemoveSymbolicLinks("$real_path/$file");
+        foreach (static::listFromDirectory($real_path) as $file) {
+            static::recursiveRemoveSymbolicLinks("$real_path/$file");
         }
     }
 }

@@ -4,21 +4,18 @@ namespace Wordless\Application\Helpers;
 
 use Symfony\Component\HttpFoundation\Request;
 use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
+use Wordless\Application\Helpers\Http\Traits\Internal;
 use WP_Error;
 use WP_Http;
 
 class Http
 {
-    public const ACCEPT = 'Accept';
-    public const CONTENT_TYPE = 'Content-Type';
-    public const CONTENT_TYPE_APPLICATION_JSON = 'application/json';
-    public const TIMEOUT = 30; // seconds
+    use Internal;
 
-    /**
-     * Singleton
-     * @var WP_Http $wp_http
-     */
-    private static WP_Http $wp_http;
+    final public const ACCEPT = 'Accept';
+    final public const CONTENT_TYPE = 'Content-Type';
+    final public const CONTENT_TYPE_APPLICATION_JSON = 'application/json';
+    final public const TIMEOUT = 30; // seconds
 
     /**
      * @param string $endpoint
@@ -29,7 +26,7 @@ class Http
      */
     public static function delete(string $endpoint, array $body = [], array $headers = []): array
     {
-        return self::request(Request::METHOD_DELETE, $endpoint, $body, $headers);
+        return static::request(Request::METHOD_DELETE, $endpoint, $body, $headers);
     }
 
     /**
@@ -41,7 +38,7 @@ class Http
      */
     public static function get(string $endpoint, array $body = [], array $headers = []): array
     {
-        return self::request(Request::METHOD_GET, $endpoint, $body, $headers);
+        return static::request(Request::METHOD_GET, $endpoint, $body, $headers);
     }
 
     /**
@@ -53,7 +50,7 @@ class Http
      */
     public static function patch(string $endpoint, array $body = [], array $headers = []): array
     {
-        return self::request(Request::METHOD_PATCH, $endpoint, $body, $headers);
+        return static::request(Request::METHOD_PATCH, $endpoint, $body, $headers);
     }
 
     /**
@@ -65,7 +62,7 @@ class Http
      */
     public static function post(string $endpoint, array $body = [], array $headers = []): array
     {
-        return self::request(Request::METHOD_POST, $endpoint, $body, $headers);
+        return static::request(Request::METHOD_POST, $endpoint, $body, $headers);
     }
 
     /**
@@ -77,7 +74,7 @@ class Http
      */
     public static function put(string $endpoint, array $body = [], array $headers = []): array
     {
-        return self::request(Request::METHOD_PUT, $endpoint, $body, $headers);
+        return static::request(Request::METHOD_PUT, $endpoint, $body, $headers);
     }
 
     /**
@@ -99,9 +96,9 @@ class Http
         $response = self::getWpHttp()->request($endpoint, wp_parse_args([
             'method' => $http_method,
             'headers' => $headers,
-            'body' => str_contains(($headers[self::CONTENT_TYPE] ?? ''), self::CONTENT_TYPE_APPLICATION_JSON) ?
+            'body' => str_contains(($headers[static::CONTENT_TYPE] ?? ''), static::CONTENT_TYPE_APPLICATION_JSON) ?
                 json_encode($body) : $body,
-            'timeout' => self::TIMEOUT,
+            'timeout' => static::TIMEOUT,
             'sslverify' => $only_with_ssl ?? Environment::isProduction(),
         ]));
 
@@ -110,7 +107,7 @@ class Http
         }
 
         if (is_string($response['body'] ?? false)) {
-            if (!Str::contains(($headers[self::ACCEPT] ?? ''), self::CONTENT_TYPE_APPLICATION_JSON)) {
+            if (!Str::contains(($headers[static::ACCEPT] ?? ''), static::CONTENT_TYPE_APPLICATION_JSON)) {
                 $response['original_body'] = $response['body'];
             }
 
@@ -118,14 +115,5 @@ class Http
         }
 
         return $response;
-    }
-
-    private static function getWpHttp(): WP_Http
-    {
-        if (isset(static::$wp_http)) {
-            return static::$wp_http;
-        }
-
-        return static::$wp_http = new WP_Http;
     }
 }

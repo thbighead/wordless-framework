@@ -6,11 +6,11 @@ use DateTimeInterface;
 
 class GetType
 {
-    public const ARRAY = 'array';
-    public const BOOLEAN = 'boolean';
-    public const DOUBLE = 'double';
-    public const INTEGER = 'integer';
-    public const STRING = 'string';
+    final public const ARRAY = 'array';
+    final public const BOOLEAN = 'boolean';
+    final public const DOUBLE = 'double';
+    final public const INTEGER = 'integer';
+    final public const STRING = 'string';
 
     public static function isDateable($value): bool
     {
