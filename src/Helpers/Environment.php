@@ -26,11 +26,7 @@ class Environment
         'DB_COLLATE' => 'utf8mb4_unicode_ci',
         'DB_TABLE_PREFIX' => 'null',
         'WORDLESS_CSP' => 'null',
-        'WP_VERSION' => 'null',
-        'WP_THEME' => 'null',
-        'WP_PERMALINK' => 'null',
         'WP_DEBUG' => 'true',
-        'WP_LANGUAGES' => 'en_US',
     ];
     public const DOT_ENV_COMMENT_MARK = '#';
     public const LOCAL = 'local';

@@ -159,12 +159,13 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @return void
      * @throws ExceptionInterface
+     * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
     private function activateWpTheme()
     {
         $this->runWpCliCommand(
-            "theme activate {$this->getEnvVariableByKey('WP_THEME', 'wordless')}"
+            'theme activate ' . Config::tryToGetOrDefault('wordpress.theme', 'wordless')
         );
     }
 
@@ -192,7 +193,7 @@ class WordlessInstall extends ConsoleCommand
 
         $robotStubMounter = (new RobotsTxtStubMounter($new_robots_txt_filepath));
 
-        $custom_login_url = Config::tryToGetOrDefault('admin.' . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL, false);
+        $custom_login_url = Config::tryToGetOrDefault('wordpress.admin.' . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL, false);
         $robotStubMounter->setReplaceContentDictionary(
             [
                 '{APP_URL}' => Str::finishWith($this->getEnvVariableByKey('APP_URL', ''), '/'),
@@ -278,6 +279,7 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @return void
      * @throws ExceptionInterface
+     * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
     private function downloadWpCore()
@@ -288,7 +290,7 @@ class WordlessInstall extends ConsoleCommand
             return;
         }
 
-        $wp_version = $this->getEnvVariableByKey('WP_VERSION', 'latest');
+        $wp_version = Config::tryToGetOrDefault('wordpress.version', 'latest');
 
         $this->runWpCliCommand("core download --version=$wp_version --skip-content");
     }
@@ -337,11 +339,12 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @return void
      * @throws ExceptionInterface
+     * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
     private function flushWpRewriteRules()
     {
-        $permalink_structure = $this->getEnvVariableByKey('WP_PERMALINK', '/%postname%/');
+        $permalink_structure = Config::tryToGetOrDefault('wordpress.permalink', '/%postname%/');
         $this->runWpCliCommand("rewrite structure '$permalink_structure' --hard");
         $this->runWpCliCommand('rewrite flush --hard');
     }
@@ -363,9 +366,15 @@ class WordlessInstall extends ConsoleCommand
         return $this->wp_languages;
     }
 
+    /**
+     * @return void
+     * @throws PathNotFoundException
+     */
     private function loadWpLanguages(): void
     {
-        $this->wp_languages = explode(',', $this->getEnvVariableByKey('WP_LANGUAGES', ''));
+        if (is_string($this->wp_languages = Config::tryToGetOrDefault('wordpress.languages', []))) {
+            $this->wp_languages = explode(',', $this->wp_languages);
+        }
     }
 
     /**
@@ -447,6 +456,7 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @return void
      * @throws ExceptionInterface
+     * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
     private function installWpCore()
@@ -456,7 +466,7 @@ class WordlessInstall extends ConsoleCommand
 
             $this->switchingMaintenanceMode(true);
 
-            if ($this->getEnvVariableByKey('WP_VERSION', 'latest') === 'latest') {
+            if (Config::tryToGetOrDefault('wordpress.version', 'latest') === 'latest') {
                 $this->performMinorUpdate();
             }
 
@@ -505,7 +515,7 @@ class WordlessInstall extends ConsoleCommand
     private function installWpLanguages()
     {
         if (empty($wp_languages = $this->getWpLanguages())) {
-            $this->writelnWarning('Environment variable WP_LANGUAGES has no value. Skipping language install.');
+            $this->writelnWarning('Wordpress configuration "languages" has no value. Skipping language install.');
 
             return;
         }

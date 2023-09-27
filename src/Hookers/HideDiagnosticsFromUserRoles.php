@@ -32,7 +32,7 @@ class HideDiagnosticsFromUserRoles extends Hooker
         }
 
         $allowed_roles_to_see_diagnostics = Config::tryToGetOrDefault(
-            'admin.' . self::SHOW_DIAGNOSTICS_CONFIG_KEY,
+            'wordpress.admin.' . self::SHOW_DIAGNOSTICS_CONFIG_KEY,
             []
         );
 

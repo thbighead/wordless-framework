@@ -20,7 +20,7 @@ class Bootstrapper
     public const HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY = 'function';
     public const HOOKERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY = 'priority';
     public const MENUS_CONFIG_KEY = 'menus';
-    private const ADMIN_CONFIG_FILENAME = 'admin';
+    private const ADMIN_CONFIG_FILENAME = 'wordpress.admin';
     private const HOOKERS_CONFIG_FILENAME = 'hookers';
 
     /**

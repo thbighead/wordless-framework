@@ -14,7 +14,7 @@ use Wordless\Hookers\CustomLoginUrl\WpLoadedCustomLoginUrlHooker;
 
 class LoginRedirect
 {
-    private const CONFIG_PREFIX = 'admin.';
+    private const CONFIG_PREFIX = 'wordpress.admin.';
     private const HOOK_TO_REMOVE = 'template_redirect';
     private const REMOVAL_ACTION = 'wp_redirect_admin_locations';
     private const REMOVAL_ACTION_PRIORITY = 1000;

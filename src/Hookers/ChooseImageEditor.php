@@ -41,7 +41,7 @@ class ChooseImageEditor extends Hooker
     public static function useGdInsteadImagick(array $image_editors): array
     {
         if (Environment::get('INSTALL_IMAGEMAGICK') === false || Config::tryToGetOrDefault(
-                'admin.' . static::IMAGE_LIBRARY_CONFIG_KEY,
+                'wordpress.admin.' . static::IMAGE_LIBRARY_CONFIG_KEY,
                 self::IMAGE_LIBRARY_CONFIG_VALUE_IMAGICK
             ) === self::IMAGE_LIBRARY_CONFIG_VALUE_GD) {
             return ['WP_Image_Editor_GD'];
