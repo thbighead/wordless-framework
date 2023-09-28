@@ -94,7 +94,7 @@ services:
         - INSTALL_GRAPHVIZ=false
         - INSTALL_IONCUBE=false
         - INSTALL_APCU=false
-        - INSTALL_MYSQL_CLIENT=true
+        - INSTALL_MYSQL_CLIENT=false
         - INSTALL_PING=false
         - INSTALL_SSHPASS=false
         - INSTALL_INOTIFY=false
@@ -145,18 +145,6 @@ services:
     ports:
       ## WORKSPACE_SSH_PORT
       - "2222:22"
-      ## WORKSPACE_BROWSERSYNC_HOST_PORT
-      - "3000:3000"
-      ## WORKSPACE_BROWSERSYNC_UI_HOST_PORT
-      - "3001:3001"
-      ## WORKSPACE_VUE_CLI_SERVE_HOST_PORT
-      - "8080:8080"
-      ## WORKSPACE_VUE_CLI_UI_HOST_PORT
-      - "8001:8000"
-      ## WORKSPACE_ANGULAR_CLI_SERVE_HOST_PORT
-      - "4200:4200"
-      ## WORKSPACE_VITE_PORT
-      - "5173:5173"
     tty: true
     environment:
       - PHP_IDE_CONFIG=serverName=laradock
