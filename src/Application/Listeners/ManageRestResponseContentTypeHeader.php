@@ -5,10 +5,10 @@ namespace Wordless\Application\Listeners;
 use Wordless\Application\Helpers\Http;
 use Wordless\Infrastructure\Http\Request;
 use Wordless\Infrastructure\Http\Response;
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 use WP_HTTP_Response;
 
-class ManageRestResponseContentTypeHeader extends Hooker
+class ManageRestResponseContentTypeHeader extends Listener
 {
     /**
      * WordPress action|filter number of arguments accepted by function

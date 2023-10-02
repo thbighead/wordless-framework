@@ -5,9 +5,9 @@ namespace Wordless\Application\Listeners;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-class EnqueueThemeEnqueueables extends Hooker
+class EnqueueThemeEnqueueables extends Listener
 {
     /**
      * The function which shall be executed during hook

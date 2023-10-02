@@ -2,7 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress;
 
-abstract class Hooker
+abstract class Listener
 {
     /**
      * WordPress action|filter number of arguments accepted by function
@@ -25,7 +25,7 @@ abstract class Hooker
      */
     protected const TYPE = 'action';
 
-    public static function hookIt()
+    public static function hookIt(): void
     {
         $hook_addition_function = 'add_' . static::TYPE;
         $hook_addition_function(

@@ -4,9 +4,9 @@ namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-class ChooseImageEditor extends Hooker
+class ChooseImageEditor extends Listener
 {
     public const IMAGE_LIBRARY_CONFIG_KEY = 'image_library';
     public const IMAGE_LIBRARY_CONFIG_VALUE_IMAGICK = 'imagick';

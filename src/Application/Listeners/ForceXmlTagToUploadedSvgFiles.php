@@ -3,9 +3,9 @@
 namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-class ForceXmlTagToUploadedSvgFiles extends Hooker
+class ForceXmlTagToUploadedSvgFiles extends Listener
 {
     private const UPLOAD_TEMP_PATH_KEY = 'tmp_name';
 

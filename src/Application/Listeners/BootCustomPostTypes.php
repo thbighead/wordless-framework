@@ -8,9 +8,9 @@ use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-class BootCustomPostTypes extends Hooker
+class BootCustomPostTypes extends Listener
 {
     public const HOOK_PRIORITY = 10;
 

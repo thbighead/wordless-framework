@@ -2,9 +2,9 @@
 
 namespace Wordless\Application\Listeners;
 
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-class RemoveEmojiFromWpResourceHints extends Hooker
+class RemoveEmojiFromWpResourceHints extends Listener
 {
     /**
      * WordPress action|filter number of arguments accepted by function

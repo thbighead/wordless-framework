@@ -3,9 +3,9 @@
 namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-class DeferEnqueuedScripts extends Hooker
+class DeferEnqueuedScripts extends Listener
 {
     private const DEFER_ATTRIBUTE = 'defer=\'true';
     /**

@@ -13,6 +13,6 @@
 use Wordless\Core\Bootstrapper;
 
 Bootstrapper::bootMenus();
-Bootstrapper::bootHookers();
+Bootstrapper::bootListeners();
 
 // {include plugins script}

@@ -4,10 +4,11 @@ namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 
-class BootCustomTaxonomies extends Hooker
+class BootCustomTaxonomies extends Listener
 {
     /**
      * WordPress action|filter hook identification
@@ -21,8 +22,9 @@ class BootCustomTaxonomies extends Hooker
     /**
      * @return void
      * @throws PathNotFoundException
+     * @throws InvalidCustomTaxonomyName
      */
-    public static function register()
+    public static function register(): void
     {
         foreach (Config::tryToGetOrDefault('custom-taxonomies', []) as $customTaxonomyClassNamespace) {
             /** @var CustomTaxonomy $customTaxonomyClassNamespace */

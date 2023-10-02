@@ -4,16 +4,17 @@ namespace Wordless\Infrastructure\Wordpress;
 
 use Generator;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
-use Wordless\Controller\Traits\ResourceValidation;
 use Wordless\Core\InternalCache;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 use Wordless\Infrastructure\Wordpress\ApiController\Exceptions\FailedToGetControllerPathFromCachedData;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\AuthorizationCheck;
+use Wordless\Infrastructure\Wordpress\ApiController\Traits\ResourceValidation;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\RestingWordPress;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\Routing;
 use Wordless\Wordpress\Models\User;
@@ -60,6 +61,7 @@ abstract class ApiController extends WP_REST_Controller
 
     /**
      * @return Generator
+     * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
     public static function all(): Generator
@@ -79,7 +81,7 @@ abstract class ApiController extends WP_REST_Controller
                     $controller_full_namespace,
                 ];
             }
-        } catch (FailedToFindCachedKey|FailedToGetControllerPathFromCachedData|InternalCacheNotLoaded $exception) {
+        } catch (FailedToFindCachedKey|FailedToGetControllerPathFromCachedData|InternalCacheNotLoaded) {
             foreach (self::yieldBootableControllersPathAndResourceNameByReadingDirectory() as $controller_path_and_resource_name) {
                 yield $controller_path_and_resource_name;
             }
@@ -88,6 +90,7 @@ abstract class ApiController extends WP_REST_Controller
 
     /**
      * @return Generator
+     * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
     public static function yieldBootableControllersPathAndResourceNameByReadingDirectory(): Generator
@@ -138,11 +141,11 @@ abstract class ApiController extends WP_REST_Controller
         return 'wordless';
     }
 
-    protected function setAuthenticatedUser()
+    protected function setAuthenticatedUser(): void
     {
         try {
             $this->authenticatedUser = new User;
-        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (NoUserAuthenticated $exception) {
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (NoUserAuthenticated) {
             $this->authenticatedUser = null;
         }
     }

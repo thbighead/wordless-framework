@@ -4,9 +4,9 @@ namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-class DoNotLoadWpAdminBarOutsidePanel extends Hooker
+class DoNotLoadWpAdminBarOutsidePanel extends Listener
 {
     public const SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY = 'show_wp_admin_bar_outside_panel';
 

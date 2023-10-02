@@ -89,17 +89,17 @@ class WpSpeedUp
     {
         return [
             self::WP_HEAD_HOOK_KEY => [[
-                Bootstrapper::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => self::WP_FUNCTION_PRINT_EMOJI_DETECTION_SCRIPT,
-                Bootstrapper::HOOKERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY => 7,
+                Bootstrapper::LISTENERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => self::WP_FUNCTION_PRINT_EMOJI_DETECTION_SCRIPT,
+                Bootstrapper::LISTENERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY => 7,
             ]],
             'admin_print_scripts' => [[
-                Bootstrapper::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => self::WP_FUNCTION_PRINT_EMOJI_DETECTION_SCRIPT,
+                Bootstrapper::LISTENERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => self::WP_FUNCTION_PRINT_EMOJI_DETECTION_SCRIPT,
             ]],
             'wp_print_styles' => [[
-                Bootstrapper::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => self::WP_FUNCTION_PRINT_EMOJI_STYLES,
+                Bootstrapper::LISTENERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => self::WP_FUNCTION_PRINT_EMOJI_STYLES,
             ]],
             'admin_print_styles' => [[
-                Bootstrapper::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => self::WP_FUNCTION_PRINT_EMOJI_STYLES,
+                Bootstrapper::LISTENERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => self::WP_FUNCTION_PRINT_EMOJI_STYLES,
             ]],
         ];
     }
@@ -108,13 +108,13 @@ class WpSpeedUp
     {
         return [
             'the_content_feed' => [[
-                Bootstrapper::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => self::WP_FUNCTION_WP_STATICIZE_EMOJI,
+                Bootstrapper::LISTENERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => self::WP_FUNCTION_WP_STATICIZE_EMOJI,
             ]],
             'comment_text_rss' => [[
-                Bootstrapper::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => self::WP_FUNCTION_WP_STATICIZE_EMOJI,
+                Bootstrapper::LISTENERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => self::WP_FUNCTION_WP_STATICIZE_EMOJI,
             ]],
             'wp_mail' => [[
-                Bootstrapper::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => 'wp_staticize_emoji_for_email',
+                Bootstrapper::LISTENERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => 'wp_staticize_emoji_for_email',
             ]],
         ];
     }
@@ -124,18 +124,18 @@ class WpSpeedUp
         return [
             self::WP_HEAD_HOOK_KEY => [
                 [
-                    Bootstrapper::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => 'wp_generator',
+                    Bootstrapper::LISTENERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => 'wp_generator',
                 ],
                 [
-                    Bootstrapper::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => 'wp_shortlink_wp_head',
+                    Bootstrapper::LISTENERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => 'wp_shortlink_wp_head',
                 ],
                 [
-                    Bootstrapper::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => 'feed_links',
-                    Bootstrapper::HOOKERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY => 2,
+                    Bootstrapper::LISTENERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => 'feed_links',
+                    Bootstrapper::LISTENERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY => 2,
                 ],
                 [
-                    Bootstrapper::HOOKERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => 'feed_links_extra',
-                    Bootstrapper::HOOKERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY => 3,
+                    Bootstrapper::LISTENERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY => 'feed_links_extra',
+                    Bootstrapper::LISTENERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY => 3,
                 ],
             ],
         ];

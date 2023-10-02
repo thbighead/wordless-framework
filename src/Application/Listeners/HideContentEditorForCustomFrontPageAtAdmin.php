@@ -2,9 +2,9 @@
 
 namespace Wordless\Application\Listeners;
 
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-class HideContentEditorForCustomFrontPageAtAdmin extends Hooker
+class HideContentEditorForCustomFrontPageAtAdmin extends Listener
 {
     /**
      * The function which shall be executed during hook
@@ -15,7 +15,7 @@ class HideContentEditorForCustomFrontPageAtAdmin extends Hooker
      */
     protected const HOOK = 'admin_init';
 
-    public static function removeContentEditorFeatureFromCustomFrontPage()
+    public static function removeContentEditorFeatureFromCustomFrontPage(): void
     {
         $post_id = $_GET['post'] ?: $_POST['post_ID'];
 

@@ -2,9 +2,9 @@
 
 namespace Wordless\Application\Listeners;
 
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-class AllowSvgUpload extends Hooker
+class AllowSvgUpload extends Listener
 {
     /**
      * WordPress action|filter number of arguments accepted by function

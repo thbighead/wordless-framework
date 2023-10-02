@@ -4,10 +4,10 @@ namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 use WP_User;
 
-class HideDiagnosticsFromUserRoles extends Hooker
+class HideDiagnosticsFromUserRoles extends Listener
 {
     public const SHOW_DIAGNOSTICS_CONFIG_KEY = 'show_diagnostics_only_to';
     /**

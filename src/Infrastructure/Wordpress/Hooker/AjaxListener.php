@@ -2,9 +2,9 @@
 
 namespace Wordless\Infrastructure\Wordpress\Hooker;
 
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-abstract class AjaxHooker extends Hooker
+abstract class AjaxListener extends Listener
 {
     /**
      * Define wp_ajax_ prefixed hook to let AJAX be called from admin panel (only logged in)

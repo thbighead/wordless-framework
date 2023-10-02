@@ -4,11 +4,11 @@ namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 use WP_Error;
 use WP_HTTP_Requests_Response;
 
-class BootHttpRemoteCallsLog extends Hooker
+class BootHttpRemoteCallsLog extends Listener
 {
     /**
      * WordPress action|filter number of arguments accepted by function

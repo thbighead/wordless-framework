@@ -2,11 +2,11 @@
 
 namespace Wordless\Application\Listeners;
 
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Wordpress\Enums\AdminMenuItemPosition;
 use Wordless\Wordpress\Enums\DashIcon;
 
-class ShowCustomFrontPageAtAdminSideMenu extends Hooker
+class ShowCustomFrontPageAtAdminSideMenu extends Listener
 {
     /**
      * The function which shall be executed during hook

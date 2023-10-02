@@ -3,9 +3,9 @@
 namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Guessers\WordlessFrameworkVersionGuesser;
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-class WordlessVersionOnAdmin extends Hooker
+class WordlessVersionOnAdmin extends Listener
 {
     /**
      * WordPress action|filter number of arguments accepted by function

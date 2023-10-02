@@ -6,28 +6,43 @@ use Wordless\Application\Listeners\BootCustomPostTypes;
 use Wordless\Application\Listeners\BootCustomTaxonomies;
 use Wordless\Application\Listeners\BootHttpRemoteCallsLog;
 use Wordless\Application\Listeners\ChooseImageEditor;
+use Wordless\Application\Listeners\CustomLoginUrl\RedirectCustomLoginUrlHooker;
 use Wordless\Application\Listeners\DeferEnqueuedScripts;
+use Wordless\Application\Listeners\DisableCptComments;
+use Wordless\Application\Listeners\DisableDefaultComments;
+use Wordless\Application\Listeners\DisableXmlrpc;
 use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Application\Listeners\EnqueueThemeEnqueueables;
 use Wordless\Application\Listeners\ForceXmlTagToUploadedSvgFiles;
 use Wordless\Application\Listeners\HideContentEditorForCustomFrontPageAtAdmin;
 use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
 use Wordless\Application\Listeners\HooksDebugLog;
+use Wordless\Application\Listeners\RestApi\Authentication;
+use Wordless\Application\Listeners\RestApi\DefineEndpoints;
 use Wordless\Application\Listeners\ShowCustomFrontPageAtAdminSideMenu;
 use Wordless\Application\Listeners\WordlessVersionOnAdmin;
+use Wordless\Application\Providers\LoginRedirect;
+use Wordless\Application\Providers\RestApi;
 use Wordless\Application\Providers\WpSpeedUp;
 use Wordless\Core\Bootstrapper;
 
 return [
-    Bootstrapper::HOOKERS_BOOT_CONFIG_KEY => [
+    Bootstrapper::LISTENERS_BOOT_CONFIG_KEY => [
+        ...RedirectCustomLoginUrlHooker::addAdditionalHooks(),
+        ...RestApi::addAdditionalHooks(),
         ...WpSpeedUp::addAdditionalHooks(),
         AllowSvgUpload::class,
+        Authentication::class,
         BootApiControllers::class,
         BootCustomPostTypes::class,
-        BootHttpRemoteCallsLog::class,
         BootCustomTaxonomies::class,
+        BootHttpRemoteCallsLog::class,
         ChooseImageEditor::class,
         DeferEnqueuedScripts::class,
+        DefineEndpoints::class,
+        DisableCptComments::class,
+        DisableDefaultComments::class,
+        DisableXmlrpc::class,
         DoNotLoadWpAdminBarOutsidePanel::class,
         EnqueueThemeEnqueueables::class,
         ForceXmlTagToUploadedSvgFiles::class,
@@ -82,11 +97,11 @@ return [
      *          HooksDebugLog::class => 16523,
      *      ],
      */
-    Bootstrapper::HOOKERS_REMOVE_CONFIG_KEY => [
-        Bootstrapper::HOOKERS_REMOVE_ACTION_CONFIG_KEY => array_merge_recursive([
+    Bootstrapper::LISTENERS_REMOVE_CONFIG_KEY => [
+        Bootstrapper::LISTENERS_REMOVE_ACTION_CONFIG_KEY => array_merge_recursive([
             //
-        ], WpSpeedUp::removeActionsConfigToSpeedUp()),
-        Bootstrapper::HOOKERS_REMOVE_FILTER_CONFIG_KEY => array_merge_recursive([
+        ], WpSpeedUp::removeActionsConfigToSpeedUp(), LoginRedirect::removeLoginTemplateHook()),
+        Bootstrapper::LISTENERS_REMOVE_FILTER_CONFIG_KEY => array_merge_recursive([
             //
         ], WpSpeedUp::removeFiltersConfigToSpeedUp()),
     ],

@@ -2,19 +2,21 @@
 
 namespace Wordless\Application\Listeners;
 
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Wordpress\ApiController;
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 
-class BootApiControllers extends Hooker
+class BootApiControllers extends Listener
 {
     /**
      * @return void
-     * @throws PathNotFoundException
      * @throws FailedToFindRole
+     * @throws PathNotFoundException
+     * @throws InvalidDirectory
      */
-    public static function register()
+    public static function register(): void
     {
         foreach (ApiController::all() as $controller_path_and_namespace) {
             self::requireAndRegisterController(

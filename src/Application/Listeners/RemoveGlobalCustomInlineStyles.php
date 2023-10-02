@@ -2,9 +2,9 @@
 
 namespace Wordless\Application\Listeners;
 
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-class RemoveGlobalCustomInlineStyles extends Hooker
+class RemoveGlobalCustomInlineStyles extends Listener
 {
     /**
      * The function which shall be executed during hook

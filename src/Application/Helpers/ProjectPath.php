@@ -2,14 +2,15 @@
 
 namespace Wordless\Application\Helpers;
 
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\ProjectPath\Traits\Internal;
 
 class ProjectPath
 {
+    use Internal;
+
     final public const VENDOR_PACKAGE_PROJECT = 'thbighead/wordless';
     final public const VENDOR_PACKAGE_RELATIVE_PATH = self::VENDOR_PACKAGE_PROJECT . '-framework';
-    private const SLASH = '/';
 
     /**
      * @param string $additional_path
@@ -19,6 +20,16 @@ class ProjectPath
     final public static function app(string $additional_path = ''): string
     {
         return self::root("app/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    final public static function assets(string $additional_path = ''): string
+    {
+        return self::vendorPackageRoot("assets/$additional_path");
     }
 
     /**
@@ -59,7 +70,7 @@ class ProjectPath
         try {
             return self::root($relative_path);
         } catch (PathNotFoundException) {
-            return self::src($relative_path);
+            return self::assets($relative_path);
         }
     }
 
@@ -98,54 +109,19 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    final public static function exceptions(string $additional_path = ''): string
+    final public static function listeners(string $additional_path = ''): string
     {
-        return self::app("Exceptions/$additional_path");
+        return self::app("Listeners/$additional_path");
     }
 
     /**
      * @param string $additional_path
      * @return string
      * @throws PathNotFoundException
-     */
-    final public static function hookers(string $additional_path = ''): string
-    {
-        return self::app("Hookers/$additional_path");
-    }
-
-    /**
-     * @param string $additional_path
-     * @return string
-     * @throws PathNotFoundException
-     * @throws InvalidDirectory
      */
     final public static function migrations(string $additional_path = ''): string
     {
-        try {
-            return self::root($relative_path = "migrations/$additional_path");
-        } catch (PathNotFoundException) {
-            foreach (DirectoryFiles::listFromDirectory(self::packages()) as $package_folder) {
-                try {
-                    return self::packages("$package_folder/$relative_path");
-                } catch (PathNotFoundException) {
-                    continue;
-                }
-            }
-
-            throw new PathNotFoundException(
-                self::root() . "/$relative_path' or '" . self::packages() . "/*/$relative_path"
-            );
-        }
-    }
-
-    /**
-     * @param string $additional_path
-     * @return string
-     * @throws PathNotFoundException
-     */
-    final public static function packages(string $additional_path = ''): string
-    {
-        return self::root("packages/$additional_path");
+        return self::root("migrations/$additional_path");
     }
 
     /**
@@ -236,7 +212,7 @@ class ProjectPath
         try {
             return self::root($relative_path);
         } catch (PathNotFoundException) {
-            return self::src($relative_path);
+            return self::assets($relative_path);
         }
     }
 
@@ -257,7 +233,8 @@ class ProjectPath
      */
     final public static function theme(string $additional_path = ''): string
     {
-        return self::wpThemes(Environment::get('WP_THEME', 'wordless') . "/$additional_path");
+        return self::wpThemes(Config::tryToGetOrDefault('wordpress.theme', 'wordless')
+            . "/$additional_path");
     }
 
     /**

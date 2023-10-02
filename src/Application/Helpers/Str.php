@@ -2,17 +2,15 @@
 
 namespace Wordless\Application\Helpers;
 
-use Doctrine\Inflector\Inflector;
-use Doctrine\Inflector\InflectorFactory;
 use Doctrine\Inflector\Language;
+use InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
 use Wordless\Application\Helpers\Str\Enums\UuidVersion;
-use Wordless\Exceptions\InvalidUuidVersion;
+use Wordless\Application\Helpers\Str\Traits\Internal;
 
 class Str
 {
-    /** @var Inflector[] $inflectors */
-    private static array $inflectors = [];
+    use Internal;
 
     public static function after(string $string, string $delimiter): string
     {
@@ -22,12 +20,10 @@ class Str
             return $string;
         }
 
-        $substring = substr($string, $substring_position + strlen($delimiter));
-
-        return $substring !== false ? $substring : $string;
+        return substr($string, $substring_position + strlen($delimiter));
     }
 
-    public static function afterLast(string $string, string $delimiter)
+    public static function afterLast(string $string, string $delimiter): string
     {
         $substring_position = strrpos($string, $delimiter);
 
@@ -45,7 +41,7 @@ class Str
         return $result === false ? $string : $result;
     }
 
-    public static function beforeLast(string $string, string $delimiter)
+    public static function beforeLast(string $string, string $delimiter): string
     {
         $substring_position = strrpos($string, $delimiter);
 
@@ -58,17 +54,17 @@ class Str
 
     public static function beginsWith(string $string, string $substring): bool
     {
-        return substr($string, 0, strlen($substring)) === $substring;
+        return str_starts_with($string, $substring);
     }
 
     public static function between(string $string, string $prefix, string $suffix): string
     {
-        return self::before(self::after($string, $prefix), $suffix);
+        return static::before(static::after($string, $prefix), $suffix);
     }
 
     public static function camelCase(string $string): string
     {
-        return lcfirst(self::pascalCase($string));
+        return lcfirst(static::pascalCase($string));
     }
 
     /**
@@ -108,12 +104,12 @@ class Str
     {
         $quoted = preg_quote($finish_with, '/');
 
-        return preg_replace('/(?:' . $quoted . ')+$/u', '', $string) . $finish_with;
+        return preg_replace("/(?:$quoted)+$/u", '', $string) . $finish_with;
     }
 
     public static function isSurroundedBy(string $string, string $prefix, string $suffix): bool
     {
-        return self::beginsWith($string, $prefix) && self::endsWith($string, $suffix);
+        return static::beginsWith($string, $prefix) && static::endsWith($string, $suffix);
     }
 
     public static function isUuid(string $string): bool
@@ -130,7 +126,7 @@ class Str
      */
     public static function kebabCase(string $string): string
     {
-        return self::slugCase($string);
+        return static::slugCase($string);
     }
 
     public static function limitWords(
@@ -147,14 +143,36 @@ class Str
         return mb_strtolower($string);
     }
 
+    public static function pascalCase(string $string): string
+    {
+        $words = explode(' ', str_replace(['-', '_'], ' ', $string));
+
+        $studly_words = array_map(function ($word) {
+            return ucfirst($word);
+        }, $words);
+
+        return implode($studly_words);
+    }
+
+    /**
+     * @param string $string
+     * @param string $language
+     * @return string
+     * @throws InvalidArgumentException
+     */
     public static function plural(string $string, string $language = Language::ENGLISH): string
     {
         return self::getInflector($language)->pluralize($string);
     }
 
+    public static function random(int $size = 16)
+    {
+        return wp_generate_password($size, false);
+    }
+
     public static function removeSuffix(string $string, string $suffix): string
     {
-        return !self::endsWith($string, $suffix) ? $string : substr($string, 0, -strlen($suffix));
+        return !static::endsWith($string, $suffix) ? $string : substr($string, 0, -strlen($suffix));
     }
 
     /**
@@ -163,11 +181,17 @@ class Str
      * @param string|string[] $replace
      * @return string
      */
-    public static function replace(string $string, $search, $replace): string
+    public static function replace(string $string, string|array $search, string|array $replace): string
     {
         return str_replace($search, $replace, $string);
     }
 
+    /**
+     * @param string $string
+     * @param string $language
+     * @return string
+     * @throws InvalidArgumentException
+     */
     public static function singular(string $string, string $language = Language::ENGLISH): string
     {
         return self::getInflector($language)->singularize($string);
@@ -175,7 +199,7 @@ class Str
 
     public static function slugCase(string $string): string
     {
-        return self::snakeCase($string, '-');
+        return static::snakeCase($string, '-');
     }
 
     public static function snakeCase(string $string, string $delimiter = '_'): string
@@ -197,23 +221,12 @@ class Str
     {
         $quoted = preg_quote($start_with, '/');
 
-        return $start_with . preg_replace('/^(?:' . $quoted . ')+/u', '', $string);
-    }
-
-    public static function pascalCase(string $string): string
-    {
-        $words = explode(' ', str_replace(['-', '_'], ' ', $string));
-
-        $studly_words = array_map(function ($word) {
-            return ucfirst($word);
-        }, $words);
-
-        return implode($studly_words);
+        return $start_with . preg_replace("/^(?:$quoted)+/u", '', $string);
     }
 
     public static function titleCase(string $string): string
     {
-        preg_match_all('/(\p{Lu}\p{Ll}*|\d)/u', self::pascalCase($string), $words);
+        preg_match_all('/(\p{Lu}\p{Ll}*|\d)/u', static::pascalCase($string), $words);
 
         return mb_convert_case(implode(' ', $words[0]), MB_CASE_TITLE, 'UTF-8');
     }
@@ -245,12 +258,5 @@ class Str
         };
 
         return $with_dashes ? $uuid->toString() : static::replace($uuid->toString(), '-', '');
-    }
-
-    private static function getInflector(?string $language = null): Inflector
-    {
-        return self::$inflectors[$language] ?? self::$inflectors[$language] = $language === null ?
-            InflectorFactory::create()->build() :
-            InflectorFactory::createForLanguage($language)->build();
     }
 }

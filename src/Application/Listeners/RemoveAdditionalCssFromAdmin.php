@@ -2,10 +2,10 @@
 
 namespace Wordless\Application\Listeners;
 
-use Wordless\Infrastructure\Wordpress\Hooker;
+use Wordless\Infrastructure\Wordpress\Listener;
 use WP_Customize_Manager;
 
-class RemoveAdditionalCssFromAdmin extends Hooker
+class RemoveAdditionalCssFromAdmin extends Listener
 {
     /**
      * WordPress action|filter number of arguments accepted by function

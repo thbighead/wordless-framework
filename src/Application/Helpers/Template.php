@@ -4,7 +4,7 @@ namespace Wordless\Application\Helpers;
 
 class Template
 {
-    public static function includeTemplate(string $template_name, array $data = [])
+    public static function includeTemplate(string $template_name, array $data = []): void
     {
         $template = locate_template(Str::finishWith($template_name, '.php'));
 
