@@ -3,8 +3,8 @@
 namespace Wordless\Infrastructure\Wordpress\ApiController\Traits;
 
 use Wordless\Application\Helpers\Debugger;
-use Wordless\Infrastructure\Http\Request;
-use Wordless\Infrastructure\Http\Response;
+use Wordless\Infrastructure\Wordpress\ApiController\Request;
+use Wordless\Infrastructure\Wordpress\ApiController\Response;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\ResourceValidation\Exceptions\ValidationError;
 use WP_Error;
 use WP_REST_Request;

@@ -2,9 +2,9 @@
 
 namespace Wordless\Infrastructure\Http;
 
-interface HeaderBag
+interface MutableHeaderBag
 {
-    public function getHeader(string $key, ?string $default = null): ?string;
+    public function getHeader(string $key, string|array|null $default = null): string|array|null;
 
     /**
      * @return string[]
@@ -17,13 +17,13 @@ interface HeaderBag
      * @param string $key
      * @return $this
      */
-    public function removeHeader(string $key): self;
+    public function removeHeader(string $key): static;
 
     /**
      * @param string[] $headers
      * @return $this
      */
-    public function removeHeaders(array $headers): self;
+    public function removeHeaders(array $headers): static;
 
     /**
      * @param string $key
@@ -31,12 +31,12 @@ interface HeaderBag
      * @param bool $override
      * @return $this
      */
-    public function setHeader(string $key, string $value, bool $override = false): self;
+    public function setHeader(string $key, string $value, bool $override = false): static;
 
     /**
      * @param string[] $headers
      * @param bool $override
      * @return $this
      */
-    public function setHeaders(array $headers, bool $override = false): self;
+    public function setHeaders(array $headers, bool $override = false): static;
 }

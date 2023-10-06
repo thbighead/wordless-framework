@@ -5,7 +5,7 @@ namespace Wordless\Infrastructure\Wordpress\ApiController\Traits\ResourceValidat
 use InvalidArgumentException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
-use Wordless\Infrastructure\Http\Response;
+use Wordless\Infrastructure\Wordpress\ApiController\Response;
 
 class ValidationError extends InvalidArgumentException
 {

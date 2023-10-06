@@ -1,23 +1,14 @@
 <?php
 
-namespace Wordless\Infrastructure\Http;
+namespace Wordless\Infrastructure\Wordpress\ApiController;
 
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
+use Wordless\Infrastructure\Http\MutableHeaderBag;
 use WP_REST_Request;
 
-class Request extends WP_REST_Request implements HeaderBag
+class Request extends WP_REST_Request implements MutableHeaderBag
 {
-    public const EDITABLE = 'PUT, PATCH';
-    public const HTTP_CONNECT = SymfonyRequest::METHOD_CONNECT;
-    public const HTTP_DELETE = SymfonyRequest::METHOD_DELETE;
-    public const HTTP_GET = SymfonyRequest::METHOD_GET;
-    public const HTTP_HEAD = SymfonyRequest::METHOD_HEAD;
-    public const HTTP_OPTIONS = SymfonyRequest::METHOD_OPTIONS;
-    public const HTTP_PATCH = SymfonyRequest::METHOD_PATCH;
-    public const HTTP_POST = SymfonyRequest::METHOD_POST;
-    public const HTTP_PUT = SymfonyRequest::METHOD_PUT;
-    public const HTTP_PURGE = SymfonyRequest::METHOD_PURGE;
-    public const HTTP_TRACE = SymfonyRequest::METHOD_TRACE;
+    final public const EDITABLE = 'PUT, PATCH';
 
     /** @var array<string, mixed> $validated_fields */
     protected array $validated_fields;
@@ -66,7 +57,7 @@ class Request extends WP_REST_Request implements HeaderBag
         return $this->get_headers();
     }
 
-    public function getValidParam(?string $param = null, $default = null)
+    public function getValidParam(?string $param = null, mixed $default = null): mixed
     {
         if ($param === null) {
             return $this->validated_fields;

@@ -3,6 +3,8 @@
 namespace Wordless\Wordpress\Models;
 
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
+use Wordless\Wordpress\Models\PostType\Traits\MixinWpPostType;
+use Wordless\Wordpress\Models\PostType\Traits\Repository;
 use WP_Post_Type;
 
 /**
@@ -10,33 +12,11 @@ use WP_Post_Type;
  */
 class PostType
 {
+    use MixinWpPostType;
+    use Repository;
+
     final public const KEY_MAX_LENGTH = 20;
     final public const QUERY_TYPE_KEY = 'post_type';
-
-    private WP_Post_Type $wpPostType;
-
-    /**
-     * @return static[]
-     */
-    public static function getAllCustom(): array
-    {
-        $customPostTypes = [];
-
-        foreach (get_post_types(['_builtin' => false]) as $custom_post_type_key) {
-            try {
-                $customPostTypes[] = new static($custom_post_type_key);
-            } catch (PostTypeNotRegistered) {
-                continue;
-            }
-        }
-
-        return $customPostTypes;
-    }
-
-    public function __call(string $method_name, array $arguments)
-    {
-        return $this->wpPostType->$method_name(...$arguments);
-    }
 
     /**
      * @param WP_Post_Type|string $post_type
@@ -55,18 +35,13 @@ class PostType
         }
     }
 
-    public function __get(string $attribute)
-    {
-        return $this->wpPostType->$attribute;
-    }
-
-    public function asWpPostType(): WP_Post_Type
-    {
-        return $this->wpPostType;
-    }
-
     public function getPermissions(): array
     {
         return (array)$this->cap;
+    }
+
+    public function is(string $type): bool
+    {
+        return $this->name === $type;
     }
 }

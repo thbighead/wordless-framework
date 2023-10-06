@@ -39,7 +39,7 @@ class Arr
     {
         $key = (string)$key;
         $key_pathing = explode('.', $key);
-        $first_key = array_shift($key_pathing);
+        $first_key = array_key_first($key_pathing);
         $pointer = $array[$first_key] ?? throw new FailedToFindArrayKey($array, $key, $first_key);
 
         foreach ($key_pathing as $key_path) {
