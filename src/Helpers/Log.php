@@ -4,6 +4,9 @@ namespace Wordless\Helpers;
 
 use Monolog\Logger;
 use Wordless\Adapters\LogFormatter;
+use Wordless\Exceptions\FailedToCreateDirectory;
+use Wordless\Exceptions\FailedToGetDirectoryPermissions;
+use Wordless\Exceptions\FailedToPutFileContent;
 use Wordless\Exceptions\PathNotFoundException;
 
 class Log
@@ -13,6 +16,9 @@ class Log
 
     /**
      * @throws PathNotFoundException
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
+     * @throws FailedToPutFileContent
      */
     public function __construct()
     {
@@ -21,7 +27,14 @@ class Log
             . '.'
             . Environment::get('APP_ENV')
         );
-        $this->logger->pushHandler(new LogFormatter(ProjectPath::wpContent(self::LOG_PATH)));
+
+        try {
+            $path = ProjectPath::wpContent(self::LOG_PATH);
+        } catch (PathNotFoundException $exception) {
+            DirectoryFiles::createFileAt($path = $exception->getPath());
+        }
+
+        $this->logger->pushHandler(new LogFormatter($path));
     }
 
     public static function alert($message, array $context = [], bool $json_format = false)
