@@ -210,13 +210,10 @@ class WordlessInstall extends ConsoleCommand
         $robotStubMounter = (new RobotsTxtStubMounter($new_robots_txt_filepath));
 
         $custom_login_url = Config::tryToGetOrDefault('admin.' . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL, false);
-        $robotStubMounter->setReplaceContentDictionary(
-            [
-                '{APP_URL}' => Str::finishWith($this->getEnvVariableByKey('APP_URL', ''), '/'),
-                '#custom_login_url' => $custom_login_url ? "Disallow: /$custom_login_url/" : ''
-            ]
-        )
-            ->mountNewFile();
+        $robotStubMounter->setReplaceContentDictionary([
+            '{APP_URL}' => Str::finishWith($this->getEnvVariableByKey('APP_URL', ''), '/'),
+            '#custom_login_url' => $custom_login_url ? "Disallow: /$custom_login_url/" : ''
+        ])->mountNewFile();
     }
 
     /**
