@@ -96,7 +96,7 @@ class WordlessInstall extends ConsoleCommand
         $this->createWpConfigFromStub();
         $this->createRobotsTxtFromStub();
         $this->createWpDatabase();
-        $this->installWpCore(); // calls switchingMaintenanceMode(false)
+        $this->installWpCore(); // calls switchingMaintenanceMode(true)
 
         try {
             $this->flushWpRewriteRules();
