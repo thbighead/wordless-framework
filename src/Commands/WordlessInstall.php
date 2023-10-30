@@ -41,6 +41,7 @@ class WordlessInstall extends ConsoleCommand
     public const TEMP_MAIL = 'temp@mail.not.real';
     protected const ALLOW_ROOT_MODE = 'allow-root';
     protected const FORCE_MODE = 'force';
+    private const ACTIVE_PLUGINS_OPTION_KEY = 'active_plugins';
     private const NO_ASK_MODE = 'no-ask';
     private const NO_DB_CREATION_MODE = 'no-db-creation';
     private const WORDPRESS_SALT_FILLABLE_VALUES = [
@@ -176,8 +177,7 @@ class WordlessInstall extends ConsoleCommand
     private function activateWpPlugins()
     {
         $should_update_active_plugins = false;
-        $active_plugins_option_key = 'active_plugins';
-        $active_plugins = get_option($active_plugins_option_key, []);
+        $active_plugins = $this->getActivateWpPlugins();
 
         foreach ($active_plugins as $index => $plugin_relative_path_from_plugins_directory) {
             try {
@@ -189,7 +189,13 @@ class WordlessInstall extends ConsoleCommand
         }
 
         if ($should_update_active_plugins) {
-            update_option($active_plugins_option_key, array_values($active_plugins));
+            $this->executeWordlessCommand(WpCliCaller::COMMAND_NAME, [
+                WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => 'option update '
+                    . self::ACTIVE_PLUGINS_OPTION_KEY
+                    . ' \''
+                    . json_encode(array_values($active_plugins))
+                    . '\' --format=json'
+            ]);
         }
 
         $this->runWpCliCommand('plugin activate --all');
@@ -358,6 +364,21 @@ class WordlessInstall extends ConsoleCommand
         $permalink_structure = $this->getEnvVariableByKey('WP_PERMALINK', '/%postname%/');
         $this->runWpCliCommand("rewrite structure '$permalink_structure' --hard");
         $this->runWpCliCommand('rewrite flush --hard');
+    }
+
+    /**
+     * @return array
+     * @throws ExceptionInterface
+     */
+    public function getActivateWpPlugins(): array
+    {
+        $active_plugins = json_decode($this->executeWordlessCommand(WpCliCaller::COMMAND_NAME, [
+            WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => 'option get '
+                . self::ACTIVE_PLUGINS_OPTION_KEY
+                . ' --format=json'
+        ]), true);
+
+        return is_array($active_plugins) ? $active_plugins : [];
     }
 
     private function getDotEnvNotFilledVariables(string $dot_env_content): array
