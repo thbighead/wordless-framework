@@ -26,6 +26,7 @@ class DatabaseOverwrite extends ConsoleCommand
 
     private wpdb $databaseConnection;
     private Generator $faker;
+    private  string $users_table;
     private ?array $configurations;
     protected static $defaultName = 'db:overwrite';
 
@@ -43,7 +44,7 @@ class DatabaseOverwrite extends ConsoleCommand
 
     public function canRun(): bool
     {
-        return Environment::isLocal();
+        return Environment::get('APP_ENV') === Environment::LOCAL;
     }
 
     protected function arguments(): array
@@ -82,6 +83,7 @@ class DatabaseOverwrite extends ConsoleCommand
             Environment::get('DB_HOST'),
         );
 
+        $this->users_table = Environment::get('DB_TABLE_PREFIX', '') .  'users';
         $this->updateUsers();
 
         return Command::SUCCESS;
@@ -92,7 +94,7 @@ class DatabaseOverwrite extends ConsoleCommand
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion('Try again? (Y/N)', true);
 
-        $users = $this->databaseConnection->get_results('SELECT ID,user_activation_key FROM wp_users');
+        $users = $this->databaseConnection->get_results("SELECT ID,user_activation_key FROM $this->users_table");
         $progressBar = new ProgressBar($this->output, count($users));
 
         $this->writelnInfo('Start overwrite Users');
@@ -128,7 +130,7 @@ class DatabaseOverwrite extends ConsoleCommand
     private function updateWpUsersTable(array $user_fake_data, string $hashed_password)
     {
         return $this->databaseConnection->update(
-            'wp_users',
+            $this->users_table,
             [
                 'user_pass' => $hashed_password,
                 'user_email' => $user_fake_data['safe_email'],
