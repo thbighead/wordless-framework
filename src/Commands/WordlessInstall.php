@@ -175,6 +175,23 @@ class WordlessInstall extends ConsoleCommand
      */
     private function activateWpPlugins()
     {
+        $should_update_active_plugins = false;
+        $active_plugins_option_key = 'active_plugins';
+        $active_plugins = get_option($active_plugins_option_key, []);
+
+        foreach ($active_plugins as $index => $plugin_relative_path_from_plugins_directory) {
+            try {
+                ProjectPath::wpPlugins($plugin_relative_path_from_plugins_directory);
+            } catch (PathNotFoundException $exception) {
+                unset($active_plugins[$index]);
+                $should_update_active_plugins = true;
+            }
+        }
+
+        if ($should_update_active_plugins) {
+            update_option($active_plugins_option_key, array_values($active_plugins));
+        }
+
         $this->runWpCliCommand('plugin activate --all');
     }
 
