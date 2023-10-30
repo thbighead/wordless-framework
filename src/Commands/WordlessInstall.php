@@ -41,6 +41,7 @@ class WordlessInstall extends ConsoleCommand
     public const TEMP_MAIL = 'temp@mail.not.real';
     protected const ALLOW_ROOT_MODE = 'allow-root';
     protected const FORCE_MODE = 'force';
+    private const ACTIVE_PLUGINS_OPTION_KEY = 'active_plugins';
     private const NO_ASK_MODE = 'no-ask';
     private const NO_DB_CREATION_MODE = 'no-db-creation';
     private const WORDPRESS_SALT_FILLABLE_VALUES = [
@@ -96,7 +97,7 @@ class WordlessInstall extends ConsoleCommand
         $this->createWpConfigFromStub();
         $this->createRobotsTxtFromStub();
         $this->createWpDatabase();
-        $this->installWpCore(); // calls switchingMaintenanceMode(false)
+        $this->installWpCore(); // calls switchingMaintenanceMode(true)
 
         try {
             $this->flushWpRewriteRules();
@@ -175,6 +176,28 @@ class WordlessInstall extends ConsoleCommand
      */
     private function activateWpPlugins()
     {
+        $should_update_active_plugins = false;
+        $active_plugins = $this->getActivateWpPlugins();
+
+        foreach ($active_plugins as $index => $plugin_relative_path_from_plugins_directory) {
+            try {
+                ProjectPath::wpPlugins($plugin_relative_path_from_plugins_directory);
+            } catch (PathNotFoundException $exception) {
+                unset($active_plugins[$index]);
+                $should_update_active_plugins = true;
+            }
+        }
+
+        if ($should_update_active_plugins) {
+            $this->executeWordlessCommand(WpCliCaller::COMMAND_NAME, [
+                WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => 'option update '
+                    . self::ACTIVE_PLUGINS_OPTION_KEY
+                    . ' \''
+                    . json_encode(array_values($active_plugins))
+                    . '\' --format=json'
+            ]);
+        }
+
         $this->runWpCliCommand('plugin activate --all');
     }
 
@@ -193,13 +216,10 @@ class WordlessInstall extends ConsoleCommand
         $robotStubMounter = (new RobotsTxtStubMounter($new_robots_txt_filepath));
 
         $custom_login_url = Config::tryToGetOrDefault('admin.' . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL, false);
-        $robotStubMounter->setReplaceContentDictionary(
-            [
-                '{APP_URL}' => Str::finishWith($this->getEnvVariableByKey('APP_URL', ''), '/'),
-                '#custom_login_url' => $custom_login_url ? "Disallow: /$custom_login_url/" : ''
-            ]
-        )
-            ->mountNewFile();
+        $robotStubMounter->setReplaceContentDictionary([
+            '{APP_URL}' => Str::finishWith($this->getEnvVariableByKey('APP_URL', ''), '/'),
+            '#custom_login_url' => $custom_login_url ? "Disallow: /$custom_login_url/" : ''
+        ])->mountNewFile();
     }
 
     /**
@@ -344,6 +364,21 @@ class WordlessInstall extends ConsoleCommand
         $permalink_structure = $this->getEnvVariableByKey('WP_PERMALINK', '/%postname%/');
         $this->runWpCliCommand("rewrite structure '$permalink_structure' --hard");
         $this->runWpCliCommand('rewrite flush --hard');
+    }
+
+    /**
+     * @return array
+     * @throws ExceptionInterface
+     */
+    public function getActivateWpPlugins(): array
+    {
+        $active_plugins = json_decode($this->executeWordlessCommand(WpCliCaller::COMMAND_NAME, [
+            WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => 'option get '
+                . self::ACTIVE_PLUGINS_OPTION_KEY
+                . ' --format=json'
+        ]), true);
+
+        return is_array($active_plugins) ? $active_plugins : [];
     }
 
     private function getDotEnvNotFilledVariables(string $dot_env_content): array
