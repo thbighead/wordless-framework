@@ -1,9 +1,6 @@
 /.git                                           export-ignore
 /.idea                                          export-ignore
 /console                                        export-ignore
+/docker                                         export-ignore
 /src/Commands/InitializeTestEnvironment.php     export-ignore
-/test-environment                               export-ignore
-/test-environment-backup                        export-ignore
 /vendor                                         export-ignore
-
-/docker                                          text eol=lf
