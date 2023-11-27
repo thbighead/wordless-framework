@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Application\Helpers\DirestoryFiles\Exceptions;
+namespace Wordless\Application\Helpers\DirectoryFiles\Exceptions;
 
 use InvalidArgumentException;
 use Throwable;

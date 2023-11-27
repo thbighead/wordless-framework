@@ -21,7 +21,10 @@
   "config": {
     "optimize-autoloader": true,
     "preferred-install": "dist",
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "composer/installers": true
+    }
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -29,6 +32,7 @@
     "php": "^8.2",
     "ext-json": "*",
     "ext-openssl": "*",
+    "composer/installers": "^2.2",
     "doctrine/inflector": "^2.0",
     "lcobucci/jwt": "^4.2",
     "ramsey/uuid": "^4.2",
@@ -43,5 +47,15 @@
     "phpunit/phpunit": "^9.5",
     "psy/psysh": "^0.10.8",
     "symfony/var-dumper": "^5.3"
+  },
+  "extra": {
+    "installer-paths": {
+      "wp/wp-content/plugins/{$name}/": [
+        "type:wordpress-plugin"
+      ],
+      "wp/wp-content/themes/{$name}/": [
+        "type:wordpress-theme"
+      ]
+    }
   }
 }
