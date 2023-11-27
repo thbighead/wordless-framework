@@ -54,7 +54,7 @@ RUN set -xe; \
     useradd -l -u ${PUID} -g laradock -m laradock -G docker_env && \
     usermod -p "*" laradock -s /bin/bash && \
     apt-get install -yqq \
-      apt-utils \
+      apt-utils dos2unix \
       #
       #--------------------------------------------------------------------------
       # Mandatory Software's Installation
@@ -103,8 +103,8 @@ USER root
 COPY ./aliases.sh /root/aliases.sh
 COPY ./aliases.sh /home/laradock/aliases.sh
 
-RUN sed -i 's/\r//' /root/aliases.sh && \
-    sed -i 's/\r//' /home/laradock/aliases.sh && \
+RUN dos2unix /root/aliases.sh && \
+    dos2unix /home/laradock/aliases.sh && \
     chown laradock:laradock /home/laradock/aliases.sh && \
     echo "" >> ~/.bashrc && \
     echo "# Load Custom Aliases" >> ~/.bashrc && \
@@ -1646,8 +1646,8 @@ COPY ./aliases.sh /root/aliases.sh
 COPY ./aliases.sh /home/laradock/aliases.sh
 
 RUN if [ ${SHELL_OH_MY_ZSH} = true ]; then \
-    sed -i 's/\r//' /root/aliases.sh && \
-    sed -i 's/\r//' /home/laradock/aliases.sh && \
+    dos2unix /root/aliases.sh && \
+    dos2unix /home/laradock/aliases.sh && \
     chown laradock:laradock /home/laradock/aliases.sh && \
     echo "" >> ~/.zshrc && \
     echo "# Load Custom Aliases" >> ~/.zshrc && \
