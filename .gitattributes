@@ -5,3 +5,5 @@
 /test-environment                               export-ignore
 /test-environment-backup                        export-ignore
 /vendor                                         export-ignore
+
+/docker                                          text eol=lf
