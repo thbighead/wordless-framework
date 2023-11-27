@@ -1,4 +1,4 @@
 /.idea/
-/test-environment/
-/vendor/
 /.phpunit.result.cache
+/vendor/
+/wp/

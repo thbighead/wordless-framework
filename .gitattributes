@@ -4,3 +4,4 @@
 /docker                                         export-ignore
 /src/Commands/InitializeTestEnvironment.php     export-ignore
 /vendor                                         export-ignore
+/wp                                             export-ignore
