@@ -103,9 +103,7 @@ USER root
 COPY ./aliases.sh /root/aliases.sh
 COPY ./aliases.sh /home/laradock/aliases.sh
 
-RUN dos2unix /root/aliases.sh && \
-    dos2unix /home/laradock/aliases.sh && \
-    chown laradock:laradock /home/laradock/aliases.sh && \
+RUN chown laradock:laradock /home/laradock/aliases.sh && \
     echo "" >> ~/.bashrc && \
     echo "# Load Custom Aliases" >> ~/.bashrc && \
     echo "source ~/aliases.sh" >> ~/.bashrc && \
@@ -1646,8 +1644,6 @@ COPY ./aliases.sh /root/aliases.sh
 COPY ./aliases.sh /home/laradock/aliases.sh
 
 RUN if [ ${SHELL_OH_MY_ZSH} = true ]; then \
-    dos2unix /root/aliases.sh && \
-    dos2unix /home/laradock/aliases.sh && \
     chown laradock:laradock /home/laradock/aliases.sh && \
     echo "" >> ~/.zshrc && \
     echo "# Load Custom Aliases" >> ~/.zshrc && \
@@ -1835,6 +1831,8 @@ USER root
 
 # Clean up
 RUN apt-get clean && \
+    dos2unix /root/aliases.sh && \
+    dos2unix /home/laradock/aliases.sh && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     rm /var/log/lastlog /var/log/faillog
 
