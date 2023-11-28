@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Infrastructure\Wordpress\Hooker;
+namespace Wordless\Infrastructure\Wordpress\Listener;
 
 use Wordless\Infrastructure\Wordpress\Listener;
 

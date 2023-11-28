@@ -2,6 +2,8 @@
 
 namespace Wordless\Infrastructure\Wordpress;
 
+use Wordless\Infrastructure\Wordpress\Listener\Enums\HookType;
+
 abstract class Listener
 {
     /**
@@ -20,19 +22,20 @@ abstract class Listener
      * WordPress action|filter hook priority
      */
     protected const HOOK_PRIORITY = 10;
-    /**
-     * action or filter type (defines which method will be called: add_action or add_filter)
-     */
-    protected const TYPE = 'action';
 
     public static function hookIt(): void
     {
-        $hook_addition_function = 'add_' . static::TYPE;
+        $hook_addition_function = 'add_' . static::type()->name;
         $hook_addition_function(
             static::HOOK,
             [static::class, static::FUNCTION],
             static::HOOK_PRIORITY,
             static::ACCEPTED_NUMBER_OF_ARGUMENTS
         );
+    }
+
+    protected static function type(): HookType
+    {
+        return HookType::action;
     }
 }

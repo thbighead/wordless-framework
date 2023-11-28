@@ -174,4 +174,32 @@ class Bootstrapper
             }
         }
     }
+
+    /**
+     * @param RemoveHookDTO[] $removable_hooks
+     * @return void
+     */
+    private function resolveRemovableHooks(array $removable_hooks, ): void
+    {
+        foreach ($removable_hooks as $removableFilter) {
+            if ($removableFilter->isOnListener()) {
+                continue;
+            }
+
+            $functions = $removableFilter->getFunctions();
+
+            if (empty($functions)) {
+                remove_all_filters($removableFilter->hook);
+                continue;
+            }
+
+            foreach ($removableFilter->getFunctions() as $function_used_on_hook) {
+                remove_filter(
+                    $removableFilter->hook,
+                    $function_used_on_hook[RemoveHookDTO::FUNCTION_KEY],
+                    $function_used_on_hook[RemoveHookDTO::PRIORITY_KEY] ?? 10
+                );
+            }
+        }
+    }
 }
