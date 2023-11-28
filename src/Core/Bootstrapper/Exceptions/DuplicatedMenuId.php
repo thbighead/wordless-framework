@@ -21,28 +21,4 @@ class DuplicatedMenuId extends DomainException
             $previous
         );
     }
-
-    /**
-     * @return string
-     */
-    public function getMenuClass(): string
-    {
-        return $this->menuClass;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMenuClassFound(): string
-    {
-        return $this->menuClassFound;
-    }
-
-    /**
-     * @return string
-     */
-    public function getId(): string
-    {
-        return $this->id;
-    }
 }

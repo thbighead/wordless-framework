@@ -2,7 +2,9 @@
 
 namespace Wordless\Infrastructure;
 
+use Wordless\Application\Libraries\DesignPattern\Singleton;
 use Wordless\Infrastructure\Migration\Script;
+use Wordless\Infrastructure\Provider\Traits\ListenersRegistration;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
@@ -12,10 +14,13 @@ use Wordless\Wordpress\Models\Page;
 
 abstract class Provider
 {
+    use ListenersRegistration;
+    use Singleton;
+
     /**
      * @return ApiController[]
      */
-    public static function registerApiControllers(): array
+    public function registerApiControllers(): array
     {
         return [];
     }
@@ -23,28 +28,20 @@ abstract class Provider
     /**
      * @return ConsoleCommand[]
      */
-    public static function registerCommand(): array
+    public function registerCommands(): array
     {
         return [];
     }
 
-    public static function registerFrontPage(): ?Page
+    public function registerFrontPage(): ?Page
     {
         return null;
     }
 
     /**
-     * @return Listener[]
+     * @return string[]|Menu[]
      */
-    public static function registerListeners(): array
-    {
-        return [];
-    }
-
-    /**
-     * @return Menu[]
-     */
-    public static function registerMenus(): array
+    public function registerMenus(): array
     {
         return [];
     }
@@ -52,7 +49,7 @@ abstract class Provider
     /**
      * @return Script[]
      */
-    public static function registerMigration(): array
+    public function registerMigrations(): array
     {
         return [];
     }
@@ -60,7 +57,7 @@ abstract class Provider
     /**
      * @return CustomPost[]
      */
-    public static function registerPostTypes(): array
+    public function registerPostTypes(): array
     {
         return [];
     }
@@ -68,17 +65,7 @@ abstract class Provider
     /**
      * @return CustomTaxonomy[]
      */
-    public static function registerTaxonomies(): array
-    {
-        return [];
-    }
-
-    public static function unregisterActionListeners(): array
-    {
-        return [];
-    }
-
-    public static function unregisterFilterListeners(): array
+    public function registerTaxonomies(): array
     {
         return [];
     }

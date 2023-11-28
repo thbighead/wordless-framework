@@ -2,127 +2,175 @@
 
 namespace Wordless\Core;
 
-use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Config;
-use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
-use Wordless\Infrastructure\Wordpress\Listener;
-use Wordless\Infrastructure\Wordpress\Menu;
+use Wordless\Application\Libraries\DesignPattern\Singleton;
+use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Infrastructure\Provider;
+use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
 
 class Bootstrapper
 {
-    final public const ERROR_REPORTING_KEY = 'error_reporting';
-    final public const LISTENERS_BOOT_CONFIG_KEY = 'boot';
-    final public const LISTENERS_REMOVE_ACTION_CONFIG_KEY = 'action';
-    final public const LISTENERS_REMOVE_CONFIG_KEY = 'remove';
-    final public const LISTENERS_REMOVE_FILTER_CONFIG_KEY = 'filter';
-    final public const LISTENERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY = 'function';
-    final public const LISTENERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY = 'priority';
-    final public const MENUS_CONFIG_KEY = 'menus';
-    private const ADMIN_CONFIG_FILENAME = 'admin';
-    private const LISTENERS_CONFIG_FILENAME = 'listeners';
+    use Singleton;
+
+    private array $prepared_listeners = [];
+    private array $prepared_menus = [];
+    /** @var Provider[] $providers */
+    private array $providers = [];
 
     /**
      * @return void
+     * @throws CustomPostTypeRegistrationFailed
+     * @throws InvalidProviderClass
      * @throws PathNotFoundException
      */
-    public static function bootListeners(): void
+    public static function boot(): void
     {
-        $config_prefix = self::LISTENERS_CONFIG_FILENAME . '.';
-        $removable_hooks = Config::tryToGetOrDefault($config_prefix . self::LISTENERS_REMOVE_CONFIG_KEY, []);
-
-        self::resolveListeners(
-            Config::tryToGetOrDefault($config_prefix . self::LISTENERS_BOOT_CONFIG_KEY, []),
-            $removable_hooks
-        );
-
-        self::resolveRemovableHooks($removable_hooks);
+        self::getInstance()->loadProviders()
+            ->loadListeners()
+            ->loadMenus()
+            ->bootIntoWordpress();
     }
 
     /**
      * @return void
-     * @throws DuplicatedMenuId
-     * @throws InvalidMenuClass
-     * @throws PathNotFoundException
-     * @throws InvalidConfigKey
+     * @throws CustomPostTypeRegistrationFailed
      */
-    public static function bootMenus(): void
+    private function bootIntoWordpress(): void
     {
-        self::resolveMenus(Config::get(self::ADMIN_CONFIG_FILENAME . '.' . self::MENUS_CONFIG_KEY));
-    }
-
-    private static function resolveListeners(array $hookers, array &$removable_hooks): void
-    {
-        foreach ($hookers as $hooker_class_namespace) {
-            if ($removable_hooks[self::LISTENERS_REMOVE_ACTION_CONFIG_KEY][$hooker_class_namespace] ?? false) {
-                unset($removable_hooks[self::LISTENERS_REMOVE_ACTION_CONFIG_KEY][$hooker_class_namespace]);
-                continue;
-            }
-
-            if ($removable_hooks[self::LISTENERS_REMOVE_FILTER_CONFIG_KEY][$hooker_class_namespace] ?? false) {
-                unset($removable_hooks[self::LISTENERS_REMOVE_FILTER_CONFIG_KEY][$hooker_class_namespace]);
-                continue;
-            }
-
-            /** @var Listener $hooker_class_namespace */
-            $hooker_class_namespace::hookIt();
+        foreach ($this->providers as $provider) {
+            $this->bootProviderServices($provider);
         }
     }
 
     /**
-     * @param array $menus_config
+     * @param Provider $provider
      * @return void
-     * @throws DuplicatedMenuId
-     * @throws InvalidMenuClass
+     * @throws CustomPostTypeRegistrationFailed
      */
-    private static function resolveMenus(array $menus_config): void
+    private function bootProviderServices(Provider $provider): void
     {
-        $registrable_nav_menus = [];
-
-        foreach ($menus_config as $menuClass) {
-            if (!is_a($menuClass, Menu::class, true)) {
-                throw new InvalidMenuClass($menuClass);
-            }
-
-            if ($menuFound = ($registrable_nav_menus[$menuClass::id()] ?? false)) {
-                throw new DuplicatedMenuId($menuClass, $menuClass::id(), $menuFound);
-            }
-
-            $registrable_nav_menus[$menuClass::id()] = esc_html__($menuClass::name());
+        foreach ($provider->registerTaxonomies() as $customTaxonomyClassNamespace) {
+            $customTaxonomyClassNamespace::register();
         }
 
-        register_nav_menus($registrable_nav_menus);
+        foreach ($provider->registerPostTypes() as $customPostTypeClassNamespace) {
+            $customPostTypeClassNamespace::register();
+        }
+
+        $this->resolveRemovableActions($provider->unregisterActionListeners());
+        $this->resolveRemovableFilters($provider->unregisterFilterListeners());
     }
 
-    private static function resolveRemovableHooks(array $removable_hooks): void
+    private function loadListeners(): static
     {
-        foreach ($removable_hooks as $hook_type => $removable_hook) {
-            $remove_single_hook_function = "remove_$hook_type";
-            $remove_all_hook_function = "remove_all_{$hook_type}s";
-
-            foreach ($removable_hook as $hook_flag => $remove_rules) {
-                if (is_a($hook_flag, Listener::class, true)) {
+        foreach ($this->providers as $provider) {
+            foreach ($provider->registerListeners() as $listener_namespace) {
+                if ($provider->unregisterActionListeners()[$listener_namespace]
+                    || $provider->unregisterFilterListeners()[$listener_namespace]) {
                     continue;
                 }
 
-                if (!is_array($remove_rules)) {
-                    $remove_all_hook_function($remove_rules);
-                    continue;
-                }
+                $this->prepared_listeners[$listener_namespace] = true;
+            }
+        }
 
-                if (Arr::isAssociative($remove_rules)) {
-                    $remove_rules = [$remove_rules];
-                }
+        return $this;
+    }
 
-                foreach ($remove_rules as $hook_remove_rules) {
-                    $remove_single_hook_function(
-                        $hook_flag,
-                        $hook_remove_rules[self::LISTENERS_REMOVE_TYPE_FUNCTION_CONFIG_KEY],
-                        $hook_remove_rules[self::LISTENERS_REMOVE_TYPE_PRIORITY_CONFIG_KEY] ?? 10
-                    );
-                }
+    private function loadMenus(): static
+    {
+        foreach ($this->providers as $provider) {
+            foreach ($provider->registerMenus() as $menu_namespace) {
+                $this->prepared_listeners[$menu_namespace] = true;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $provider_class_namespace
+     * @return Provider
+     * @throws InvalidProviderClass
+     */
+    private function loadProvider(string $provider_class_namespace): Provider
+    {
+        /** @var Provider $provider_class_namespace */
+        if (!(($provider = $provider_class_namespace::getInstance()) instanceof Provider)) {
+            throw new InvalidProviderClass($provider_class_namespace);
+        }
+
+        return $provider;
+    }
+
+    /**
+     * @return $this
+     * @throws InvalidProviderClass
+     * @throws PathNotFoundException
+     */
+    private function loadProviders(): static
+    {
+        foreach (Config::get('providers') as $provider_class_namespace) {
+            $this->providers[] = $this->loadProvider($provider_class_namespace);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param RemoveHookDTO[] $removable_actions
+     * @return void
+     */
+    private function resolveRemovableActions(array $removable_actions): void
+    {
+        foreach ($removable_actions as $removableAction) {
+            if ($removableAction->isOnListener()) {
+                continue;
+            }
+
+            $functions = $removableAction->getFunctions();
+
+            if (empty($functions)) {
+                remove_all_actions($removableAction->hook);
+                continue;
+            }
+
+            foreach ($removableAction->getFunctions() as $function_used_on_hook) {
+                remove_action(
+                    $removableAction->hook,
+                    $function_used_on_hook[RemoveHookDTO::FUNCTION_KEY],
+                    $function_used_on_hook[RemoveHookDTO::PRIORITY_KEY] ?? 10
+                );
+            }
+        }
+    }
+
+    /**
+     * @param RemoveHookDTO[] $removable_filters
+     * @return void
+     */
+    private function resolveRemovableFilters(array $removable_filters): void
+    {
+        foreach ($removable_filters as $removableFilter) {
+            if ($removableFilter->isOnListener()) {
+                continue;
+            }
+
+            $functions = $removableFilter->getFunctions();
+
+            if (empty($functions)) {
+                remove_all_filters($removableFilter->hook);
+                continue;
+            }
+
+            foreach ($removableFilter->getFunctions() as $function_used_on_hook) {
+                remove_filter(
+                    $removableFilter->hook,
+                    $function_used_on_hook[RemoveHookDTO::FUNCTION_KEY],
+                    $function_used_on_hook[RemoveHookDTO::PRIORITY_KEY] ?? 10
+                );
             }
         }
     }

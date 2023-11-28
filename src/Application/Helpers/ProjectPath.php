@@ -143,6 +143,22 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
+    final public static function providers(string $additional_path = ''): string
+    {
+        $relative_path = "Providers/$additional_path";
+
+        try {
+            return self::app($relative_path);
+        } catch (PathNotFoundException) {
+            return self::srcApplication($relative_path);
+        }
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     final public static function public(string $additional_path = ''): string
     {
         return self::root("public/$additional_path");
@@ -198,6 +214,16 @@ class ProjectPath
     final public static function src(string $additional_path = ''): string
     {
         return self::vendorPackageRoot("src/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
+    final public static function srcApplication(string $additional_path = ''): string
+    {
+        return self::src("Application/$additional_path");
     }
 
     /**
