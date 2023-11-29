@@ -18,7 +18,7 @@ trait Loader
      */
     private function load(): static
     {
-        return self::getInstance()->loadProviders()
+        return $this->loadProviders()
             ->loadListeners()
             ->loadMenus();
     }
