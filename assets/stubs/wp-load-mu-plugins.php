@@ -12,6 +12,6 @@
 
 use Wordless\Core\Bootstrapper;
 
-Bootstrapper::boot();
+Bootstrapper::bootMainPlugin();
 
 // {include plugins script}

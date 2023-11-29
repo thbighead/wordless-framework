@@ -2,6 +2,8 @@
 
 namespace Wordless\Core;
 
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Exception\LogicException;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
@@ -32,6 +34,19 @@ final class Bootstrapper extends Singleton
     private array $providers = [];
 
     /**
+     * @param Application $application
+     * @return void
+     * @throws InvalidConfigKey
+     * @throws InvalidProviderClass
+     * @throws LogicException
+     * @throws PathNotFoundException
+     */
+    public static function bootConsole(Application $application): void
+    {
+        self::getInstance()->bootIntoSymfonyApplication($application);
+    }
+
+    /**
      * @return void
      * @throws CustomPostTypeRegistrationFailed
      * @throws DuplicatedMenuId
@@ -43,7 +58,7 @@ final class Bootstrapper extends Singleton
      * @throws PathNotFoundException
      * @throws ReservedCustomPostTypeKey
      */
-    public static function boot(): void
+    public static function bootMainPlugin(): void
     {
         self::getInstance()->bootIntoWordpress();
     }
@@ -76,6 +91,20 @@ final class Bootstrapper extends Singleton
     }
 
     /**
+     * @param Application $application
+     * @return void
+     * @throws LogicException
+     */
+    private function bootIntoSymfonyApplication(Application $application): void
+    {
+        foreach ($this->providers as $provider) {
+            foreach ($provider->registerCommands() as $command_namespace) {
+                $application->add(new $command_namespace);
+            }
+        }
+    }
+
+    /**
      * @return void
      * @throws CustomPostTypeRegistrationFailed
      * @throws DuplicatedMenuId
@@ -87,7 +116,7 @@ final class Bootstrapper extends Singleton
     private function bootIntoWordpress(): void
     {
         foreach ($this->providers as $provider) {
-            $this->bootProviderServices($provider);
+            $this->bootProviderWordpressServices($provider);
         }
     }
 
@@ -101,7 +130,7 @@ final class Bootstrapper extends Singleton
      * @throws ReservedCustomPostTypeKey
      * @throws InvalidCustomTaxonomyName
      */
-    private function bootProviderServices(Provider $provider): void
+    private function bootProviderWordpressServices(Provider $provider): void
     {
         foreach ($provider->registerTaxonomies() as $customTaxonomyClassNamespace) {
             $customTaxonomyClassNamespace::register();
