@@ -2,10 +2,12 @@
 
 namespace Wordless\Core;
 
+use Exception;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\LogicException;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
 use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
@@ -101,6 +103,12 @@ final class Bootstrapper extends Singleton
             foreach ($provider->registerCommands() as $command_namespace) {
                 $application->add(new $command_namespace);
             }
+        }
+
+        try {
+            $application->run();
+        } catch (Exception $exception) {
+            echo Str::finishWith($exception->getMessage(), "\n");
         }
     }
 
