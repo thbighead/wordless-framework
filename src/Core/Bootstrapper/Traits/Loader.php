@@ -18,7 +18,8 @@ trait Loader
      */
     private function load(): static
     {
-        return $this->loadProviders()
+        return $this->setErrorReporting()
+            ->loadProviders()
             ->loadListeners()
             ->loadMenus();
     }

@@ -5,7 +5,9 @@ namespace Wordless\Core;
 use Exception;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\LogicException;
+use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
+use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
@@ -91,6 +93,22 @@ final class Bootstrapper extends Singleton
         }
 
         return array_values($api_controllers_namespaces);
+    }
+
+    /**
+     * @return $this
+     * @throws PathNotFoundException
+     */
+    public function setErrorReporting(): self
+    {
+        error_reporting(Config::tryToGetOrDefault(
+            'wordpress.admin.' . self::ERROR_REPORTING_KEY,
+            Environment::isProduction()
+                ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
+                : E_ALL
+        ));
+
+        return $this;
     }
 
     /**
