@@ -2,23 +2,22 @@
 
 namespace Wordless\Infrastructure;
 
-use Wordless\Application\Libraries\DesignPattern\Singleton;
+use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Infrastructure\Migration\Script;
 use Wordless\Infrastructure\Provider\Traits\ListenersRegistration;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
-use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Infrastructure\Wordpress\Menu;
 use Wordless\Wordpress\Models\Page;
 
 abstract class Provider
 {
     use ListenersRegistration;
-    use Singleton;
+    use Constructors;
 
     /**
-     * @return ApiController[]
+     * @return string[]|ApiController[]
      */
     public function registerApiControllers(): array
     {
@@ -31,11 +30,6 @@ abstract class Provider
     public function registerCommands(): array
     {
         return [];
-    }
-
-    public function registerFrontPage(): ?Page
-    {
-        return null;
     }
 
     /**

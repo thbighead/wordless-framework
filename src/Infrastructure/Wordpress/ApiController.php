@@ -3,13 +3,15 @@
 namespace Wordless\Infrastructure\Wordpress;
 
 use Generator;
-use Wordless\Application\Helpers\DirectoryFiles;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
+use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
+use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Application\Libraries\DesignPattern\Singleton;
+use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
+use Wordless\Core\Bootstrapper;
 use Wordless\Core\InternalCache;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 use Wordless\Infrastructure\Wordpress\ApiController\Exceptions\FailedToGetControllerPathFromCachedData;
@@ -23,7 +25,7 @@ use WP_REST_Controller;
 
 abstract class ApiController extends WP_REST_Controller
 {
-    use AuthorizationCheck, ResourceValidation, RestingWordPress, Routing, Singleton;
+    use AuthorizationCheck, ResourceValidation, RestingWordPress, Routing, Constructors;
 
     final public const CACHE_PATH_KEY = 'path';
     /** @var bool[] */
@@ -58,6 +60,38 @@ abstract class ApiController extends WP_REST_Controller
     abstract protected function resourceName(): string;
 
     abstract protected function version(): ?string;
+
+    /**
+     * @return Generator
+     * @throws InvalidConfigKey
+     * @throws InvalidProviderClass
+     * @throws PathNotFoundException
+     */
+    public static function all(): Generator
+    {
+        try {
+            $cached_controllers_data = InternalCache::getValueOrFail('controllers');
+
+            foreach ($cached_controllers_data as $api_controller_namespace) {
+                yield $api_controller_namespace;
+            }
+        } catch (FailedToFindCachedKey|InternalCacheNotLoaded) {
+            foreach (self::loadProvidedApiControllers() as $api_controller_namespace) {
+                yield $api_controller_namespace;
+            }
+        }
+    }
+
+    /**
+     * @return string[]|ApiController[]
+     * @throws InvalidConfigKey
+     * @throws InvalidProviderClass
+     * @throws PathNotFoundException
+     */
+    public static function loadProvidedApiControllers(): array
+    {
+        return Bootstrapper::getInstance()->getProvidedApiControllers();
+    }
 
     private function __construct()
     {

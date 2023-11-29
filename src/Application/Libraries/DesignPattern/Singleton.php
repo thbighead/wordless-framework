@@ -2,31 +2,9 @@
 
 namespace Wordless\Application\Libraries\DesignPattern;
 
-use Wordless\Application\Libraries\DesignPattern\Singleton\Exceptions\TryingToUnserializeSingleton;
+use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 
-trait Singleton
+abstract class Singleton
 {
-    private static array $instances = [];
-
-    public static function getInstance()
-    {
-        return self::$instances[static::class] ?? self::$instances[static::class] = new static;
-    }
-
-    protected function __construct()
-    {
-    }
-
-    private function __clone()
-    {
-    }
-
-    /**
-     * @throws TryingToUnserializeSingleton
-     * @noinspection PhpUnusedPrivateMethodInspection
-     */
-    private function __wakeup()
-    {
-        throw new TryingToUnserializeSingleton(static::class);
-    }
+    use Constructors;
 }

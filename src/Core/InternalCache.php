@@ -6,7 +6,7 @@ use Wordless\Application\Cachers\ConfigCacher;
 use Wordless\Application\Cachers\ControllerCacher;
 use Wordless\Application\Cachers\EnvironmentCacher;
 use Wordless\Application\Helpers\DirectoryFiles;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;

@@ -4,7 +4,7 @@ namespace Wordless\Wordpress;
 
 use Wordless\Application\Helpers\Option;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
-use Wordless\Application\Libraries\DesignPattern\Singleton;
+use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Infrastructure\Wordpress\CustomPost\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\Page;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
@@ -12,21 +12,15 @@ use WP_Post;
 
 final class FrontPage
 {
-    use Singleton;
+    use Constructors;
 
     private const FRONT_PAGE_ID_OPTION_KEY = 'page_on_front';
 
     private Page $frontPage;
 
-    /**
-     * @throws InitializingModelWithWrongPostType
-     * @throws PostTypeNotRegistered
-     */
-    protected function __construct()
+    public function getPage(): ?Page
     {
-        if (!is_null($front_page_id = Option::get('page_on_front'))) {
-            $this->frontPage = new Page($front_page_id);
-        }
+        return $this->frontPage ?? null;
     }
 
     /**
@@ -51,9 +45,20 @@ final class FrontPage
             return;
         }
 
-        Option::update('page_on_front', $page->ID);
+        Option::update(self::FRONT_PAGE_ID_OPTION_KEY, $page->ID);
         Option::update('show_on_front', 'page');
 
         $this->frontPage = $page;
+    }
+
+    /**
+     * @throws InitializingModelWithWrongPostType
+     * @throws PostTypeNotRegistered
+     */
+    protected function __construct()
+    {
+        if (!is_null($front_page_id = Option::get(self::FRONT_PAGE_ID_OPTION_KEY))) {
+            $this->frontPage = new Page($front_page_id);
+        }
     }
 }

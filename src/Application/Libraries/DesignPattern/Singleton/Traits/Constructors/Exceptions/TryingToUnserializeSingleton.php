@@ -1,10 +1,10 @@
 <?php
 
-namespace Wordless\Application\Libraries\DesignPattern\Singleton\Exceptions;
+namespace Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors\Exceptions;
 
 use ErrorException;
 use Throwable;
-use Wordless\Application\Libraries\DesignPattern\Singleton;
+use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class TryingToUnserializeSingleton extends ErrorException
@@ -13,7 +13,7 @@ class TryingToUnserializeSingleton extends ErrorException
     {
         parent::__construct(
             "Cannot unserialize a $this->singletonClass object because it uses "
-            . Singleton::class
+            . Constructors::class
             . ' strategy.',
             ExceptionCode::intentional_interrupt->value,
             previous: $previous

@@ -2,9 +2,11 @@
 
 namespace Wordless\Wordpress;
 
+use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Wordpress\Models\CustomTaxonomyTerm;
 use Wordless\Wordpress\Models\PostType;
@@ -107,7 +109,9 @@ class RolesList extends WP_Roles
     /**
      * @param Role $role
      * @return void
+     * @throws InvalidConfigKey
      * @throws PathNotFoundException
+     * @throws InvalidProviderClass
      */
     public static function syncRestResourcesPermissionsToRole(Role $role): void
     {
