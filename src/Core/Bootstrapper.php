@@ -148,21 +148,21 @@ class Bootstrapper
         $remove_all_function = "remove_all_{$type->name}s";
         $remove_single_function = "remove_$type->name";
 
-        foreach ($removable_hooks as $removableFilter) {
-            if ($removableFilter->isOnListener()) {
+        foreach ($removable_hooks as $removableHook) {
+            if ($removableHook->isOnListener()) {
                 continue;
             }
 
-            $functions = $removableFilter->getFunctions();
+            $functions_usec_on_hook = $removableHook->getFunctionsUsedOnHook();
 
-            if (empty($functions)) {
-                $remove_all_function($removableFilter->hook);
+            if (empty($functions_usec_on_hook)) {
+                $remove_all_function($removableHook->hook);
                 continue;
             }
 
-            foreach ($removableFilter->getFunctions() as $function_used_on_hook) {
+            foreach ($functions_usec_on_hook as $function_used_on_hook) {
                 $remove_single_function(
-                    $removableFilter->hook,
+                    $removableHook->hook,
                     $function_used_on_hook[RemoveHookDTO::FUNCTION_KEY],
                     $function_used_on_hook[RemoveHookDTO::PRIORITY_KEY] ?? 10
                 );

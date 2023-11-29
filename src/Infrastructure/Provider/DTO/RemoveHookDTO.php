@@ -10,16 +10,16 @@ class RemoveHookDTO
     final public const FUNCTION_KEY = 'function';
     final public const PRIORITY_KEY = 'priority';
 
-    private array $functions = [];
+    private array $functions_used_on_hook = [];
     private bool $is_on_listener;
 
     public function __construct(public readonly string $hook)
     {
     }
 
-    public function getFunctions(): array
+    public function getFunctionsUsedOnHook(): array
     {
-        return $this->functions;
+        return $this->functions_used_on_hook;
     }
 
     public function isOnListener(): bool
@@ -43,7 +43,7 @@ class RemoveHookDTO
             throw new TriedToSetFunctionWhenRemovingListener($this->hook);
         }
 
-        $this->functions[] = [
+        $this->functions_used_on_hook[] = [
             self::FUNCTION_KEY => $function_used_on_hook,
             self::PRIORITY_KEY => $function_priority_used_on_hook,
         ];
