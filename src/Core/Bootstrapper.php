@@ -9,6 +9,7 @@ use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
+use Wordless\Infrastructure\Wordpress\Listener\Enums\HookType;
 
 class Bootstrapper
 {
@@ -125,26 +126,7 @@ class Bootstrapper
      */
     private function resolveRemovableActions(array $removable_actions): void
     {
-        foreach ($removable_actions as $removableAction) {
-            if ($removableAction->isOnListener()) {
-                continue;
-            }
-
-            $functions = $removableAction->getFunctions();
-
-            if (empty($functions)) {
-                remove_all_actions($removableAction->hook);
-                continue;
-            }
-
-            foreach ($removableAction->getFunctions() as $function_used_on_hook) {
-                remove_action(
-                    $removableAction->hook,
-                    $function_used_on_hook[RemoveHookDTO::FUNCTION_KEY],
-                    $function_used_on_hook[RemoveHookDTO::PRIORITY_KEY] ?? 10
-                );
-            }
-        }
+        $this->resolveRemovableHooks($removable_actions, HookType::action);
     }
 
     /**
@@ -153,34 +135,19 @@ class Bootstrapper
      */
     private function resolveRemovableFilters(array $removable_filters): void
     {
-        foreach ($removable_filters as $removableFilter) {
-            if ($removableFilter->isOnListener()) {
-                continue;
-            }
-
-            $functions = $removableFilter->getFunctions();
-
-            if (empty($functions)) {
-                remove_all_filters($removableFilter->hook);
-                continue;
-            }
-
-            foreach ($removableFilter->getFunctions() as $function_used_on_hook) {
-                remove_filter(
-                    $removableFilter->hook,
-                    $function_used_on_hook[RemoveHookDTO::FUNCTION_KEY],
-                    $function_used_on_hook[RemoveHookDTO::PRIORITY_KEY] ?? 10
-                );
-            }
-        }
+        $this->resolveRemovableHooks($removable_filters, HookType::filter);
     }
 
     /**
      * @param RemoveHookDTO[] $removable_hooks
+     * @param HookType $type
      * @return void
      */
-    private function resolveRemovableHooks(array $removable_hooks, ): void
+    private function resolveRemovableHooks(array $removable_hooks, HookType $type): void
     {
+        $remove_all_function = "remove_all_{$type->name}s";
+        $remove_single_function = "remove_$type->name";
+
         foreach ($removable_hooks as $removableFilter) {
             if ($removableFilter->isOnListener()) {
                 continue;
@@ -189,12 +156,12 @@ class Bootstrapper
             $functions = $removableFilter->getFunctions();
 
             if (empty($functions)) {
-                remove_all_filters($removableFilter->hook);
+                $remove_all_function($removableFilter->hook);
                 continue;
             }
 
             foreach ($removableFilter->getFunctions() as $function_used_on_hook) {
-                remove_filter(
+                $remove_single_function(
                     $removableFilter->hook,
                     $function_used_on_hook[RemoveHookDTO::FUNCTION_KEY],
                     $function_used_on_hook[RemoveHookDTO::PRIORITY_KEY] ?? 10
