@@ -59,10 +59,10 @@ class NestedAnd extends MetaSubQueryBuilder
      * @return $this
      */
     public function andWhereTaxonomyIn(
-        string $taxonomy,
-        string $column,
-               $values,
-        bool $include_children = true
+        string           $taxonomy,
+        string           $column,
+        array|int|string $values,
+        bool             $include_children = true
     ): NestedAnd
     {
         $this->setConditionToSubQuery($this->mountCondition(
