@@ -13,8 +13,9 @@ class RemoveHookDTO
     private array $functions_used_on_hook = [];
     private bool $is_on_listener;
 
-    public function __construct(public readonly string $hook)
+    public static function make(string $hook): static
     {
+        return new static($hook);
     }
 
     public function getFunctionsUsedOnHook(): array
@@ -33,11 +34,11 @@ class RemoveHookDTO
 
     /**
      * @param string $function_used_on_hook
-     * @param string|null $function_priority_used_on_hook
+     * @param int|null $function_priority_used_on_hook
      * @return $this
      * @throws TriedToSetFunctionWhenRemovingListener
      */
-    public function setFunction(string $function_used_on_hook, ?string $function_priority_used_on_hook = null): static
+    public function setFunction(string $function_used_on_hook, ?int $function_priority_used_on_hook = null): static
     {
         if ($this->isOnListener()) {
             throw new TriedToSetFunctionWhenRemovingListener($this->hook);
@@ -49,5 +50,9 @@ class RemoveHookDTO
         ];
 
         return $this;
+    }
+
+    private function __construct(public readonly string $hook)
+    {
     }
 }

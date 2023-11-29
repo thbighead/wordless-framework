@@ -1,6 +1,9 @@
 <?php
 
+use Wordless\Application\Providers\WpSpeedUpProvider;
 use Wordless\Infrastructure\Provider;
 
 /** @var Provider[] */
-return [];
+return [
+    WpSpeedUpProvider::class,
+];

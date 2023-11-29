@@ -12,8 +12,9 @@ use Wordless\Application\Listeners\CustomLoginUrl\SiteUrlCustomLoginUrlHooker;
 use Wordless\Application\Listeners\CustomLoginUrl\WelcomeEmailWithCustomLoginUrlHooker;
 use Wordless\Application\Listeners\CustomLoginUrl\WpLoadedCustomLoginUrlHooker;
 use Wordless\Core\Bootstrapper;
+use Wordless\Infrastructure\Provider;
 
-class LoginRedirect
+class LoginRedirect extends Provider
 {
     private const CONFIG_PREFIX = 'wordpress.admin.';
     private const HOOK_TO_REMOVE = 'template_redirect';

@@ -15,7 +15,7 @@ class RemoveGlobalCustomInlineStyles extends Listener
      */
     protected const HOOK = 'wp_enqueue_scripts';
 
-    public static function removeInlineCss()
+    public static function removeInlineCss(): void
     {
         wp_dequeue_style('global-styles');
     }

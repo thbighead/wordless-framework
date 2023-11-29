@@ -24,7 +24,7 @@ class RemoveAdditionalCssFromAdmin extends Listener
      */
     protected const HOOK_PRIORITY = 15;
 
-    public static function removeAdditionalCss(WP_Customize_Manager $manager)
+    public static function removeAdditionalCss(WP_Customize_Manager $manager): void
     {
         $manager->remove_section('custom_css');
     }

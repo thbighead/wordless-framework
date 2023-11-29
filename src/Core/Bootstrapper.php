@@ -28,6 +28,7 @@ final class Bootstrapper extends Singleton
     use Loader;
     use Resolver;
 
+    public const ERROR_REPORTING_KEY = 'error_reporting';
     /** @var string[]|Listener[] $prepared_listeners */
     private array $prepared_listeners = [];
     /** @var string[]|Menu[] $prepared_menus */
