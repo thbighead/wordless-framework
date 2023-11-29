@@ -5,7 +5,7 @@ namespace Wordless\Infrastructure\Wordpress;
 use Generator;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -59,68 +59,6 @@ abstract class ApiController extends WP_REST_Controller
 
     abstract protected function version(): ?string;
 
-    /**
-     * @return Generator
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
-     */
-    public static function all(): Generator
-    {
-        try {
-            $cached_controllers_data = InternalCache::getValueOrFail('controllers');
-
-            foreach ($cached_controllers_data as $controller_full_namespace => $controller_cached_data) {
-                $controller_pathing = $controller_cached_data[self::CACHE_PATH_KEY] ?? false;
-
-                if (!$controller_pathing) {
-                    throw new FailedToGetControllerPathFromCachedData($controller_cached_data);
-                }
-
-                yield [
-                    $controller_cached_data[self::CACHE_PATH_KEY],
-                    $controller_full_namespace,
-                ];
-            }
-        } catch (FailedToFindCachedKey|FailedToGetControllerPathFromCachedData|InternalCacheNotLoaded) {
-            foreach (self::yieldBootableControllersPathAndResourceNameByReadingDirectory() as $controller_path_and_resource_name) {
-                yield $controller_path_and_resource_name;
-            }
-        }
-    }
-
-    /**
-     * @return Generator
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
-     */
-    public static function yieldBootableControllersPathAndResourceNameByReadingDirectory(): Generator
-    {
-        $controllers_directory_path = ProjectPath::controllers();
-
-        foreach (DirectoryFiles::recursiveRead($controllers_directory_path) as $controller_path) {
-            if (is_dir($controller_path)) {
-                continue;
-            }
-
-            if (Str::endsWith($controller_path, 'Controller.php')) {
-                $controller_relative_filepath_without_extension = trim(Str::after(
-                    substr($controller_path, 0, -4), // Removes '.php'
-                    $controllers_directory_path
-                ), DIRECTORY_SEPARATOR);
-                $controller_full_namespace = '\\App\\Controllers';
-
-                foreach (explode(
-                             DIRECTORY_SEPARATOR,
-                             $controller_relative_filepath_without_extension
-                         ) as $controller_pathing) {
-                    $controller_full_namespace .= "\\$controller_pathing";
-                }
-
-                yield [$controller_path, $controller_full_namespace];
-            }
-        }
-    }
-
     private function __construct()
     {
         $uri_namespace_prefix = "/{$this->namespace()}";
@@ -145,7 +83,7 @@ abstract class ApiController extends WP_REST_Controller
     {
         try {
             $this->authenticatedUser = new User;
-        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (NoUserAuthenticated) {
+        } catch (NoUserAuthenticated) {
             $this->authenticatedUser = null;
         }
     }

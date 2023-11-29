@@ -60,6 +60,8 @@ class Bootstrapper
             $customPostTypeClassNamespace::register();
         }
 
+        $this->resolveMenus();
+        $this->resolveListeners();
         $this->resolveRemovableActions($provider->unregisterActionListeners());
         $this->resolveRemovableFilters($provider->unregisterFilterListeners());
     }
@@ -84,7 +86,7 @@ class Bootstrapper
     {
         foreach ($this->providers as $provider) {
             foreach ($provider->registerMenus() as $menu_namespace) {
-                $this->prepared_listeners[$menu_namespace] = true;
+                $this->prepared_menus[$menu_namespace] = true;
             }
         }
 
