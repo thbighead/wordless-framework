@@ -294,7 +294,6 @@ enum FilterHook: string implements FilterHookEnum
     case esc_html = 'esc_html';
     case esc_textarea = 'esc_textarea';
     case esc_xml = 'esc_xml';
-    case example_filter = 'example_filter';
     case excerpt_allowed_blocks = 'excerpt_allowed_blocks';
     case excerpt_allowed_wrapper_blocks = 'excerpt_allowed_wrapper_blocks';
     case excerpt_length = 'excerpt_length';
