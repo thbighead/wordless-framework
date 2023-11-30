@@ -21,15 +21,15 @@ use Wordless\Application\Listeners\RestApi\Authentication;
 use Wordless\Application\Listeners\RestApi\DefineEndpoints;
 use Wordless\Application\Listeners\ShowCustomFrontPageAtAdminSideMenu;
 use Wordless\Application\Listeners\WordlessVersionOnAdmin;
-use Wordless\Application\Providers\LoginRedirect;
-use Wordless\Application\Providers\RestApi;
+use Wordless\Application\Providers\LoginRedirectProvider;
+use Wordless\Application\Providers\RestApiProvider;
 use Wordless\Application\Providers\WpSpeedUpProvider;
 use Wordless\Core\Bootstrapper;
 
 return [
     Bootstrapper::LISTENERS_BOOT_CONFIG_KEY => [
         ...RedirectCustomLoginUrlHooker::addAdditionalHooks(),
-        ...RestApi::addAdditionalHooks(),
+        ...RestApiProvider::addAdditionalHooks(),
         ...WpSpeedUpProvider::addAdditionalHooks(),
         AllowSvgUpload::class,
         Authentication::class,
@@ -100,7 +100,7 @@ return [
     Bootstrapper::LISTENERS_REMOVE_CONFIG_KEY => [
         Bootstrapper::LISTENERS_REMOVE_ACTION_CONFIG_KEY => array_merge_recursive([
             //
-        ], WpSpeedUpProvider::removeActionsConfigToSpeedUp(), LoginRedirect::removeLoginTemplateHook()),
+        ], WpSpeedUpProvider::removeActionsConfigToSpeedUp(), LoginRedirectProvider::removeLoginTemplateHook()),
         Bootstrapper::LISTENERS_REMOVE_FILTER_CONFIG_KEY => array_merge_recursive([
             //
         ], WpSpeedUpProvider::removeFiltersConfigToSpeedUp()),

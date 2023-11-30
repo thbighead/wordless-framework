@@ -4,10 +4,16 @@ namespace Wordless\Application\Providers;
 
 use Wordless\Application\Listeners\RestApi\Authentication;
 use Wordless\Application\Listeners\RestApi\DefineEndpoints;
+use Wordless\Infrastructure\Provider;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-class RestApi
+class RestApiProvider extends Provider
 {
-    public static function addAdditionalHooks(): array
+
+    /**
+     * @return array|string[]|Listener[]
+     */
+    public function registerListeners(): array
     {
         return [
             Authentication::class,

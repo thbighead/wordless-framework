@@ -12,6 +12,8 @@ use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO\Exceptions\TriedToSetFunctionWhenRemovingListener;
 use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Wordpress\Hooks\Enums\ActionHook;
+use Wordless\Wordpress\Hooks\Enums\FilterHook;
 
 class WpSpeedUpProvider extends Provider
 {
@@ -62,11 +64,11 @@ class WpSpeedUpProvider extends Provider
         if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . static::CONFIG_KEY_REMOVE_WP_EMOJIS, false)) {
             $unregistered_action_listeners[] = RemoveHookDTO::make('wp_head')
                 ->setFunction(self::FUNCTION_PRINT_EMOJI_DETECTION_SCRIPT,7);
-            $unregistered_action_listeners[] = RemoveHookDTO::make('admin_print_scripts')
+            $unregistered_action_listeners[] = RemoveHookDTO::make(ActionHook::admin_print_scripts->value)
                 ->setFunction(self::FUNCTION_PRINT_EMOJI_DETECTION_SCRIPT);
-            $unregistered_action_listeners[] = RemoveHookDTO::make('wp_print_styles')
+            $unregistered_action_listeners[] = RemoveHookDTO::make(ActionHook::admin_print_styles->value)
                 ->setFunction(self::FUNCTION_PRINT_EMOJI_STYLES);
-            $unregistered_action_listeners[] = RemoveHookDTO::make('admin_print_styles')
+            $unregistered_action_listeners[] = RemoveHookDTO::make(ActionHook::admin_print_styles->value)
                 ->setFunction(self::FUNCTION_PRINT_EMOJI_STYLES);
         }
 
@@ -84,7 +86,7 @@ class WpSpeedUpProvider extends Provider
         if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . static::CONFIG_KEY_REMOVE_WP_EMOJIS, false)) {
             $unregistered_filter_listeners[] = RemoveHookDTO::make('the_content_feed')
                 ->setFunction(self::FUNCTION_WP_STATICIZE_EMOJI);
-            $unregistered_filter_listeners[] = RemoveHookDTO::make('comment_text_rss')
+            $unregistered_filter_listeners[] = RemoveHookDTO::make(FilterHook::comment_text_rss->value)
                 ->setFunction(self::FUNCTION_WP_STATICIZE_EMOJI);
             $unregistered_filter_listeners[] = RemoveHookDTO::make('wp_mail')
                 ->setFunction('wp_staticize_emoji_for_email');
