@@ -7,27 +7,17 @@ use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Url;
-use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
+use Wordless\Wordpress\Hook\Contracts\FilterHook;
+use Wordless\Wordpress\Hook\Enums\Filter;
 use WP_Error;
 
-class Authentication extends Listener
+class Authentication extends FilterListener
 {
-    /**
-     * WordPress action|filter number of arguments accepted by function
-     */
-    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 1;
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'checkUserAuthorization';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'rest_authentication_errors';
-    /**
-     * action or filter type (defines which method will be called: add_action or add_filter)
-     */
-    protected const TYPE = 'filter';
 
     /**
      * @param WP_Error|null|true $errors
@@ -45,6 +35,16 @@ class Authentication extends Listener
         }
 
         return $errors;
+    }
+
+    protected static function functionNumberOfArgumentsAccepted(): int
+    {
+        return 1;
+    }
+
+    protected static function hook(): FilterHook
+    {
+        return Filter::rest_authentication_errors;
     }
 
     /**

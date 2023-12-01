@@ -18,7 +18,7 @@ class BootHttpRemoteCallsLog extends ActionListener
     protected const FUNCTION = 'debugWordPressRemoteRequest';
 
     /** @noinspection PhpUnusedParameterInspection */
-    public static function debugWordPressRemoteRequest($response, $context, $class, $request, $url)
+    public static function debugWordPressRemoteRequest($response, $context, $class, $request, $url): void
     {
         if (WP_DEBUG && Str::beginsWith($url, Environment::get('APP_URL'))) {
             $request_as_json = json_encode([

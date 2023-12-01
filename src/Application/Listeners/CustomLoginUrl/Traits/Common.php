@@ -1,15 +1,13 @@
 <?php
 
-namespace Wordless\Application\Listeners\CustomLoginUrl;
+namespace Wordless\Application\Listeners\CustomLoginUrl\Traits;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\Wordpress\Listener;
 
-class CustomLoginUrlHooker extends Listener
+trait Common
 {
-
     public const WP_CUSTOM_LOGIN_URL = 'wp_custom_login_url';
     public const WP_REDIRECT_URL = 'wp_redirect_url';
 

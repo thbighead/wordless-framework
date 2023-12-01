@@ -4,13 +4,11 @@ namespace Wordless\Application\Providers;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Listeners\CustomLoginUrl\CustomLoginUrlHooker;
-use Wordless\Application\Listeners\CustomLoginUrl\LoadCustomLoginUrlHooker;
-use Wordless\Application\Listeners\CustomLoginUrl\NetworkSiteUrlCustomLoginUrlHooker;
-use Wordless\Application\Listeners\CustomLoginUrl\RedirectCustomLoginUrlHooker;
-use Wordless\Application\Listeners\CustomLoginUrl\SiteUrlCustomLoginUrlHooker;
-use Wordless\Application\Listeners\CustomLoginUrl\WelcomeEmailWithCustomLoginUrlHooker;
-use Wordless\Application\Listeners\CustomLoginUrl\WpLoadedCustomLoginUrlHooker;
+use Wordless\Application\Listeners\CustomLoginUrl\LoadCustomLoginUrl;
+use Wordless\Application\Listeners\CustomLoginUrl\NetworkSiteUrlCustomLoginUrl;
+use Wordless\Application\Listeners\CustomLoginUrl\RedirectCustomLoginUrl;
+use Wordless\Application\Listeners\CustomLoginUrl\SiteUrlCustomLoginUrl;
+use Wordless\Application\Listeners\CustomLoginUrl\WpLoadedCustomLoginUrl;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO\Exceptions\TriedToSetFunctionWhenRemovingListener;
@@ -29,13 +27,12 @@ class LoginRedirectProvider extends Provider
     {
         $additional_hooks_configs = [];
 
-        if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL, false)) {
-            $additional_hooks_configs[] = LoadCustomLoginUrlHooker::class;
-            $additional_hooks_configs[] = WpLoadedCustomLoginUrlHooker::class;
-            $additional_hooks_configs[] = SiteUrlCustomLoginUrlHooker::class;
-            $additional_hooks_configs[] = NetworkSiteUrlCustomLoginUrlHooker::class;
-            $additional_hooks_configs[] = RedirectCustomLoginUrlHooker::class;
-            $additional_hooks_configs[] = WelcomeEmailWithCustomLoginUrlHooker::class;
+        if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . 'wp_custom_login_url', false)) {
+            $additional_hooks_configs[] = LoadCustomLoginUrl::class;
+            $additional_hooks_configs[] = WpLoadedCustomLoginUrl::class;
+            $additional_hooks_configs[] = SiteUrlCustomLoginUrl::class;
+            $additional_hooks_configs[] = NetworkSiteUrlCustomLoginUrl::class;
+            $additional_hooks_configs[] = RedirectCustomLoginUrl::class;
         }
 
         return $additional_hooks_configs;
@@ -50,7 +47,7 @@ class LoginRedirectProvider extends Provider
     {
         $hooks_to_remove = [];
 
-        if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . CustomLoginUrlHooker::WP_CUSTOM_LOGIN_URL, false)) {
+        if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . 'wp_custom_login_url', false)) {
             $hooks_to_remove[] = RemoveHookDTO::make('template_redirect')
                 ->setFunction('wp_redirect_admin_locations', 1000);
         }

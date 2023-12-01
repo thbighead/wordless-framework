@@ -6,7 +6,7 @@ use Wordless\Application\Listeners\BootCustomPostTypes;
 use Wordless\Application\Listeners\BootCustomTaxonomies;
 use Wordless\Application\Listeners\BootHttpRemoteCallsLog;
 use Wordless\Application\Listeners\ChooseImageEditor;
-use Wordless\Application\Listeners\CustomLoginUrl\RedirectCustomLoginUrlHooker;
+use Wordless\Application\Listeners\CustomLoginUrl\RedirectCustomLoginUrl;
 use Wordless\Application\Listeners\DeferEnqueuedScripts;
 use Wordless\Application\Listeners\DisableCptComments;
 use Wordless\Application\Listeners\DisableDefaultComments;
@@ -28,7 +28,7 @@ use Wordless\Core\Bootstrapper;
 
 return [
     Bootstrapper::LISTENERS_BOOT_CONFIG_KEY => [
-        ...RedirectCustomLoginUrlHooker::addAdditionalHooks(),
+        ...RedirectCustomLoginUrl::addAdditionalHooks(),
         ...RestApiProvider::addAdditionalHooks(),
         ...WpSpeedUpProvider::addAdditionalHooks(),
         AllowSvgUpload::class,

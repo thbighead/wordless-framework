@@ -2,34 +2,23 @@
 
 namespace Wordless\Application\Listeners\RestApi;
 
-use Wordless\Abstractions\Enums\RestApiPolicy;
-use Wordless\Abstractions\Hooker;
-use Wordless\Exceptions\InvalidRestApiMultipleConfigKey;
-use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\Config;
+use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
+use Wordless\Wordpress\Hook\Contracts\FilterHook;
+use Wordless\Wordpress\Hook\Enums\Filter;
 
-class DefineEndpoints extends Hooker
+class DefineEndpoints extends FilterListener
 {
-    /**
-     * WordPress action|filter number of arguments accepted by function
-     */
-    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 1;
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'setRestApiRoutes';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'rest_endpoints';
-    /**
-     * WordPress action|filter hook priority
-     */
-    protected const HOOK_PRIORITY = 20;
-    /**
-     * action or filter type (defines which method will be called: add_action or add_filter)
-     */
-    protected const TYPE = 'filter';
+
+    public static function priority(): int
+    {
+        return 20;
+    }
 
     /**
      * @param array $endpoints
@@ -55,6 +44,16 @@ class DefineEndpoints extends Hooker
         }
 
         return $endpoints;
+    }
+
+    protected static function functionNumberOfArgumentsAccepted(): int
+    {
+        return 1;
+    }
+
+    protected static function hook(): FilterHook
+    {
+        return Filter::rest_endpoints;
     }
 
     private static function allowEndpoints(array $endpoints, array $config_routes): array

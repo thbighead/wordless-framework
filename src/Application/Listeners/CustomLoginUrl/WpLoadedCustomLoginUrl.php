@@ -2,39 +2,41 @@
 
 namespace Wordless\Application\Listeners\CustomLoginUrl;
 
-class WpLoadedCustomLoginUrlHooker extends CustomLoginUrlHooker
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Listeners\CustomLoginUrl\Traits\Common;
+use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
+use Wordless\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Wordpress\Hook\Enums\Action;
+
+class WpLoadedCustomLoginUrl extends ActionListener
 {
+    use Common;
+
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'load';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'wp_loaded';
-
-    /**
-     * action or filter type (defines which method will be called: add_action or add_filter)
-     */
-    protected const TYPE = 'action';
     private const WP_LOGIN_PHP = 'wp-login.php';
 
-    public static function load()
+    /**
+     * @throws PathNotFoundException
+     */
+    public static function load(): void
     {
-        if (self::canHook()) {
+        if (static::canHook()) {
             global $pagenow;
 
-            if (self::isAdminPanelRouteAndNotLoggedIn()) {
-                self::redirectToFrontPageOrCustomRedirectUrl();
+            if (static::isAdminPanelRouteAndNotLoggedIn()) {
+                static::redirectToFrontPageOrCustomRedirectUrl();
             }
 
             $request = parse_url(rawurldecode($_SERVER['REQUEST_URI']));
             if (
-                self::isWpLoginPageAndRequestUriDifferentFromTrailingslashit($pagenow, $request['path'])
+                static::isWpLoginPageAndRequestUriDifferentFromTrailingslashit($pagenow, $request['path'])
             ) {
                 wp_safe_redirect(
                     user_trailingslashit(
-                        self::newLoginSlug()) . (!empty($_SERVER['QUERY_STRING'])
+                        static::newLoginSlug()) . (!empty($_SERVER['QUERY_STRING'])
                         ? '?' . $_SERVER['QUERY_STRING']
                         : ''
                     )
@@ -47,6 +49,11 @@ class WpLoadedCustomLoginUrlHooker extends CustomLoginUrlHooker
                 die;
             }
         }
+    }
+
+    protected static function hook(): ActionHook
+    {
+        return Action::wp_loaded;
     }
 
     private static function isAdminPanelRouteAndNotLoggedIn(): bool
@@ -68,9 +75,12 @@ class WpLoadedCustomLoginUrlHooker extends CustomLoginUrlHooker
             $path !== user_trailingslashit($path);
     }
 
+    /**
+     * @throws PathNotFoundException
+     */
     private static function redirectToFrontPageOrCustomRedirectUrl(): void
     {
-        if ($redirect_to = self::newRedirectUrl()) {
+        if ($redirect_to = static::newRedirectUrl()) {
             wp_safe_redirect("/$redirect_to");
             die();
         }
