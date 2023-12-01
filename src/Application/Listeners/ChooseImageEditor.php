@@ -4,29 +4,20 @@ namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
+use Wordless\Wordpress\Hook\Contracts\FilterHook;
+use Wordless\Wordpress\Hook\Enums\Filter;
 
-class ChooseImageEditor extends Listener
+class ChooseImageEditor extends FilterListener
 {
     public const IMAGE_LIBRARY_CONFIG_KEY = 'image_library';
     public const IMAGE_LIBRARY_CONFIG_VALUE_IMAGICK = 'imagick';
     public const IMAGE_LIBRARY_CONFIG_VALUE_GD = 'gd';
     /**
-     * WordPress action|filter number of arguments accepted by function
-     */
-    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 1;
-    /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'useGdInsteadImagick';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'wp_image_editors';
-    /**
-     * action or filter type (defines which method will be called: add_action or add_filter)
-     */
-    protected const TYPE = 'filter';
+
 
     /**
      * Based on https://br.wordpress.org/support/topic/nao-consigo-fazer-upload-de-imagens-no-word-press/#post-12171660
@@ -47,5 +38,15 @@ class ChooseImageEditor extends Listener
         }
 
         return $image_editors;
+    }
+
+    protected static function functionNumberOfArgumentsAccepted(): int
+    {
+        return 1;
+    }
+
+    protected static function hook(): FilterHook
+    {
+        return Filter::wp_image_editors;
     }
 }

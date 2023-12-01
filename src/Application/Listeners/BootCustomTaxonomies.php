@@ -4,20 +4,18 @@ namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
+use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
+use Wordless\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Wordpress\Hook\Enums\Action;
 
-class BootCustomTaxonomies extends Listener
+class BootCustomTaxonomies extends ActionListener
 {
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'init';
-    /**
-     * WordPress action|filter hook priority
-     */
-    protected const HOOK_PRIORITY = BootCustomPostTypes::HOOK_PRIORITY - 1;
+    public static function priority(): int
+    {
+        return 9;
+    }
 
     /**
      * @return void
@@ -30,5 +28,10 @@ class BootCustomTaxonomies extends Listener
             /** @var CustomTaxonomy $customTaxonomyClassNamespace */
             $customTaxonomyClassNamespace::register();
         }
+    }
+
+    protected static function hook(): ActionHook
+    {
+        return Action::init;
     }
 }

@@ -2,26 +2,17 @@
 
 namespace Wordless\Application\Listeners;
 
-use Wordless\Infrastructure\Wordpress\Listener;
 
-class RemoveEmojiFromWpResourceHints extends Listener
+use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
+use Wordless\Wordpress\Hook\Contracts\FilterHook;
+use Wordless\Wordpress\Hook\Enums\Filter;
+
+class RemoveEmojiFromWpResourceHints extends FilterListener
 {
-    /**
-     * WordPress action|filter number of arguments accepted by function
-     */
-    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 2;
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'disableDns';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'wp_resource_hints';
-    /**
-     * action or filter type (defines which method will be called: add_action or add_filter)
-     */
-    protected const TYPE = 'filter';
 
     public static function disableDns(array $urls, string $relation_type): array
     {
@@ -33,5 +24,15 @@ class RemoveEmojiFromWpResourceHints extends Listener
         }
 
         return $urls;
+    }
+
+    protected static function functionNumberOfArgumentsAccepted(): int
+    {
+        return 2;
+    }
+
+    protected static function hook(): FilterHook
+    {
+        return Filter::wp_resource_hints;
     }
 }

@@ -2,30 +2,35 @@
 
 namespace Wordless\Application\Listeners;
 
-use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
+use Wordless\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Wordpress\Hook\Enums\Action;
 use WP_Customize_Manager;
 
-class RemoveAdditionalCssFromAdmin extends Listener
+class RemoveAdditionalCssFromAdmin extends ActionListener
 {
-    /**
-     * WordPress action|filter number of arguments accepted by function
-     */
-    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 1;
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'removeAdditionalCss';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'customize_register';
-    /**
-     * WordPress action|filter hook priority
-     */
-    protected const HOOK_PRIORITY = 15;
+
+    public static function priority(): int
+    {
+        return 15;
+    }
 
     public static function removeAdditionalCss(WP_Customize_Manager $manager): void
     {
         $manager->remove_section('custom_css');
+    }
+
+    protected static function functionNumberOfArgumentsAccepted(): int
+    {
+        return 1;
+    }
+
+    protected static function hook(): ActionHook
+    {
+        return Action::customize_register;
     }
 }

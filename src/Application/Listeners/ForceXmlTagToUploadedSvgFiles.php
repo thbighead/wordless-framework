@@ -3,28 +3,18 @@
 namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
+use Wordless\Wordpress\Hook\Contracts\FilterHook;
+use Wordless\Wordpress\Hook\Enums\Filter;
 
-class ForceXmlTagToUploadedSvgFiles extends Listener
+class ForceXmlTagToUploadedSvgFiles extends FilterListener
 {
     private const UPLOAD_TEMP_PATH_KEY = 'tmp_name';
-
-    /**
-     * WordPress action|filter number of arguments accepted by function
-     */
-    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 1;
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'appendXmlTag';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'wp_handle_upload_prefilter';
-    /**
-     * action or filter type (defines which method will be called: add_action or add_filter)
-     */
-    protected const TYPE = 'filter';
+
 
     public static function appendXmlTag(array $upload): array
     {
@@ -42,5 +32,15 @@ class ForceXmlTagToUploadedSvgFiles extends Listener
         }
 
         return $upload;
+    }
+
+    protected static function functionNumberOfArgumentsAccepted(): int
+    {
+        return 1;
+    }
+
+    protected static function hook(): FilterHook
+    {
+        return Filter::wp_handle_upload_prefilter;
     }
 }

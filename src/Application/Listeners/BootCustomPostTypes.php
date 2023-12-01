@@ -8,17 +8,12 @@ use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
-use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
+use Wordless\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Wordpress\Hook\Enums\Action;
 
-class BootCustomPostTypes extends Listener
+class BootCustomPostTypes extends ActionListener
 {
-    public const HOOK_PRIORITY = 10;
-
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'init';
-
     /**
      * @return void
      * @throws CustomPostTypeRegistrationFailed
@@ -32,5 +27,10 @@ class BootCustomPostTypes extends Listener
             /** @var CustomPost $customPostTypeClassNamespace */
             $customPostTypeClassNamespace::register();
         }
+    }
+
+    protected static function hook(): ActionHook
+    {
+        return Action::init;
     }
 }

@@ -1363,6 +1363,7 @@ enum Filter: string implements FilterHook
     case wp_get_revision_ui_diff = 'wp_get_revision_ui_diff';
     case wp_get_update_data = 'wp_get_update_data';
     case wp_handle_upload = 'wp_handle_upload';
+    case wp_handle_upload_prefilter = 'wp_handle_upload_prefilter';
     case wp_header_image_attachment_metadata = 'wp_header_image_attachment_metadata';
     case wp_headers = 'wp_headers';
     case wp_http_accept_encoding = 'wp_http_accept_encoding';

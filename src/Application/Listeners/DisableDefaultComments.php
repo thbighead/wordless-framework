@@ -4,22 +4,21 @@ namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
+use Wordless\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Wordpress\Hook\Enums\Action;
 
-class DisableDefaultComments extends Listener
+class DisableDefaultComments extends ActionListener
 {
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'removeCommentsSupport';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'init';
-    /**
-     * WordPress action|filter hook priority
-     */
-    protected const HOOK_PRIORITY = 1;
+
+    public static function priority(): int
+    {
+        return 1;
+    }
 
     /**
      * @return void
@@ -37,5 +36,10 @@ class DisableDefaultComments extends Listener
                 remove_post_type_support($post_type, 'trackbacks');
             }
         }
+    }
+
+    protected static function hook(): ActionHook
+    {
+        return Action::init;
     }
 }

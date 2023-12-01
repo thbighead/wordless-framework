@@ -3,35 +3,36 @@
 namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Guessers\WordlessFrameworkVersionGuesser;
-use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
+use Wordless\Wordpress\Hook\Contracts\FilterHook;
+use Wordless\Wordpress\Hook\Enums\Filter;
 
-class WordlessVersionOnAdmin extends Listener
+class WordlessVersionOnAdmin extends FilterListener
 {
-    /**
-     * WordPress action|filter number of arguments accepted by function
-     */
-    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 1;
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'writeWordlessVersions';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'update_footer';
-    /**
-     * WordPress action|filter hook priority
-     */
-    protected const HOOK_PRIORITY = PHP_INT_MAX;
-    /**
-     * action or filter type (defines which method will be called: add_action or add_filter)
-     */
-    protected const TYPE = 'filter';
+
+    public static function priority(): int
+    {
+        return PHP_INT_MAX;
+    }
 
     public static function writeWordlessVersions(string $content): string
     {
         $framework_version = (new WordlessFrameworkVersionGuesser)->getValue();
 
         return "$content (Wordless Framework version $framework_version)";
+    }
+
+    protected static function functionNumberOfArgumentsAccepted(): int
+    {
+        return 1;
+    }
+
+    protected static function hook(): FilterHook
+    {
+        return Filter::update_footer;
     }
 }

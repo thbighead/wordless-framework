@@ -4,24 +4,18 @@ namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
+use Wordless\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Wordpress\Hook\Enums\Action;
 use WP_Error;
 use WP_HTTP_Requests_Response;
 
-class BootHttpRemoteCallsLog extends Listener
+class BootHttpRemoteCallsLog extends ActionListener
 {
-    /**
-     * WordPress action|filter number of arguments accepted by function
-     */
-    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 5;
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'debugWordPressRemoteRequest';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'http_api_debug';
 
     /** @noinspection PhpUnusedParameterInspection */
     public static function debugWordPressRemoteRequest($response, $context, $class, $request, $url)
@@ -46,6 +40,16 @@ class BootHttpRemoteCallsLog extends Listener
                 . "> URL: $url\n> REQUEST:\n$request_as_json\n> RESPONSE:\n$raw_response"
                 . self::headerLog('REMOTE API CALL END'));
         }
+    }
+
+    protected static function functionNumberOfArgumentsAccepted(): int
+    {
+        return 5;
+    }
+
+    protected static function hook(): ActionHook
+    {
+        return Action::http_api_debug;
     }
 
     private static function headerLog(string $title): string

@@ -2,26 +2,17 @@
 
 namespace Wordless\Application\Listeners;
 
-use Wordless\Infrastructure\Wordpress\Listener;
 
-class RemoveEmojiFromTinyMce extends Listener
+use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
+use Wordless\Wordpress\Hook\Contracts\FilterHook;
+use Wordless\Wordpress\Hook\Enums\Filter;
+
+class RemoveEmojiFromTinyMce extends FilterListener
 {
-    /**
-     * WordPress action|filter number of arguments accepted by function
-     */
-    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 1;
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'removeEmojis';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'tiny_mce_plugins';
-    /**
-     * action or filter type (defines which method will be called: add_action or add_filter)
-     */
-    protected const TYPE = 'filter';
 
     public static function removeEmojis($plugins): array
     {
@@ -31,5 +22,15 @@ class RemoveEmojiFromTinyMce extends Listener
         }
 
         return [];
+    }
+
+    protected static function functionNumberOfArgumentsAccepted(): int
+    {
+        return 1;
+    }
+
+    protected static function hook(): FilterHook
+    {
+        return Filter::tiny_mce_plugins;
     }
 }

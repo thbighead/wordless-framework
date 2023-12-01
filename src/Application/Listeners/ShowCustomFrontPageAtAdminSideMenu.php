@@ -2,20 +2,18 @@
 
 namespace Wordless\Application\Listeners;
 
-use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 use Wordless\Wordpress\Enums\AdminMenuItemPosition;
 use Wordless\Wordpress\Enums\DashIcon;
+use Wordless\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Wordpress\Hook\Enums\Action;
 
-class ShowCustomFrontPageAtAdminSideMenu extends Listener
+class ShowCustomFrontPageAtAdminSideMenu extends ActionListener
 {
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'showAsDetachedMenuItem';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'admin_menu';
 
     public static function showAsDetachedMenuItem(): void
     {
@@ -38,5 +36,10 @@ class ShowCustomFrontPageAtAdminSideMenu extends Listener
                 AdminMenuItemPosition::AFTER_FIRST_SEPARATOR->value
             );
         }
+    }
+
+    protected static function hook(): ActionHook
+    {
+        return Action::admin_menu;
     }
 }
