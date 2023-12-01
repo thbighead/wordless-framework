@@ -3,6 +3,7 @@
 namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Core\Bootstrapper;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
@@ -22,8 +23,7 @@ class EnqueueThemeEnqueueables extends ActionListener
      */
     public static function enqueue(): void
     {
-        EnqueueableStyle::enqueueAll();
-        EnqueueableScript::enqueueAll();
+
     }
 
     protected static function hook(): ActionHook

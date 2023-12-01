@@ -2,9 +2,9 @@
 
 namespace Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle\Enums;
 
-enum MediaOption: string
+enum MediaOption
 {
-    case ALL = 'all';
-    case PRINT = 'print';
-    case SCREEN = 'screen';
+    case all;
+    case print;
+    case screen;
 }

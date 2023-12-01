@@ -2,71 +2,27 @@
 
 namespace Wordless\Core;
 
-use Exception;
-use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Exception\LogicException;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
-use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
-use Wordless\Core\Bootstrapper\Traits\Loader;
-use Wordless\Core\Bootstrapper\Traits\Resolver;
+use Wordless\Core\Bootstrapper\Traits\ApiControllers;
+use Wordless\Core\Bootstrapper\Traits\Console;
+use Wordless\Core\Bootstrapper\Traits\MainPlugin;
 use Wordless\Infrastructure\Provider;
-use Wordless\Infrastructure\Wordpress\ApiController;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
-use Wordless\Infrastructure\Wordpress\Listener;
-use Wordless\Infrastructure\Wordpress\Menu;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 
 final class Bootstrapper extends Singleton
 {
-    use Loader;
-    use Resolver;
+    use ApiControllers;
+    use Console;
+    use MainPlugin;
 
     public const ERROR_REPORTING_KEY = 'error_reporting';
-    /** @var string[]|Listener[] $prepared_listeners */
-    private array $prepared_listeners = [];
-    /** @var string[]|Menu[] $prepared_menus */
-    private array $prepared_menus = [];
-    /** @var Provider[] $providers */
-    private array $providers = [];
 
-    /**
-     * @param Application $application
-     * @return void
-     * @throws InvalidConfigKey
-     * @throws InvalidProviderClass
-     * @throws LogicException
-     * @throws PathNotFoundException
-     */
-    public static function bootConsole(Application $application): void
-    {
-        self::getInstance()->bootIntoSymfonyApplication($application);
-    }
-
-    /**
-     * @return void
-     * @throws CustomPostTypeRegistrationFailed
-     * @throws DuplicatedMenuId
-     * @throws InvalidConfigKey
-     * @throws InvalidCustomPostTypeKey
-     * @throws InvalidCustomTaxonomyName
-     * @throws InvalidMenuClass
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     * @throws ReservedCustomPostTypeKey
-     */
-    public static function bootMainPlugin(): void
-    {
-        self::getInstance()->bootIntoWordpress();
-    }
+    /** @var string[]|Provider[] $loaded_providers */
+    private array $loaded_providers;
 
     /**
      * @return Bootstrapper
@@ -80,26 +36,56 @@ final class Bootstrapper extends Singleton
     }
 
     /**
-     * @return string[]|ApiController[]
+     * @return Bootstrapper
+     * @throws InvalidConfigKey
+     * @throws InvalidProviderClass
+     * @throws PathNotFoundException
      */
-    public function getProvidedApiControllers(): array
+    private function load(): Bootstrapper
     {
-        $api_controllers_namespaces = [];
+        return $this->setErrorReporting()
+            ->loadProviders();
+    }
 
-        foreach ($this->providers as $provider) {
-            foreach ($provider->registerApiControllers() as $api_controller_namespace) {
-                $api_controllers_namespaces[$api_controller_namespace] = $api_controller_namespace;
-            }
+    /**
+     * @param string $provider_class_namespace
+     * @return Provider
+     * @throws InvalidProviderClass
+     */
+    private function loadProvider(string $provider_class_namespace): Provider
+    {
+        /** @var Provider $provider_class_namespace */
+        if (!(($provider = $provider_class_namespace::getInstance()) instanceof Provider)) {
+            throw new InvalidProviderClass($provider_class_namespace);
         }
 
-        return array_values($api_controllers_namespaces);
+        return $provider;
+    }
+
+    /**
+     * @return Bootstrapper
+     * @throws InvalidConfigKey
+     * @throws InvalidProviderClass
+     * @throws PathNotFoundException
+     */
+    private function loadProviders(): Bootstrapper
+    {
+        if (!empty($this->loaded_providers)) {
+            return $this;
+        }
+
+        foreach (Config::get('providers') as $provider_class_namespace) {
+            $this->loaded_providers[] = $this->loadProvider($provider_class_namespace);
+        }
+
+        return $this;
     }
 
     /**
      * @return $this
      * @throws PathNotFoundException
      */
-    public function setErrorReporting(): self
+    private function setErrorReporting(): self
     {
         error_reporting(Config::tryToGetOrDefault(
             'wordpress.admin.' . self::ERROR_REPORTING_KEY,
@@ -109,67 +95,5 @@ final class Bootstrapper extends Singleton
         ));
 
         return $this;
-    }
-
-    /**
-     * @param Application $application
-     * @return void
-     * @throws LogicException
-     */
-    private function bootIntoSymfonyApplication(Application $application): void
-    {
-        foreach ($this->providers as $provider) {
-            foreach ($provider->registerCommands() as $command_namespace) {
-                $application->add(new $command_namespace);
-            }
-        }
-
-        try {
-            $application->run();
-        } catch (Exception $exception) {
-            echo Str::finishWith($exception->getMessage(), "\n");
-        }
-    }
-
-    /**
-     * @return void
-     * @throws CustomPostTypeRegistrationFailed
-     * @throws DuplicatedMenuId
-     * @throws InvalidCustomPostTypeKey
-     * @throws InvalidCustomTaxonomyName
-     * @throws InvalidMenuClass
-     * @throws ReservedCustomPostTypeKey
-     */
-    private function bootIntoWordpress(): void
-    {
-        foreach ($this->providers as $provider) {
-            $this->bootProviderWordpressServices($provider);
-        }
-    }
-
-    /**
-     * @param Provider $provider
-     * @return void
-     * @throws CustomPostTypeRegistrationFailed
-     * @throws DuplicatedMenuId
-     * @throws InvalidMenuClass
-     * @throws InvalidCustomPostTypeKey
-     * @throws ReservedCustomPostTypeKey
-     * @throws InvalidCustomTaxonomyName
-     */
-    private function bootProviderWordpressServices(Provider $provider): void
-    {
-        foreach ($provider->registerTaxonomies() as $customTaxonomyClassNamespace) {
-            $customTaxonomyClassNamespace::register();
-        }
-
-        foreach ($provider->registerPostTypes() as $customPostTypeClassNamespace) {
-            $customPostTypeClassNamespace::register();
-        }
-
-        $this->resolveMenus()
-            ->resolveRemovableActions($provider->unregisterActionListeners())
-            ->resolveRemovableFilters($provider->unregisterFilterListeners())
-            ->resolveListeners();
     }
 }

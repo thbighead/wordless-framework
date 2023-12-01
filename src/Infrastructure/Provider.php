@@ -4,6 +4,7 @@ namespace Wordless\Infrastructure;
 
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Infrastructure\Migration\Script;
+use Wordless\Infrastructure\Provider\Traits\EnqueueablesRegistration;
 use Wordless\Infrastructure\Provider\Traits\ListenersRegistration;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Infrastructure\Wordpress\CustomPost;
@@ -13,6 +14,7 @@ use Wordless\Wordpress\Models\Page;
 
 abstract class Provider
 {
+    use EnqueueablesRegistration;
     use ListenersRegistration;
     use Constructors;
 

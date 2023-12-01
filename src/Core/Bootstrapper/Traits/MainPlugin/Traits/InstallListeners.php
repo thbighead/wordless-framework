@@ -1,52 +1,46 @@
 <?php
 
-namespace Wordless\Core\Bootstrapper\Traits;
+namespace Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits;
 
 use Wordless\Core\Bootstrapper;
-use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
+use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
-use Wordless\Infrastructure\Wordpress\Menu;
+use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Wordpress\Hook\Enums\Type;
 
-trait Resolver
+trait InstallListeners
 {
-    private function resolveListeners(): void
-    {
-        foreach ($this->prepared_listeners as $listener_namespace) {
-            $listener_namespace::hookIt();
-        }
-    }
+    private array $loaded_listeners = [];
 
     /**
-     * @return $this
-     * @throws DuplicatedMenuId
-     * @throws InvalidMenuClass
+     * @return string[]|Listener[]
      */
-    private function resolveMenus(): static
+    private function getLoadedListeners(): array
     {
-        $registrable_nav_menus = [];
+        return array_keys($this->loaded_listeners);
+    }
 
-        foreach ($this->prepared_menus as $menuClass) {
-            if (!is_a($menuClass, Menu::class, true)) {
-                throw new InvalidMenuClass($menuClass);
-            }
-
-            if ($menuFound = ($registrable_nav_menus[$menuClass::id()] ?? false)) {
-                throw new DuplicatedMenuId($menuClass, $menuClass::id(), $menuFound);
-            }
-
-            $registrable_nav_menus[$menuClass::id()] = esc_html__($menuClass::name());
+    private function loadListeners(Provider $provider): static
+    {
+        foreach ($provider->registerListeners() as $listener_namespace) {
+            $this->loaded_listeners[$listener_namespace] = true;
         }
 
-        register_nav_menus($registrable_nav_menus);
+        return $this;
+    }
+
+    private function resolveListeners(): static
+    {
+        foreach ($this->getLoadedListeners() as $listener_namespace) {
+            $listener_namespace::hookIt();
+        }
 
         return $this;
     }
 
     /**
      * @param RemoveHookDTO[] $removable_actions
-     * @return Bootstrapper
+     * @return $this
      */
     private function resolveRemovableActions(array $removable_actions): static
     {
@@ -57,7 +51,7 @@ trait Resolver
 
     /**
      * @param RemoveHookDTO[] $removable_filters
-     * @return Bootstrapper
+     * @return $this
      */
     private function resolveRemovableFilters(array $removable_filters): static
     {
@@ -78,7 +72,7 @@ trait Resolver
 
         foreach ($removable_hooks as $removableHook) {
             if ($removableHook->isOnListener()) {
-                unset($this->prepared_listeners[$removableHook->hook]);
+                unset($this->loaded_listeners[$removableHook->hook]);
                 continue;
             }
 

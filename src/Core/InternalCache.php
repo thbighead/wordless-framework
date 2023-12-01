@@ -3,7 +3,7 @@
 namespace Wordless\Core;
 
 use Wordless\Application\Cachers\ConfigCacher;
-use Wordless\Application\Cachers\ControllerCacher;
+use Wordless\Application\Cachers\ApiControllerCacher;
 use Wordless\Application\Cachers\EnvironmentCacher;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
@@ -28,7 +28,7 @@ class InternalCache
     {
         (new EnvironmentCacher)->cache();
         (new ConfigCacher)->cache();
-        (new ControllerCacher)->cache();
+        (new ApiControllerCacher)->cache();
     }
 
     /**

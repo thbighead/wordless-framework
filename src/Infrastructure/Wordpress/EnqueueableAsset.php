@@ -3,17 +3,17 @@
 namespace Wordless\Infrastructure\Wordpress;
 
 use InvalidArgumentException;
-use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Link;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\Mounters\EnqueueableMounter;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
 
 abstract class EnqueueableAsset
 {
-    abstract public static function configKey(): string;
+    abstract protected static function id(): string;
+
+    abstract protected static function relativeFilepath(): string;
 
     abstract public function enqueue(): void;
 
@@ -22,70 +22,101 @@ abstract class EnqueueableAsset
         EnqueueableScript::class => []
     ];
 
-    protected const CONFIG_FILENAME = 'enqueue';
-
-    protected array $dependencies;
-    protected string $id;
-    protected string $relative_file_path;
-    private string $file_path;
-    private ?string $version;
+    /** @var string[] $dependencies */
+    private array $dependencies = [];
+    private string $filepath;
+    private string $id;
 
     /**
-     * @param string $id
-     * @param string $relative_file_path
-     * @param array $dependencies
-     * @param string|null $version
+     * @return static
      * @throws DuplicatedEnqueueableId
+     * @throws InvalidArgumentException
+     * @throws PathNotFoundException
+     * @noinspection PhpDocRedundantThrowsInspection
      */
-    public function __construct(
-        string  $id,
-        string  $relative_file_path,
-        array   $dependencies = [],
-        ?string $version = null
-    )
+    public static function make(): static
     {
-        $this->setId($id);
-        $this->relative_file_path = $relative_file_path;
-        $this->dependencies = $dependencies;
-        $this->version = $version;
-        $this->setFilePath();
+        return new static;
     }
 
     /**
-     * @return void
-     * @throws PathNotFoundException
+     * @return string[]|EnqueueableAsset[]
      */
-    public static function enqueueAll(): void
+    protected static function dependencies(): array
     {
-        $style_mounters_to_queue = Config::tryToGetOrDefault(
-            self::CONFIG_FILENAME . '.' . static::configKey(),
-            []
-        );
-
-        foreach ($style_mounters_to_queue as $style_mounter_class) {
-            /** @var EnqueueableMounter $enqueueableStyleMounter */
-            $enqueueableStyleMounter = new $style_mounter_class;
-            $enqueueableStyleMounter->mountAndEnqueue();
-        }
+        return [];
     }
 
-    public function id(): string
+    protected static function version(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getDependencies(): array
+    {
+        return $this->dependencies;
+    }
+
+    protected function getFilepath(): string
+    {
+        return $this->filepath;
+    }
+
+    protected function getId(): string
     {
         return $this->id;
     }
 
-    protected function filepath(): string
+    /**
+     * @return string|false
+     */
+    protected function getVersion(): string|bool
     {
-        return $this->file_path;
+        return static::version() ?? false;
     }
 
     /**
-     * @param string $id
-     * @return void
      * @throws DuplicatedEnqueueableId
+     * @throws InvalidArgumentException
+     * @throws PathNotFoundException
      */
-    protected function setId(string $id): void
+    private function __construct()
     {
+        $this->setId()
+            ->setFilepath()
+            ->setDependencies();
+    }
+
+    private function setDependencies(): void
+    {
+        foreach (static::dependencies() as $enqueueable_asset_namespace) {
+            $this->dependencies[] = $enqueueable_asset_namespace::id();
+        }
+    }
+
+    /**
+     * @return $this
+     * @throws PathNotFoundException
+     */
+    private function setFilepath(): static
+    {
+        $this->filepath = Link::themePublic(static::relativeFilepath());
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws DuplicatedEnqueueableId
+     * @throws InvalidArgumentException
+     */
+    private function setId(): static
+    {
+        $id = static::id();
+
         if (empty($id)) {
             throw new InvalidArgumentException(static::class . ' must have a non-empty id');
         }
@@ -96,18 +127,7 @@ abstract class EnqueueableAsset
 
         static::$ids_pool[static::class][$id] = true;
         $this->id = $id;
-    }
 
-    /**
-     * @return string|false
-     */
-    protected function version(): string|bool
-    {
-        return $this->version ?? false;
-    }
-
-    private function setFilePath(): void
-    {
-        $this->file_path = get_stylesheet_directory_uri() . Str::startWith($this->relative_file_path, '/');
+        return $this;
     }
 }

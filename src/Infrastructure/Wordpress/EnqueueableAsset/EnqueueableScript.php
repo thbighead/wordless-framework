@@ -4,16 +4,24 @@ namespace Wordless\Infrastructure\Wordpress\EnqueueableAsset;
 
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset;
 
-class EnqueueableScript extends EnqueueableAsset
+abstract class EnqueueableScript extends EnqueueableAsset
 {
-    public static function configKey(): string
+    /**
+     * @return string[]|EnqueueableScript[]
+     */
+    protected static function dependencies(): array
     {
-        return 'scripts';
+        return parent::dependencies();
     }
 
     public function enqueue(): void
     {
-        /** @noinspection PhpRedundantOptionalArgumentInspection */
-        wp_enqueue_script($this->id, $this->filepath(), $this->dependencies, $this->version(), false);
+        wp_enqueue_script(
+            $this->getId(),
+            $this->getFilepath(),
+            $this->getDependencies(),
+            $this->getVersion(),
+            false
+        );
     }
 }

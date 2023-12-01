@@ -90,7 +90,7 @@ abstract class ApiController extends WP_REST_Controller
      */
     public static function loadProvidedApiControllers(): array
     {
-        return Bootstrapper::getInstance()->getProvidedApiControllers();
+        return Bootstrapper::getInstance()->loadProvidedApiControllers();
     }
 
     private function __construct()

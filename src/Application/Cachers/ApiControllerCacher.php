@@ -10,11 +10,11 @@ use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\Cacher;
 use Wordless\Infrastructure\Wordpress\ApiController;
 
-class ControllerCacher extends Cacher
+class ApiControllerCacher extends Cacher
 {
     protected function cacheFilename(): string
     {
-        return 'controllers.php';
+        return 'api_controllers.php';
     }
 
     /**
@@ -25,12 +25,12 @@ class ControllerCacher extends Cacher
      */
     protected function mountCacheArray(): array
     {
-        $controllers_cache_array = [];
+        $api_controllers_cache_array = [];
 
-        foreach (ApiController::loadProvidedApiControllers() as $controller_namespace) {
-            $controllers_cache_array[$controller_namespace] = $controller_namespace;
+        foreach (ApiController::loadProvidedApiControllers() as $api_controller_namespace) {
+            $api_controllers_cache_array[$api_controller_namespace] = $api_controller_namespace;
         }
 
-        return $controllers_cache_array;
+        return $api_controllers_cache_array;
     }
 }
