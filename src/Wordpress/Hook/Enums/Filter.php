@@ -1,10 +1,10 @@
 <?php
 
-namespace Wordless\Wordpress\Hooks\Enums;
+namespace Wordless\Wordpress\Hook\Enums;
 
-use Wordless\Wordpress\Hooks\Contracts\FilterHookEnum;
+use Wordless\Wordpress\Hook\Contracts\FilterHook;
 
-enum FilterHook: string implements FilterHookEnum
+enum Filter: string implements FilterHook
 {
     case _get_page_link = '_get_page_link';
     case _wp_post_revision_fields = '_wp_post_revision_fields';

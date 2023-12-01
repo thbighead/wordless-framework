@@ -1,20 +1,30 @@
-<?php
+<?php /** @noinspection PhpUnused */
+/** @noinspection PhpIllegalPsrClassPathInspection */
 
 /**
  * Used just to help IDE to know those constants should be correctly loaded dynamically.
  */
 
-use Wordless\Application\Libraries\PolymorphicConstructor\Contracts\IPolymorphicConstructor;
-use Wordless\Contracts\MultipleConstructors\Traits\MultipleConstructorsGuesser;
+use Wordless\Infrastructure\Wordpress\Listener\ActionListener\AjaxListener;
+use Wordless\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Wordpress\Hook\Enums\Action;
 
 const INTERNAL_WORDLESS_CACHE = [];
 
-class MarkIPolymorphicConstructorWithNecessaryConstantsToSuppressLintError implements IPolymorphicConstructor
+final class ExampleAjaxListener extends AjaxListener
 {
-    use MultipleConstructorsGuesser;
-
-    public static function constructorsDictionary(): array
+    protected static function hook(): ActionHook
     {
-        return [];
+        return Action::init;
+    }
+
+    protected static function isAvailableToAdminPanel(): bool
+    {
+        return true;
+    }
+
+    protected static function isAvailableToFrontend(): bool
+    {
+        return true;
     }
 }

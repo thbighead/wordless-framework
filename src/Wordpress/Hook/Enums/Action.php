@@ -1,10 +1,10 @@
 <?php
 
-namespace Wordless\Wordpress\Hooks\Enums;
+namespace Wordless\Wordpress\Hook\Enums;
 
-use Wordless\Wordpress\Hooks\Contracts\ActionHookEnum;
+use Wordless\Wordpress\Hook\Contracts\ActionHook;
 
-enum ActionHook: string implements ActionHookEnum
+enum Action: string implements ActionHook
 {
     case _admin_menu = '_admin_menu';
     case _core_updated_successfully = '_core_updated_successfully';

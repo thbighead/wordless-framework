@@ -2,40 +2,38 @@
 
 namespace Wordless\Infrastructure\Wordpress;
 
-use Wordless\Infrastructure\Wordpress\Listener\Enums\HookType;
+use Wordless\Wordpress\Hook;
+use Wordless\Wordpress\Hook\Enums\Type;
 
 abstract class Listener
 {
+    abstract protected static function hook(): Hook;
+
+    abstract protected static function type(): Type;
+
     /**
-     * WordPress action|filter number of arguments accepted by function
-     */
-    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 0;
-    /**
-     * The function which shall be executed during hook
+     * The public static method which shall be executed during hook.
      */
     protected const FUNCTION = 'register';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'rest_api_init';
-    /**
-     * WordPress action|filter hook priority
-     */
-    protected const HOOK_PRIORITY = 10;
 
     public static function hookIt(): void
     {
         $hook_addition_function = 'add_' . static::type()->name;
         $hook_addition_function(
-            static::HOOK,
+            static::hook()->value,
             [static::class, static::FUNCTION],
-            static::HOOK_PRIORITY,
-            static::ACCEPTED_NUMBER_OF_ARGUMENTS
+            static::priority(),
+            static::functionNumberOfArgumentsAccepted()
         );
     }
 
-    protected static function type(): HookType
+    public static function priority(): int
     {
-        return HookType::action;
+        return 10;
+    }
+
+    protected static function functionNumberOfArgumentsAccepted(): int
+    {
+        return 0;
     }
 }

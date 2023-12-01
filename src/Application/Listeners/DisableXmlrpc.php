@@ -2,29 +2,24 @@
 
 namespace Wordless\Application\Listeners;
 
-use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
+use Wordless\Wordpress\Hook\Contracts\FilterHook;
+use Wordless\Wordpress\Hook\Enums\Filter;
 
-class DisableXmlrpc extends Listener
+class DisableXmlrpc extends FilterListener
 {
-    /**
-     * WordPress action|filter number of arguments accepted by function
-     */
-    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 0;
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'disable';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'xmlrpc_enabled';
-    /**
-     * action or filter type (defines which method will be called: add_action or add_filter)
-     */
-    protected const TYPE = 'filter';
 
     public static function disable(): bool
     {
         return false;
+    }
+
+    protected static function hook(): FilterHook
+    {
+        return Filter::xmlrpc_enabled;
     }
 }

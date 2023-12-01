@@ -4,26 +4,21 @@ namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
+use Wordless\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Wordpress\Hook\Enums\Action;
 
-class DisableCptComments extends Listener
+class DisableCptComments extends ActionListener
 {
-    /**
-     * WordPress action|filter number of arguments accepted by function
-     */
-    protected const ACCEPTED_NUMBER_OF_ARGUMENTS = 1;
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'removeCommentsSupport';
-    /**
-     * WordPress action|filter hook identification
-     */
-    protected const HOOK = 'registered_post_type';
-    /**
-     * WordPress action|filter hook priority
-     */
-    protected const HOOK_PRIORITY = 1;
+
+    public static function priority(): int
+    {
+        return 1;
+    }
 
     /**
      * @param string $post_type
@@ -40,5 +35,15 @@ class DisableCptComments extends Listener
             remove_post_type_support($post_type, 'comments');
             remove_post_type_support($post_type, 'trackbacks');
         }
+    }
+
+    protected static function functionNumberOfArgumentsAccepted(): int
+    {
+        return 1;
+    }
+
+    protected static function hook(): ActionHook
+    {
+        return Action::registered_post_type;
     }
 }

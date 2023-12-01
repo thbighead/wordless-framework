@@ -6,8 +6,8 @@ use Wordless\Core\Bootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
-use Wordless\Infrastructure\Wordpress\Listener\Enums\HookType;
 use Wordless\Infrastructure\Wordpress\Menu;
+use Wordless\Wordpress\Hook\Enums\Type;
 
 trait Resolver
 {
@@ -50,7 +50,7 @@ trait Resolver
      */
     private function resolveRemovableActions(array $removable_actions): static
     {
-        $this->resolveRemovableHooks($removable_actions, HookType::action);
+        $this->resolveRemovableHooks($removable_actions, Type::action);
 
         return $this;
     }
@@ -61,17 +61,17 @@ trait Resolver
      */
     private function resolveRemovableFilters(array $removable_filters): static
     {
-        $this->resolveRemovableHooks($removable_filters, HookType::filter);
+        $this->resolveRemovableHooks($removable_filters, Type::filter);
 
         return $this;
     }
 
     /**
      * @param RemoveHookDTO[] $removable_hooks
-     * @param HookType $type
+     * @param Type $type
      * @return void
      */
-    private function resolveRemovableHooks(array $removable_hooks, HookType $type): void
+    private function resolveRemovableHooks(array $removable_hooks, Type $type): void
     {
         $remove_all_function = "remove_all_{$type->name}s";
         $remove_single_function = "remove_$type->name";
