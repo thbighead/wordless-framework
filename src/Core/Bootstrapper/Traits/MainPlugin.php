@@ -27,7 +27,9 @@ trait MainPlugin
     /**
      * @return void
      * @throws CustomPostTypeRegistrationFailed
+     * @throws DuplicatedEnqueueableId
      * @throws DuplicatedMenuId
+     * @throws InvalidArgumentException
      * @throws InvalidConfigKey
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidCustomTaxonomyName
@@ -44,10 +46,13 @@ trait MainPlugin
     /**
      * @return void
      * @throws CustomPostTypeRegistrationFailed
+     * @throws DuplicatedEnqueueableId
      * @throws DuplicatedMenuId
+     * @throws InvalidArgumentException
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidCustomTaxonomyName
      * @throws InvalidMenuClass
+     * @throws PathNotFoundException
      * @throws ReservedCustomPostTypeKey
      */
     private function bootIntoWordpress(): void

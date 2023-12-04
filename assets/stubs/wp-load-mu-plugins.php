@@ -7,7 +7,7 @@
  *              path. To rehydrate this file just run a composer install or php console mup:loader.
  * Version:     2.0.0
  * Author:      Thales Nathan
- * Author URI:  https://www.soluthions.com
+ * Author URI:  https://github.com/thbighead
  */
 
 use Wordless\Core\Bootstrapper;
