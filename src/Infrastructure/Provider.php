@@ -51,7 +51,7 @@ abstract class Provider
     }
 
     /**
-     * @return CustomPost[]
+     * @return string[]|CustomPost[]
      */
     public function registerPostTypes(): array
     {
@@ -59,7 +59,7 @@ abstract class Provider
     }
 
     /**
-     * @return CustomTaxonomy[]
+     * @return string[]|CustomTaxonomy[]
      */
     public function registerTaxonomies(): array
     {

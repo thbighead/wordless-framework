@@ -8,6 +8,8 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallCustomPostTypes;
+use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallCustomTaxonomies;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallListeners;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallMenus;
 use Wordless\Infrastructure\Provider;
@@ -20,6 +22,8 @@ use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallEnqueueables;
 
 trait MainPlugin
 {
+    use InstallCustomPostTypes;
+    use InstallCustomTaxonomies;
     use InstallEnqueueables;
     use InstallListeners;
     use InstallMenus;
@@ -86,21 +90,29 @@ trait MainPlugin
             ->loadListeners($provider)
             ->loadEnqueueableAssets($provider)
             ->resolveRemovableActions($provider->unregisterActionListeners())
-            ->resolveRemovableFilters($provider->unregisterFilterListeners());
+            ->resolveRemovableFilters($provider->unregisterFilterListeners())
+            ->loadCustomTaxonomies($provider)
+            ->loadCustomPostTypes($provider);
     }
 
     /**
      * @return void
+     * @throws CustomPostTypeRegistrationFailed
+     * @throws DuplicatedEnqueueableId
      * @throws DuplicatedMenuId
+     * @throws InvalidArgumentException
+     * @throws InvalidCustomPostTypeKey
+     * @throws InvalidCustomTaxonomyName
      * @throws InvalidMenuClass
      * @throws PathNotFoundException
-     * @throws InvalidArgumentException
-     * @throws DuplicatedEnqueueableId
+     * @throws ReservedCustomPostTypeKey
      */
     private function finishWordpressServicesBoot(): void
     {
         $this->resolveListeners()
             ->resolveMenus()
-            ->resolveEnqueues();
+            ->resolveEnqueues()
+            ->resolveCustomTaxonomies()
+            ->resolveCustomPostTypes();
     }
 }

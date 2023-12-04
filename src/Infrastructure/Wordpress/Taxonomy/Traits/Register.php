@@ -102,7 +102,7 @@ trait Register
      * @return void
      * @throws InvalidCustomTaxonomyName
      */
-    public static function register()
+    public static function register(): void
     {
         self::validateNameKey();
 
