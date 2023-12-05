@@ -11,9 +11,9 @@ use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\WunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Infrastructure\ConsoleCommand;
-use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
-use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO\Enums\ArgumentMode;
-use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 
 class ReplaceBaseUrls extends ConsoleCommand
 {

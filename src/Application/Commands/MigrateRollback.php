@@ -6,9 +6,9 @@ use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Commands\Migrate\Exceptions\FailedToFindMigrationScript;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
-use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
-use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO\Enums\OptionMode;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 
 class MigrateRollback extends Migrate
 {

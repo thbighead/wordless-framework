@@ -7,8 +7,8 @@ use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Infrastructure\ConsoleCommand;
-use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
-use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 
 class MigrationList extends ConsoleCommand
 {

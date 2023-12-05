@@ -3,11 +3,13 @@
 namespace Wordless\Infrastructure;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
-use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand;
 use Wordless\Infrastructure\ConsoleCommand\Traits\ConsoleCommandInstantiator;
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage;
@@ -39,6 +41,10 @@ abstract class ConsoleCommand extends Command
 
     abstract protected function runIt(): int;
 
+    /**
+     * @return void
+     * @throws InvalidArgumentException
+     */
     protected function configure(): void
     {
         $this->setArguments(...$this->arguments())
@@ -73,6 +79,11 @@ abstract class ConsoleCommand extends Command
         return new BufferedOutput($this->output->getVerbosity(), true);
     }
 
+    /**
+     * @param ArgumentDTO ...$arguments
+     * @return $this
+     * @throws InvalidArgumentException
+     */
     private function setArguments(ArgumentDTO ...$arguments): static
     {
         foreach ($arguments as $argument) {
@@ -87,6 +98,11 @@ abstract class ConsoleCommand extends Command
         return $this;
     }
 
+    /**
+     * @param OptionDTO ...$options
+     * @return $this
+     * @throws InvalidArgumentException
+     */
     private function setOptions(OptionDTO ...$options): static
     {
         foreach ($options as $option) {
@@ -95,7 +111,7 @@ abstract class ConsoleCommand extends Command
                 $option->shortcut,
                 $option->mode?->value,
                 $option->description,
-                $option->default
+                OptionMode::optional_value && $option->default === null ? false : $option->default
             );
         }
 

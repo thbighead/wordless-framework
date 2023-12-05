@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO\Enums;
+namespace Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums;
 
 use Symfony\Component\Console\Input\InputArgument;
 

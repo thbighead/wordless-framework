@@ -23,9 +23,9 @@ use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetDirectoryP
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\ConsoleCommand;
-use Wordless\Infrastructure\ConsoleCommand\DTO\ArgumentDTO;
-use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
-use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO\Enums\OptionMode;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 
 class InitializeTestEnvironment extends ConsoleCommand
 {

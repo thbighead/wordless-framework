@@ -2,8 +2,8 @@
 
 namespace Wordless\Application\Commands\Traits\ForceMode\DTO;
 
-use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO;
-use Wordless\Infrastructure\ConsoleCommand\DTO\OptionDTO\Enums\OptionMode;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 
 class ForceModeOptionDTO extends OptionDTO
 {
