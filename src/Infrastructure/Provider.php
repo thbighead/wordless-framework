@@ -43,7 +43,7 @@ abstract class Provider
     }
 
     /**
-     * @return Script[]
+     * @return string[]
      */
     public function registerMigrations(): array
     {

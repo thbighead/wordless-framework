@@ -11,6 +11,7 @@ use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\ApiControllers;
 use Wordless\Core\Bootstrapper\Traits\Console;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin;
+use Wordless\Core\Bootstrapper\Traits\Migrations;
 use Wordless\Infrastructure\Provider;
 
 final class Bootstrapper extends Singleton
@@ -18,10 +19,11 @@ final class Bootstrapper extends Singleton
     use ApiControllers;
     use Console;
     use MainPlugin;
+    use Migrations;
 
     public const ERROR_REPORTING_KEY = 'error_reporting';
 
-    /** @var string[]|Provider[] $loaded_providers */
+    /** @var Provider[] $loaded_providers */
     private array $loaded_providers;
 
     /**

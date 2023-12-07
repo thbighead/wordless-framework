@@ -5,14 +5,14 @@ namespace Wordless\Application\Helpers;
 use Generator;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangeDirectoryTo;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangePathPermissions;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCopyFile;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCreateDirectory;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCreateSymlink;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToDeletePath;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetDirectoryPermissions;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangeDirectoryTo;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangePathPermissions;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateSymlink;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 
 class DirectoryFiles

@@ -8,11 +8,12 @@ use Wordless\Application\Commands\Migrate\Exceptions\FailedToFindMigrationScript
 use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Guessers\MigrationClassNameGuesser;
-use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Helpers\Str;
+use Wordless\Core\Bootstrapper;
+use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -91,7 +92,8 @@ class Migrate extends ConsoleCommand
 
     /**
      * @return array
-     * @throws InvalidDirectory
+     * @throws InvalidConfigKey
+     * @throws InvalidProviderClass
      * @throws PathNotFoundException
      */
     protected function getScriptsFilesToClassNamesDictionary(): array
@@ -103,9 +105,11 @@ class Migrate extends ConsoleCommand
         $this->guessed_migrations_class_names = [];
         $migrationClassNameGuesser = new MigrationClassNameGuesser;
 
-        foreach ($this->getMigrationFiles() as $migration_filename) {
-            $guessed_class_name = $migrationClassNameGuesser->setMigrationFilename($migration_filename)->getValue();
-            $this->guessed_migrations_class_names[$migration_filename] = $guessed_class_name;
+        foreach ($this->getMigrationFiles() as $migration_filename_without_extension => $migration_filepath) {
+            $guessed_class_name = $migrationClassNameGuesser->setMigrationFilename(
+                $migration_filename_without_extension
+            )->getValue();
+            $this->guessed_migrations_class_names[$migration_filename_without_extension] = $guessed_class_name;
             $migrationClassNameGuesser->resetGuessedValue();
         }
 
@@ -222,7 +226,8 @@ class Migrate extends ConsoleCommand
 
     /**
      * @return array
-     * @throws InvalidDirectory
+     * @throws InvalidConfigKey
+     * @throws InvalidProviderClass
      * @throws PathNotFoundException
      */
     private function getMigrationFiles(): array
@@ -232,29 +237,13 @@ class Migrate extends ConsoleCommand
 
     /**
      * @return array
-     * @throws InvalidDirectory
+     * @throws InvalidProviderClass
      * @throws PathNotFoundException
+     * @throws InvalidConfigKey
      */
     private function listMigrationFiles(): array
     {
-        $files_list = DirectoryFiles::listFromDirectory(ProjectPath::migrations());
-
-        foreach (DirectoryFiles::listFromDirectory(ProjectPath::packages()) as $package_folder) {
-            try {
-                $files_list = array_merge($files_list, DirectoryFiles::listFromDirectory(
-                    ProjectPath::packages("$package_folder/migrations")
-                ));
-            } catch (PathNotFoundException|InvalidDirectory) {
-                continue;
-            }
-        }
-
-        return array_filter(
-            array_unique($files_list),
-            function ($supposed_migration_file) {
-                return Str::endsWith($supposed_migration_file, '.php');
-            }
-        );
+        return Bootstrapper::getInstance()->getLoadedMigrationsFilepath();
     }
 
     private function getNow(): string

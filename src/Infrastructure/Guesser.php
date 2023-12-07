@@ -5,16 +5,11 @@ namespace Wordless\Infrastructure;
 abstract class Guesser
 {
     private bool $already_guessed = false;
-    /** @var mixed $guessed_value */
-    private $guessed_value;
+    private mixed $guessed_value;
 
-    /** @return mixed */
-    abstract protected function guessValue();
+    abstract protected function guessValue(): mixed;
 
-    /**
-     * @return mixed
-     */
-    public function getValue()
+    public function getValue(): mixed
     {
         if (!$this->already_guessed) {
             $this->already_guessed = true;
@@ -25,7 +20,7 @@ abstract class Guesser
         return $this->guessed_value;
     }
 
-    public function resetGuessedValue()
+    public function resetGuessedValue(): void
     {
         $this->already_guessed = false;
         unset($this->guessed_value);
