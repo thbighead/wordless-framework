@@ -7,6 +7,7 @@ use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
 
 trait Migrations
 {
@@ -55,6 +56,10 @@ trait Migrations
 
                 $migration_filename = Str::afterLast($migration_absolute_filepath, DIRECTORY_SEPARATOR);
 
+                if (!$this->validateMigrationFilename($migration_filename)) {
+                    continue;
+                }
+
                 $this->loaded_migrations_filepath[$migration_filename] = $migration_absolute_filepath;
             }
         }
@@ -64,16 +69,28 @@ trait Migrations
         return $this;
     }
 
-    private function validateMigrationFilepath(string $migration_absolute_filepath): ?string
+    private function validateMigrationFilename(string $migration_filename): bool
     {
-        if (!Str::($migration_absolute_filepath, '.php')) {
-            return null;
+        try {
+            $migration_filename = ProjectPath::realpath($migration_filename);
+        } catch (PathNotFoundException) {
+            throw new MigrationFileNotFound();
         }
 
+        return $migration_filename;
+    }
+
+    /**
+     * @param string $migration_absolute_filepath
+     * @return string|null
+     * @throws MigrationFileNotFound
+     */
+    private function validateMigrationFilepath(string $migration_absolute_filepath): ?string
+    {
         try {
             $migration_absolute_filepath = ProjectPath::realpath($migration_absolute_filepath);
         } catch (PathNotFoundException) {
-            return null;
+            throw new MigrationFileNotFound($migration_absolute_filepath);
         }
 
         return $migration_absolute_filepath;
