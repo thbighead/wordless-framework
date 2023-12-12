@@ -5,9 +5,11 @@ namespace Wordless\Wordpress\Models;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
+use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\Post\Traits\Categories;
 use Wordless\Wordpress\Models\Post\Traits\MixinWpPost;
 use Wordless\Wordpress\Models\Post\Traits\Repository;
+use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
 use WP_Post;
 
@@ -21,6 +23,10 @@ class Post implements IRelatedMetaData
     use Repository;
     use WithAcfs;
     use WithMetaData;
+
+    private const TYPE_KEY = StandardType::post->name;
+
+    protected PostType $type;
 
     public static function get(WP_Post|int $post, bool $with_acfs = true): static
     {
@@ -36,8 +42,19 @@ class Post implements IRelatedMetaData
     {
         $this->wpPost = $post instanceof WP_Post ? $post : get_post($post);
 
+        $this->type = new PostType($this->post_type);
+
+        if (!$this->type->is(static::TYPE_KEY)) {
+            throw new InitializingModelWithWrongPostType($this, $with_acfs);
+        }
+
         if ($with_acfs) {
             $this->loadAcfs($this->wpPost->ID);
         }
+    }
+
+    public function getType(): PostType
+    {
+        return $this->type;
     }
 }

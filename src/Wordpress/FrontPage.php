@@ -5,8 +5,8 @@ namespace Wordless\Wordpress;
 use Wordless\Application\Helpers\Option;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
-use Wordless\Infrastructure\Wordpress\CustomPost\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\Page;
+use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use WP_Post;
 

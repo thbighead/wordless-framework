@@ -1,17 +1,17 @@
 <?php
 
-namespace Wordless\Infrastructure\Wordpress\CustomPost\Exceptions;
+namespace Wordless\Wordpress\Models\Post\Exceptions;
 
 use InvalidArgumentException;
 use Throwable;
-use Wordless\Infrastructure\Wordpress\CustomPost;
+use Wordless\Wordpress\Models\Post;
 
 class InitializingModelWithWrongPostType extends InvalidArgumentException
 {
     public function __construct(
-        public readonly CustomPost $model,
+        public readonly Post $model,
         public readonly bool $with_acfs,
-        ?Throwable $previous = null
+        ?Throwable           $previous = null
     )
     {
         parent::__construct($this->mountMessage(), 0, $previous);
