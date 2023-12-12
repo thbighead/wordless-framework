@@ -1,10 +1,10 @@
 <?php
 
-namespace Wordless\Wordpress;
+namespace Wordless\Wordpress\Models\Category;
 
 use WP_Term;
 
-class CategoriesList
+class Dictionary
 {
     /**
      * @var WP_Term[]

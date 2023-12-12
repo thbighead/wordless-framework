@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register;
+namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register;
 
 /**
  * https://developer.wordpress.org/reference/functions/register_taxonomy/#arguments

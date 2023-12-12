@@ -1,11 +1,11 @@
 <?php
 
-namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Validation\Exceptions;
+namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions;
 
 use InvalidArgumentException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
-use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
 
 class InvalidCustomTaxonomyName extends InvalidArgumentException
 {

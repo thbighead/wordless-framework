@@ -1,8 +1,8 @@
 <?php
 
-namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits;
+namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits;
 
-use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\TaxonomyNotRegistered;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\TaxonomyNotRegistered;
 use Wordless\Wordpress\TaxonomyTermsList;
 use WP_Term;
 

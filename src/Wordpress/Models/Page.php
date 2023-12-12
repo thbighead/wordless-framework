@@ -6,5 +6,5 @@ use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 
 class Page extends Post
 {
-    protected const TYPE_KEY = StandardType::page->name;
+    final protected const TYPE_KEY = StandardType::page->name;
 }

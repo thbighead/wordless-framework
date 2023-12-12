@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions;
+namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions;
 
 use InvalidArgumentException;
 use Throwable;

@@ -1,11 +1,11 @@
 <?php
 
-namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits;
+namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits;
 
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Labels;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Rewrite;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Validation;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Labels;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Rewrite;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 
 trait Register
 {

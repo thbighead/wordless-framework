@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Validation\Exceptions;
+namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions;
 
 class ReservedCustomTaxonomyName extends InvalidCustomTaxonomyName
 {

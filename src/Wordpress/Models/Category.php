@@ -2,21 +2,16 @@
 
 namespace Wordless\Wordpress\Models;
 
-use Wordless\Wordpress\CategoriesList;
-use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
-use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
-use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
-use Wordless\Wordpress\Models\Traits\WithAcfs;
+use Wordless\Infrastructure\Wordpress\Taxonomy;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Enums\StandardTaxonomy;
+use Wordless\Wordpress\Models\Category\Dictionary;
 use WP_Term;
 
-class Category implements IRelatedMetaData
+class Category extends Taxonomy
 {
-    use WithAcfs, WithMetaData;
+    final protected const NAME_KEY = StandardTaxonomy::category->name;
 
-    private static CategoriesList $categories;
-
-    private array $acfs = [];
-    private WP_Term $wpCategory;
+    private static Dictionary $categories;
 
     /**
      * @return WP_Term[]
@@ -50,32 +45,13 @@ class Category implements IRelatedMetaData
         return self::getCategoriesList()->getBySlug($slug);
     }
 
-    public static function objectType(): MetableObjectType
+    private static function getCategoriesList(): Dictionary
     {
-        return MetableObjectType::term;
+        return self::$categories ?? self::$categories = new Dictionary;
     }
 
-    private static function getCategoriesList(): CategoriesList
+    final protected function setWpTaxonomy(): void
     {
-        return self::$categories ?? self::$categories = new CategoriesList;
-    }
-
-    public function __construct(WP_Term|int|string $category, bool $with_acfs = true)
-    {
-        $this->wpCategory = $category instanceof WP_Term ? $category : static::find($category);
-
-        if ($with_acfs) {
-            $this->loadCategoryAcfs($this->wpCategory->term_id);
-        }
-    }
-
-    public function asWpTerm(): ?WP_Term
-    {
-        return $this->wpCategory;
-    }
-
-    private function loadCategoryAcfs(int $from_id): void
-    {
-        $this->loadAcfs("category_$from_id");
+        $this->wpTaxonomy = get_taxonomy(self::NAME_KEY);
     }
 }

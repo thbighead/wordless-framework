@@ -4,9 +4,9 @@ namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 use Wordless\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Wordpress\Hook\Enums\Action;
 

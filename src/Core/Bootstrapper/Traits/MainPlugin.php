@@ -10,6 +10,7 @@ use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallCustomPostTypes;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallCustomTaxonomies;
+use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallEnqueueables;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallListeners;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallMenus;
 use Wordless\Infrastructure\Provider;
@@ -17,8 +18,7 @@ use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\Cust
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
-use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallEnqueueables;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 
 trait MainPlugin
 {

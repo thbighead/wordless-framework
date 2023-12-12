@@ -1,10 +1,10 @@
 <?php
 
-namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register;
+namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register;
 
 use Wordless\Application\Helpers\Reserved;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Validation\Exceptions\ReservedCustomTaxonomyName;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\ReservedCustomTaxonomyName;
 
 trait Validation
 {

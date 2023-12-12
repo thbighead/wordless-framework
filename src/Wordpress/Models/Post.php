@@ -10,6 +10,7 @@ use Wordless\Wordpress\Models\Post\Traits\Categories;
 use Wordless\Wordpress\Models\Post\Traits\MixinWpPost;
 use Wordless\Wordpress\Models\Post\Traits\Repository;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
+use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
 use WP_Post;
 
@@ -28,6 +29,12 @@ class Post implements IRelatedMetaData
 
     protected PostType $type;
 
+    /**
+     * @param WP_Post|int $post
+     * @param bool $with_acfs
+     * @return static
+     * @throws InitializingModelWithWrongPostType|PostTypeNotRegistered
+     */
     public static function get(WP_Post|int $post, bool $with_acfs = true): static
     {
         return new static($post, $with_acfs);
@@ -38,6 +45,12 @@ class Post implements IRelatedMetaData
         return MetableObjectType::post;
     }
 
+    /**
+     * @param WP_Post|int $post
+     * @param bool $with_acfs
+     * @throws InitializingModelWithWrongPostType
+     * @throws PostType\Exceptions\PostTypeNotRegistered
+     */
     public function __construct(WP_Post|int $post, bool $with_acfs = true)
     {
         $this->wpPost = $post instanceof WP_Post ? $post : get_post($post);

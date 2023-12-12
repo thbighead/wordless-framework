@@ -3,8 +3,8 @@
 namespace Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits;
 
 use Wordless\Infrastructure\Provider;
-use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 
 trait InstallCustomTaxonomies
 {

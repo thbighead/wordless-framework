@@ -4,7 +4,7 @@ namespace Wordless\Application\Guessers;
 
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Guesser;
-use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
 
 class CustomTaxonomyNameGuesser extends Guesser
 {

@@ -3,14 +3,12 @@
 namespace Wordless\Infrastructure;
 
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
-use Wordless\Infrastructure\Migration\Script;
 use Wordless\Infrastructure\Provider\Traits\EnqueueablesRegistration;
 use Wordless\Infrastructure\Provider\Traits\ListenersRegistration;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Infrastructure\Wordpress\CustomPost;
-use Wordless\Infrastructure\Wordpress\CustomTaxonomy;
 use Wordless\Infrastructure\Wordpress\Menu;
-use Wordless\Wordpress\Models\Page;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
 
 abstract class Provider
 {
