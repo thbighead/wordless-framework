@@ -3,11 +3,13 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Wordless\Application\Commands\Migrate\Exceptions\FailedToFindExecutedMigrationScript;
 use Wordless\Application\Commands\Migrate\Exceptions\FailedToFindMigrationScript;
-use Wordless\Application\Commands\Traits\ForceMode;
+use Wordless\Application\Commands\Migrate\Traits\ExecutionTimestamp;
+use Wordless\Application\Commands\Migrate\Traits\ForceMode;
+use Wordless\Application\Commands\Migrate\Traits\MissingMigrationsCalculator;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
-use Wordless\Application\Guessers\MigrationClassNameGuesser;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
@@ -21,19 +23,21 @@ use Wordless\Infrastructure\Migration\Script;
 
 class Migrate extends ConsoleCommand
 {
-    use ForceMode, LoadWpConfig;
+    use ExecutionTimestamp;
+    use ForceMode;
+    use LoadWpConfig;
+    use MissingMigrationsCalculator;
 
     public const COMMAND_NAME = 'migrate';
 
-    public const MIGRATIONS_WP_OPTION_NAME = 'wordless_migrations_already_executed';
+    final public const MIGRATIONS_WP_OPTION_NAME = 'wordless_migrations_already_executed';
 
     protected static $defaultName = self::COMMAND_NAME;
 
     private array $executed_migrations_list;
-    private array $guessed_migrations_class_names;
+    private array $loaded_migrations_classes;
     private array $migrations_missing_execution;
     private array $migration_files;
-    private string $now;
 
     /**
      * @return ArgumentDTO[]
@@ -59,7 +63,7 @@ class Migrate extends ConsoleCommand
      */
     protected function executeMigrationScriptFile(string $migration_filename, bool $up = true): void
     {
-        $migration_class_name = $this->getScriptsFilesToClassNamesDictionary()[$migration_filename] ?? null;
+        $migration_class_name = $this->getLoadedMigrationsClasses()[$migration_filename] ?? null;
 
         if ($migration_class_name === null) {
             throw new FailedToFindMigrationScript($migration_filename);
@@ -96,24 +100,14 @@ class Migrate extends ConsoleCommand
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
      */
-    protected function getScriptsFilesToClassNamesDictionary(): array
+    protected function getLoadedMigrationsClasses(): array
     {
-        if (isset($this->guessed_migrations_class_names)) {
-            return $this->guessed_migrations_class_names;
+        if (isset($this->loaded_migrations_classes)) {
+            return $this->loaded_migrations_classes;
         }
 
-        $this->guessed_migrations_class_names = [];
-        $migrationClassNameGuesser = new MigrationClassNameGuesser;
-
-        foreach ($this->getMigrationFiles() as $migration_filename_without_extension => $migration_filepath) {
-            $guessed_class_name = $migrationClassNameGuesser->setMigrationFilename(
-                $migration_filename_without_extension
-            )->getValue();
-            $this->guessed_migrations_class_names[$migration_filename_without_extension] = $guessed_class_name;
-            $migrationClassNameGuesser->resetGuessedValue();
-        }
-
-        return $this->guessed_migrations_class_names;
+        return $this->loaded_migrations_classes = Bootstrapper::bootIntoMigrationCommand()
+            ->getLoadedMigrationsFilepath();
     }
 
     protected function help(): string
@@ -129,7 +123,7 @@ class Migrate extends ConsoleCommand
     protected function options(): array
     {
         return [
-            $this->mountForceModeOption('Rollback every migration to run all scripts from zero.')
+            $this->mountForceModeOption('Rollback every migration to run all scripts from zero.'),
         ];
     }
 
@@ -139,27 +133,15 @@ class Migrate extends ConsoleCommand
      * @throws FailedToFindMigrationScript
      * @throws InvalidDirectory
      * @throws PathNotFoundException
+     * @throws InvalidArgumentException
      */
     protected function runIt(): int
     {
-        $this->resolveForceMode();
-        $this->filterMigrationsMissingExecution();
+        $this->resolveForceMode()
+            ->filterMigrationsMissingExecution();
         $this->executeMissingMigrationsScripts();
 
         return Command::SUCCESS;
-    }
-
-    protected function trashMigrationsOption(): void
-    {
-        $this->wrapScriptWithMessages(
-            'Trashing ' . self::MIGRATIONS_WP_OPTION_NAME . '...',
-            function () {
-                update_option(
-                    self::MIGRATIONS_WP_OPTION_NAME,
-                    $this->executed_migrations_list = []
-                );
-            }
-        );
     }
 
     private function addToExecutedMigrationsListOption(string $migration_filename): void
@@ -201,7 +183,7 @@ class Migrate extends ConsoleCommand
      */
     private function filterMigrationsMissingExecution(): void
     {
-        $this->migrations_missing_execution = $this->getScriptsFilesToClassNamesDictionary();
+        $this->migrations_missing_execution = $this->getLoadedMigrationsClasses();
 
         foreach ($this->getExecutedMigrationsChunksList() as $executed_migrations_chunk) {
             foreach ($executed_migrations_chunk as $executed_migration_filename) {
@@ -246,11 +228,6 @@ class Migrate extends ConsoleCommand
         return Bootstrapper::getInstance()->getLoadedMigrationsFilepath();
     }
 
-    private function getNow(): string
-    {
-        return $this->now ?? $this->now = date('Y-m-d H:i:s');
-    }
-
     /**
      * @param string $migration_filename
      * @return void
@@ -278,28 +255,6 @@ class Migrate extends ConsoleCommand
         }
 
         $this->updateExecutedMigrationsListOption();
-    }
-
-    /**
-     * @return void
-     * @throws FailedToFindMigrationScript
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
-     */
-    private function resolveForceMode(): void
-    {
-        if ($this->isForceMode()) {
-            $this->writelnWarning(
-                'Running migration into force mode. Rolling back every executed migration.'
-            );
-            foreach ($this->getOrderedExecutedMigrationsChunksList() as $executed_migrations_chunk) {
-                foreach (array_reverse($executed_migrations_chunk) as $executed_migration_filename) {
-                    $this->executeMigrationScriptFile($executed_migration_filename, false);
-                }
-            }
-
-            $this->trashMigrationsOption();
-        }
     }
 
     private function updateExecutedMigrationsListOption(): bool

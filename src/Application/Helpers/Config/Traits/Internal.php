@@ -20,7 +20,7 @@ trait Internal
      */
     private static function loadConfigFile(string $config_filename_without_extension): mixed
     {
-        return include ProjectPath::config("$config_filename_without_extension.php");
+        return require ProjectPath::config("$config_filename_without_extension.php");
     }
 
     /**

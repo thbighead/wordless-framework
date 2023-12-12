@@ -10,19 +10,20 @@ use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 
 trait Migrations
 {
-    private const PHP_EXTENSION = '.php';
 
     private array $loaded_migrations_filepath = [];
+    private array $migrations_objects = [];
 
     /**
-     * @return void
-     * @throws PathNotFoundException
+     * @return static
      * @throws InvalidConfigKey
      * @throws InvalidProviderClass
+     * @throws PathNotFoundException
      */
-    public static function bootIntoMigrationCommand(): void
+    public static function bootIntoMigrationCommand(): static
     {
-        self::getInstance()->loadProvidedMigrations();
+        return self::getInstance()->loadProvidedMigrations()
+            ->initializeMigrations();
     }
 
     /**
@@ -31,6 +32,15 @@ trait Migrations
     public function getLoadedMigrationsFilepath(): array
     {
         return $this->loaded_migrations_filepath;
+    }
+
+    private function initializeMigrations(): static
+    {
+        foreach ($this->loaded_migrations_filepath as $migration_filename => $migration_absolute_filepath) {
+            $this->migrations_objects[$migration_filename] = require $migration_absolute_filepath;
+        }
+
+        return $this;
     }
 
     private function loadProvidedMigrations(): static
@@ -43,13 +53,9 @@ trait Migrations
                     continue;
                 }
 
-                $migration_filename_without_extension = Str::beforeLast(Str::afterLast(
-                    $migration_absolute_filepath,
-                    DIRECTORY_SEPARATOR
-                ), self::PHP_EXTENSION);
+                $migration_filename = Str::afterLast($migration_absolute_filepath, DIRECTORY_SEPARATOR);
 
-                $this->loaded_migrations_filepath[$migration_filename_without_extension] =
-                    $migration_absolute_filepath;
+                $this->loaded_migrations_filepath[$migration_filename] = $migration_absolute_filepath;
             }
         }
 
@@ -60,7 +66,7 @@ trait Migrations
 
     private function validateMigrationFilepath(string $migration_absolute_filepath): ?string
     {
-        if (!Str::endsWith($migration_absolute_filepath, self::PHP_EXTENSION)) {
+        if (!Str::($migration_absolute_filepath, '.php')) {
             return null;
         }
 

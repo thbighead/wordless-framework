@@ -14,7 +14,8 @@ use WP_Taxonomy;
  */
 abstract class CustomTaxonomy
 {
-    use Register, Repository;
+    use Register;
+    use Repository;
 
     /** @var array<static, string> $taxonomies_name_keys */
     protected static array $taxonomies_name_keys = [];
@@ -27,6 +28,11 @@ abstract class CustomTaxonomy
     protected const NAME = null;
 
     private WP_Taxonomy $wpTaxonomy;
+
+    public static function __callStatic(string $method_name, array $arguments)
+    {
+        return WP_Taxonomy::$method_name(...$arguments);
+    }
 
     private static function getNameKey()
     {

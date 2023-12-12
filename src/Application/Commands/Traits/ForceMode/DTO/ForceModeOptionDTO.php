@@ -5,7 +5,7 @@ namespace Wordless\Application\Commands\Traits\ForceMode\DTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 
-class ForceModeOptionDTO extends OptionDTO
+readonly class ForceModeOptionDTO extends OptionDTO
 {
     final public const FORCE_MODE = 'force';
 

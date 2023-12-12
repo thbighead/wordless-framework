@@ -24,7 +24,7 @@ abstract class Cacher
     {
         try {
             $cache_file_path = ProjectPath::cache($this->cacheFilename());
-            $cached_values = include $cache_file_path;
+            $cached_values = require $cache_file_path;
             $array_to_cache = $this->mountCacheArray();
 
             if (Arr::isAssociative($array_to_cache)) {

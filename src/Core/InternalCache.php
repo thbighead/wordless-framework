@@ -110,7 +110,7 @@ class InternalCache
             $internal_wordless_cache[Str::before(
                 Str::afterLast($cache_file_path, DIRECTORY_SEPARATOR),
                 self::PHP_EXTENSION
-            )] = include $cache_file_path;
+            )] = require $cache_file_path;
         }
 
         return $internal_wordless_cache;
