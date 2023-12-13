@@ -23,7 +23,8 @@ use Wordless\Application\Commands\Traits\WriteRobotsTxt;
 use Wordless\Application\Commands\Traits\WunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\DirectoryFiles;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToDeletePath;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
@@ -87,11 +88,11 @@ class WordlessInstall extends ConsoleCommand
      * @throws FailedToRewriteDotEnvFile
      * @throws FormatException
      * @throws InvalidArgumentException
+     * @throws InvalidDirectory
      * @throws PathNotFoundException
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
-     * @throws WpCliCommandReturnedNonZero
      */
     protected function runIt(): int
     {
@@ -104,7 +105,7 @@ class WordlessInstall extends ConsoleCommand
         $this->createWpConfigFromStub();
         $this->createRobotsTxtFromStub();
         $this->createWpDatabase();
-        $this->installWpCore(); // calls switchingMaintenanceMode(false)
+        $this->installWpCore(); // calls switchingMaintenanceMode(true)
 
         try {
             $this->flushWpRewriteRules();
@@ -365,11 +366,11 @@ class WordlessInstall extends ConsoleCommand
      */
     private function getOrCreateDotEnvFilepath(): string
     {
-        if (!DOT_ENV_NOT_LOADED) {
+        try {
             return ProjectPath::root('.env');
+        } catch (PathNotFoundException) {
+            return ProjectPath::realpath(Environment::createDotEnvFromExample());
         }
-
-        return ProjectPath::realpath(Environment::createDotEnvFromExample());
     }
 
     /**
@@ -609,7 +610,10 @@ class WordlessInstall extends ConsoleCommand
     }
 
     /**
+     * @return void
      * @throws FailedToDeletePath
+     * @throws InvalidDirectory
+     * @throws InvalidArgumentException
      */
     private function resolveForceMode(): void
     {
