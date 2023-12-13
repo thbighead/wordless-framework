@@ -41,10 +41,8 @@ trait ForceMode
                 'Running migration into force mode. Rolling back every executed migration.'
             );
 
-            foreach ($this->getOrderedExecutedMigrationsChunksList() as $executed_migrations_chunk) {
-                foreach (array_reverse($executed_migrations_chunk) as $executed_migration_filename) {
-                    $this->executeMigrationScriptFile($executed_migration_filename, false);
-                }
+            foreach ($this->executedMigrationsOrderedByExecutionDescending() as $executed_migration_filename) {
+                $this->executeMigrationScriptFile($executed_migration_filename, false);
             }
 
             $this->trashMigrationsOption();

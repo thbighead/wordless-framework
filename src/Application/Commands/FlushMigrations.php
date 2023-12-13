@@ -48,7 +48,7 @@ class FlushMigrations extends Migrate
      */
     protected function runIt(): int
     {
-        foreach ($this->getOrderedExecutedMigrationsChunksList() as $migration_filename => $migration_class_name) {
+        foreach ($this->executedMigrationsOrderedByExecutionDescending() as $migration_filename) {
             try {
                 $this->executeMigrationScriptFile($migration_filename, false);
             } catch (FailedToFindMigrationScript $exception) {

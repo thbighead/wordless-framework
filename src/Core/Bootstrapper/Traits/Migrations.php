@@ -7,58 +7,49 @@ use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\InvalidMigrationFilename;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
 
 trait Migrations
 {
-
     private array $loaded_migrations_filepath = [];
-    private array $migrations_objects = [];
 
     /**
-     * @return static
+     * @return array<string, string>
      * @throws InvalidConfigKey
+     * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
+     * @throws MigrationFileNotFound
      * @throws PathNotFoundException
      */
-    public static function bootIntoMigrationCommand(): static
+    public static function bootIntoMigrationCommand(): array
     {
         return self::getInstance()->loadProvidedMigrations()
-            ->initializeMigrations();
+            ->getLoadedMigrationsFilepath();
     }
 
     /**
      * @return array<string, string>
      */
-    public function getLoadedMigrationsFilepath(): array
+    private function getLoadedMigrationsFilepath(): array
     {
         return $this->loaded_migrations_filepath;
     }
 
-    private function initializeMigrations(): static
-    {
-        foreach ($this->loaded_migrations_filepath as $migration_filename => $migration_absolute_filepath) {
-            $this->migrations_objects[$migration_filename] = require $migration_absolute_filepath;
-        }
-
-        return $this;
-    }
-
+    /**
+     * @return $this
+     * @throws InvalidMigrationFilename
+     * @throws MigrationFileNotFound
+     */
     private function loadProvidedMigrations(): static
     {
         foreach ($this->loaded_providers as $provider) {
             foreach ($provider->registerMigrations() as $migration_absolute_filepath) {
                 $migration_absolute_filepath = $this->validateMigrationFilepath($migration_absolute_filepath);
 
-                if ($migration_absolute_filepath === null) {
-                    continue;
-                }
-
                 $migration_filename = Str::afterLast($migration_absolute_filepath, DIRECTORY_SEPARATOR);
 
-                if (!$this->validateMigrationFilename($migration_filename)) {
-                    continue;
-                }
+                $this->validateMigrationFilename($migration_filename);
 
                 $this->loaded_migrations_filepath[$migration_filename] = $migration_absolute_filepath;
             }
@@ -69,23 +60,24 @@ trait Migrations
         return $this;
     }
 
-    private function validateMigrationFilename(string $migration_filename): bool
+    /**
+     * @param string $migration_filename
+     * @return void
+     * @throws InvalidMigrationFilename
+     */
+    private function validateMigrationFilename(string $migration_filename): void
     {
-        try {
-            $migration_filename = ProjectPath::realpath($migration_filename);
-        } catch (PathNotFoundException) {
-            throw new MigrationFileNotFound();
+        if (!preg_match('/^[1-9]\d{3}_[0-1]\d_[0-3]\d_\d{6}_\w+\.php$/', $migration_filename)) {
+            throw new InvalidMigrationFilename($migration_filename);
         }
-
-        return $migration_filename;
     }
 
     /**
      * @param string $migration_absolute_filepath
-     * @return string|null
+     * @return string
      * @throws MigrationFileNotFound
      */
-    private function validateMigrationFilepath(string $migration_absolute_filepath): ?string
+    private function validateMigrationFilepath(string $migration_absolute_filepath): string
     {
         try {
             $migration_absolute_filepath = ProjectPath::realpath($migration_absolute_filepath);

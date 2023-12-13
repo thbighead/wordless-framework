@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Commands;
 
+use Generator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Wordless\Application\Commands\Migrate\Exceptions\FailedToFindExecutedMigrationScript;
@@ -12,10 +13,14 @@ use Wordless\Application\Commands\Migrate\Traits\MissingMigrationsCalculator;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
+use Wordless\Application\Helpers\Option;
+use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\InvalidMigrationFilename;
+use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -29,15 +34,12 @@ class Migrate extends ConsoleCommand
     use MissingMigrationsCalculator;
 
     public const COMMAND_NAME = 'migrate';
-
     final public const MIGRATIONS_WP_OPTION_NAME = 'wordless_migrations_already_executed';
 
     protected static $defaultName = self::COMMAND_NAME;
 
-    private array $executed_migrations_list;
-    private array $loaded_migrations_classes;
-    private array $migrations_missing_execution;
-    private array $migration_files;
+    /** @var array<string, string> $migrations_paths_provided */
+    private array $migrations_paths_provided;
 
     /**
      * @return ArgumentDTO[]
@@ -89,25 +91,13 @@ class Migrate extends ConsoleCommand
         );
     }
 
-    protected function getOrderedExecutedMigrationsChunksList(): array
+    protected function executedMigrationsOrderedByExecutionDescending(): Generator
     {
-        return array_reverse($this->getExecutedMigrationsChunksList());
-    }
-
-    /**
-     * @return array
-     * @throws InvalidConfigKey
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     */
-    protected function getLoadedMigrationsClasses(): array
-    {
-        if (isset($this->loaded_migrations_classes)) {
-            return $this->loaded_migrations_classes;
+        foreach (array_reverse($this->getExecutedMigrationsChunksList()) as $chunk) {
+            foreach (array_reverse($chunk) as $migration_filename) {
+                yield $migration_filename;
+            }
         }
-
-        return $this->loaded_migrations_classes = Bootstrapper::bootIntoMigrationCommand()
-            ->getLoadedMigrationsFilepath();
     }
 
     protected function help(): string
@@ -131,19 +121,28 @@ class Migrate extends ConsoleCommand
      * @return int
      * @throws FailedToFindExecutedMigrationScript
      * @throws FailedToFindMigrationScript
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
      * @throws InvalidArgumentException
+     * @throws InvalidConfigKey
+     * @throws InvalidDirectory
+     * @throws InvalidMigrationFilename
+     * @throws InvalidProviderClass
+     * @throws MigrationFileNotFound
+     * @throws PathNotFoundException
      */
     protected function runIt(): int
     {
         $this->resolveForceMode()
-            ->filterMigrationsMissingExecution();
-        $this->executeMissingMigrationsScripts();
+            ->filterMigrationsMissingExecution()
+            ->executeMissingMigrationsScripts();
 
         return Command::SUCCESS;
     }
 
+    /**
+     * @param string $migration_filename
+     * @return void
+     * @throws FailedToUpdateOption
+     */
     private function addToExecutedMigrationsListOption(string $migration_filename): void
     {
         if (!isset($this->executed_migrations_list[$this->getNow()])) {
@@ -175,63 +174,17 @@ class Migrate extends ConsoleCommand
         }
     }
 
-    /**
-     * @return void
-     * @throws FailedToFindExecutedMigrationScript
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
-     */
-    private function filterMigrationsMissingExecution(): void
-    {
-        $this->migrations_missing_execution = $this->getLoadedMigrationsClasses();
-
-        foreach ($this->getExecutedMigrationsChunksList() as $executed_migrations_chunk) {
-            foreach ($executed_migrations_chunk as $executed_migration_filename) {
-                $migration_namespaced_class =
-                    $this->migrations_missing_execution[$executed_migration_filename] ?? null;
-                if ($migration_namespaced_class === null) {
-                    throw new FailedToFindExecutedMigrationScript($executed_migration_filename);
-                }
-
-                unset($this->migrations_missing_execution[$executed_migration_filename]);
-            }
-        }
-
-        $this->migrations_missing_execution = array_keys($this->migrations_missing_execution);
-    }
-
     private function getExecutedMigrationsChunksList(): array
     {
         return $this->executed_migrations_list ??
-            $this->executed_migrations_list = get_option(self::MIGRATIONS_WP_OPTION_NAME, []);
-    }
-
-    /**
-     * @return array
-     * @throws InvalidConfigKey
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     */
-    private function getMigrationFiles(): array
-    {
-        return $this->migration_files ?? $this->migration_files = $this->listMigrationFiles();
-    }
-
-    /**
-     * @return array
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     * @throws InvalidConfigKey
-     */
-    private function listMigrationFiles(): array
-    {
-        return Bootstrapper::getInstance()->getLoadedMigrationsFilepath();
+            $this->executed_migrations_list = Option::get(self::MIGRATIONS_WP_OPTION_NAME, []);
     }
 
     /**
      * @param string $migration_filename
      * @return void
      * @throws FailedToFindExecutedMigrationScript
+     * @throws FailedToUpdateOption
      */
     private function removeFromExecutedMigrationsListOption(string $migration_filename): void
     {
@@ -257,8 +210,35 @@ class Migrate extends ConsoleCommand
         $this->updateExecutedMigrationsListOption();
     }
 
-    private function updateExecutedMigrationsListOption(): bool
+    /**
+     * @return void
+     * @throws FailedToUpdateOption
+     */
+    private function updateExecutedMigrationsListOption(): void
     {
-        return update_option(self::MIGRATIONS_WP_OPTION_NAME, $this->executed_migrations_list);
+        Option::update(self::MIGRATIONS_WP_OPTION_NAME, $this->executed_migrations_list);
+    }
+
+    private function initializeMigrations(): static
+    {
+        foreach ($this->getMigrationsPathsProvided() as $migration_filename => $migration_absolute_filepath) {
+            $this->migrations_missing_execution[$migration_filename] = require $migration_absolute_filepath;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string>
+     * @throws InvalidConfigKey
+     * @throws InvalidMigrationFilename
+     * @throws InvalidProviderClass
+     * @throws MigrationFileNotFound
+     * @throws PathNotFoundException
+     */
+    private function getMigrationsPathsProvided(): array
+    {
+        return $this->migrations_paths_provided ??
+            $this->migrations_paths_provided = Bootstrapper::bootIntoMigrationCommand();
     }
 }

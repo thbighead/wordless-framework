@@ -48,6 +48,12 @@
     "psy/psysh": "^0.11.22",
     "symfony/var-dumper": "^6.3"
   },
+  "scripts": {
+    "post-autoload-dump": [
+      "cp wp-config.php wp/wp-core/wp-config.php",
+      "@php console mup:loader"
+    ]
+  },
   "extra": {
     "wordpress-install-dir": "wp/wp-core"
   }

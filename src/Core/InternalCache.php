@@ -2,11 +2,12 @@
 
 namespace Wordless\Core;
 
-use Wordless\Application\Cachers\ConfigCacher;
 use Wordless\Application\Cachers\ApiControllerCacher;
+use Wordless\Application\Cachers\ConfigCacher;
 use Wordless\Application\Cachers\EnvironmentCacher;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -74,12 +75,14 @@ class InternalCache
     }
 
     /**
+     * @return void
      * @throws InvalidCache
+     * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
     public static function load(): void
     {
-        if (Environment::get('APP_ENV') !== Environment::LOCAL && !self::isLoaded()) {
+        if (Environment::isNotLocal() && !self::isLoaded()) {
             define(self::INTERNAL_WORDLESS_CACHE_CONSTANT_NAME, self::retrieveCachedValues());
         }
     }
@@ -91,6 +94,7 @@ class InternalCache
 
     /**
      * @return array
+     * @throws InvalidDirectory
      * @throws InvalidCache
      * @throws PathNotFoundException
      */

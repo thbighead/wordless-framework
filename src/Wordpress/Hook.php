@@ -2,8 +2,13 @@
 
 namespace Wordless\Wordpress;
 
-use StringBackedEnum;
+use BackedEnum;
 
-interface Hook extends StringBackedEnum
+/**
+ * @var string $value
+ * @method static static from(string $value)
+ * @method static static|null tryFrom(string $value)
+ */
+interface Hook extends BackedEnum
 {
 }
