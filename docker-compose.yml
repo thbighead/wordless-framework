@@ -149,3 +149,154 @@ services:
     networks:
       - frontend
       - backend
+  ### PHP-FPM ##############################################
+  php-fpm:
+    build:
+      context: ./docker/php-fpm
+      args:
+        - CHANGE_SOURCE=false
+        - BASE_IMAGE_TAG_PREFIX=latest
+        - LARADOCK_PHP_VERSION=8.2
+        - LARADOCK_PHALCON_VERSION=5.0.0
+        - INSTALL_BZ2=false
+        - INSTALL_ENCHANT=false
+        - INSTALL_GMP=false
+        - INSTALL_GNUPG=false
+        - INSTALL_XDEBUG=false
+        - XDEBUG_PORT=9003
+        - INSTALL_PCOV=false
+        - INSTALL_PHPDBG=false
+        - INSTALL_BLACKFIRE=false
+        - INSTALL_SSH2=false
+        - INSTALL_SOAP=false
+        - INSTALL_XSL=false
+        - INSTALL_SMB=false
+        - INSTALL_IMAP=false
+        - INSTALL_MONGO=false
+        - INSTALL_AMQP=false
+        - INSTALL_CASSANDRA=false
+        - INSTALL_ZMQ=false
+        - INSTALL_GEARMAN=false
+        - INSTALL_MSSQL=false
+        - INSTALL_BCMATH=true
+        - INSTALL_PHPREDIS=true
+        - INSTALL_MEMCACHED=false
+        - INSTALL_OPCACHE=true
+        - INSTALL_EXIF=false
+        - INSTALL_AEROSPIKE=false
+        - INSTALL_OCI8=false
+        - INSTALL_MYSQLI=true
+        - INSTALL_PGSQL=false
+        - INSTALL_PG_CLIENT=false
+        - PG_CLIENT_VERSION=15
+        - INSTALL_POSTGIS=false
+        - INSTALL_INTL=true
+        - INSTALL_GHOSTSCRIPT=false
+        - INSTALL_LDAP=false
+        - INSTALL_PHALCON=false
+        - INSTALL_SWOOLE=false
+        - INSTALL_TAINT=false
+        - INSTALL_IMAGE_OPTIMIZERS=true
+        - INSTALL_IMAGEMAGICK=false
+        - INSTALL_CALENDAR=false
+        - INSTALL_XLSWRITER=false
+        - INSTALL_FAKETIME=false
+        - INSTALL_IONCUBE=false
+        - INSTALL_APCU=false
+        - INSTALL_CACHETOOL=false
+        - INSTALL_YAML=false
+        - INSTALL_RDKAFKA=false
+        - INSTALL_GETTEXT=false
+        - INSTALL_ADDITIONAL_LOCALES=true
+        - INSTALL_MYSQL_CLIENT=false
+        - INSTALL_PING=false
+        - INSTALL_SSHPASS=false
+        - INSTALL_MAILPARSE=false
+        - INSTALL_PCNTL=false
+        - ADDITIONAL_LOCALES="pt_BR.UTF-8 pt_PT.UTF-8 en_US.UTF-8 es_ES.UTF-8 fr_FR.UTF-8"
+        - INSTALL_FFMPEG=false
+        - INSTALL_AUDIOWAVEFORM=false
+        - INSTALL_WKHTMLTOPDF=false
+        - WKHTMLTOPDF_VERSION=0.12.6-1
+        - INSTALL_XHPROF=false
+        - INSTALL_XMLRPC=false
+        - INSTALL_PHPDECIMAL=false
+        - INSTALL_ZOOKEEPER=false
+        - INSTALL_SSDB=false
+        - INSTALL_TRADER=false
+        - INSTALL_EVENT=false
+        - DOWNGRADE_OPENSSL_TLS_AND_SECLEVEL=false
+        - DOWNGRADE_OPENSSL_TLS_VERSION=1.2
+        - PUID=1000
+        - PGID=1000
+        - IMAGEMAGICK_VERSION=latest
+        - LOCALE=POSIX
+        - PHP_FPM_NEW_RELIC=false
+        - PHP_FPM_NEW_RELIC_KEY=0000
+        - PHP_FPM_NEW_RELIC_APP_NAME=app_name
+        - INSTALL_DOCKER_CLIENT=false
+        - INSTALL_DNSUTILS=true
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    volumes:
+      - ./docker/php-fpm/php8.2.ini:/usr/local/etc/php/php.ini
+      - ./:/var/www:cached
+    ports:
+      - "9003:9003"
+    expose:
+      - "9000"
+    extra_hosts:
+      - "dockerhost:10.0.75.1"
+    #      - "${APP_HOST}:${DOCKER_HOST_IP}"
+    environment:
+      - PHP_IDE_CONFIG=serverName=laradock
+      - DOCKER_HOST=tcp://docker-in-docker:2376
+      - DOCKER_TLS_VERIFY=1
+      - DOCKER_TLS_CERTDIR=/certs
+      - DOCKER_CERT_PATH=/certs/client
+      - FAKETIME=-0
+    depends_on:
+      - workspace
+    networks:
+      - backend
+  ### MariaDB ##############################################
+  mariadb:
+    build:
+      context: ./docker/mariadb
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - MARIADB_VERSION=lts
+    volumes:
+      - ~/.laradock/data/mariadb:/var/lib/mysql
+      - ./docker/mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    environment:
+      - TZ=UTC
+      - MYSQL_DATABASE=default
+      - MYSQL_USER=default
+      - MYSQL_PASSWORD=secret
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - backend
+
+  ### Adminer ###########################################
+  adminer:
+    build:
+      context: ./docker/adminer
+      args:
+        - INSTALL_MSSQL=false
+    environment:
+      - ADMINER_PLUGINS=
+      - ADMINER_DESIGN=pepa-linha
+      - ADMINER_DEFAULT_SERVER=mysql
+    ports:
+      - "8081:8080"
+    depends_on:
+      - php-fpm
+    networks:
+      - frontend
+      - backend
