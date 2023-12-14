@@ -2,7 +2,7 @@
 
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Listeners\ChooseImageEditor;
-use Wordless\Application\Listeners\CustomLoginUrl\Traits\Common;
+use Wordless\Application\Listeners\CustomLoginUrl\Contracts\BaseListener;
 use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
 use Wordless\Application\Providers\WpSpeedUpProvider;
@@ -24,8 +24,8 @@ return [
             Role::ADMIN => true,
             Role::AUTHOR => false,
         ],
-        Common::WP_REDIRECT_URL => false,
-        Common::WP_CUSTOM_LOGIN_URL => false,
+        BaseListener::WP_REDIRECT_URL_KEY => false,
+        BaseListener::WP_CUSTOM_LOGIN_URL_KEY => false,
         'enable_comments' => false,
         Bootstrapper::ERROR_REPORTING_KEY => Environment::isProduction()
             ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED

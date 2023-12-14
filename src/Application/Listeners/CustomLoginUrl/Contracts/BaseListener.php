@@ -1,15 +1,20 @@
 <?php
 
-namespace Wordless\Application\Listeners\CustomLoginUrl\Traits;
+namespace Wordless\Application\Listeners\CustomLoginUrl\Contracts;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Infrastructure\Wordpress\Listener;
 
-trait Common
+abstract class BaseListener extends Listener
 {
-    public const WP_CUSTOM_LOGIN_URL = 'wp_custom_login_url';
-    public const WP_REDIRECT_URL = 'wp_redirect_url';
+    final public const WP_CUSTOM_LOGIN_URL_KEY = 'wp_custom_login_url';
+    final public const WP_REDIRECT_URL_KEY = 'wp_redirect_url';
+    /**
+     * The function which shall be executed during hook
+     */
+    final protected const FUNCTION = 'load';
 
     /**
      * @return string|false
@@ -17,7 +22,7 @@ trait Common
      */
     protected static function canHook(): string|false
     {
-        return Config::tryToGetOrDefault('wordpress.admin.' . static::WP_CUSTOM_LOGIN_URL, false);
+        return Config::tryToGetOrDefault('wordpress.admin.' . static::WP_CUSTOM_LOGIN_URL_KEY, false);
     }
 
     /**
@@ -53,7 +58,7 @@ trait Common
      */
     protected static function newLoginSlug(): string|false
     {
-        return Config::tryToGetOrDefault('wordpress.admin.' . static::WP_CUSTOM_LOGIN_URL, false);
+        return Config::tryToGetOrDefault('wordpress.admin.' . static::WP_CUSTOM_LOGIN_URL_KEY, false);
     }
 
     /**
@@ -76,6 +81,6 @@ trait Common
      */
     protected static function newRedirectUrl(): bool
     {
-        return Config::tryToGetOrDefault('wordpress.admin.' . self::WP_REDIRECT_URL, false);
+        return Config::tryToGetOrDefault('wordpress.admin.' . self::WP_REDIRECT_URL_KEY, false);
     }
 }

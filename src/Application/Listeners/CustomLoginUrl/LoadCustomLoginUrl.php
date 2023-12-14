@@ -3,19 +3,14 @@
 namespace Wordless\Application\Listeners\CustomLoginUrl;
 
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Listeners\CustomLoginUrl\Traits\Common;
-use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
+use Wordless\Application\Listeners\CustomLoginUrl\Contracts\BaseListener;
+use Wordless\Infrastructure\Wordpress\Listener\ActionListener\Traits\Adapter as ActionListener;
 use Wordless\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Wordpress\Hook\Enums\Action;
 
-class LoadCustomLoginUrl extends ActionListener
+class LoadCustomLoginUrl extends BaseListener
 {
-    use Common;
-
-    /**
-     * The function which shall be executed during hook
-     */
-    protected const FUNCTION = 'load';
+    use ActionListener;
 
     /**
      * @throws PathNotFoundException
