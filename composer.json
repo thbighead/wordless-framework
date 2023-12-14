@@ -50,6 +50,7 @@
   },
   "scripts": {
     "post-autoload-dump": [
+      "touch .env",
       "cp wp-config.php wp/wp-core/wp-config.php",
       "@php console mup:loader"
     ]
