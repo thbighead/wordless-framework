@@ -84,3 +84,44 @@ mistake occurs;
 2. *Logic control*: it controls any application logic. It may be wrapped by a try-catch code or not depending on what
 developers expect;
 3. *Intentional interrupt*: should never be caught. Exceptions are made to ALWAYS interrupt the application. 
+
+## Docker
+
+To provide a development environment, Wordless offers the following containers:
+
+#### Workspace
+
+This is the main container, where you can access PHP, Composer, and the Wordless CLI console. Generally, this is where 
+you will interact with your application most of the time.
+
+#### MariaDB
+
+This container is responsible for creating and managing your database.
+
+#### Adminer
+
+Adminer is a container that allows interaction with the database through the browser, providing an interface to perform 
+various tasks necessary for database-related development.
+
+### Commands
+
+### Starting containers 
+To start the containers, use the `up` command, which will initiate each container. If the containers haven't been created, 
+this command will also build them.
+
+> The `-d` flag allows you to execute this command in non-verbose mode. In other words, you won't receive the outputs of 
+> your containers, leaving the terminal free for other tasks.
+> ```shell
+> docker compose up -d
+> ```
+
+### Executing Containers
+Once the containers are created and started, you can navigate inside them using the `exec` command. Inside each 
+container, you can leverage all its specific functionalities characteristic of each container. Specify which container 
+to execute; in this case, we are executing the workspace.
+
+> The `--user` flag indicates the user to be used for logging into the container. Usually, `laradock` is the default, 
+> but in some cases where a profile with greater responsibility is needed, you can use `root`.
+> ```shell
+> docker compose exec --user=laradock workspace bash
+> ```
