@@ -1,12 +1,12 @@
 <?php
 
-namespace Wordless\Tests\Unit\StrHelperTest\CaseStyleTests;
+namespace StrHelperTest\Traits\CaseStyleTests\Traits;
 
 use Wordless\Application\Helpers\Str;
 
 trait FromRawToAnother
 {
-    public function testRawToTitleCase()
+    public function testRawToTitleCase(): void
     {
         $this->assertEquals(
             Str::titleCase(self::CLEAN_RAW_CASE_EXAMPLE),
@@ -16,9 +16,17 @@ trait FromRawToAnother
             Str::titleCase(self::NUMERICAL_RAW_CASE_EXAMPLE),
             self::NUMERICAL_TITLE_CASE_EXAMPLE
         );
+        $this->assertEquals(
+            Str::titleCase(mb_strtoupper(self::CLEAN_RAW_CASE_EXAMPLE)),
+            self::CLEAN_TITLE_CASE_EXAMPLE
+        );
+        $this->assertEquals(
+            Str::titleCase(mb_strtoupper(self::NUMERICAL_RAW_CASE_EXAMPLE)),
+            self::NUMERICAL_TITLE_CASE_EXAMPLE
+        );
     }
 
-    public function testRawToCamelCase()
+    public function testRawToCamelCase(): void
     {
         $this->assertEquals(
             Str::camelCase(self::CLEAN_RAW_CASE_EXAMPLE),
@@ -30,7 +38,7 @@ trait FromRawToAnother
         );
     }
 
-    public function testRawToPascalCase()
+    public function testRawToPascalCase(): void
     {
         $this->assertEquals(
             Str::pascalCase(self::CLEAN_RAW_CASE_EXAMPLE),
@@ -42,7 +50,7 @@ trait FromRawToAnother
         );
     }
 
-    public function testRawToSnakeCase()
+    public function testRawToSnakeCase(): void
     {
         $this->assertEquals(
             Str::snakeCase(self::CLEAN_RAW_CASE_EXAMPLE),
@@ -54,7 +62,7 @@ trait FromRawToAnother
         );
     }
 
-    public function testRawToKebabCase()
+    public function testRawToKebabCase(): void
     {
         $this->assertEquals(
             Str::kebabCase(self::CLEAN_RAW_CASE_EXAMPLE),

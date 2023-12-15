@@ -2,9 +2,9 @@
 
 namespace Wordless\Tests\Unit;
 
+use StrHelperTest\Traits\CaseStyleTests;
+use StrHelperTest\Traits\UuidTests;
 use Wordless\Application\Helpers\Str;
-use Wordless\Tests\Unit\StrHelperTest\CaseStyleTests;
-use Wordless\Tests\Unit\StrHelperTest\UuidTests;
 use Wordless\Tests\WordlessTestCase;
 
 class StrHelperTest extends WordlessTestCase

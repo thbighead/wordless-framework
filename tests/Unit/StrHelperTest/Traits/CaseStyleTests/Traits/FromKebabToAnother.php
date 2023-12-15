@@ -1,12 +1,12 @@
 <?php
 
-namespace Wordless\Tests\Unit\StrHelperTest\CaseStyleTests;
+namespace StrHelperTest\Traits\CaseStyleTests\Traits;
 
 use Wordless\Application\Helpers\Str;
 
 trait FromKebabToAnother
 {
-    public function testKebabToTitleCase()
+    public function testKebabToTitleCase(): void
     {
         $this->assertEquals(
             Str::titleCase(self::CLEAN_KEBAB_CASE_EXAMPLE),
@@ -18,7 +18,7 @@ trait FromKebabToAnother
         );
     }
 
-    public function testKebabToCamelCase()
+    public function testKebabToCamelCase(): void
     {
         $this->assertEquals(
             Str::camelCase(self::CLEAN_KEBAB_CASE_EXAMPLE),
@@ -30,7 +30,7 @@ trait FromKebabToAnother
         );
     }
 
-    public function testKebabToPascalCase()
+    public function testKebabToPascalCase(): void
     {
         $this->assertEquals(
             Str::pascalCase(self::CLEAN_KEBAB_CASE_EXAMPLE),
@@ -42,7 +42,7 @@ trait FromKebabToAnother
         );
     }
 
-    public function testKebabToSnakeCase()
+    public function testKebabToSnakeCase(): void
     {
         $this->assertEquals(
             Str::snakeCase(self::CLEAN_KEBAB_CASE_EXAMPLE),
@@ -54,7 +54,7 @@ trait FromKebabToAnother
         );
     }
 
-    public function testKebabToKebabCase()
+    public function testKebabToKebabCase(): void
     {
         $this->assertEquals(
             Str::kebabCase(self::CLEAN_KEBAB_CASE_EXAMPLE),
