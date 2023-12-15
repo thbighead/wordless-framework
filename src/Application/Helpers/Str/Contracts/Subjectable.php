@@ -1,0 +1,14 @@
+<?php
+
+namespace Wordless\Application\Helpers\Str\Contracts;
+
+use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO;
+use Wordless\Infrastructure\Helper\Contracts\Subjectable as BaseSubjectable;
+
+abstract class Subjectable extends BaseSubjectable
+{
+    public static function of(mixed $subject): StringSubjectDTO
+    {
+        return new StringSubjectDTO($subject);
+    }
+}

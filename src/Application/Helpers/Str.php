@@ -5,10 +5,11 @@ namespace Wordless\Application\Helpers;
 use Doctrine\Inflector\Language;
 use InvalidArgumentException;
 use Ramsey\Uuid\Uuid;
+use Wordless\Application\Helpers\Str\Contracts\Subjectable;
 use Wordless\Application\Helpers\Str\Enums\UuidVersion;
 use Wordless\Application\Helpers\Str\Traits\Internal;
 
-class Str
+class Str extends Subjectable
 {
     use Internal;
 
