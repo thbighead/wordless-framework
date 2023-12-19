@@ -1,5 +1,5 @@
 /.idea/
 /.env
-/.phpunit.result.cache
+/.phpunit.cache
 /vendor/
 /wp/
