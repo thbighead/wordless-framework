@@ -2,9 +2,7 @@
 
 namespace Wordless\Core;
 
-use Wordless\Application\Cachers\ApiControllerCacher;
-use Wordless\Application\Cachers\ConfigCacher;
-use Wordless\Application\Cachers\EnvironmentCacher;
+use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
@@ -12,6 +10,7 @@ use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 use Wordless\Core\InternalCache\Exceptions\InvalidCache;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
@@ -22,14 +21,17 @@ class InternalCache
     private const PHP_EXTENSION = '.php';
 
     /**
+     * @return void
+     * @throws InvalidProviderClass
      * @throws FailedToCopyStub
      * @throws PathNotFoundException
+     * @throws InvalidConfigKey
      */
     public static function generate(): void
     {
-        (new EnvironmentCacher)->cache();
-        (new ConfigCacher)->cache();
-        (new ApiControllerCacher)->cache();
+        foreach (Bootstrapper::getInstance()->loadProvidedInternalCachers() as $internal_cacher_namespace) {
+            $internal_cacher_namespace::generate();
+        }
     }
 
     /**

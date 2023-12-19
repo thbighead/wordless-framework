@@ -10,49 +10,57 @@ use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
 abstract class Cacher
 {
-    private SimpleCacheStubMounter $simpleCacheStubMounter;
-
     abstract protected function cacheFilename(): string;
 
     abstract protected function mountCacheArray(): array;
 
+    private SimpleCacheStubMounter $simpleCacheStubMounter;
+
     /**
-     * @throws FailedToCopyStub failed to create cache file.
-     * @throws PathNotFoundException 'cache' directory was not found.
+     * @return void
+     * @throws FailedToCopyStub
+     * @throws PathNotFoundException
      */
-    public function cache(): void
+    final public static function generate(): void
     {
-        try {
-            $cache_file_path = ProjectPath::cache($this->cacheFilename());
-            $cached_values = require $cache_file_path;
-            $array_to_cache = $this->mountCacheArray();
+        (new static)->cache();
+    }
 
-            if (Arr::isAssociative($array_to_cache)) {
-                Arr::recursiveJoin($cached_values, $array_to_cache);
-            } else {
-                Arr::recursiveJoin($cached_values, ...$array_to_cache);
-            }
-        } catch (PathNotFoundException $exception) {
-            $cache_file_path = ProjectPath::cache() . DIRECTORY_SEPARATOR . $this->cacheFilename();
-            $array_to_cache = $this->mountCacheArray();
+    /**
+     * @return void
+     * @throws FailedToCopyStub
+     * @throws PathNotFoundException
+     */
+    private function cache(): void
+    {
+        $array_to_cache = $this->mountCacheArray();
 
-            if (!Arr::isAssociative($array_to_cache)) {
-                $array_to_cache = Arr::recursiveJoin(...$array_to_cache);
-            }
+        if (!Arr::isAssociative($array_to_cache)) {
+            $array_to_cache = Arr::recursiveJoin(...$array_to_cache);
         }
 
-        $stubMounterClass = $this->stubMounterClass();
-        $this->simpleCacheStubMounter = new $stubMounterClass($cache_file_path);
-        $this->simpleCacheStubMounter->setReplaceContentDictionary($array_to_cache)
+        $this->getSimpleCacheStubMounter()
+            ->setReplaceContentDictionary($array_to_cache)
             ->mountNewFile();
     }
 
-    public function getSimpleCacheStubMounter(): ?SimpleCacheStubMounter
+    /**
+     * @return SimpleCacheStubMounter
+     * @throws PathNotFoundException
+     */
+    private function getSimpleCacheStubMounter(): SimpleCacheStubMounter
     {
-        return $this->simpleCacheStubMounter ?? null;
+        if (isset($this->simpleCacheStubMounter)) {
+            return $this->simpleCacheStubMounter;
+        }
+
+        $cache_file_path = ProjectPath::cache() . DIRECTORY_SEPARATOR . $this->cacheFilename();
+        $stubMounterClass = $this->stubMounterClass();
+
+        return $this->simpleCacheStubMounter = new $stubMounterClass($cache_file_path);
     }
 
-    protected function stubMounterClass(): string
+    private function stubMounterClass(): string
     {
         return SimpleCacheStubMounter::class;
     }

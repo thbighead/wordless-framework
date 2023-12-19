@@ -25,9 +25,17 @@ abstract class Provider
     }
 
     /**
-     * @return ConsoleCommand[]
+     * @return string[]|ConsoleCommand[]
      */
     public function registerCommands(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return string[]|Cacher[]
+     */
+    public function registerInternalCachers(): array
     {
         return [];
     }

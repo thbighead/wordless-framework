@@ -10,6 +10,7 @@ use Wordless\Application\Libraries\DesignPattern\Singleton;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\ApiControllers;
 use Wordless\Core\Bootstrapper\Traits\Console;
+use Wordless\Core\Bootstrapper\Traits\InternalCachers;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin;
 use Wordless\Core\Bootstrapper\Traits\Migrations;
 use Wordless\Infrastructure\Provider;
@@ -18,6 +19,7 @@ final class Bootstrapper extends Singleton
 {
     use ApiControllers;
     use Console;
+    use InternalCachers;
     use MainPlugin;
     use Migrations;
 
