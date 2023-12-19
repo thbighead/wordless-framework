@@ -4,7 +4,9 @@ use Symfony\Component\Console\Application;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Core\Bootstrapper;
 
-require_once __DIR__ . '/wp/wp-core/wp-config.php';
+require_once __DIR__ . '/vendor/autoload.php';
+
+const ROOT_PROJECT_PATH = __DIR__;
 
 Environment::loadDotEnv();
 
