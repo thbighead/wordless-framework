@@ -34,7 +34,11 @@ trait Console
     {
         foreach ($this->loaded_providers as $provider) {
             foreach ($provider->registerCommands() as $command_namespace) {
-                $application->add(new $command_namespace);
+                $command = new $command_namespace;
+
+                if ($command->canRun()) {
+                    $application->add($command);
+                }
             }
         }
 

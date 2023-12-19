@@ -13,12 +13,14 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMo
 use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand;
 use Wordless\Infrastructure\ConsoleCommand\Traits\ConsoleCommandInstantiator;
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage;
+use Wordless\Infrastructure\ConsoleCommand\Traits\Questions;
 
 abstract class ConsoleCommand extends Command
 {
     use CallCommand;
     use ConsoleCommandInstantiator;
     use OutputMessage;
+    use Questions;
 
     final public const DONE_MESSAGE = ' Done!';
 
@@ -40,6 +42,11 @@ abstract class ConsoleCommand extends Command
     abstract protected function options(): array;
 
     abstract protected function runIt(): int;
+
+    public function canRun(): bool
+    {
+        return true;
+    }
 
     /**
      * @return void

@@ -1,9 +1,7 @@
 <?php
 
-use Wordless\Commands\DatabaseOverwrite;
+use Wordless\Application\Commands\DatabaseOverwrite;
 
 return [
-    DatabaseOverwrite::DATABASE_OVERWRITE_KEY => [
-        DatabaseOverwrite::USER_DEFAULT_PASSWORD => 'password',
-    ],
+
 ];

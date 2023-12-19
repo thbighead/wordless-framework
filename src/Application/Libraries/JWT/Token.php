@@ -6,12 +6,16 @@ use Lcobucci\JWT\Encoding\ChainedFormatter;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Blake2b;
+use Lcobucci\JWT\Signer\CannotSignPayload;
+use Lcobucci\JWT\Signer\Ecdsa\ConversionFailed;
 use Lcobucci\JWT\Signer\Hmac\Sha256 as HmacSha256;
 use Lcobucci\JWT\Signer\Hmac\Sha384 as HmacSha384;
 use Lcobucci\JWT\Signer\Hmac\Sha512 as HmacSha512;
+use Lcobucci\JWT\Signer\InvalidKeyProvided;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Token\Builder;
 use Lcobucci\JWT\Token\Plain;
+use Lcobucci\JWT\Token\RegisteredClaimGiven;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Validator;
 use Wordless\Application\Helpers\Config;
@@ -32,10 +36,10 @@ class Token implements IPolymorphicConstructor
     use Constructors;
     use PolymorphicConstructorGuesser;
 
-    public const CONFIG_DEFAULT_CRYPTO = 'default_crypto';
-    public const CONFIG_SIGN_KEY = 'sign_key';
-    public const ENVIRONMENT_SIGN_VARIABLE = 'JWT_BASE_64_SIGN_KEY';
-    public const JWT_HEADER_ALGORITHM_KEY = 'alg';
+    final public const CONFIG_DEFAULT_CRYPTO = 'default_crypto';
+    final public const CONFIG_SIGN_KEY = 'sign_key';
+    final public const ENVIRONMENT_SIGN_VARIABLE = 'JWT_BASE_64_SIGN_KEY';
+    final public const JWT_HEADER_ALGORITHM_KEY = 'alg';
 
     private Plain $parsedToken;
 
@@ -120,13 +124,17 @@ class Token implements IPolymorphicConstructor
 
     /**
      * @param array $payload
-     * @param string|null $crypto_strategy
+     * @param CryptoAlgorithm|null $crypto_strategy
      * @return void
+     * @throws CannotSignPayload
+     * @throws ConversionFailed
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
+     * @throws InvalidKeyProvided
      * @throws PathNotFoundException
+     * @throws RegisteredClaimGiven
      */
-    protected function buildJwt(array $payload, ?string $crypto_strategy = null): void
+    protected function buildJwt(array $payload, ?CryptoAlgorithm $crypto_strategy = null): void
     {
         $builder = new Builder(new JoseEncoder, (new ChainedFormatter));
         $crypto_strategy = $crypto_strategy ?? Config::get('jwt.' . self::CONFIG_DEFAULT_CRYPTO);

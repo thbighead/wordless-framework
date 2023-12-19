@@ -44,6 +44,7 @@
     "wp-cli/wp-cli-bundle": "^2.6"
   },
   "require-dev": {
+    "fakerphp/faker": "~1.23.0",
     "phpunit/phpunit": "~10.5.3",
     "psy/psysh": "^0.11.22",
     "symfony/var-dumper": "^6.3"
