@@ -2,9 +2,10 @@
 
 namespace Wordless\Wordpress\Models\Category;
 
+use Wordless\Application\Libraries\DesignPattern\Singleton;
 use WP_Term;
 
-class Dictionary
+class Dictionary extends Singleton
 {
     /**
      * @var WP_Term[]
@@ -20,8 +21,10 @@ class Dictionary
     private static array $categories_keyed_by_slug = [];
     private static bool $loaded = false;
 
-    public function __construct()
+    protected function __construct()
     {
+        parent::__construct();
+
         self::init();
     }
 
@@ -34,8 +37,8 @@ class Dictionary
         foreach (get_categories() as $category) {
             /** @var WP_Term $category */
             self::$categories_keyed_by_id[$category->term_id] = $category;
-            self::$categories_keyed_by_name[$category->name] = $category;
-            self::$categories_keyed_by_slug[$category->slug] = $category;
+            self::$categories_keyed_by_name[$category->name] = self::$categories_keyed_by_slug[$category->slug] =
+            &self::$categories_keyed_by_id[$category->term_id];
         }
 
         self::$loaded = true;

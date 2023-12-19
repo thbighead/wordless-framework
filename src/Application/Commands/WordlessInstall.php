@@ -101,31 +101,12 @@ class WordlessInstall extends ConsoleCommand
         $this->resolveDotEnv();
         $this->loadWpLanguages();
 
-        $this->downloadWpCore();
         $this->createWpConfigFromStub();
         $this->createRobotsTxtFromStub();
         $this->createWpDatabase();
         $this->installWpCore(); // calls switchingMaintenanceMode(true)
 
-        try {
-            $this->flushWpRewriteRules();
-            $this->activateWpTheme();
-            $this->activateWpPlugins();
-            $this->installWpLanguages();
-            $this->makeWpBlogPublic();
-            $this->runWpCliCommand('core update-db', true);
-            $this->callConsoleCommand(
-                GeneratePublicWordpressSymbolicLinks::COMMAND_NAME,
-                [],
-                $this->output
-            );
-            $this->callConsoleCommand(Migrate::COMMAND_NAME, [], $this->output);
-            $this->callConsoleCommand(SyncRoles::COMMAND_NAME, [], $this->output);
-            $this->callConsoleCommand(CreateInternalCache::COMMAND_NAME, [], $this->output);
-            $this->applyAdminConfiguration();
-        } finally {
-            $this->switchingMaintenanceMode(false);
-        }
+        $this->coreSteps();
 
         $this->resolveWpConfigChmod();
 
@@ -215,6 +196,39 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return void
+     * @throws ExceptionInterface
+     * @throws PathNotFoundException
+     */
+    private function coreSteps(): void
+    {
+        try {
+            $this->flushWpRewriteRules();
+            $this->activateWpTheme();
+            $this->activateWpPlugins();
+            $this->installWpLanguages();
+            $this->makeWpBlogPublic();
+            $this->databaseUpdate();
+            $this->generateSymbolicLinks();
+            $this->runMigrations();
+            $this->syncRoles();
+            $this->createCache();
+            $this->applyAdminConfiguration();
+        } finally {
+            $this->switchingMaintenanceMode(false);
+        }
+    }
+
+    /**
+     * @return void
+     * @throws ExceptionInterface
+     */
+    private function createCache(): void
+    {
+        $this->callConsoleCommand(CreateInternalCache::COMMAND_NAME, output: $this->output);
+    }
+
+    /**
+     * @return void
      * @throws PathNotFoundException
      */
     private function createRobotsTxtFromStub(): void
@@ -272,19 +286,10 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @return void
      * @throws ExceptionInterface
-     * @throws WpCliCommandReturnedNonZero
      */
-    private function downloadWpCore(): void
+    private function databaseUpdate(): void
     {
-        if ($this->runWpCliCommand('core version --extra', true) == 0) {
-            $this->writelnCommentWhenVerbose('WordPress Core already downloaded, skipping.');
-
-            return;
-        }
-
-        $wp_version = $this->getEnvVariableByKey('WP_VERSION', 'latest');
-
-        $this->runWpCliCommand("core download --version=$wp_version --skip-content");
+        $this->runWpCliCommand('core update-db', true);
     }
 
     /**
@@ -335,6 +340,18 @@ class WordlessInstall extends ConsoleCommand
         $permalink_structure = $this->getEnvVariableByKey('WP_PERMALINK', '/%postname%/');
         $this->runWpCliCommand("rewrite structure '$permalink_structure' --hard");
         $this->runWpCliCommand('rewrite flush --hard');
+    }
+
+    /**
+     * @return void
+     * @throws ExceptionInterface
+     */
+    private function generateSymbolicLinks(): void
+    {
+        $this->callConsoleCommand(
+            GeneratePublicWordpressSymbolicLinks::COMMAND_NAME,
+            output: $this->output
+        );
     }
 
     private function getDotEnvNotFilledVariables(string $dot_env_content): array
@@ -650,6 +667,24 @@ class WordlessInstall extends ConsoleCommand
         if ($this->getEnvVariableByKey('APP_ENV') === Environment::PRODUCTION) {
             chmod(ProjectPath::wpCore('wp-config.php'), 0660);
         }
+    }
+
+    /**
+     * @return void
+     * @throws ExceptionInterface
+     */
+    private function runMigrations(): void
+    {
+        $this->callConsoleCommand(Migrate::COMMAND_NAME, output: $this->output);
+    }
+
+    /**
+     * @return void
+     * @throws ExceptionInterface
+     */
+    private function syncRoles(): void
+    {
+        $this->callConsoleCommand(SyncRoles::COMMAND_NAME, output: $this->output);
     }
 
     /**

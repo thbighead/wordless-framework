@@ -2,11 +2,14 @@
 
 namespace Wordless\Wordpress\Models;
 
+use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\Str;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 use Wordless\Wordpress\RolesList;
 use WP_Role;
+
+require_once ProjectPath::wpCore('wp-includes/class-wp-role.php');
 
 class Role extends WP_Role
 {
