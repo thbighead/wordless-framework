@@ -1,84 +1,45 @@
 <?php
 
-namespace StrHelperTest\Traits;
+namespace Wordless\Tests\Unit\StrHelperTest\Traits;
 
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\InvalidUuidVersion;
+use Wordless\Application\Helpers\Str\Enums\UuidVersion;
 
 trait UuidTests
 {
-    /**
-     * @return void
-     * @throws InvalidUuidVersion
-     */
-    public function testInvalidVersion()
-    {
-        $this->expectException(InvalidUuidVersion::class);
-
-        Str::uuid(-1);
-    }
-
-    /**
-     * @return void
-     * @throws InvalidUuidVersion
-     */
-    public function testDefault()
+    public function testDefault(): void
     {
         $this->assertTrue(Str::isUuid(Str::uuid()));
     }
 
-    /**
-     * @return void
-     * @throws InvalidUuidVersion
-     */
-    public function testVersion1()
+    public function testVersion1(): void
     {
-        $this->assertTrue(Str::isUuid(Str::uuid(1)));
+        $this->assertTrue(Str::isUuid(Str::uuid(UuidVersion::one)));
     }
 
-    /**
-     * @return void
-     * @throws InvalidUuidVersion
-     */
-    public function testVersion2()
+    public function testVersion2(): void
     {
-        $this->assertTrue(Str::isUuid(Str::uuid(2)));
+        $this->assertTrue(Str::isUuid(Str::uuid(UuidVersion::two)));
     }
 
-    /**
-     * @return void
-     * @throws InvalidUuidVersion
-     */
-    public function testVersion3()
+    public function testVersion3(): void
     {
-        $this->assertTrue(Str::isUuid(Str::uuid(3)));
+        $this->assertTrue(Str::isUuid(Str::uuid(UuidVersion::three)));
     }
 
-    /**
-     * @return void
-     * @throws InvalidUuidVersion
-     */
-    public function testVersion4()
+    public function testVersion4(): void
     {
         /** @noinspection PhpRedundantOptionalArgumentInspection */
-        $this->assertTrue(Str::isUuid(Str::uuid(4)));
+        $this->assertTrue(Str::isUuid(Str::uuid(UuidVersion::four)));
     }
 
-    /**
-     * @return void
-     * @throws InvalidUuidVersion
-     */
-    public function testVersion5()
+    public function testVersion5(): void
     {
-        $this->assertTrue(Str::isUuid(Str::uuid(5)));
+        $this->assertTrue(Str::isUuid(Str::uuid(UuidVersion::five)));
     }
 
-    /**
-     * @return void
-     * @throws InvalidUuidVersion
-     */
-    public function testVersion6()
+    public function testVersion6(): void
     {
-        $this->assertTrue(Str::isUuid(Str::uuid(6)));
+        $this->assertTrue(Str::isUuid(Str::uuid(UuidVersion::six)));
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace StrHelperTest\Traits\CaseStyleTests\Traits;
+namespace Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests\Traits;
 
 use Wordless\Application\Helpers\Str;
 
