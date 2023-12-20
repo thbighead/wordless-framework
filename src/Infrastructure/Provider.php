@@ -65,6 +65,14 @@ abstract class Provider
     }
 
     /**
+     * @return string[]|Provider[]
+     */
+    public function registerProviders(): array
+    {
+        return [];
+    }
+
+    /**
      * @return string[]|CustomTaxonomy[]
      */
     public function registerTaxonomies(): array

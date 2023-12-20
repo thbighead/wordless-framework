@@ -63,6 +63,10 @@ final class Bootstrapper extends Singleton
             throw new InvalidProviderClass($provider_class_namespace);
         }
 
+        foreach ($provider->registerProviders() as $provider_class_namespace) {
+            $this->loadProvider($provider_class_namespace);
+        }
+
         return $provider;
     }
 
