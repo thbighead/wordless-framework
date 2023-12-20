@@ -5,12 +5,17 @@ use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Libraries\JWT\Enums\CryptoAlgorithm;
 use Wordless\Application\Libraries\JWT\Token;
+use Wordless\Application\Providers\CommentsProvider;
+use Wordless\Application\Providers\CoreProvider;
+use Wordless\Application\Providers\EmojiProvider;
 use Wordless\Infrastructure\Provider;
 
 $current_wp_theme = Config::tryToGetOrDefault('wordpress.theme', 'wordless');
 /** @var Provider[] $providers */
 $providers = [
-    
+    CoreProvider::class,
+    CommentsProvider::class,
+    EmojiProvider::class,
 ];
 
 return [
