@@ -4,6 +4,8 @@ namespace Wordless\Application\Listeners\RestApi;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Listeners\RestApi\DefineEndpoints\Exceptions\InvalidRestApiMultipleConfigKey;
+use Wordless\Application\Providers\RestApiProvider;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
 use Wordless\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Wordpress\Hook\Enums\Filter;
@@ -15,11 +17,6 @@ class DefineEndpoints extends FilterListener
      */
     protected const FUNCTION = 'setRestApiRoutes';
 
-    public static function priority(): int
-    {
-        return 20;
-    }
-
     /**
      * @param array $endpoints
      * @return array
@@ -28,19 +25,22 @@ class DefineEndpoints extends FilterListener
      */
     public static function setRestApiRoutes(array $endpoints): array
     {
-        $routes_configuration = Config::tryToGetOrDefault('rest-api.routes');
+        $routes_configuration = Config::tryToGetOrDefault('rest-api.' . RestApiProvider::CONFIG_KEY_ROUTES);
 
-        if (isset($routes_configuration[RestApiPolicy::ALLOW])
-            && isset($routes_configuration[RestApiPolicy::DISALLOW])) {
-            throw new InvalidRestApiMultipleConfigKey();
+        if (isset($routes_configuration[RestApiProvider::CONFIG_ROUTES_KEY_ALLOW])
+            && isset($routes_configuration[RestApiProvider::CONFIG_ROUTES_KEY_DISALLOW])) {
+            throw new InvalidRestApiMultipleConfigKey;
         }
 
-        if (isset($routes_configuration[RestApiPolicy::ALLOW])) {
-            return self::allowEndpoints($endpoints, $routes_configuration[RestApiPolicy::ALLOW]);
+        if (isset($routes_configuration[RestApiProvider::CONFIG_ROUTES_KEY_ALLOW])) {
+            return self::allowEndpoints($endpoints, $routes_configuration[RestApiProvider::CONFIG_ROUTES_KEY_ALLOW]);
         }
 
-        if (isset($routes_configuration[RestApiPolicy::DISALLOW])) {
-            return self::disallowEndpoints($endpoints, $routes_configuration[RestApiPolicy::DISALLOW]);
+        if (isset($routes_configuration[RestApiProvider::CONFIG_ROUTES_KEY_DISALLOW])) {
+            return self::disallowEndpoints(
+                $endpoints,
+                $routes_configuration[RestApiProvider::CONFIG_ROUTES_KEY_DISALLOW]
+            );
         }
 
         return $endpoints;

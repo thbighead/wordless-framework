@@ -5,6 +5,7 @@ use Wordless\Application\Listeners\ChooseImageEditor;
 use Wordless\Application\Listeners\CustomLoginUrl\Contracts\BaseListener as CustomLoginUrl;
 use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
+use Wordless\Application\Providers\RestApiProvider;
 use Wordless\Application\Providers\WpSpeedUpProvider;
 use Wordless\Core\Bootstrapper;
 use Wordless\Wordpress\Enums\StartOfWeek;
@@ -50,15 +51,15 @@ return [
 //        ],
     ],
     'rest-api' => [
-        RestApiRoutes::KEY => [
-            RestApiRoutes::PUBLIC => [
+        RestApiProvider::CONFIG_KEY_ROUTES => [
+            RestApiProvider::CONFIG_ROUTES_KEY_PUBLIC => [
 //                '/wp/v2',
 //                '/wp/v2/pages',
 //                '/wp/v2/posts',
 //                '/wp/v2/users',
             ],
-//            RestApiPolicy::ALLOW => [],
-            RestApiPolicy::DISALLOW => [],
+//            RestApiProvider::CONFIG_ROUTES_KEY_ALLOW => [],
+            RestApiProvider::CONFIG_ROUTES_KEY_DISALLOW => [],
         ],
     ],
 ];

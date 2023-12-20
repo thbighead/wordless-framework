@@ -9,6 +9,11 @@ use Wordless\Infrastructure\Wordpress\Listener;
 
 class RestApiProvider extends Provider
 {
+    final public const CONFIG_KEY_ROUTES = 'routes';
+    final public const CONFIG_ROUTES_KEY_ALLOW = 'allow';
+    final public const CONFIG_ROUTES_KEY_DISALLOW = 'disallow';
+    final public const CONFIG_ROUTES_KEY_PUBLIC = 'public';
+
     /**
      * @return string[]|Listener[]
      */
