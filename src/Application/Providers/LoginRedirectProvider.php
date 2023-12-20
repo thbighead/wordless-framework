@@ -16,7 +16,6 @@ use Wordless\Infrastructure\Wordpress\Listener;
 
 class LoginRedirectProvider extends Provider
 {
-
     private const CONFIG_PREFIX = 'wordpress.admin.';
 
     /**
@@ -53,13 +52,5 @@ class LoginRedirectProvider extends Provider
         }
 
         return $hooks_to_remove;
-    }
-
-    /**
-     * @return RemoveHookDTO[]
-     */
-    public function unregisterFilterListeners(): array
-    {
-        return [];
     }
 }

@@ -9,9 +9,8 @@ use Wordless\Infrastructure\Wordpress\Listener;
 
 class RestApiProvider extends Provider
 {
-
     /**
-     * @return array|string[]|Listener[]
+     * @return string[]|Listener[]
      */
     public function registerListeners(): array
     {
