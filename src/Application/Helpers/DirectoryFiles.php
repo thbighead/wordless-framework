@@ -3,9 +3,6 @@
 namespace Wordless\Application\Helpers;
 
 use Generator;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangePathPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
@@ -14,6 +11,9 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateSymlink
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 
 class DirectoryFiles
@@ -209,9 +209,11 @@ class DirectoryFiles
      */
     public static function getFileContent(string $filepath): string
     {
-        if (file_get_contents($filepath = ProjectPath::realpath($filepath)) === false) {
+        if (($file_content = file_get_contents($filepath = ProjectPath::realpath($filepath))) === false) {
             throw new FailedToGetFileContent($filepath);
         }
+
+        return $file_content;
     }
 
     /**

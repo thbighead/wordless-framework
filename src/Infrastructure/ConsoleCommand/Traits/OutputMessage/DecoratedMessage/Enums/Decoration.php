@@ -2,9 +2,10 @@
 
 namespace Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\DecoratedMessage\Enums;
 
+use Wordless\Application\Libraries\TypeBackedEnum\StringBackedEnum;
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\DecoratedMessage\Enums\Decoration\Contracts\IDecoration;
 
-enum Decoration: string implements IDecoration
+enum Decoration: string implements IDecoration, StringBackedEnum
 {
     case comment = 'gray';
     case danger = 'red';

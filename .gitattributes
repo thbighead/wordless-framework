@@ -3,6 +3,7 @@
 /config                                         export-ignore
 /console                                        export-ignore
 /docker                                         export-ignore
+/stubs                                          export-ignore
 /vendor                                         export-ignore
 /wp                                             export-ignore
 /wp-cli.php                                     export-ignore

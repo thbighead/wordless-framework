@@ -9,7 +9,6 @@ use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Symfony\Component\HttpClient\HttpClient;
@@ -35,6 +34,7 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Listeners\CustomLoginUrl\Contracts\BaseListener as CustomLoginUrl;
 use Wordless\Application\Mounters\Stub\RobotsTxtStubMounter;
+use Wordless\Application\Mounters\Stub\WordlessPluginStubMounter;
 use Wordless\Application\Mounters\Stub\WpConfigStubMounter;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
@@ -110,10 +110,10 @@ class WordlessInstall extends ConsoleCommand
             ->loadWpLanguages()
             ->createWpConfigFromStub()
             ->createRobotsTxtFromStub()
+            ->createWordlessPluginFromStub()
             ->createWpDatabase()
             ->coreSteps()
-            ->resolveWpConfigChmod()
-            ->copyWordlessPluginToMUPlugins();
+            ->resolveWpConfigChmod();
 
         return Command::SUCCESS;
     }
@@ -200,15 +200,15 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws DirectoryFiles\Exceptions\FailedToCopyFile
+     * @throws FailedToCopyStub
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
      * @throws PathNotFoundException
      */
-    private function copyWordlessPluginToMUPlugins(): static
+    private function createWordlessPluginFromStub(): static
     {
-        DirectoryFiles::copyFile(
-            ProjectPath::assets('stubs/wordless-plugin.php'),
-            ProjectPath::wpCore('wp-content/mu-plugins')
-        );
+        WordlessPluginStubMounter::make(ProjectPath::wpContent() . '/mu-plugins/wordless-plugin.php')
+            ->mountNewFile();
 
         return $this;
     }
@@ -335,10 +335,9 @@ class WordlessInstall extends ConsoleCommand
      * @param string $dot_env_filepath
      * @return void
      * @throws ClientExceptionInterface
-     * @throws DirectoryFiles\Exceptions\FailedToGetFileContent
+     * @throws FailedToGetFileContent
      * @throws FailedToRewriteDotEnvFile
      * @throws FormatException
-     * @throws InvalidArgumentException
      * @throws PathNotFoundException
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
@@ -408,10 +407,7 @@ class WordlessInstall extends ConsoleCommand
      */
     private function loadWpLanguages(): static
     {
-        $this->wp_languages = explode(
-            ',',
-            Config::tryToGetOrDefault('wordpress.languages', ['en_US'])
-        );
+        $this->wp_languages = Config::tryToGetOrDefault('wordpress.languages', ['en_US']);
 
         return $this;
     }
