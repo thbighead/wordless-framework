@@ -71,6 +71,11 @@ STRING;
         return self::returnTypedValue($value);
     }
 
+    public static function isFramework(): bool
+    {
+        return defined('FRAMEWORK_ENVIRONMENT') && FRAMEWORK_ENVIRONMENT === true;
+    }
+
     public static function isLocal(): bool
     {
         return static::get('APP_ENV') === self::LOCAL;
@@ -79,6 +84,11 @@ STRING;
     public static function isNotLocal(): bool
     {
         return !static::isLocal();
+    }
+
+    public static function isNotFramework(): bool
+    {
+        return !static::isFramework();
     }
 
     public static function isNotProduction(): bool

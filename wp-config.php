@@ -25,6 +25,10 @@
  * if this path doesn't exist) on every 'php console wordless:install' command.
  * @author Wordless
  */
+if (!defined('FRAMEWORK_ENVIRONMENT')) {
+    define('FRAMEWORK_ENVIRONMENT', true);
+}
+
 if (!defined('ROOT_PROJECT_PATH')) {
     define('ROOT_PROJECT_PATH', __DIR__ . '/../..');
 }

@@ -6,6 +6,7 @@ use Wordless\Core\Bootstrapper;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+const FRAMEWORK_ENVIRONMENT = true;
 const ROOT_PROJECT_PATH = __DIR__;
 
 Environment::loadDotEnv();
