@@ -263,6 +263,10 @@ class WordlessInstall extends ConsoleCommand
      */
     private function createRobotsTxtFromStub(): static
     {
+        if (Environment::isFramework()) {
+            return $this;
+        }
+
         $robotStubMounter = new RobotsTxtStubMounter(
             ProjectPath::public()
             . DIRECTORY_SEPARATOR
