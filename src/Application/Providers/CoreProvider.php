@@ -4,7 +4,6 @@ namespace Wordless\Application\Providers;
 
 use Wordless\Application\Commands\CreateInternalCache;
 use Wordless\Application\Commands\FlushMigrations;
-use Wordless\Application\Commands\GenerateMustUsePluginsLoader;
 use Wordless\Application\Commands\GeneratePublicWordpressSymbolicLinks;
 use Wordless\Application\Commands\MakeCommand;
 use Wordless\Application\Commands\MakeController;
@@ -27,8 +26,6 @@ use Wordless\Application\Listeners\BootCustomTaxonomies;
 use Wordless\Application\Listeners\BootHttpRemoteCallsLog;
 use Wordless\Application\Listeners\ChooseImageEditor;
 use Wordless\Application\Listeners\DeferEnqueuedScripts;
-use Wordless\Application\Listeners\DisableCptComments;
-use Wordless\Application\Listeners\DisableDefaultComments;
 use Wordless\Application\Listeners\DisableXmlrpc;
 use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Application\Listeners\EnqueueThemeEnqueueables;
@@ -37,8 +34,6 @@ use Wordless\Application\Listeners\HideContentEditorForCustomFrontPageAtAdmin;
 use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
 use Wordless\Application\Listeners\ManageRestResponseContentTypeHeader;
 use Wordless\Application\Listeners\RemoveAdditionalCssFromAdmin;
-use Wordless\Application\Listeners\RemoveEmojiFromTinyMce;
-use Wordless\Application\Listeners\RemoveEmojiFromWpResourceHints;
 use Wordless\Application\Listeners\RemoveGlobalCustomInlineStyles;
 use Wordless\Application\Listeners\ShowCustomFrontPageAtAdminSideMenu;
 use Wordless\Application\Listeners\WordlessVersionOnAdmin;
@@ -51,7 +46,6 @@ final class CoreProvider extends Provider
         return [
             CreateInternalCache::class,
             FlushMigrations::class,
-            GenerateMustUsePluginsLoader::class,
             GeneratePublicWordpressSymbolicLinks::class,
             MakeCommand::class,
             MakeController::class,

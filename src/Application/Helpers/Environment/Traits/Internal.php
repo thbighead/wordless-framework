@@ -68,6 +68,10 @@ trait Internal
 
     private static function returnTypedValue(mixed $value): mixed
     {
+        if (!is_string($value)) {
+            return $value;
+        }
+
         return match (strtoupper($value)) {
             'TRUE' => true,
             'FALSE' => false,

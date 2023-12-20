@@ -82,7 +82,7 @@ final class Bootstrapper extends Singleton
             return $this;
         }
 
-        foreach (Config::get('providers') as $provider_class_namespace) {
+        foreach (Config::get('wordless.providers') as $provider_class_namespace) {
             $this->loaded_providers[] = $this->loadProvider($provider_class_namespace);
         }
 

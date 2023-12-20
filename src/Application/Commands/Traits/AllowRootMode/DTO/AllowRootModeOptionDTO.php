@@ -5,7 +5,7 @@ namespace Wordless\Application\Commands\Traits\AllowRootMode\DTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 
-class AllowRootModeOptionDTO extends OptionDTO
+readonly class AllowRootModeOptionDTO extends OptionDTO
 {
     final public const ALLOW_ROOT_MODE = 'allow-root';
 

@@ -85,6 +85,7 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @return int
      * @throws ClientExceptionInterface
+     * @throws DirectoryFiles\Exceptions\FailedToCopyFile
      * @throws ExceptionInterface
      * @throws FailedToChangePathPermissions
      * @throws FailedToCopyStub
@@ -111,7 +112,8 @@ class WordlessInstall extends ConsoleCommand
             ->createRobotsTxtFromStub()
             ->createWpDatabase()
             ->coreSteps()
-            ->resolveWpConfigChmod();
+            ->resolveWpConfigChmod()
+            ->copyWordlessPluginToMUPlugins();
 
         return Command::SUCCESS;
     }
@@ -196,9 +198,19 @@ class WordlessInstall extends ConsoleCommand
             . Config::tryToGetOrDefault('admin.' . StartOfWeek::KEY, StartOfWeek::sunday->value));
     }
 
-    private function ask(string $question, $default = null)
+    /**
+     * @return $this
+     * @throws DirectoryFiles\Exceptions\FailedToCopyFile
+     * @throws PathNotFoundException
+     */
+    private function copyWordlessPluginToMUPlugins(): static
     {
-        return $this->questionHelper->ask($this->input, $this->output, new Question($question, $default));
+        DirectoryFiles::copyFile(
+            ProjectPath::assets('stubs/wordless-plugin.php'),
+            ProjectPath::wpCore('wp-content/mu-plugins')
+        );
+
+        return $this;
     }
 
     /**
@@ -585,16 +597,18 @@ class WordlessInstall extends ConsoleCommand
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws FailedToChangePathPermissions
      * @throws PathNotFoundException
      */
-    private function resolveWpConfigChmod(): void
+    private function resolveWpConfigChmod(): static
     {
         if ($this->getEnvVariableByKey('APP_ENV') === Environment::PRODUCTION) {
 
             DirectoryFiles::changePermissions(ProjectPath::wpCore('wp-config.php'), 0660);
         }
+
+        return $this;
     }
 
     /**

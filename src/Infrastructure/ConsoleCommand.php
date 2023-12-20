@@ -113,12 +113,15 @@ abstract class ConsoleCommand extends Command
     private function setOptions(OptionDTO ...$options): static
     {
         foreach ($options as $option) {
+            $optionMode = $option->mode;
+
             $this->addOption(
                 $option->name,
                 $option->shortcut,
-                $option->mode?->value,
+                $optionMode?->value,
                 $option->description,
-                OptionMode::optional_value && $option->default === null ? false : $option->default
+                $optionMode === OptionMode::optional_value && $option->default === null ?
+                    false : $option->default
             );
         }
 
