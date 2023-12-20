@@ -3,6 +3,7 @@
 namespace Wordless\Application\Helpers;
 
 use Generator;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangeDirectoryTo;
@@ -124,7 +125,7 @@ class DirectoryFiles
         }
 
         if (file_put_contents($filepath, $file_content) === false) {
-            throw new FailedToPutFileContent($filepath);
+            throw new FailedToPutFileContent($filepath, $file_content);
         }
     }
 
@@ -198,6 +199,19 @@ class DirectoryFiles
         }
 
         return ProjectPath::realpath($current_working_directory);
+    }
+
+    /**
+     * @param string $filepath
+     * @return string
+     * @throws FailedToGetFileContent
+     * @throws PathNotFoundException
+     */
+    public static function getFileContent(string $filepath): string
+    {
+        if (file_get_contents($filepath = ProjectPath::realpath($filepath)) === false) {
+            throw new FailedToGetFileContent($filepath);
+        }
     }
 
     /**

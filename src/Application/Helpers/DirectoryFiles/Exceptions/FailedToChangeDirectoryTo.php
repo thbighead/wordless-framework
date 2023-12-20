@@ -12,7 +12,7 @@ class FailedToChangeDirectoryTo extends ErrorException
     {
         parent::__construct(
             "Failed to change working directory to $this->path_to_change_to",
-            ExceptionCode::logic_control->value,
+            ExceptionCode::intentional_interrupt->value,
             previous: $previous
         );
     }

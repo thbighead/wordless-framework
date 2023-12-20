@@ -12,7 +12,7 @@ class InvalidConfigKey extends DomainException
     {
         parent::__construct(
             "Tried to get key '$this->keys_as_string' from configuration file.",
-            ExceptionCode::logic_control->value,
+            ExceptionCode::intentional_interrupt->value,
             $previous
         );
     }

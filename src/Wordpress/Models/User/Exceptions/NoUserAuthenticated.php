@@ -13,7 +13,7 @@ class NoUserAuthenticated extends DomainException
     {
         parent::__construct(
             'Failed to retrieve the current authenticated user from ' . User::class,
-            ExceptionCode::logic_control->value,
+            ExceptionCode::intentional_interrupt->value,
             $previous
         );
     }

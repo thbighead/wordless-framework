@@ -19,7 +19,7 @@ class FailedToCopyFile extends ErrorException
 
         parent::__construct(
             "Failed to copy from $this->from to $this->to in $security_word_mode mode.",
-            ExceptionCode::logic_control->value,
+            ExceptionCode::intentional_interrupt->value,
             previous: $previous
         );
     }

@@ -19,7 +19,7 @@ class ValidationError extends InvalidArgumentException
     {
         parent::__construct(
             __('Invalid parameters.'),
-            ExceptionCode::logic_control->value,
+            ExceptionCode::intentional_interrupt->value,
             $previous
         );
 

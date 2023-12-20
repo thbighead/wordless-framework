@@ -2,7 +2,7 @@
 
 namespace Wordless\Application\Commands\Traits\WunWpCliCommand\Exceptions;
 
-use Wordless\Exceptions\CliReturnedNonZero;
+use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 
 class WpCliCommandReturnedNonZero extends CliReturnedNonZero
 {

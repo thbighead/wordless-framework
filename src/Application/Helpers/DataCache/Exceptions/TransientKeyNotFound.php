@@ -12,7 +12,7 @@ class TransientKeyNotFound extends InvalidArgumentException
     {
         parent::__construct(
             "Failed to find any data cached by key '$this->key'.",
-            ExceptionCode::logic_control->value,
+            ExceptionCode::intentional_interrupt->value,
             $previous
         );
     }

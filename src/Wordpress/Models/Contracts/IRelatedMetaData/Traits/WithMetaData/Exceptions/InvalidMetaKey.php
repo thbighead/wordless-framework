@@ -12,7 +12,7 @@ class InvalidMetaKey extends Exception
     {
         parent::__construct(
             "The meta key '$this->invalid_meta_key' is invalid.",
-            ExceptionCode::logic_control->value,
+            ExceptionCode::intentional_interrupt->value,
             $previous
         );
     }

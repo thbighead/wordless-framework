@@ -16,7 +16,7 @@ class FailedToChangePathPermissions extends ErrorException
     {
         parent::__construct(
             "Failed to change $this->path permissions to $this->permissions",
-            ExceptionCode::logic_control->value,
+            ExceptionCode::intentional_interrupt->value,
             previous: $previous
         );
     }

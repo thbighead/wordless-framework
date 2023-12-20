@@ -4,20 +4,20 @@ namespace Wordless\Application\Helpers\DirectoryFiles\Exceptions;
 
 use ErrorException;
 use Throwable;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToPutFileContent extends ErrorException
 {
-    private string $filepath;
-
-    public function __construct(string $filepath, Throwable $previous = null)
+    public function __construct(
+        public readonly string $filepath,
+        public readonly string $intended_content,
+        ?Throwable             $previous = null
+    )
     {
-        $this->filepath = $filepath;
-
-        parent::__construct("Failed to put contents in file at $this->filepath", 0, $previous);
-    }
-
-    public function getFilepath(): string
-    {
-        return $this->filepath;
+        parent::__construct(
+            "Failed to put contents in file at $this->filepath",
+            ExceptionCode::intentional_interrupt->value,
+            previous: $previous
+        );
     }
 }

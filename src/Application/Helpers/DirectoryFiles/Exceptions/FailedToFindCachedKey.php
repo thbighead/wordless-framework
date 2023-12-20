@@ -19,7 +19,7 @@ class FailedToFindCachedKey extends InvalidArgumentException
             "Failed to retrieve '$this->full_key_string' key from "
             . InternalCache::INTERNAL_WORDLESS_CACHE_CONSTANT_NAME
             . " at '$this->partial_key_which_failed'.",
-            ExceptionCode::logic_control->value,
+            ExceptionCode::intentional_interrupt->value,
             $previous
         );
     }

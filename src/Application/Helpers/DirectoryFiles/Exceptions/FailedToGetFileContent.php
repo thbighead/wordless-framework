@@ -6,19 +6,14 @@ use ErrorException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class FailedToDeletePath extends ErrorException
+class FailedToGetFileContent extends ErrorException
 {
-    public function __construct(private readonly string $path, ?Throwable $previous = null)
+    public function __construct(private readonly string $filepath, ?Throwable $previous = null)
     {
         parent::__construct(
-            "Couldn't delete $this->path.",
+            "Failed to get content from file at $this->filepath",
             ExceptionCode::intentional_interrupt->value,
             previous: $previous
         );
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
     }
 }

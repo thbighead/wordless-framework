@@ -3,7 +3,6 @@
 namespace Wordless\Core\Composer\Traits;
 
 use Composer\Script\Event;
-use Wordless\Application\Commands\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
@@ -12,6 +11,7 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Composer\Exceptions\AppHostAlreadySetOnDotEnv;
 use Wordless\Core\Composer\Traits\SetHostFromNginx\Exceptions\UnavailableNginxServerName;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 trait SetHostFromNginx
 {

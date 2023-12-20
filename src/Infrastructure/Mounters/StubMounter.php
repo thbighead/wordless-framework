@@ -2,6 +2,10 @@
 
 namespace Wordless\Infrastructure\Mounters;
 
+use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -41,13 +45,18 @@ abstract class StubMounter
     /**
      * @param string|null $new_file_path
      * @return void
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
      * @throws FailedToCopyStub
+     * @throws PathNotFoundException
      */
     public function mountNewFile(?string $new_file_path = null): void
     {
         $new_file_path = $new_file_path ?? $this->new_file_path;
 
-        if (file_put_contents($new_file_path, $this->replaceUnfilledContent()) === false) {
+        try {
+            DirectoryFiles::createFileAt($new_file_path, $this->replaceUnfilledContent());
+        } catch (FailedToPutFileContent) {
             throw new FailedToCopyStub($this->stub_filepath, $new_file_path, false);
         }
     }

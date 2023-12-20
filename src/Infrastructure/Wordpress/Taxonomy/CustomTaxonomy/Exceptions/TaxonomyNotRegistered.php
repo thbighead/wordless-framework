@@ -12,7 +12,7 @@ class TaxonomyNotRegistered extends InvalidArgumentException
     {
         parent::__construct(
             "There's no custom taxonomies registered with the following key: $this->not_registered_taxonomy_key",
-            ExceptionCode::logic_control->value,
+            ExceptionCode::intentional_interrupt->value,
             $previous
         );
     }

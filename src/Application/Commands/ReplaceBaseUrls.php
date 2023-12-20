@@ -6,10 +6,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Wordless\Application\Commands\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\WunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
@@ -37,7 +37,7 @@ class ReplaceBaseUrls extends ConsoleCommand
                 self::BASE_URLS_TO_SEARCH_FOR_REPLACING,
                 'Base URLs to search and replace by the defined by the application (.env APP_URL)',
                 ArgumentMode::array_optional,
-                [Environment::COMMONLY_DOT_ENV_DEFAULT_VALUES['APP_URL']]
+                [Environment::get('APP_URL')]
             ),
         ];
     }
@@ -90,7 +90,7 @@ class ReplaceBaseUrls extends ConsoleCommand
 
         if (($this->app_url = Environment::get($app_url_env_variable_name)) === null) {
             throw new DotEnvNotSetException(
-                ".env seems to be not correctly set for application because \"$app_url_env_variable_name\" returned a not expected value."
+                ".env seems incorrect for application because \"$app_url_env_variable_name\" returned a non expected value."
             );
         }
     }

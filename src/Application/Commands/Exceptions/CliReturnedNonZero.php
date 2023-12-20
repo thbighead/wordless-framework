@@ -16,7 +16,7 @@ class CliReturnedNonZero extends ErrorException
     {
         parent::__construct(
             "Running $this->command returned non-zero ($this->command_result)",
-            ExceptionCode::logic_control->value,
+            ExceptionCode::intentional_interrupt->value,
             previous: $previous
         );
     }

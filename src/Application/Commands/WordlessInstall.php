@@ -19,20 +19,23 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
-use Wordless\Application\Commands\Traits\WriteRobotsTxt;
 use Wordless\Application\Commands\Traits\WunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangePathPermissions;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Environment;
-use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Listeners\CustomLoginUrl\Contracts\BaseListener as CustomLoginUrl;
+use Wordless\Application\Mounters\Stub\RobotsTxtStubMounter;
 use Wordless\Application\Mounters\Stub\WpConfigStubMounter;
-use Wordless\Application\Mounters\Stub\WpConfigStubMounter\Exceptions\WpConfigAlreadySet;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -42,11 +45,10 @@ use Wordless\Wordpress\Enums\StartOfWeek;
 
 class WordlessInstall extends ConsoleCommand
 {
-    use ForceMode, RunWpCliCommand, WriteRobotsTxt;
+    use ForceMode;
+    use RunWpCliCommand;
 
-    protected static $defaultName = 'wordless:install';
-
-    public const TEMP_MAIL = 'temp@mail.not.real';
+    final public const COMMAND_NAME = 'wordless:install';
     final protected const NO_ASK_MODE = 'no-ask';
     private const WORDPRESS_SALT_FILLABLE_VALUES = [
         '#AUTH_KEY',
@@ -59,6 +61,8 @@ class WordlessInstall extends ConsoleCommand
         '#NONCE_SALT',
     ];
     private const WORDPRESS_SALT_URL_GETTER = 'https://api.wordpress.org/secret-key/1.1/salt/';
+
+    protected static $defaultName = self::COMMAND_NAME;
 
     private array $fresh_new_env_content;
     private QuestionHelper $questionHelper;
@@ -82,9 +86,12 @@ class WordlessInstall extends ConsoleCommand
      * @return int
      * @throws ClientExceptionInterface
      * @throws ExceptionInterface
-     * @throws FailedToCopyDotEnvExampleIntoNewDotEnv
+     * @throws FailedToChangePathPermissions
      * @throws FailedToCopyStub
+     * @throws FailedToCreateDirectory
      * @throws FailedToDeletePath
+     * @throws FailedToGetDirectoryPermissions
+     * @throws FailedToGetFileContent
      * @throws FailedToRewriteDotEnvFile
      * @throws FormatException
      * @throws InvalidArgumentException
@@ -93,22 +100,18 @@ class WordlessInstall extends ConsoleCommand
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
     protected function runIt(): int
     {
-        $this->resolveForceMode();
-
-        $this->resolveDotEnv();
-        $this->loadWpLanguages();
-
-        $this->createWpConfigFromStub();
-        $this->createRobotsTxtFromStub();
-        $this->createWpDatabase();
-        $this->installWpCore(); // calls switchingMaintenanceMode(true)
-
-        $this->coreSteps();
-
-        $this->resolveWpConfigChmod();
+        $this->resolveForceMode()
+            ->resolveDotEnv()
+            ->loadWpLanguages()
+            ->createWpConfigFromStub()
+            ->createRobotsTxtFromStub()
+            ->createWpDatabase()
+            ->coreSteps()
+            ->resolveWpConfigChmod();
 
         return Command::SUCCESS;
     }
@@ -150,25 +153,29 @@ class WordlessInstall extends ConsoleCommand
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
-    private function activateWpTheme(): void
+    private function activateWpTheme(): static
     {
         $this->runWpCliCommand(
             "theme activate {$this->getEnvVariableByKey('WP_THEME', 'wordless')}"
         );
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
-    private function activateWpPlugins(): void
+    private function activateWpPlugins(): static
     {
         $this->runWpCliCommand('plugin activate --all');
+
+        return $this;
     }
 
     /**
@@ -195,78 +202,93 @@ class WordlessInstall extends ConsoleCommand
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws ExceptionInterface
      * @throws PathNotFoundException
+     * @throws WpCliCommandReturnedNonZero
      */
-    private function coreSteps(): void
+    private function coreSteps(): static
     {
+        $this->switchingMaintenanceMode(true);
+
         try {
-            $this->flushWpRewriteRules();
-            $this->activateWpTheme();
-            $this->activateWpPlugins();
-            $this->installWpLanguages();
-            $this->makeWpBlogPublic();
-            $this->databaseUpdate();
-            $this->generateSymbolicLinks();
-            $this->runMigrations();
-            $this->syncRoles();
-            $this->createCache();
-            $this->applyAdminConfiguration();
+            $this->performUrlDatabaseFix()
+                ->flushWpRewriteRules()
+                ->activateWpTheme()
+                ->activateWpPlugins()
+                ->installWpLanguages()
+                ->makeWpBlogPublic()
+                ->databaseUpdate()
+                ->generateSymbolicLinks()
+                ->runMigrations()
+                ->syncRoles()
+                ->createCache()
+                ->applyAdminConfiguration();
         } finally {
             $this->switchingMaintenanceMode(false);
         }
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws ExceptionInterface
      */
-    private function createCache(): void
+    private function createCache(): static
     {
         $this->callConsoleCommand(CreateInternalCache::COMMAND_NAME, output: $this->output);
+
+        return $this;
     }
 
     /**
-     * @return void
-     * @throws PathNotFoundException
-     */
-    private function createRobotsTxtFromStub(): void
-    {
-        $filename = 'robots.txt';
-        $new_robots_txt_filepath = ProjectPath::public() . "/$filename";
-
-        if (($supposed_already_existing_robots_txt_filepath = realpath($new_robots_txt_filepath)) !== false) {
-            $this->writelnInfoWhenVerbose(
-                "$supposed_already_existing_robots_txt_filepath already exists, skipping."
-            );
-
-            return;
-        }
-
-        $this->mountRobotsTxtFromStub($filename, $new_robots_txt_filepath);
-    }
-
-    /**
-     * @return void
+     * @return $this
      * @throws FailedToCopyStub
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
      * @throws PathNotFoundException
      */
-    private function createWpConfigFromStub(): void
+    private function createRobotsTxtFromStub(): static
     {
-        try {
-            WpConfigStubMounter::make(ProjectPath::wpCore() . '/wp-config.php')->mountNewFile();
-        } catch (WpConfigAlreadySet $exception) {
-            $this->writelnCommentWhenVerbose("{$exception->getMessage()} Skipping.");
-        }
+        $robotStubMounter = new RobotsTxtStubMounter(
+            ProjectPath::public()
+            . DIRECTORY_SEPARATOR
+            . RobotsTxtStubMounter::STUB_FINAL_FILENAME
+        );
+        $custom_login_url = Config::tryToGetOrDefault(
+            'wordpress.admin.' . CustomLoginUrl::WP_CUSTOM_LOGIN_URL_KEY,
+            false
+        );
+
+        $robotStubMounter->setReplaceContentDictionary([
+            '{APP_URL}' => Str::finishWith($this->getEnvVariableByKey('APP_URL', ''), '/'),
+            '#custom_login_url' => $custom_login_url ? "Disallow: /$custom_login_url/" : ''
+        ])->mountNewFile();
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return $this
+     * @throws FailedToCopyStub
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
+     * @throws PathNotFoundException
+     */
+    private function createWpConfigFromStub(): static
+    {
+        WpConfigStubMounter::make(ProjectPath::wpCore() . '/wp-config.php')->mountNewFile();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
      * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
-    private function createWpDatabase(): void
+    private function createWpDatabase(): static
     {
         $database_username = $this->getEnvVariableByKey('DB_USER');
         $database_password = $this->getEnvVariableByKey('DB_PASSWORD');
@@ -277,28 +299,35 @@ class WordlessInstall extends ConsoleCommand
             ) == 0) {
             $this->writelnCommentWhenVerbose('WordPress Database already created, skipping.');
 
-            return;
+            return $this;
         }
 
         $this->runWpCliCommand("db create --dbuser=$database_username --dbpass=$database_password");
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
      */
-    private function databaseUpdate(): void
+    private function databaseUpdate(): static
     {
         $this->runWpCliCommand('core update-db', true);
+
+        return $this;
     }
 
     /**
      * @param string $dot_env_filepath
      * @return void
      * @throws ClientExceptionInterface
+     * @throws DirectoryFiles\Exceptions\FailedToGetFileContent
      * @throws FailedToRewriteDotEnvFile
      * @throws FormatException
      * @throws InvalidArgumentException
+     * @throws PathNotFoundException
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
@@ -306,52 +335,42 @@ class WordlessInstall extends ConsoleCommand
     private function fillDotEnv(string $dot_env_filepath): void
     {
         if (($dot_env_content = $this->guessAndResolveDotEnvWpSaltVariables(
-                $dot_env_original_content = file_get_contents($dot_env_filepath)
+                $dot_env_original_content = DirectoryFiles::getFileContent($dot_env_filepath)
             )) !== $dot_env_original_content) {
             Environment::rewriteDotEnvFile($dot_env_filepath, $dot_env_content);
         }
-
-        if (empty($not_filled_variables = $this->getDotEnvNotFilledVariables($dot_env_content))) {
-            return;
-        }
-
-        $this->writeln("We'll need to fill up $dot_env_filepath: ('null' values to comment line)");
-
-        $filler_dictionary = $this->mountDotEnvFillerDictionary($not_filled_variables);
-        $dot_env_content = str_replace(
-            array_keys($filler_dictionary),
-            array_values($filler_dictionary),
-            $dot_env_content
-        );
-
-        Environment::rewriteDotEnvFile($dot_env_filepath, $dot_env_content);
 
         // populates an internal array with env variables freshly new.
         $this->fresh_new_env_content = (new Dotenv)->parse($dot_env_content);
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
-    private function flushWpRewriteRules(): void
+    private function flushWpRewriteRules(): static
     {
         $permalink_structure = $this->getEnvVariableByKey('WP_PERMALINK', '/%postname%/');
+
         $this->runWpCliCommand("rewrite structure '$permalink_structure' --hard");
         $this->runWpCliCommand('rewrite flush --hard');
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws ExceptionInterface
      */
-    private function generateSymbolicLinks(): void
+    private function generateSymbolicLinks(): static
     {
         $this->callConsoleCommand(
             GeneratePublicWordpressSymbolicLinks::COMMAND_NAME,
             output: $this->output
         );
+
+        return $this;
     }
 
     private function getDotEnvNotFilledVariables(string $dot_env_content): array
@@ -371,23 +390,18 @@ class WordlessInstall extends ConsoleCommand
         return $this->wp_languages;
     }
 
-    private function loadWpLanguages(): void
-    {
-        $this->wp_languages = explode(',', $this->getEnvVariableByKey('WP_LANGUAGES', ''));
-    }
-
     /**
-     * @return string
-     * @throws FailedToCopyDotEnvExampleIntoNewDotEnv
+     * @return $this
      * @throws PathNotFoundException
      */
-    private function getOrCreateDotEnvFilepath(): string
+    private function loadWpLanguages(): static
     {
-        try {
-            return ProjectPath::root('.env');
-        } catch (PathNotFoundException) {
-            return ProjectPath::realpath(Environment::createDotEnvFromExample());
-        }
+        $this->wp_languages = explode(
+            ',',
+            Config::tryToGetOrDefault('wordpress.languages', ['en_US'])
+        );
+
+        return $this;
     }
 
     /**
@@ -434,63 +448,6 @@ class WordlessInstall extends ConsoleCommand
     }
 
     /**
-     * @param string $variable_marked_as_not_filled
-     * @return false|mixed|string|null
-     * @throws InvalidArgumentException
-     */
-    private function guessOrAskDotEnvVariableValue(string $variable_marked_as_not_filled): mixed
-    {
-        $variable_default = $_ENV[$variable_marked_as_not_filled] ?? '';
-
-        if ($this->input->getOption(self::NO_ASK_MODE)) {
-            return $variable_default;
-        }
-
-        $variable_name = substr($variable_marked_as_not_filled, 1); // removing '$'
-        $variable_default = $_ENV[$variable_marked_as_not_filled] ??
-            Environment::COMMONLY_DOT_ENV_DEFAULT_VALUES[$variable_name] ??
-            '';
-
-        return $this->ask(
-            "What should be $variable_name value? [$variable_default] ",
-            $variable_default
-        );
-    }
-
-    /**
-     * @return void
-     * @throws ExceptionInterface
-     * @throws WpCliCommandReturnedNonZero
-     */
-    private function installWpCore(): void
-    {
-        if ($this->runWpCliCommand('core is-installed', true) == 0) {
-            $this->writelnInfoWhenVerbose('WordPress Core already installed, minor updating.');
-
-            $this->switchingMaintenanceMode(true);
-
-            if ($this->getEnvVariableByKey('WP_VERSION', 'latest') === 'latest') {
-                $this->performMinorUpdate();
-            }
-
-            return;
-        }
-
-        $app_url = $this->getEnvVariableByKey('APP_URL');
-        $app_url_with_final_slash = Str::finishWith($app_url, '/');
-        $app_name = $this->getEnvVariableByKey('APP_NAME', 'Wordless App');
-
-        $this->runWpCliCommand(
-            "core install --url=$app_url_with_final_slash --title=\"$app_name\" --skip-email --admin_user=temp --admin_email="
-            . self::TEMP_MAIL
-        );
-
-        $this->switchingMaintenanceMode(true);
-
-        $this->performUrlDatabaseFix($app_url, $app_url_with_final_slash);
-    }
-
-    /**
      * @param string $language
      * @return void
      * @throws ExceptionInterface
@@ -511,16 +468,16 @@ class WordlessInstall extends ConsoleCommand
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
-    private function installWpLanguages(): void
+    private function installWpLanguages(): static
     {
         if (empty($wp_languages = $this->getWpLanguages())) {
             $this->writelnWarning('Environment variable WP_LANGUAGES has no value. Skipping language install.');
 
-            return;
+            return $this;
         }
 
         $this->installWpCoreLanguage($wp_languages[0]);
@@ -528,6 +485,8 @@ class WordlessInstall extends ConsoleCommand
         foreach ($wp_languages as $language) {
             $this->installWpPluginsLanguage($language);
         }
+
+        return $this;
     }
 
     /**
@@ -543,96 +502,60 @@ class WordlessInstall extends ConsoleCommand
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
-    private function makeWpBlogPublic(): void
+    private function makeWpBlogPublic(): static
     {
         $blog_public = $this->getEnvVariableByKey('APP_ENV') === Environment::PRODUCTION ? '1' : '0';
 
         $this->runWpCliCommand("option update blog_public $blog_public");
+
+        return $this;
     }
 
     /**
-     * @param array $not_filled_variables
-     * @return array
-     * @throws InvalidArgumentException
-     */
-    private function mountDotEnvFillerDictionary(array $not_filled_variables): array
-    {
-        $filler_dictionary = [];
-
-        foreach ($not_filled_variables as $variable) {
-            $variable_value = $this->guessOrAskDotEnvVariableValue($variable);
-
-            if ($variable_value === 'null') {
-                $variable_name = substr($variable, 1); // removing '$'
-                $filler_dictionary["$variable_name=$variable"] = Environment::DOT_ENV_COMMENT_MARK . "$variable_name=";
-                continue;
-            }
-
-            $filler_dictionary[$variable] = "\"$variable_value\"";
-        }
-
-        return $filler_dictionary;
-    }
-
-    /**
-     * @return void
+     * @return $this
      * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
-    private function performMinorUpdate(): void
+    private function performUrlDatabaseFix(): static
     {
-        try {
-            $this->runWpCliCommand('core update --minor');
-        } finally {
-            $this->switchingMaintenanceMode(false);
-        }
+        $app_url = $this->getEnvVariableByKey('APP_URL');
+
+        $this->runWpCliCommand("option update siteurl $app_url/wp-core/");
+        $this->runWpCliCommand("option update home $app_url");
+
+        return $this;
     }
 
     /**
-     * @param string $app_url
-     * @param string $app_url_with_final_slash
-     * @return void
-     * @throws ExceptionInterface
-     * @throws WpCliCommandReturnedNonZero
-     */
-    private function performUrlDatabaseFix(string $app_url, string $app_url_with_final_slash): void
-    {
-        try {
-            $this->runWpCliCommand("option update siteurl {$app_url_with_final_slash}wp-core/");
-            $this->runWpCliCommand("option update home $app_url");
-        } finally {
-            $this->switchingMaintenanceMode(false);
-        }
-    }
-
-    /**
-     * @return void
+     * @return $this
      * @throws ClientExceptionInterface
-     * @throws FailedToCopyDotEnvExampleIntoNewDotEnv
+     * @throws FailedToGetFileContent
      * @throws FailedToRewriteDotEnvFile
      * @throws FormatException
      * @throws InvalidArgumentException
      * @throws PathNotFoundException
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
+     * @throws TransportExceptionInterface,
      */
-    private function resolveDotEnv(): void
+    private function resolveDotEnv(): static
     {
-        $this->fillDotEnv($this->getOrCreateDotEnvFilepath());
+        $this->fillDotEnv(ProjectPath::root('.env'));
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws FailedToDeletePath
-     * @throws InvalidDirectory
      * @throws InvalidArgumentException
+     * @throws InvalidDirectory
      */
-    private function resolveForceMode(): void
+    private function resolveForceMode(): static
     {
         if ($this->isForceMode()) {
             try {
@@ -657,34 +580,43 @@ class WordlessInstall extends ConsoleCommand
                 $this->writelnCommentWhenVerbose("{$exception->getMessage()} Skipped from force mode.");
             }
         }
+
+        return $this;
     }
 
     /**
+     * @return void
+     * @throws FailedToChangePathPermissions
      * @throws PathNotFoundException
      */
     private function resolveWpConfigChmod(): void
     {
         if ($this->getEnvVariableByKey('APP_ENV') === Environment::PRODUCTION) {
-            chmod(ProjectPath::wpCore('wp-config.php'), 0660);
+
+            DirectoryFiles::changePermissions(ProjectPath::wpCore('wp-config.php'), 0660);
         }
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws ExceptionInterface
      */
-    private function runMigrations(): void
+    private function runMigrations(): static
     {
         $this->callConsoleCommand(Migrate::COMMAND_NAME, output: $this->output);
+
+        return $this;
     }
 
     /**
-     * @return void
+     * @return $this
      * @throws ExceptionInterface
      */
-    private function syncRoles(): void
+    private function syncRoles(): static
     {
         $this->callConsoleCommand(SyncRoles::COMMAND_NAME, output: $this->output);
+
+        return $this;
     }
 
     /**

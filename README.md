@@ -76,36 +76,34 @@ php console test:environment -f
 
 ## Exception codes
 
-0. *Caught internally*: those exceptions should never interrupt the application because they are (or should be) always
+0. *Caught internally*: those exceptions should never interrupt application because they are (or should be) always
 caught by the framework itself everytime it would be thrown;
-1. *Development error*: it means that the exception is thrown to force developers to always use a try-catch block
-when calling what throws it. It's a kind of exception that should only interrupt the application when a develop
-mistake occurs;
+1. *Development error*: it's a kind of exception that should only interrupt application when a develop mistake occurs;
 2. *Logic control*: it controls any application logic. It may be wrapped by a try-catch code or not depending on what
 developers expect;
-3. *Intentional interrupt*: should never be caught. Exceptions are made to ALWAYS interrupt the application. 
+3. *Intentional interrupt*: should never be caught, those exceptions are made to ALWAYS interrupt application. 
 
 ## Docker
 
 To provide a development environment, Wordless offers the following containers:
 
-#### Workspace
+### Workspace
 
 This is the main container, where you can access PHP, Composer, and the Wordless CLI console. Generally, this is where 
 you will interact with your application most of the time.
 
-#### MariaDB
+### MariaDB
 
 This container is responsible for creating and managing your database.
 
-#### Adminer
+### Adminer
 
 Adminer is a container that allows interaction with the database through the browser, providing an interface to perform 
 various tasks necessary for database-related development.
 
 ### Commands
 
-### Starting containers 
+#### Starting containers 
 To start the containers, use the `up` command, which will initiate each container. If the containers haven't been created, 
 this command will also build them.
 
@@ -115,7 +113,7 @@ this command will also build them.
 > docker compose up -d
 > ```
 
-### Executing Containers
+#### Executing Containers
 Once the containers are created and started, you can navigate inside them using the `exec` command. Inside each 
 container, you can leverage all its specific functionalities characteristic of each container. Specify which container 
 to execute; in this case, we are executing the workspace.

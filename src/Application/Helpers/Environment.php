@@ -4,7 +4,6 @@ namespace Wordless\Application\Helpers;
 
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Commands\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
@@ -12,6 +11,7 @@ use Wordless\Application\Helpers\Environment\Exceptions\FailedToFindPackagesMark
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Application\Helpers\Environment\Traits\Internal;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Core\InternalCache;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 
@@ -19,24 +19,6 @@ class Environment
 {
     use Internal;
 
-    final public const COMMONLY_DOT_ENV_DEFAULT_VALUES = [
-        'APP_NAME' => 'Wordless App',
-        'APP_ENV' => 'local',
-        'APP_URL' => 'https://wordless-app.dev.br',
-        'FRONT_END_URL' => 'https://wordless-front.dev.br',
-        'DB_NAME' => 'wordless',
-        'DB_USER' => 'root',
-        'DB_HOST' => '127.0.0.1',
-        'DB_CHARSET' => 'utf8mb4',
-        'DB_COLLATE' => 'utf8mb4_unicode_ci',
-        'DB_TABLE_PREFIX' => 'null',
-        'WORDLESS_CSP' => 'null',
-        'WP_VERSION' => 'null',
-        'WP_THEME' => 'null',
-        'WP_PERMALINK' => 'null',
-        'WP_DEBUG' => 'true',
-        'WP_LANGUAGES' => 'en_US',
-    ];
     final public const DOT_ENV_COMMENT_MARK = '#';
     final public const LOCAL = 'local';
     final public const PACKAGES_MARKER = <<<STRING

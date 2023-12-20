@@ -12,7 +12,7 @@ class FailedToCreateDirectory extends ErrorException
     {
         parent::__construct(
             "Failed to create directory $this->path",
-            ExceptionCode::logic_control->value,
+            ExceptionCode::intentional_interrupt->value,
             previous: $previous
         );
     }
