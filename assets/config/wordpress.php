@@ -36,5 +36,29 @@ return [
             'date_format' => 'F j, Y',
             'time_format' => 'H:i',
         ],
-    ]
+    ],
+    'permissions' => [
+//        'custom-admin' => [
+//            'custom_cap_1' => true,
+//            'custom_cap_2' => true,
+//        ],
+//        Role::EDITOR => [
+//            'moderate_comments' => true,
+//            'upload_files' => false,
+//            'custom_capability' => true,
+//            'another_custom_capability' => false,
+//        ],
+    ],
+    'rest-api' => [
+        RestApiRoutes::KEY => [
+            RestApiRoutes::PUBLIC => [
+//                '/wp/v2',
+//                '/wp/v2/pages',
+//                '/wp/v2/posts',
+//                '/wp/v2/users',
+            ],
+//            RestApiPolicy::ALLOW => [],
+            RestApiPolicy::DISALLOW => [],
+        ],
+    ],
 ];

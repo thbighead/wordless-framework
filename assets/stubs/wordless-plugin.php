@@ -13,5 +13,3 @@
 use Wordless\Core\Bootstrapper;
 
 Bootstrapper::bootMainPlugin();
-
-// {include plugins script}

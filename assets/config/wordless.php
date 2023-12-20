@@ -9,7 +9,9 @@ use Wordless\Infrastructure\Provider;
 
 $current_wp_theme = Config::tryToGetOrDefault('wordpress.theme', 'wordless');
 /** @var Provider[] $providers */
-$providers = [];
+$providers = [
+    
+];
 
 return [
     'csp' => [
