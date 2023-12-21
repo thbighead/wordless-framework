@@ -5,14 +5,10 @@ namespace Wordless\Tests\Unit;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Exceptions\InvalidUuidVersion;
-use Wordless\Tests\Contracts\NeedsTestEnvironment;
 use Wordless\Tests\WordlessTestCase;
 
 class ProjectPathHelperTest extends WordlessTestCase
 {
-    use NeedsTestEnvironment;
-
     /**
      * @return void
      * @throws PathNotFoundException
@@ -25,7 +21,6 @@ class ProjectPathHelperTest extends WordlessTestCase
     /**
      * @return void
      * @throws PathNotFoundException
-     * @throws InvalidUuidVersion
      */
     public function testInvalidPath()
     {
