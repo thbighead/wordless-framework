@@ -207,7 +207,7 @@ class WordlessInstall extends ConsoleCommand
      */
     private function createWordlessPluginFromStub(): static
     {
-        WordlessPluginStubMounter::make(ProjectPath::wpContent() . '/mu-plugins/wordless-plugin.php')
+        WordlessPluginStubMounter::make(ProjectPath::wp() . '/wp-content/mu-plugins/wordless-plugin.php')
             ->mountNewFile();
 
         return $this;
