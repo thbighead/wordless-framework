@@ -272,6 +272,7 @@ class WordlessInstall extends ConsoleCommand
             . DIRECTORY_SEPARATOR
             . RobotsTxtStubMounter::STUB_FINAL_FILENAME
         );
+
         $custom_login_url = Config::tryToGetOrDefault(
             'wordpress.admin.' . CustomLoginUrl::WP_CUSTOM_LOGIN_URL_KEY,
             false
@@ -287,6 +288,7 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws DirectoryFiles\Exceptions\FailedToCopyFile
      * @throws FailedToCopyStub
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
@@ -294,7 +296,19 @@ class WordlessInstall extends ConsoleCommand
      */
     private function createWpConfigFromStub(): static
     {
-        WpConfigStubMounter::make(ProjectPath::wpCore() . '/wp-config.php')->mountNewFile();
+        $wp_config_destiny_path = ProjectPath::wpCore() . '/wp-config.php';
+
+        if (Environment::isFramework()) {
+            DirectoryFiles::copyFile(
+                ProjectPath::root('wp-config.php'),
+                $wp_config_destiny_path,
+                false
+            );
+
+            return $this;
+        }
+
+        WpConfigStubMounter::make($wp_config_destiny_path)->mountNewFile();
 
         return $this;
     }

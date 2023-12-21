@@ -75,7 +75,7 @@ trait CallCommand
         return $output->fetch();
     }
 
-    private function resolveOutput(?BufferedOutput &$output): static
+    private function resolveOutput(?OutputInterface &$output): static
     {
         if (!($output instanceof BufferedOutput)) {
             $output = $this->mountBufferedOutput();
