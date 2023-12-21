@@ -49,6 +49,7 @@ class WordlessInstall extends ConsoleCommand
     use RunWpCliCommand;
 
     final public const COMMAND_NAME = 'wordless:install';
+    final public const TEMP_MAIL = 'temp@mail.not.real';
     final protected const NO_ASK_MODE = 'no-ask';
     private const WORDPRESS_SALT_FILLABLE_VALUES = [
         '#AUTH_KEY',
@@ -320,21 +321,14 @@ class WordlessInstall extends ConsoleCommand
      */
     private function createWpDatabase(): static
     {
-        $database_username = $this->getEnvVariableByKey('DB_USER');
-        $database_password = $this->getEnvVariableByKey('DB_PASSWORD');
-
-        if ($this->runWpCliCommand(
-                "db check --dbuser=$database_username --dbpass=$database_password",
-                true
-            ) == 0) {
+        try {
+            $this->runWpCliCommand('db check');
             $this->writelnCommentWhenVerbose('WordPress Database already created, skipping.');
-
-            return $this;
+        } catch (WpCliCommandReturnedNonZero) {
+            $this->runWpCliCommand('db create');
         }
 
-        $this->runWpCliCommand("db create --dbuser=$database_username --dbpass=$database_password");
-
-        return $this;
+        return $this->installWpDatabaseCore();
     }
 
     /**
@@ -402,13 +396,6 @@ class WordlessInstall extends ConsoleCommand
         return $this;
     }
 
-    private function getDotEnvNotFilledVariables(string $dot_env_content): array
-    {
-        preg_match_all('/^(.+)=(#\1)$/m', $dot_env_content, $not_filled_variables_regex_result);
-        // Getting Regex result (#\1) group or leading to an empty array
-        return $not_filled_variables_regex_result[2] ?? [];
-    }
-
     private function getEnvVariableByKey(string $key, $default = null)
     {
         return $this->fresh_new_env_content[$key] ?? Environment::get($key, $default);
@@ -417,17 +404,6 @@ class WordlessInstall extends ConsoleCommand
     private function getWpLanguages(): array
     {
         return $this->wp_languages;
-    }
-
-    /**
-     * @return $this
-     * @throws PathNotFoundException
-     */
-    private function loadWpLanguages(): static
-    {
-        $this->wp_languages = Config::tryToGetOrDefault('wordpress.languages', ['en_US']);
-
-        return $this;
     }
 
     /**
@@ -471,6 +447,42 @@ class WordlessInstall extends ConsoleCommand
             }, $parse_wp_salt_response_regex_result[2] ?? []),
             $dot_env_content
         );
+    }
+
+    /**
+     * @return $this
+     * @throws ExceptionInterface
+     * @throws WpCliCommandReturnedNonZero
+     */
+    private function installWpDatabaseCore(): static
+    {
+        if ($this->runWpCliCommand('core is-installed', true) == 0) {
+            $this->writelnInfoWhenVerbose('WordPress Core Database already installed, skipping.');
+
+            return $this;
+        }
+
+        $app_url = $this->getEnvVariableByKey('APP_URL');
+        $app_url_with_final_slash = Str::finishWith($app_url, '/');
+        $app_name = $this->getEnvVariableByKey('APP_NAME', 'Wordless App');
+
+        $this->runWpCliCommand(
+            "core install --url=$app_url_with_final_slash --title=\"$app_name\" --skip-email --admin_user=temp --admin_email="
+            . self::TEMP_MAIL
+        );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws PathNotFoundException
+     */
+    private function loadWpLanguages(): static
+    {
+        $this->wp_languages = Config::tryToGetOrDefault('wordpress.languages', ['en_US']);
+
+        return $this;
     }
 
     /**
@@ -552,6 +564,7 @@ class WordlessInstall extends ConsoleCommand
 
         $this->runWpCliCommand("option update siteurl $app_url/wp-core/");
         $this->runWpCliCommand("option update home $app_url");
+        $this->runWpCliCommand('db optimize');
 
         return $this;
     }
@@ -562,11 +575,10 @@ class WordlessInstall extends ConsoleCommand
      * @throws FailedToGetFileContent
      * @throws FailedToRewriteDotEnvFile
      * @throws FormatException
-     * @throws InvalidArgumentException
      * @throws PathNotFoundException
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface,
+     * @throws TransportExceptionInterface
      */
     private function resolveDotEnv(): static
     {

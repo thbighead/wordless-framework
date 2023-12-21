@@ -56,7 +56,7 @@ trait RunWpCliCommand
     {
         $this->resolveCommandAllowRootMode($command);
 
-        if (($return_var = $this->callWpCliCommand($command, $this->output)) && !$return_script_code) {
+        if (($return_var = $this->callWpCliCommand($command, $return_script_code ? null : $this->output)) && !$return_script_code) {
             throw new WpCliCommandReturnedNonZero($command, $return_var);
         }
 
