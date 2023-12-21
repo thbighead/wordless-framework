@@ -16,6 +16,7 @@ use Wordless\Application\Commands\MigrationList;
 use Wordless\Application\Commands\OverwriteWpConfig;
 use Wordless\Application\Commands\PublishConfigurationFiles;
 use Wordless\Application\Commands\ReplaceBaseUrls;
+use Wordless\Application\Commands\RunTests;
 use Wordless\Application\Commands\SyncRoles;
 use Wordless\Application\Commands\WordlessInstall;
 use Wordless\Application\Commands\WpCliCaller;
@@ -58,6 +59,7 @@ final class CoreProvider extends Provider
             OverwriteWpConfig::class,
             PublishConfigurationFiles::class,
             ReplaceBaseUrls::class,
+            RunTests::class,
             SyncRoles::class,
             WordlessInstall::class,
             WpCliCaller::class,

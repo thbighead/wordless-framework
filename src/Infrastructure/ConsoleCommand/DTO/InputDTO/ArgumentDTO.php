@@ -7,6 +7,16 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\Argume
 
 readonly class ArgumentDTO extends InputDTO
 {
+    public static function make(
+        string        $name,
+        string        $description,
+        ?ArgumentMode $mode = null,
+        mixed         $default = null
+    ): static
+    {
+        return new static($name, $description, $mode, $default);
+    }
+
     public function __construct(
         string        $name,
         string        $description,

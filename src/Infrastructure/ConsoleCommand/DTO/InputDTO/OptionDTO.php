@@ -7,6 +7,17 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMo
 
 readonly class OptionDTO extends InputDTO
 {
+    public static function make(
+        string            $name,
+        string            $description,
+        array|string|null $shortcut = null,
+        ?OptionMode       $mode = null,
+        mixed             $default = null
+    ): static
+    {
+        return new static($name, $description, $shortcut, $mode, $default);
+    }
+
     /**
      * @param string $name
      * @param string[]|string|null $shortcut
