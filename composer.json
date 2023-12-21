@@ -52,6 +52,7 @@
   "scripts": {
     "post-autoload-dump": [
       "touch .env",
+      "rm config stubs && ln -s assets/config config && ln -s assets/stubs stubs",
       "cp wp-config.php wp/wp-core/wp-config.php"
     ]
   },

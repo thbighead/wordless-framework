@@ -3,3 +3,5 @@
 /.phpunit.cache
 /vendor/
 /wp/
+/stubs
+/config
