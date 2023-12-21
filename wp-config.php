@@ -42,7 +42,6 @@ require_once ROOT_PROJECT_PATH . '/vendor/autoload.php';
 
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
-use Wordless\Core\InternalCache;
 
 /** @noinspection PhpUnhandledExceptionInspection */
 Environment::loadDotEnv();
