@@ -6,3 +6,4 @@
 /wp                                             export-ignore
 /wp-cli.php                                     export-ignore
 /wp-config.php                                  export-ignore
+/env.php                                        export-ignore

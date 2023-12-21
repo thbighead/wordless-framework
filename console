@@ -6,14 +6,10 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper;
 
 require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/env.php';
 
 const FRAMEWORK_ENVIRONMENT = true;
 const ROOT_PROJECT_PATH = __DIR__;
-
-$_ENV['DB_USER'] = 'root';
-$_ENV['DB_PASSWORD'] = 'root';
-$_ENV['DB_NAME'] = 'wordless';
-$_ENV['DB_HOST'] = 'wordless-framework-mariadb';
 
 Environment::loadDotEnv();
 

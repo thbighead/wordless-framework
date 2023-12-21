@@ -39,6 +39,7 @@ if (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null) === 'https') {
 }
 
 require_once ROOT_PROJECT_PATH . '/vendor/autoload.php';
+require_once ROOT_PROJECT_PATH . '/env.php';
 
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
