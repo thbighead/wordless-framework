@@ -57,7 +57,7 @@ trait RunWpCliCommand
      * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
-    private function runWpCliCommand(string $command, bool $return_script_code = true): int|string
+    private function runWpCliCommand(string $command, bool $return_script_code = false): int|string
     {
         $return_var = $this->resolveCommandAllowRootMode($command)
             ->resolveCommandDebugMode($command)
@@ -68,5 +68,21 @@ trait RunWpCliCommand
         }
 
         return $return_var;
+    }
+
+    /**
+     * @param string $command
+     * @return string
+     * @throws ExceptionInterface
+     */
+    private function runWpCliCommandReturningOutputWithoutInterruption(string $command): string
+    {
+        try {
+            return $this->runWpCliCommand($command);
+        } catch (WpCliCommandReturnedNonZero $exception) {
+            $this->writelnWarningWhenVerbose($exception->getMessage());
+
+            return '';
+        }
     }
 }

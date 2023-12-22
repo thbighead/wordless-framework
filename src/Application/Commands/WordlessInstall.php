@@ -88,10 +88,12 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return int
+     * @throws CliReturnedNonZero
      * @throws ClientExceptionInterface
-     * @throws DirectoryFiles\Exceptions\FailedToCopyFile
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
      * @throws FailedToChangePathPermissions
+     * @throws FailedToCopyFile
      * @throws FailedToCopyStub
      * @throws FailedToCreateDirectory
      * @throws FailedToDeletePath
@@ -462,20 +464,19 @@ class WordlessInstall extends ConsoleCommand
      */
     private function installWpDatabaseCore(): static
     {
-        if ($this->runWpCliCommand('core is-installed', true) == 0) {
+        try {
+            $this->runWpCliCommand('core is-installed');
             $this->writelnInfoWhenVerbose('WordPress Core Database already installed, skipping.');
+        } catch (WpCliCommandReturnedNonZero) {
+            $app_name = $this->getEnvVariableByKey('APP_NAME', 'Wordless App');
+            $app_url = $this->getEnvVariableByKey('APP_URL');
+            $app_url_with_final_slash = Str::finishWith($app_url, '/');
 
-            return $this;
+            $this->runWpCliCommand(
+                "core install --url=$app_url_with_final_slash --locale={$this->getWpLanguages()[0]} --title=\"$app_name\" --skip-email --admin_user=temp --admin_email="
+                . self::TEMP_MAIL
+            );
         }
-
-        $app_url = $this->getEnvVariableByKey('APP_URL');
-        $app_url_with_final_slash = Str::finishWith($app_url, '/');
-        $app_name = $this->getEnvVariableByKey('APP_NAME', 'Wordless App');
-
-        $this->runWpCliCommand(
-            "core install --url=$app_url_with_final_slash --title=\"$app_name\" --skip-email --admin_user=temp --admin_email="
-            . self::TEMP_MAIL
-        );
 
         return $this;
     }
@@ -499,16 +500,16 @@ class WordlessInstall extends ConsoleCommand
      */
     private function installWpCoreLanguage(string $language): void
     {
-        if ($this->runWpCliCommand("language core is-installed $language", true) == 0) {
+        try {
+            $this->runWpCliCommand("language core is-installed $language");
             $this->writelnInfoWhenVerbose("WordPress Core Language $language already installed, updating.");
-
-            $this->runWpCliCommand('language core update', true);
-            $this->runWpCliCommand("site switch-language $language", true);
-
+        } catch (WpCliCommandReturnedNonZero) {
+            $this->runWpCliCommand("language core install $language --activate");
             return;
         }
 
-        $this->runWpCliCommand("language core install $language --activate");
+        $this->runWpCliCommand('language core update');
+        $this->runWpCliCommand("site switch-language $language");
     }
 
     /**
@@ -541,8 +542,8 @@ class WordlessInstall extends ConsoleCommand
      */
     private function installWpPluginsLanguage(string $language): void
     {
-        $this->runWpCliCommand("language plugin install $language --all", true);
-        $this->runWpCliCommand("language plugin update $language --all", true);
+        $this->runWpCliCommand("language plugin install $language --all");
+        $this->runWpCliCommand("language plugin update $language --all");
     }
 
     /**
