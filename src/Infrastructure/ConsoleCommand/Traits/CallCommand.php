@@ -2,85 +2,102 @@
 
 namespace Wordless\Infrastructure\ConsoleCommand\Traits;
 
+use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Process;
+use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 
 trait CallCommand
 {
     /**
-     * @param string $full_command
-     * @return int
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     */
-    protected function callExternalCommand(string $full_command): int
-    {
-        if ($this->output instanceof BufferedOutput) {
-            exec($full_command, $output, $result_code);
-            $this->output->writeln($output);
-
-            return $result_code;
-        }
-
-        return Process::fromShellCommandline($full_command)
-            ->setTimeout(null)
-            ->setTty(true)
-            ->run(function ($type, $buffer) {
-                echo $buffer;
-            });
-    }
-
-    /**
      * @param string $command_name
      * @param array $inputs
-     * @param OutputInterface|null $output
+     * @param bool $return_script_code
      * @return int|string
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
      */
     protected function callConsoleCommand(
-        string           $command_name,
-        array            $inputs = [],
-        ?OutputInterface $output = null
+        string $command_name,
+        array  $inputs = [],
+        bool   $return_script_code = false
     ): int|string
     {
-        $return_code = $this->resolveOutput($output)
-            ->getConsoleCommandInstance($command_name)
-            ->run(new ArrayInput($inputs), $output);
-
-        return $output instanceof BufferedOutput ? $output->fetch() : $return_code;
+        return $this->resolveCommandReturn(
+            "'php console $command_name " . implode(' ', $inputs) . '\'',
+            $return_script_code,
+            $this->getConsoleCommandInstance($command_name)
+                ->run(
+                    new ArrayInput($inputs),
+                    $return_script_code ? $this->output : $bufferedOutput = $this->mountBufferedOutput()
+                ),
+            isset($bufferedOutput) ? $bufferedOutput->fetch() : ''
+        );
     }
 
     /**
-     * @param string $command_name
-     * @param array $inputs
-     * @param BufferedOutput|null $output
-     * @return string
-     * @throws ExceptionInterface
+     * @param string $full_command
+     * @param bool $return_script_code
+     * @return int|string
+     * @throws CliReturnedNonZero
+     * @throws InvalidArgumentException
+     * @throws LogicException
      */
-    protected function callConsoleCommandGettingOutput(
-        string          $command_name,
-        array           $inputs = [],
-        ?BufferedOutput $output = null
-    ): string
+    protected function callExternalCommand(string $full_command, bool $return_script_code = false): int|string
     {
-        $this->resolveOutput($output)
-            ->getConsoleCommandInstance($command_name)
-            ->run(new ArrayInput($inputs), $output);
+        $command_output = '';
+        $script_result_code = Process::fromShellCommandline($full_command)
+            ->setTimeout(null)
+            ->setTty(true)
+            ->run(
+                function ($type, $buffer) use (&$command_output, $return_script_code): void {
+                    if (empty($buffer)) {
+                        return;
+                    }
 
-        return $output->fetch();
+                    $command_output .= $buffer;
+
+                    if ($return_script_code) {
+                        echo $buffer;
+                    }
+                }
+            );
+
+        return $this->resolveCommandReturn(
+            $full_command,
+            $return_script_code,
+            $script_result_code,
+            $command_output
+        );
     }
 
-    private function resolveOutput(?OutputInterface &$output): static
+    /**
+     * @param string $full_command
+     * @param bool $return_script_code
+     * @param int $script_result_code
+     * @param string $command_output
+     * @return int|string
+     * @throws CliReturnedNonZero
+     */
+    private function resolveCommandReturn(
+        string $full_command,
+        bool   $return_script_code,
+        int    $script_result_code,
+        string $command_output
+    ): int|string
     {
-        if (!($output instanceof BufferedOutput)) {
-            $output = $this->mountBufferedOutput();
+        if ($return_script_code) {
+            return $script_result_code;
         }
 
-        return $this;
+        if ($script_result_code !== self::SUCCESS) {
+            throw new CliReturnedNonZero($full_command, $script_result_code);
+        }
+
+        return $command_output;
     }
 }

@@ -3,6 +3,7 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
@@ -16,12 +17,14 @@ use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\WunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangePathPermissions;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
@@ -216,6 +219,8 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
      * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
@@ -247,10 +252,12 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @return $this
      * @throws ExceptionInterface
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      */
     private function createCache(): static
     {
-        $this->callConsoleCommand(CreateInternalCache::COMMAND_NAME, output: $this->output);
+        $this->callConsoleCommand(CreateInternalCache::COMMAND_NAME);
 
         return $this;
     }
@@ -289,7 +296,7 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws DirectoryFiles\Exceptions\FailedToCopyFile
+     * @throws FailedToCopyFile
      * @throws FailedToCopyStub
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
@@ -384,14 +391,13 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
      */
     private function generateSymbolicLinks(): static
     {
-        $this->callConsoleCommand(
-            GeneratePublicWordpressSymbolicLinks::COMMAND_NAME,
-            output: $this->output
-        );
+        $this->callConsoleCommand(GeneratePublicWordpressSymbolicLinks::COMMAND_NAME);
 
         return $this;
     }
@@ -639,22 +645,26 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
      */
     private function runMigrations(): static
     {
-        $this->callConsoleCommand(Migrate::COMMAND_NAME, output: $this->output);
+        $this->callConsoleCommand(Migrate::COMMAND_NAME);
 
         return $this;
     }
 
     /**
      * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
      */
     private function syncRoles(): static
     {
-        $this->callConsoleCommand(SyncRoles::COMMAND_NAME, output: $this->output);
+        $this->callConsoleCommand(SyncRoles::COMMAND_NAME);
 
         return $this;
     }

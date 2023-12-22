@@ -2,8 +2,9 @@
 
 namespace Wordless\Application\Commands\Traits;
 
+use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Wordless\Application\Commands\Traits\AllowRootMode\DTO\AllowRootModeOptionDTO;
 use Wordless\Application\Commands\Traits\WunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Commands\WpCliCaller;
@@ -14,17 +15,23 @@ trait RunWpCliCommand
 
     /**
      * @param string $command
-     * @param OutputInterface|null $output
+     * @param bool $return_script_code
      * @return int|string
      * @throws ExceptionInterface
+     * @throws CommandNotFoundException
      */
-    private function callWpCliCommand(string $command, ?OutputInterface $output = null): int|string
+    private function callWpCliCommand(string $command, bool $return_script_code = true): int|string
     {
         return $this->callConsoleCommand(WpCliCaller::COMMAND_NAME, [
             WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => $command,
-        ], $output);
+        ], $return_script_code);
     }
 
+    /**
+     * @param string $command
+     * @return $this
+     * @throws InvalidArgumentException
+     */
     private function resolveCommandAllowRootMode(string &$command): static
     {
         if ($this->isAllowRootMode()) {
@@ -34,15 +41,13 @@ trait RunWpCliCommand
         return $this;
     }
 
-    /**
-     * @param string $command
-     * @return int|string
-     * @throws ExceptionInterface
-     */
-    private function runAndGetWpCliCommandOutput(string $command): int|string
+    private function resolveCommandDebugMode(string &$command): static
     {
-        return $this->resolveCommandAllowRootMode($command)
-            ->callWpCliCommand($command);
+        if ($this->isVVV()) {
+            $command = "$command --debug";
+        }
+
+        return $this;
     }
 
     /**
@@ -52,11 +57,13 @@ trait RunWpCliCommand
      * @throws ExceptionInterface
      * @throws WpCliCommandReturnedNonZero
      */
-    private function runWpCliCommand(string $command, bool $return_script_code = false): int|string
+    private function runWpCliCommand(string $command, bool $return_script_code = true): int|string
     {
-        $this->resolveCommandAllowRootMode($command);
+        $return_var = $this->resolveCommandAllowRootMode($command)
+            ->resolveCommandDebugMode($command)
+            ->callWpCliCommand($command, $return_script_code);
 
-        if (($return_var = $this->callWpCliCommand($command, $return_script_code ? null : $this->output)) && !$return_script_code) {
+        if (!$return_script_code) {
             throw new WpCliCommandReturnedNonZero($command, $return_var);
         }
 

@@ -47,10 +47,11 @@ class WpCliCaller extends ConsoleCommand
 
     /**
      * @return int
+     * @throws Exceptions\CliReturnedNonZero
      * @throws InvalidArgumentException
+     * @throws LogicException
      * @throws PathNotFoundException
      * @throws SymfonyProcessInvalidArgumentException
-     * @throws LogicException
      */
     protected function runIt(): int
     {
@@ -94,7 +95,7 @@ class WpCliCaller extends ConsoleCommand
             return $this->operational_system;
         }
 
-        return $this->operational_system = (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') ?
+        return $this->operational_system = Str::of(PHP_OS)->upper()->beginsWith('WIN') ?
             self::WINDOWS_OS : self::NON_WINDOWS_OS;
     }
 
@@ -113,8 +114,8 @@ class WpCliCaller extends ConsoleCommand
              * pathing (https://github.com/wp-cli/wp-cli/issues/2677#issue-149924458)
              */
             $wp_cli_full_command_string = preg_replace(
-                '/(\'|")?\/(.+)(\'|")?/',
-                '$1$2$3',
+                '/([\'"])?\/(.+)\1?/',
+                '$1$2$1',
                 $wp_cli_full_command_string
             );
         }

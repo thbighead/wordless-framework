@@ -13,6 +13,10 @@ class Str extends Subjectable
 {
     use Internal;
 
+    final public const DEFAULT_RANDOM_SIZE = 16;
+    final public const DEFAULT_LIMIT_WORDS = 15;
+    final public const DEFAULT_TRUNCATE_SIZE = 15;
+
     public static function after(string $string, string $delimiter): string
     {
         $substring_position = strpos($string, $delimiter);
@@ -132,11 +136,15 @@ class Str extends Subjectable
 
     public static function limitWords(
         string $string,
-        int    $max_words = 15,
+        int    $max_words = self::DEFAULT_LIMIT_WORDS,
         string $limit_marker = '...'
     ): string
     {
-        return wp_trim_words($string, $max_words, $limit_marker);
+        return wp_trim_words(
+            $string,
+            $max_words <= 0 ? self::DEFAULT_LIMIT_WORDS : $max_words,
+            $limit_marker
+        );
     }
 
     public static function lower(string $string): string
@@ -166,9 +174,9 @@ class Str extends Subjectable
         return self::getInflector($language)->pluralize($string);
     }
 
-    public static function random(int $size = 16)
+    public static function random(int $size = self::DEFAULT_RANDOM_SIZE): string
     {
-        return wp_generate_password($size, false);
+        return wp_generate_password($size <= 0 ? self::DEFAULT_RANDOM_SIZE : $size, false);
     }
 
     public static function removeSuffix(string $string, string $suffix): string
@@ -232,9 +240,9 @@ class Str extends Subjectable
         return mb_convert_case(implode(' ', $words[0]), MB_CASE_TITLE, 'UTF-8');
     }
 
-    public static function truncate(string $string, int $max_chars = 15): string
+    public static function truncate(string $string, int $max_chars = self::DEFAULT_TRUNCATE_SIZE): string
     {
-        return substr($string, 0, $max_chars);
+        return substr($string, 0, $max_chars <= 0 ? self::DEFAULT_TRUNCATE_SIZE : $max_chars);
     }
 
     public static function upper(string $string): string

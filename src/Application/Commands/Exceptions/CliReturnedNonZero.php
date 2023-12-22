@@ -9,8 +9,8 @@ use Wordless\Infrastructure\Enums\ExceptionCode;
 class CliReturnedNonZero extends ErrorException
 {
     public function __construct(
-        private readonly string $command,
-        private readonly int $command_result,
+        public readonly string $command,
+        public readonly int $command_result,
         ?Throwable $previous = null
     )
     {
@@ -19,15 +19,5 @@ class CliReturnedNonZero extends ErrorException
             ExceptionCode::intentional_interrupt->value,
             previous: $previous
         );
-    }
-
-    public function getCommand(): string
-    {
-        return $this->command;
-    }
-
-    public function getCommandResult(): int
-    {
-        return $this->command_result;
     }
 }
