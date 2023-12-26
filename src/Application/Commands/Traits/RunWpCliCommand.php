@@ -5,6 +5,7 @@ namespace Wordless\Application\Commands\Traits;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Traits\AllowRootMode\DTO\AllowRootModeOptionDTO;
 use Wordless\Application\Commands\Traits\WunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Commands\WpCliCaller;
@@ -17,8 +18,9 @@ trait RunWpCliCommand
      * @param string $command
      * @param bool $return_script_code
      * @return int|string
-     * @throws ExceptionInterface
      * @throws CommandNotFoundException
+     * @throws ExceptionInterface
+     * @throws CliReturnedNonZero
      */
     private function callWpCliCommand(string $command, bool $return_script_code = true): int|string
     {
@@ -54,7 +56,10 @@ trait RunWpCliCommand
      * @param string $command
      * @param bool $return_script_code
      * @return int|string
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function runWpCliCommand(string $command, bool $return_script_code = false): int|string
@@ -73,7 +78,10 @@ trait RunWpCliCommand
     /**
      * @param string $command
      * @return string
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      */
     private function runWpCliCommandReturningOutputWithoutInterruption(string $command): string
     {
