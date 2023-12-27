@@ -1,0 +1,36 @@
+<?php
+
+namespace Wordless\Application\Commands\RunTests\Traits;
+
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Wordless\Application\Helpers\Str;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
+
+trait PathArgument
+{
+    private const ARGUMENT_NAME = 'path';
+
+    private function mountPathArgument(): ArgumentDTO
+    {
+        return ArgumentDTO::make(
+            self::ARGUMENT_NAME,
+            'Pass the directory or class file path to run tests.',
+            ArgumentMode::required
+        );
+    }
+
+    /**
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    private function getPathArgument(): string
+    {
+        $tests_path_option = $this->input->getArgument(self::ARGUMENT_NAME);
+
+        return $tests_path_option === null ? '' : Str::startWith(
+            $tests_path_option,
+            'tests/'
+        );
+    }
+}

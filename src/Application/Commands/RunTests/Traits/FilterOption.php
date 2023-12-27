@@ -3,14 +3,12 @@
 namespace Wordless\Application\Commands\RunTests\Traits;
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 
 trait FilterOption
 {
     private const OPTION_FILTER_NAME = 'filter';
-    private const FILTER_SEPARATOR_MARK = '::';
 
     /**
      * @return string|null
@@ -25,10 +23,10 @@ trait FilterOption
                 continue;
             }
 
-            $filters_string = "$filters_string {$this->prepareFilterAsString($filter)}";
+            $filters_string = $filters_string === '' ? $filter : "$filters_string $filter";
         }
 
-        return empty($filters_string) ? null : $filters_string;
+        return empty($filters_string) ? null : "--filter $filters_string";
     }
 
     private function mountFilterOption(): OptionDTO
@@ -38,25 +36,6 @@ trait FilterOption
             'Filters what tests should run. You may pass multiple filters to use them together with a logical and. The filter pattern works as follows: test/class/relative/filepath/from/tests/directory.php[::methodNamePattern]',
             mode: OptionMode::array_required_values
         );
-    }
-
-    private function prepareFilterAsString(string $filter): string
-    {
-        if (!Str::contains($filter, self::FILTER_SEPARATOR_MARK)) {
-            $filter .= self::FILTER_SEPARATOR_MARK;
-        }
-
-        [$test_class_relative_filepath_from_tests, $methods_pattern] = explode(
-            self::FILTER_SEPARATOR_MARK,
-            $filter
-        );
-
-        $test_class_relative_filepath_from_tests = Str::startWith(
-            $test_class_relative_filepath_from_tests,
-            'tests/'
-        );
-
-        return "--filter $methods_pattern $test_class_relative_filepath_from_tests";
     }
 
     /**

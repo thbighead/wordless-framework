@@ -4,6 +4,7 @@ namespace Wordless\Tests\Unit;
 
 use Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests;
 use Wordless\Application\Helpers\Str;
+use Wordless\Tests\Unit\StrHelperTest\Traits\SubstringTests;
 use Wordless\Tests\Unit\StrHelperTest\Traits\UuidTests;
 use Wordless\Tests\WordlessTestCase;
 
@@ -11,6 +12,7 @@ class StrHelperTest extends WordlessTestCase
 {
     use CaseStyleTests;
     use UuidTests;
+    use SubstringTests;
 
     private const FINISHING_WORD = ' example';
     private const EXCLAMATION_MARK = '!';

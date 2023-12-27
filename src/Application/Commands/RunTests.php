@@ -3,15 +3,17 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyConsoleInvalidArgumentException;
-use Symfony\Component\Process\Exception\InvalidArgumentException as SymfonyProcessInvalidArgumentException;
+use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\RunTests\Traits\FilterOption;
 use Wordless\Application\Commands\RunTests\Traits\OutputOption;
+use Wordless\Application\Commands\RunTests\Traits\PathArgument;
 use Wordless\Infrastructure\ConsoleCommand;
 
 class RunTests extends ConsoleCommand
 {
+    use PathArgument;
     use FilterOption;
     use OutputOption;
 
@@ -22,7 +24,7 @@ class RunTests extends ConsoleCommand
      */
     protected function arguments(): array
     {
-        return [];
+        return [$this->mountPathArgument()];
     }
 
     protected function description(): string
@@ -49,22 +51,19 @@ class RunTests extends ConsoleCommand
     /**
      * @return int
      * @throws CliReturnedNonZero
+     * @throws InvalidArgumentException
      * @throws LogicException
      * @throws SymfonyConsoleInvalidArgumentException
-     * @throws SymfonyProcessInvalidArgumentException
      */
     protected function runIt(): int
     {
-        $phpunit_command = 'vendor/bin/phpunit';
-        $phpunit_command = "$phpunit_command {$this->getTestOutputFormat()}";
+        $phpunit_command = "vendor/bin/phpunit {$this->getTestOutputFormat()}";
         $filter_string = $this->getFilterOption();
 
         if (!empty($filter_string)) {
             $phpunit_command = "$phpunit_command $filter_string";
         }
 
-        $this->callExternalCommand($phpunit_command);
-
-        return self::SUCCESS;
+        return $this->callExternalCommand("$phpunit_command {$this->getPathArgument()}", true);
     }
 }

@@ -19,13 +19,13 @@ trait OutputOption
      */
     private function getTestOutputFormat(): string
     {
-        if (isset($this->test_output_format)) {
-            return $this->test_output_format->value;
+        if (!isset($this->test_output_format)) {
+            $test_output_format = TestOutput::tryFrom((string)$this->input->getOption(self::OPTION_OUTPUT_NAME));
+
+            $this->test_output_format = $test_output_format ?? TestOutput::testdox;
         }
 
-        $test_output_format = TestOutput::tryFrom((string)$this->input->getOption(self::OPTION_OUTPUT_NAME));
-
-        return ($this->test_output_format = $test_output_format ?? TestOutput::testdox)->value;
+        return "--{$this->test_output_format->value}";
     }
 
     private function mountOutputOption(): OptionDTO
