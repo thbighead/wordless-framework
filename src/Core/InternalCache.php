@@ -15,7 +15,7 @@ use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 use Wordless\Core\InternalCache\Exceptions\InvalidCache;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
-class InternalCache
+final class InternalCache
 {
     public const INTERNAL_WORDLESS_CACHE_CONSTANT_NAME = 'INTERNAL_WORDLESS_CACHE';
     private const PHP_EXTENSION = '.php';

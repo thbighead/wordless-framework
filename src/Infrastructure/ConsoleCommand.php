@@ -46,7 +46,7 @@ abstract class ConsoleCommand extends Command
 
     public function __toString(): string
     {
-        return '$this->get';
+        return "php console {$this->input->__toString()}";
     }
 
     public function canRun(): bool
@@ -85,11 +85,6 @@ abstract class ConsoleCommand extends Command
 
         $this->setupOutputStyles()
             ->turnOnDecoratedOutputs();
-    }
-
-    private function mountBufferedOutput(): BufferedOutput
-    {
-        return new BufferedOutput($this->output->getVerbosity(), true);
     }
 
     /**
