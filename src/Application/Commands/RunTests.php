@@ -5,6 +5,7 @@ namespace Wordless\Application\Commands;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyConsoleInvalidArgumentException;
 use Symfony\Component\Process\Exception\InvalidArgumentException as SymfonyProcessInvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
+use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\RunTests\Traits\FilterOption;
 use Wordless\Application\Commands\RunTests\Traits\OutputOption;
 use Wordless\Infrastructure\ConsoleCommand;
@@ -49,6 +50,7 @@ class RunTests extends ConsoleCommand
 
     /**
      * @return int
+     * @throws CliReturnedNonZero
      * @throws LogicException
      * @throws SymfonyConsoleInvalidArgumentException
      * @throws SymfonyProcessInvalidArgumentException
