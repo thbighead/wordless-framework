@@ -162,7 +162,10 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function activateWpTheme(): static
@@ -176,7 +179,10 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function activateWpPlugins(): static
@@ -188,7 +194,10 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return void
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
@@ -325,7 +334,10 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function createWpDatabase(): static
@@ -342,7 +354,10 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function databaseUpdate(): static
@@ -378,7 +393,10 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function flushWpRewriteRules(): static
@@ -459,7 +477,10 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function installWpDatabaseCore(): static
@@ -495,7 +516,10 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @param string $language
      * @return void
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function installWpCoreLanguage(string $language): void
