@@ -56,8 +56,8 @@ abstract class StubMounter
 
         try {
             DirectoryFiles::createFileAt($new_file_path, $this->replaceUnfilledContent());
-        } catch (FailedToPutFileContent) {
-            throw new FailedToCopyStub($this->stub_filepath, $new_file_path, false);
+        } catch (FailedToPutFileContent $exception) {
+            throw new FailedToCopyStub($this->stub_filepath, $new_file_path, false, $exception);
         }
     }
 
