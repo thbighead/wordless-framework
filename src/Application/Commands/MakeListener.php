@@ -9,20 +9,23 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryP
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Application\Mounters\Stub\MigrationStubMounter;
+use Wordless\Application\Mounters\Stub\ActionListenerStubMounter;
+use Wordless\Application\Mounters\Stub\FilterListenerStubMounter;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
-use Wordless\Infrastructure\Migration\Script;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
-class MakeMigration extends ConsoleCommand
+class MakeListener extends ConsoleCommand
 {
     use LoadWpConfig;
 
-    final public const COMMAND_NAME = 'make:migration';
-    private const MIGRATION_CLASS_ARGUMENT_NAME = 'snake_cased_migration_class';
+    final public const COMMAND_NAME = 'make:listener';
+    private const LISTENER_CLASS_ARGUMENT_NAME = 'PascalCasedListenerClass';
+    const LISTENER_ACTION_MODE = 'action';
+    const LISTENER_FILTER_MODE = 'filter';
 
     protected static $defaultName = self::COMMAND_NAME;
 
@@ -33,8 +36,8 @@ class MakeMigration extends ConsoleCommand
     {
         return [
             new ArgumentDTO(
-                self::MIGRATION_CLASS_ARGUMENT_NAME,
-                'The name of your new migration file in snake case (using _ between words).',
+                self::LISTENER_CLASS_ARGUMENT_NAME,
+                'The class name of your new hooker file in pascal case.',
                 ArgumentMode::required
             ),
         ];
@@ -42,12 +45,12 @@ class MakeMigration extends ConsoleCommand
 
     protected function description(): string
     {
-        return 'Creates a migration script.';
+        return 'Creates a listener script.';
     }
 
     protected function help(): string
     {
-        return 'Creates a migration script file using its name to guess the generated class name.';
+        return 'Creates a listener script file based on its class name.';
     }
 
     /**
@@ -55,7 +58,13 @@ class MakeMigration extends ConsoleCommand
      */
     protected function options(): array
     {
-        return [];
+        return [
+            new OptionDTO(
+                self::LISTENER_FILTER_MODE,
+                'Generates a filter listener instead of action.',
+                mode: OptionMode::no_value
+            ),
+        ];
     }
 
     /**
@@ -67,21 +76,24 @@ class MakeMigration extends ConsoleCommand
      */
     protected function runIt(): int
     {
-        $snake_cased_migration_class_name = Str::snakeCase(
-            $this->input->getArgument(self::MIGRATION_CLASS_ARGUMENT_NAME)
-        );
-        $migration_class_name = Str::pascalCase($snake_cased_migration_class_name);
-        $migration_file_name = date(Script::FILENAME_DATE_FORMAT) . "$snake_cased_migration_class_name.php";
+        $listener_class_name = Str::pascalCase($this->input->getArgument(self::LISTENER_CLASS_ARGUMENT_NAME));
+        $listener_stub_type = $this->isFilterListener() ?
+            FilterListenerStubMounter::class : ActionListenerStubMounter::class;
 
         $this->wrapScriptWithMessages(
-            "Creating $migration_file_name...",
-            function () use ($migration_class_name, $migration_file_name) {
-                MigrationStubMounter::make(ProjectPath::migrations() . "/$migration_file_name")
-                    ->setReplaceContentDictionary(['DummyMigration' => $migration_class_name])
+            "Creating $listener_class_name...",
+            function () use ($listener_class_name, $listener_stub_type) {
+                $listener_stub_type::make(ProjectPath::listeners() . "/$listener_class_name.php")
+                    ->setReplaceContentDictionary(['DummyListener' => $listener_class_name])
                     ->mountNewFile();
             }
         );
 
         return Command::SUCCESS;
+    }
+
+    private function isFilterListener(): bool
+    {
+        return (bool)$this->input->getOption(self::LISTENER_FILTER_MODE);
     }
 }

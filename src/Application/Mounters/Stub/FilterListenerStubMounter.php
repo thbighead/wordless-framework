@@ -4,10 +4,10 @@ namespace Wordless\Application\Mounters\Stub;
 
 use Wordless\Infrastructure\Mounters\StubMounter;
 
-class HookerStubMounter extends StubMounter
+class FilterListenerStubMounter extends StubMounter
 {
     protected function relativeStubFilename(): string
     {
-        return 'hooker';
+        return 'filter_listener';
     }
 }

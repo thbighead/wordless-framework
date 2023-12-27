@@ -8,7 +8,7 @@ use Wordless\Application\Commands\GeneratePublicWordpressSymbolicLinks;
 use Wordless\Application\Commands\MakeCommand;
 use Wordless\Application\Commands\MakeController;
 use Wordless\Application\Commands\MakeCustomPostType;
-use Wordless\Application\Commands\MakeHooker;
+use Wordless\Application\Commands\MakeListener;
 use Wordless\Application\Commands\MakeMigration;
 use Wordless\Application\Commands\Migrate;
 use Wordless\Application\Commands\MigrateRollback;
@@ -51,7 +51,7 @@ final class CoreProvider extends Provider
             MakeCommand::class,
             MakeController::class,
             MakeCustomPostType::class,
-            MakeHooker::class,
+            MakeListener::class,
             MakeMigration::class,
             Migrate::class,
             MigrateRollback::class,

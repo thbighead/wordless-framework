@@ -3,6 +3,8 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -56,6 +58,8 @@ class MakeCommand extends ConsoleCommand
      * @return int
      * @throws FailedToCopyStub
      * @throws PathNotFoundException
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
      */
     protected function runIt(): int
     {
@@ -64,7 +68,7 @@ class MakeCommand extends ConsoleCommand
         $this->wrapScriptWithMessages(
             "Creating $command_class_name...",
             function () use ($command_class_name) {
-                (new CommandStubMounter(ProjectPath::app() . "Commands/$command_class_name.php"))
+                CommandStubMounter::make(ProjectPath::app() . "Commands/$command_class_name.php")
                     ->setReplaceContentDictionary(['DummyCommand' => $command_class_name])
                     ->mountNewFile();
             }

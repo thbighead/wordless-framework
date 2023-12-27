@@ -5,6 +5,8 @@ namespace Wordless\Application\Commands;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -80,9 +82,9 @@ class MakeCustomPostType extends ConsoleCommand
      * @throws CustomPostTypeRegistrationFailed
      * @throws FailedToCopyStub
      * @throws FailedToCreateRole
-     * @throws FailedToFindRole
-     * @throws InvalidArgumentException
      * @throws PathNotFoundException
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
      */
     protected function runIt(): int
     {
@@ -93,11 +95,11 @@ class MakeCustomPostType extends ConsoleCommand
         $this->wrapScriptWithMessages(
             "Creating $custom_post_type_class_name...",
             function () use ($custom_post_type_class_name) {
-                (new CustomPostTypeStubMounter(
+                CustomPostTypeStubMounter::make(
                     ProjectPath::customPostTypes() . "/$custom_post_type_class_name.php")
-                )->setReplaceContentDictionary(
-                    $this->mountStubContentReplacementDictionary($custom_post_type_class_name)
-                )->mountNewFile();
+                    ->setReplaceContentDictionary(
+                        $this->mountStubContentReplacementDictionary($custom_post_type_class_name)
+                    )->mountNewFile();
             }
         );
 
