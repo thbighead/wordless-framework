@@ -17,8 +17,6 @@ class RunTests extends ConsoleCommand
 
     final public const COMMAND_NAME = 'test';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     /**
      * @inheritDoc
      */

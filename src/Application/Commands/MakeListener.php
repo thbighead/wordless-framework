@@ -27,8 +27,6 @@ class MakeListener extends ConsoleCommand
     const LISTENER_ACTION_MODE = 'action';
     const LISTENER_FILTER_MODE = 'filter';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     /**
      * @return ArgumentDTO[]
      */

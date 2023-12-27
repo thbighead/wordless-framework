@@ -22,8 +22,6 @@ class ReplaceBaseUrls extends ConsoleCommand
     final public const COMMAND_NAME = 'replace:base_urls';
     private const BASE_URLS_TO_SEARCH_FOR_REPLACING = 'base_urls';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     private string $app_url;
     private array $base_urls_to_search;
 

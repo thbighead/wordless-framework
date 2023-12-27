@@ -16,8 +16,6 @@ class MigrationList extends ConsoleCommand
 
     final public const COMMAND_NAME = 'migrate:list';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     /**
      * @return ArgumentDTO[]
      */

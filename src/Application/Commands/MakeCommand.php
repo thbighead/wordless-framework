@@ -20,8 +20,6 @@ class MakeCommand extends ConsoleCommand
     final public const COMMAND_NAME = 'make:command';
     private const COMMAND_CLASS_ARGUMENT_NAME = 'PascalCasedCommandClass';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     /**
      * @return ArgumentDTO[]
      */

@@ -27,7 +27,7 @@ trait CallCommand
         bool   $return_script_code = false
     ): int|string
     {
-        return $this->resolveCommandReturn(
+        return $this->resolveExternalCommandReturn(
             "'php console $command_name " . implode(' ', $inputs) . '\'',
             $return_script_code,
             $this->getConsoleCommandInstance($command_name)
@@ -67,7 +67,7 @@ trait CallCommand
                 }
             );
 
-        return $this->resolveCommandReturn(
+        return $this->resolveExternalCommandReturn(
             $full_command,
             $return_script_code,
             $script_result_code,
@@ -83,8 +83,25 @@ trait CallCommand
      * @return int|string
      * @throws CliReturnedNonZero
      */
-    private function resolveCommandReturn(
+    private function resolveExternalCommandReturn(
         string $full_command,
+        bool   $return_script_code,
+        int    $script_result_code,
+        string $command_output
+    ): int|string
+    {
+        if ($return_script_code) {
+            return $script_result_code;
+        }
+
+        if ($script_result_code !== self::SUCCESS) {
+            throw new CliReturnedNonZero($full_command, $script_result_code);
+        }
+
+        return $command_output;
+    }
+
+    private function resolveConsoleCommandReturn(
         bool   $return_script_code,
         int    $script_result_code,
         string $command_output

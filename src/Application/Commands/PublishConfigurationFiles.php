@@ -3,10 +3,12 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Wordless\Application\Commands\PublishConfigurationFiles\Exceptions\FailedToCopyConfig;
 use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Helpers\DirectoryFiles;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCopyFile;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -19,7 +21,7 @@ class PublishConfigurationFiles extends ConsoleCommand
 {
     use ForceMode;
 
-    protected static $defaultName = 'publish:config';
+    final public const COMMAND_NAME = 'publish:config';
 
     private const FORCE_MODE = 'force';
     private const CONFIG_FILENAME_ARGUMENT_NAME = 'config_filename';
@@ -30,7 +32,7 @@ class PublishConfigurationFiles extends ConsoleCommand
     protected function arguments(): array
     {
         return [
-            new ArgumentDTO(
+            ArgumentDTO::make(
                 self::CONFIG_FILENAME_ARGUMENT_NAME,
                 'Configuration filenames to publish. If none passed, all files shall be published.',
                 ArgumentMode::array_optional,
@@ -62,6 +64,8 @@ class PublishConfigurationFiles extends ConsoleCommand
     /**
      * @return int
      * @throws FailedToCopyConfig
+     * @throws InvalidArgumentException
+     * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
     protected function runIt(): int
@@ -93,7 +97,9 @@ class PublishConfigurationFiles extends ConsoleCommand
 
     /**
      * @param array $config_filenames
+     * @return void
      * @throws FailedToCopyConfig
+     * @throws InvalidArgumentException
      * @throws PathNotFoundException
      */
     private function publishConfigFilesFromCommandArgument(array $config_filenames): void
@@ -108,7 +114,10 @@ class PublishConfigurationFiles extends ConsoleCommand
     }
 
     /**
+     * @return void
      * @throws FailedToCopyConfig
+     * @throws InvalidArgumentException
+     * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
     private function publishConfigFilesFromSrcDirectory(): void
@@ -120,7 +129,9 @@ class PublishConfigurationFiles extends ConsoleCommand
 
     /**
      * @param string $config_filepath_from
+     * @return void
      * @throws FailedToCopyConfig
+     * @throws InvalidArgumentException
      * @throws PathNotFoundException
      */
     private function skipOrCopiedConfigFile(string $config_filepath_from): void

@@ -16,8 +16,6 @@ class MigrateRollback extends Migrate
     private const NUMBER_OF_CHUNKS_OPTION = 'chunks';
     private const ALL_CHUNKS_VALUE = 'all';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     private int $number_of_chunks;
 
     /**

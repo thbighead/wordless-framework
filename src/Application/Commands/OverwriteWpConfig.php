@@ -17,8 +17,6 @@ class OverwriteWpConfig extends ConsoleCommand
     final public const COMMAND_NAME = 'wp-config:overwrite';
     private const WP_CONFIG_FILENAME = 'wp-config.php';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     /**
      * @return ArgumentDTO[]
      */

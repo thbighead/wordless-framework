@@ -34,8 +34,6 @@ class Migrate extends ConsoleCommand
     public const COMMAND_NAME = 'migrate';
     final public const MIGRATIONS_WP_OPTION_NAME = 'wordless_migrations_already_executed';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     /** @var array<string, string> $migrations_paths_provided */
     private array $migrations_paths_provided;
 

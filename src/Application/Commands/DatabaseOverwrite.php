@@ -22,7 +22,7 @@ class DatabaseOverwrite extends ConsoleCommand
 {
     use LoadWpConfig;
 
-    protected static $defaultName = 'db:overwrite';
+    final public const COMMAND_NAME = 'db:overwrite';
 
     private wpdb $databaseConnection;
     private string $users_table;

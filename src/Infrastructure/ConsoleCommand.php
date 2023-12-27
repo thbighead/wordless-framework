@@ -22,6 +22,7 @@ abstract class ConsoleCommand extends Command
     use OutputMessage;
     use Questions;
 
+    public const COMMAND_NAME = '';
     final public const DONE_MESSAGE = ' Done!';
 
     protected InputInterface $input;
@@ -42,6 +43,11 @@ abstract class ConsoleCommand extends Command
     abstract protected function options(): array;
 
     abstract protected function runIt(): int;
+
+    public function __toString(): string
+    {
+        return '$this->get';
+    }
 
     public function canRun(): bool
     {

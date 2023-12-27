@@ -32,8 +32,6 @@ class MakeCustomPostType extends ConsoleCommand
     private const CUSTOM_POST_TYPE_CLASS_ARGUMENT_NAME = 'PascalCasedCustomPostTypeClass';
     private const NO_PERMISSIONS_MODE = 'no-permissions';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     /**
      * @return ArgumentDTO[]
      */

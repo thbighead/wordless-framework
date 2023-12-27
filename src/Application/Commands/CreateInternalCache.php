@@ -17,8 +17,6 @@ class CreateInternalCache extends ConsoleCommand
 
     final public const COMMAND_NAME = 'cache:create';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     /**
      * @return ArgumentDTO[]
      */

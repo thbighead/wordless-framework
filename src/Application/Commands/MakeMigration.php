@@ -24,8 +24,6 @@ class MakeMigration extends ConsoleCommand
     final public const COMMAND_NAME = 'make:migration';
     private const MIGRATION_CLASS_ARGUMENT_NAME = 'snake_cased_migration_class';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     /**
      * @return ArgumentDTO[]
      */

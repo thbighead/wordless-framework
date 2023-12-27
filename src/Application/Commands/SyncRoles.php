@@ -18,8 +18,6 @@ class SyncRoles extends ConsoleCommand
 
     final public const COMMAND_NAME = 'roles:sync';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     /**
      * @return ArgumentDTO[]
      */

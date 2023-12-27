@@ -27,8 +27,6 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
     private const FILTER_RULE = '!';
     private const SLASH = '/';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     private array $symlinks = [];
 
     /**

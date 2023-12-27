@@ -25,8 +25,6 @@ class MakeController extends ConsoleCommand
     private const CONTROLLER_CLASS_ARGUMENT_NAME = 'PascalCasedControllerClass';
     private const NO_PERMISSIONS_MODE = 'no-permissions';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     protected function arguments(): array
     {
         return [

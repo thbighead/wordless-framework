@@ -66,8 +66,6 @@ class WordlessInstall extends ConsoleCommand
     ];
     private const WORDPRESS_SALT_URL_GETTER = 'https://api.wordpress.org/secret-key/1.1/salt/';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     private array $fresh_new_env_content;
     private QuestionHelper $questionHelper;
     private array $wp_languages;

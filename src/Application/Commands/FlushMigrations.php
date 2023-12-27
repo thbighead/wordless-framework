@@ -13,8 +13,6 @@ class FlushMigrations extends Migrate
 {
     final public const COMMAND_NAME = 'migrate:flush';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     /**
      * @return ArgumentDTO[]
      */

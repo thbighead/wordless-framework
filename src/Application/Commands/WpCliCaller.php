@@ -21,8 +21,6 @@ class WpCliCaller extends ConsoleCommand
     private const PARTIAL_REWRITE_STRUCTURE_COMMAND = 'rewrite structure ';
     private const WINDOWS_OS = 'windows';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     private string $operational_system;
 
     /**
