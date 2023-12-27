@@ -49,6 +49,8 @@ trait Internal
         try {
             return $this->callConsoleCommand($command_name, $inputs);
         } catch (CliReturnedNonZero $exception) {
+            $this->writelnWarningWhenVerbose($exception->getMessage());
+
             return $exception->script_result_output;
         }
     }

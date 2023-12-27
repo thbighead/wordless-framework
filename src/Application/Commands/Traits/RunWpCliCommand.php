@@ -56,7 +56,6 @@ trait RunWpCliCommand
      * @param string $command
      * @param bool $return_script_code
      * @return int|string
-     * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
@@ -64,21 +63,23 @@ trait RunWpCliCommand
      */
     private function runWpCliCommand(string $command, bool $return_script_code = false): int|string
     {
-        $return_var = $this->resolveCommandAllowRootMode($command)
-            ->resolveCommandDebugMode($command)
-            ->callWpCliCommand($command, $return_script_code);
-
-        if (!$return_script_code) {
-            throw new WpCliCommandReturnedNonZero($command, $return_var);
+        try {
+            return $this->resolveCommandAllowRootMode($command)
+                ->resolveCommandDebugMode($command)
+                ->callWpCliCommand($command, $return_script_code);
+        } catch (CliReturnedNonZero $exception) {
+            throw new WpCliCommandReturnedNonZero(
+                $exception->full_command,
+                $exception->script_result_code,
+                $exception->script_result_output,
+                $exception
+            );
         }
-
-        return $return_var;
     }
 
     /**
      * @param string $command
      * @return string
-     * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
@@ -90,7 +91,7 @@ trait RunWpCliCommand
         } catch (WpCliCommandReturnedNonZero $exception) {
             $this->writelnWarningWhenVerbose($exception->getMessage());
 
-            return '';
+            return $exception->script_result_output;
         }
     }
 }

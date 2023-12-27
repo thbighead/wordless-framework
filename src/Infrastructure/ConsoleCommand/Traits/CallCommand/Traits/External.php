@@ -37,6 +37,8 @@ trait External
         try {
             return $this->callExternalCommand($full_command);
         } catch (CliReturnedNonZero $exception) {
+            $this->writelnWarningWhenVerbose($exception->getMessage());
+
             return $exception->script_result_output;
         }
     }
