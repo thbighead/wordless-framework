@@ -538,7 +538,10 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function installWpLanguages(): static
@@ -561,7 +564,10 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @param string $language
      * @return void
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function installWpPluginsLanguage(string $language): void
@@ -572,7 +578,10 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function makeWpBlogPublic(): static
@@ -586,7 +595,10 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function performUrlDatabaseFix(): static
@@ -697,7 +709,10 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @param bool $switch
      * @return void
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function switchingMaintenanceMode(bool $switch): void
