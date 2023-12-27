@@ -2,13 +2,11 @@
 
 namespace Wordless\Infrastructure\Helper\Contracts\Subjectable\DTO;
 
-use Wordless\Infrastructure\Helper\Contracts\Subjectable\DTO\SubjectDTO\Exceptions\CannotCallOfFromSubject;
-
 class SubjectDTO
 {
     private readonly mixed $original_subject;
 
-    public function __construct(protected mixed $subject, protected readonly string $helper_class_namespace)
+    public function __construct(protected mixed $subject)
     {
         $this->original_subject = $this->subject;
     }
