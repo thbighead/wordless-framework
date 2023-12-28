@@ -42,7 +42,6 @@ use Wordless\Application\Mounters\Stub\WpConfigStubMounter;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
-use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 use Wordless\Wordpress\Enums\StartOfWeek;
 
@@ -53,7 +52,6 @@ class WordlessInstall extends ConsoleCommand
 
     final public const COMMAND_NAME = 'wordless:install';
     final public const TEMP_MAIL = 'temp@mail.not.real';
-    final protected const NO_ASK_MODE = 'no-ask';
     private const WORDPRESS_SALT_FILLABLE_VALUES = [
         '#AUTH_KEY',
         '#SECURE_AUTH_KEY',
@@ -135,11 +133,6 @@ class WordlessInstall extends ConsoleCommand
         return [
             $this->mountAllowRootModeOption(),
             $this->mountForceModeOption('Forces a project installation.'),
-            new OptionDTO(
-                self::NO_ASK_MODE,
-                'Don\'t ask for any input while running.',
-                mode: OptionMode::no_value,
-            ),
         ];
     }
 
@@ -671,7 +664,6 @@ class WordlessInstall extends ConsoleCommand
     private function resolveWpConfigChmod(): static
     {
         if ($this->getEnvVariableByKey('APP_ENV') === Environment::PRODUCTION) {
-
             DirectoryFiles::changePermissions(ProjectPath::wpCore('wp-config.php'), 0660);
         }
 

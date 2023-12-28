@@ -13,7 +13,6 @@ use Wordless\Application\Commands\MakeMigration;
 use Wordless\Application\Commands\Migrate;
 use Wordless\Application\Commands\MigrateRollback;
 use Wordless\Application\Commands\MigrationList;
-use Wordless\Application\Commands\OverwriteWpConfig;
 use Wordless\Application\Commands\PublishConfigurationFiles;
 use Wordless\Application\Commands\ReplaceBaseUrls;
 use Wordless\Application\Commands\RunTests;
@@ -56,7 +55,6 @@ final class CoreProvider extends Provider
             Migrate::class,
             MigrateRollback::class,
             MigrationList::class,
-            OverwriteWpConfig::class,
             PublishConfigurationFiles::class,
             ReplaceBaseUrls::class,
             RunTests::class,
