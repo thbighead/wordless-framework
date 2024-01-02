@@ -6,6 +6,7 @@ use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyConso
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
+use Wordless\Application\Commands\RunTests\Traits\CoverageOption;
 use Wordless\Application\Commands\RunTests\Traits\FilterOption;
 use Wordless\Application\Commands\RunTests\Traits\OutputOption;
 use Wordless\Application\Commands\RunTests\Traits\PathArgument;
@@ -13,9 +14,10 @@ use Wordless\Infrastructure\ConsoleCommand;
 
 class RunTests extends ConsoleCommand
 {
-    use PathArgument;
+    use CoverageOption;
     use FilterOption;
     use OutputOption;
+    use PathArgument;
 
     final public const COMMAND_NAME = 'test';
 
@@ -43,6 +45,7 @@ class RunTests extends ConsoleCommand
     protected function options(): array
     {
         return [
+            $this->mountCoverageOption(),
             $this->mountFilterOption(),
             $this->mountOutputOption(),
         ];
@@ -58,12 +61,12 @@ class RunTests extends ConsoleCommand
     protected function runIt(): int
     {
         $phpunit_command = "vendor/bin/phpunit {$this->getTestOutputFormat()}";
-        $filter_string = $this->getFilterOption();
 
-        if (!empty($filter_string)) {
-            $phpunit_command = "$phpunit_command $filter_string";
-        }
-
-        return $this->callExternalCommand("$phpunit_command {$this->getPathArgument()}", true);
+        return $this->resolveFilterOptions($phpunit_command)
+            ->resolveCoverageOptions($phpunit_command)
+            ->callExternalCommand(
+                "$phpunit_command {$this->getPathArgument()}",
+                true
+            );
     }
 }

@@ -15,8 +15,8 @@ trait PathArgument
     {
         return ArgumentDTO::make(
             self::ARGUMENT_NAME,
-            'Pass the directory or class file path to run tests.',
-            ArgumentMode::required
+            'Filters what paths inside tests directory should run.',
+            ArgumentMode::optional
         );
     }
 

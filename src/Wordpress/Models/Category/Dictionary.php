@@ -2,10 +2,10 @@
 
 namespace Wordless\Wordpress\Models\Category;
 
-use Wordless\Application\Libraries\DesignPattern\Singleton;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary as BaseDictionary;
 use WP_Term;
 
-class Dictionary extends Singleton
+class Dictionary extends BaseDictionary
 {
     /**
      * @var WP_Term[]

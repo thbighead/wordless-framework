@@ -33,9 +33,25 @@ trait FilterOption
     {
         return OptionDTO::make(
             self::OPTION_FILTER_NAME,
-            'Filters what tests should run. You may pass multiple filters to use them together with a logical and. The filter pattern works as follows: test/class/relative/filepath/from/tests/directory.php[::methodNamePattern]',
+            'Filters what tests should run. You may pass multiple filters to use them together with a logical and.',
             mode: OptionMode::array_required_values
         );
+    }
+
+    /**
+     * @param string $phpunit_command
+     * @return $this
+     * @throws InvalidArgumentException
+     */
+    private function resolveFilterOptions(string &$phpunit_command): static
+    {
+        $filter_string = $this->getFilterOption();
+
+        if (!empty($filter_string)) {
+            $phpunit_command = "$phpunit_command $filter_string";
+        }
+
+        return $this;
     }
 
     /**

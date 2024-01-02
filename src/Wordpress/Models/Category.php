@@ -11,8 +11,6 @@ class Category extends Taxonomy
 {
     final protected const NAME_KEY = StandardTaxonomy::category->name;
 
-    private static Dictionary $categories;
-
     /**
      * @return WP_Term[]
      */
@@ -45,9 +43,9 @@ class Category extends Taxonomy
         return self::getCategoriesList()->getBySlug($slug);
     }
 
-    private static function getCategoriesList(): Dictionary
+    protected static function getCategoriesList(): Dictionary
     {
-        return self::$categories ?? self::$categories = new Dictionary;
+        return Dictionary::getInstance();
     }
 
     final protected function setWpTaxonomy(): void

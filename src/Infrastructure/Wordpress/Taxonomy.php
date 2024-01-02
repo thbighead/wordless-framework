@@ -3,6 +3,7 @@
 namespace Wordless\Infrastructure\Wordpress;
 
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\MixinWpTerm;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
@@ -20,6 +21,7 @@ abstract class Taxonomy implements IRelatedMetaData
     use WithAcfs;
     use WithMetaData;
 
+    abstract protected static function getCategoriesList(): Dictionary;
     abstract protected function setWpTaxonomy(): void;
 
     protected const NAME_KEY = null;
