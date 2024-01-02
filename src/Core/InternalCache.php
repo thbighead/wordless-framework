@@ -112,11 +112,10 @@ final class InternalCache
             if (is_dir($cache_file_path) || !Str::endsWith($cache_file_path, self::PHP_EXTENSION)) {
                 throw new InvalidCache($cache_file_path, 'Cache directory must have only PHP files.');
             }
-
-            $internal_wordless_cache[Str::before(
-                Str::afterLast($cache_file_path, DIRECTORY_SEPARATOR),
-                self::PHP_EXTENSION
-            )] = require $cache_file_path;
+            $internal_wordless_cache[Str::of($cache_file_path)
+                ->afterLast(DIRECTORY_SEPARATOR)
+                ->before(self::PHP_EXTENSION)
+                ->getSubject()] = require $cache_file_path;
         }
 
         return $internal_wordless_cache;

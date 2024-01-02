@@ -73,6 +73,6 @@ enum StatusCode: int
 
     public function asText(): string
     {
-        return Str::titleCase(Str::beforeLast($this->name, '_'));
+        return Str::of($this->name)->beforeLast('_')->titleCase();
     }
 }

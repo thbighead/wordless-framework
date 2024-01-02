@@ -17,7 +17,7 @@ class DeferEnqueuedScripts extends FilterListener
 
     public static function addReferToScriptTag(string $url): string
     {
-        if (is_admin() || !Str::endsWith(Str::beforeLast($url, '?'), '.js')) {
+        if (is_admin() || !Str::of($url)->beforeLast('?')->endsWith('.js')) {
             return $url;
         }
 

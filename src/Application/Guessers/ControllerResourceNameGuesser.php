@@ -9,11 +9,7 @@ class ControllerResourceNameGuesser extends ControllerGuesser
 {
     protected function guessValue(): string
     {
-        return Str::snakeCase(
-            Str::before(
-                Str::afterLast($this->controller_namespace_class, '\\'),
-                'Controller'
-            )
-        );
+        return Str::of(Str::afterLast($this->controller_namespace_class, '\\'))
+            ->before('Controller')->snakeCase();
     }
 }

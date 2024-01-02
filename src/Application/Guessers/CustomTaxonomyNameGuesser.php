@@ -17,9 +17,6 @@ class CustomTaxonomyNameGuesser extends Guesser
 
     protected function guessValue(): string
     {
-        return Str::truncate(
-            Str::slugCase($this->class_name),
-            CustomTaxonomy::TAXONOMY_NAME_MAX_LENGTH
-        );
+        return Str::of($this->class_name)->slugCase()->truncate(CustomTaxonomy::TAXONOMY_NAME_MAX_LENGTH);
     }
 }

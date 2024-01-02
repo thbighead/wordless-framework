@@ -17,6 +17,6 @@ class CustomPostTypeKeyGuesser extends Guesser
 
     protected function guessValue(): string
     {
-        return Str::truncate(Str::slugCase($this->class_name), PostType::KEY_MAX_LENGTH);
+        return Str::of($this->class_name)->slugCase()->truncate(PostType::KEY_MAX_LENGTH);
     }
 }
