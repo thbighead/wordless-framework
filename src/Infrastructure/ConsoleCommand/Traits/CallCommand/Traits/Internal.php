@@ -63,11 +63,11 @@ trait Internal
     /**
      * @param ConsoleCommand $command
      * @param ArrayInput $inputs
-     * @return int
+     * @return string
      * @throws CliReturnedNonZero
      * @throws ExceptionInterface
      */
-    private function runCommandReturningOutput(ConsoleCommand $command, ArrayInput $inputs): int
+    private function runCommandReturningOutput(ConsoleCommand $command, ArrayInput $inputs): string
     {
         $script_result_code = $command->run($inputs, $bufferedOutput = $this->mountBufferedOutput());
         $script_result_output = $bufferedOutput->fetch();

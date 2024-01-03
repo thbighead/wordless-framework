@@ -58,11 +58,11 @@ trait External
 
     /**
      * @param Process $process
-     * @return int
+     * @return string
      * @throws CliReturnedNonZero
      * @throws LogicException
      */
-    private function runProcessReturningOutput(Process $process): int
+    private function runProcessReturningOutput(Process $process): string
     {
         $script_result_output = '';
         $script_result_code = $process->run(

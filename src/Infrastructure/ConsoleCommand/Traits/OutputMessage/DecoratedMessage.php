@@ -2,7 +2,7 @@
 
 namespace Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage;
 
-use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\DecoratedMessage\Enums\Decoration;
+use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\DecoratedMessage\Enums\Decoration\Contracts\IDecoration;
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\DecoratedMessage\Traits\Comment;
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\DecoratedMessage\Traits\Danger;
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\DecoratedMessage\Traits\Info;
@@ -19,10 +19,10 @@ trait DecoratedMessage
     use Success;
     use Warning;
 
-    protected function decorateText(string $text, ?Decoration $decoration = null): string
+    protected function decorateText(string $text, ?IDecoration $decoration = null): string
     {
         if ($decoration !== null) {
-            return "<$decoration->name>$text</>";
+            return "<{$decoration->name()}>$text</>";
         }
 
         return $text;

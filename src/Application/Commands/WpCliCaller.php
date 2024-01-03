@@ -5,6 +5,7 @@ namespace Wordless\Application\Commands;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\InvalidArgumentException as SymfonyProcessInvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
+use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -45,7 +46,7 @@ class WpCliCaller extends ConsoleCommand
 
     /**
      * @return int
-     * @throws Exceptions\CliReturnedNonZero
+     * @throws CliReturnedNonZero
      * @throws InvalidArgumentException
      * @throws LogicException
      * @throws PathNotFoundException
@@ -53,14 +54,16 @@ class WpCliCaller extends ConsoleCommand
      */
     protected function runIt(): int
     {
-        $wp_cli_full_command_string = $this->input->getArgument(self::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME);
-        $this->treatWpCliCommand($wp_cli_full_command_string);
         $wp_cli_filepath = $this->chooseWpCliScriptByOperationalSystem();
+        $wp_cli_full_command_string = $this->input->getArgument(self::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME);
+
+        $this->treatWpCliCommand($wp_cli_full_command_string);
+
         $full_command = "$wp_cli_filepath $wp_cli_full_command_string";
 
         $this->writelnInfoWhenVerbose("Executing $full_command...");
 
-        return $this->callExternalCommand($full_command);
+        return $this->callExternalCommand($full_command, true);
     }
 
     protected function help(): string
