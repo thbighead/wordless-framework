@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress;
 
+use InvalidArgumentException;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -55,13 +56,14 @@ class RolesList extends WP_Roles
      * @return void
      * @throws FailedToCreateRole
      * @throws PathNotFoundException
+     * @throws InvalidArgumentException
      */
     public static function syncConfiguredPermissions(): void
     {
-        foreach (Config::tryToGetOrDefault('permissions', []) as $role_key => $permissions) {
+        foreach (Config::tryToGetOrDefault('wordpress.permissions', []) as $role_key => $permissions) {
             try {
                 $role = Role::find($role_key);
-            } catch (FailedToFindRole $exception) {
+            } catch (FailedToFindRole) {
                 Role::create(
                     Str::titleCase($role_key),
                     array_filter($permissions, function (bool $value) {

@@ -16,7 +16,9 @@ use WP_Error;
 
 trait Register
 {
-    use Labels, Rewrite, Validation;
+    use Labels;
+    use Rewrite;
+    use Validation;
 
     /** @var array<static, string> */
     private static array $type_keys = [];

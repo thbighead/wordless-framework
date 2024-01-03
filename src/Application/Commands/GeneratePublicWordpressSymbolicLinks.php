@@ -7,13 +7,13 @@ use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangeDirectoryTo;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateSymlink;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToChangeDirectoryTo;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCreateDirectory;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToCreateSymlink;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToDeletePath;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -63,6 +63,7 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
      * @throws FailedToDeletePath
      * @throws FailedToGetCurrentWorkingDirectory
      * @throws FailedToGetDirectoryPermissions
+     * @throws InvalidConfigKey
      * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
@@ -134,7 +135,7 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
      */
     private function getMappedSymlinks(): array
     {
-        return Config::get('wp-symlinks');
+        return Config::get('wordless.public-symlinks');
     }
 
     /**

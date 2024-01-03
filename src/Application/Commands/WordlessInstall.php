@@ -195,13 +195,13 @@ class WordlessInstall extends ConsoleCommand
     private function applyAdminConfiguration(): void
     {
         $this->runWpCliCommand('option update date_format '
-            . Config::tryToGetOrDefault('admin.datetime.date_format', 'Y-m-d'));
+            . Config::tryToGetOrDefault('wordpress.admin.datetime.date_format', 'Y-m-d'));
         $this->runWpCliCommand('option update time_format '
-            . Config::tryToGetOrDefault('admin.datetime.time_format', 'H:i'));
+            . Config::tryToGetOrDefault('wordpress.admin.datetime.time_format', 'H:i'));
         $this->runWpCliCommand('option update '
             . StartOfWeek::KEY
             . ' '
-            . Config::tryToGetOrDefault('admin.' . StartOfWeek::KEY, StartOfWeek::sunday->value));
+            . Config::tryToGetOrDefault('wordpress.admin.' . StartOfWeek::KEY, StartOfWeek::sunday->value));
     }
 
     /**
@@ -481,7 +481,7 @@ class WordlessInstall extends ConsoleCommand
             $this->writelnInfoWhenVerbose('WordPress Core Database already installed, skipping.');
         } catch (WpCliCommandReturnedNonZero) {
             $app_name = $this->getEnvVariableByKey('APP_NAME', 'Wordless App');
-            $app_url = $this->getEnvVariableByKey('APP_URL');
+            $app_url = $this->getEnvVariableByKey('APP_URL', Environment::isFramework() ? '' : null);
             $app_url_with_final_slash = Str::finishWith($app_url, '/');
 
             $this->runWpCliCommand(

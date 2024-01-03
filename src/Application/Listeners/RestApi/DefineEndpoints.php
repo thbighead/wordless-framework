@@ -25,7 +25,9 @@ class DefineEndpoints extends FilterListener
      */
     public static function setRestApiRoutes(array $endpoints): array
     {
-        $routes_configuration = Config::tryToGetOrDefault('rest-api.' . RestApiProvider::CONFIG_KEY_ROUTES);
+        $routes_configuration = Config::tryToGetOrDefault(
+            'wordpress.rest-api.' . RestApiProvider::CONFIG_KEY_ROUTES
+        );
 
         if (isset($routes_configuration[RestApiProvider::CONFIG_ROUTES_KEY_ALLOW])
             && isset($routes_configuration[RestApiProvider::CONFIG_ROUTES_KEY_DISALLOW])) {

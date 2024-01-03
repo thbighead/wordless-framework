@@ -6,9 +6,11 @@ use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\Wordpress\ApiController;
-use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
+use Wordless\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Wordpress\Hook\Enums\Action;
 
-class BootApiControllers extends Listener
+class BootApiControllers extends ActionListener
 {
     /**
      * @return void
@@ -23,5 +25,10 @@ class BootApiControllers extends Listener
 
             $controller->register_routes();
         }
+    }
+
+    protected static function hook(): ActionHook
+    {
+        return Action::rest_api_init;
     }
 }
