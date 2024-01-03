@@ -21,8 +21,6 @@ use Wordless\Application\Commands\WordlessInstall;
 use Wordless\Application\Commands\WpCliCaller;
 use Wordless\Application\Listeners\AllowSvgUpload;
 use Wordless\Application\Listeners\BootApiControllers;
-use Wordless\Application\Listeners\BootCustomPostTypes;
-use Wordless\Application\Listeners\BootCustomTaxonomies;
 use Wordless\Application\Listeners\BootHttpRemoteCallsLog;
 use Wordless\Application\Listeners\ChooseImageEditor;
 use Wordless\Application\Listeners\DeferEnqueuedScripts;
@@ -69,8 +67,6 @@ final class CoreProvider extends Provider
         return [
             AllowSvgUpload::class,
             BootApiControllers::class,
-            BootCustomPostTypes::class,
-            BootCustomTaxonomies::class,
             BootHttpRemoteCallsLog::class,
             ChooseImageEditor::class,
             DeferEnqueuedScripts::class,
