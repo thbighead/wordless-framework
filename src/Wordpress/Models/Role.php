@@ -44,6 +44,11 @@ class Role extends WP_Role
         parent::__construct($role, $capabilities);
     }
 
+    public function addCapability(string $capability): void
+    {
+        $this->add_cap($capability);
+    }
+
     /**
      * @return Role[]
      */
@@ -63,6 +68,11 @@ class Role extends WP_Role
     public static function allNames(): array
     {
         return self::getRepository()->get_names();
+    }
+
+    public function can(string $capability): bool
+    {
+        return $this->has_cap($capability);
     }
 
     /**
@@ -101,29 +111,14 @@ class Role extends WP_Role
         throw new FailedToFindRole($role);
     }
 
-    public static function isDefaultByName(string $role): bool
-    {
-        return (bool)(self::DEFAULT[Str::slugCase($role)] ?? false);
-    }
-
-    private static function getRepository(): RolesList
-    {
-        return self::$wpRolesRepository ?? self::$wpRolesRepository = new RolesList;
-    }
-
-    public function addCapability(string $capability): void
-    {
-        $this->add_cap($capability);
-    }
-
-    public function can(string $capability): bool
-    {
-        return $this->has_cap($capability);
-    }
-
     public function isDefault(): bool
     {
         return $this->is_default ?? $this->is_default = self::isDefaultByName($this->name);
+    }
+
+    public static function isDefaultByName(string $role): bool
+    {
+        return (bool)(self::DEFAULT[Str::slugCase($role)] ?? false);
     }
 
     public function removeCapability(string $capability): void
@@ -140,5 +135,10 @@ class Role extends WP_Role
         foreach ($capabilities as $capability => $can) {
             $can ? $this->addCapability($capability) : $this->removeCapability($capability);
         }
+    }
+
+    private static function getRepository(): RolesList
+    {
+        return self::$wpRolesRepository ?? self::$wpRolesRepository = new RolesList;
     }
 }
