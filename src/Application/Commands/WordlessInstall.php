@@ -19,6 +19,7 @@ use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Application\Commands\WordlessInstall\Traits\ForFramework;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangePathPermissions;
@@ -27,6 +28,7 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirecto
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
@@ -46,6 +48,7 @@ use Wordless\Wordpress\Enums\StartOfWeek;
 class WordlessInstall extends ConsoleCommand
 {
     use ForceMode;
+    use ForFramework;
     use RunWpCliCommand;
 
     final public const COMMAND_NAME = 'wordless:install';
@@ -107,6 +110,7 @@ class WordlessInstall extends ConsoleCommand
      * @throws FailedToDeletePath
      * @throws FailedToGetDirectoryPermissions
      * @throws FailedToGetFileContent
+     * @throws FailedToPutFileContent
      * @throws FailedToRewriteDotEnvFile
      * @throws FormatException
      * @throws InvalidArgumentException
@@ -162,14 +166,21 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
+     * @throws FailedToPutFileContent
      * @throws InvalidArgumentException
+     * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
     private function activateWpTheme(): static
     {
+        if (Environment::isFramework()) {
+            $this->generateEmptyWordlessTheme();
+        }
+
         $this->runWpCliCommand(
             "theme activate {$this->getEnvVariableByKey('WP_THEME', 'wordless')}"
         );
@@ -233,6 +244,10 @@ class WordlessInstall extends ConsoleCommand
      * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
+     * @throws FailedToPutFileContent
+     * @throws InvalidArgumentException
      * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
@@ -362,7 +377,7 @@ class WordlessInstall extends ConsoleCommand
      */
     private function databaseUpdate(): static
     {
-        $this->runWpCliCommand('core update-db', true);
+        $this->runWpCliCommand('core update-db');
 
         return $this;
     }
@@ -417,7 +432,9 @@ class WordlessInstall extends ConsoleCommand
      */
     private function generateSymbolicLinks(): static
     {
-        $this->callConsoleCommand(GeneratePublicWordpressSymbolicLinks::COMMAND_NAME);
+        if (Environment::isNotFramework()) {
+            $this->callConsoleCommand(GeneratePublicWordpressSymbolicLinks::COMMAND_NAME);
+        }
 
         return $this;
     }
@@ -610,7 +627,7 @@ class WordlessInstall extends ConsoleCommand
         $app_url = $this->getEnvVariableByKey('APP_URL');
 
         $this->runWpCliCommand("option update siteurl $app_url/wp-core/");
-        $this->runWpCliCommand("option update home $app_url");
+        $this->runWpCliCommand('option update home ' . (Environment::isFramework() ? '/' : $app_url));
         $this->runWpCliCommand('db optimize');
 
         return $this;
