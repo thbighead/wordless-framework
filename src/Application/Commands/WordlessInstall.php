@@ -131,6 +131,9 @@ class WordlessInstall extends ConsoleCommand
             ->createWordlessPluginFromStub()
             ->createWpDatabase()
             ->coreSteps()
+            ->runMigrations()
+            ->syncRoles()
+            ->createCache()
             ->resolveWpConfigChmod();
 
         return Command::SUCCESS;
@@ -214,10 +217,12 @@ class WordlessInstall extends ConsoleCommand
      */
     private function applyAdminConfiguration(): void
     {
-        $this->runWpCliCommand('option update date_format '
-            . Config::tryToGetOrDefault('wordpress.admin.datetime.date_format', 'Y-m-d'));
-        $this->runWpCliCommand('option update time_format '
-            . Config::tryToGetOrDefault('wordpress.admin.datetime.time_format', 'H:i'));
+        $this->runWpCliCommand('option update date_format "'
+            . Config::tryToGetOrDefault('wordpress.admin.datetime.date_format', 'Y-m-d')
+            . '"');
+        $this->runWpCliCommand('option update time_format "'
+            . Config::tryToGetOrDefault('wordpress.admin.datetime.time_format', 'H:i')
+            . '"');
         $this->runWpCliCommand('option update '
             . StartOfWeek::KEY
             . ' '
@@ -264,9 +269,6 @@ class WordlessInstall extends ConsoleCommand
                 ->makeWpBlogPublic()
                 ->databaseUpdate()
                 ->generateSymbolicLinks()
-                ->runMigrations()
-                ->syncRoles()
-                ->createCache()
                 ->applyAdminConfiguration();
         } finally {
             $this->switchingMaintenanceMode(false);
@@ -708,7 +710,9 @@ class WordlessInstall extends ConsoleCommand
      */
     private function runMigrations(): static
     {
-        $this->callConsoleCommand(Migrate::COMMAND_NAME);
+        if (Environment::isNotFramework()) {
+            $this->callConsoleCommand(Migrate::COMMAND_NAME);
+        }
 
         return $this;
     }

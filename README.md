@@ -28,7 +28,7 @@ The [Wordless](https://github.com/thbighead/Wordless) project framework.
 |  | Wordpress (Wordpress adapted class abstractions)
 | tests (Automated tests)
 | \
-|  | Feature (Application endpoint tests)
+|  | coverage (files with test coverage results in any format)
 |  | Unit (Class methods unitary tests)
 |>.env.example (Used to create new .env files)
 |>composer.json (Composer)
@@ -45,34 +45,8 @@ Inside any [main directory](#main-directories-and-files) we may have the followi
 | DTO (Useful DTO implementations to avoid complex array data configuration)
 | Enums (Useful Enums to avoid magic values)
 | Exceptions (Keep custom Exceptions. Better then if-else)
+| Traits (Traits used to group methods, properties and constants in a scope or to be used in more than one specialized class.)
 ```
-
-## Test environment
-
-To begin a completely new test environment, so you can test a full Wordless installation, use the following command:
-
-```shell
-php console test:environment
-```
-
-This should create a folder named `test-environment` with a fresh Wordless installation based on your local `wordless`
-and `wordless-framework` projects. **Note that this command is only available at this project for test purposes,
-Wordless fresh installations (even the one created by this command) can't use it.**
-
-> **IMPORTANT:** If you want to run a composer command inside `test-environment` directory, use `vendor/bin/composer`
-> instead of only `composer`. Using only the `composer` command may reference to `/var/www/vendor/bin/composer` making
-> your Composer script changes to not be applied.
-
-If you already have installed a test environment you may restart it by using `--force` (or `-f`) flag:
-
-```shell
-php console test:environment -f
-```
-
-> When using `--force` (or `-f`) flag you may also use `--drop-db` flag to also restarts the test database:
-> ```shell
-> php console test:environment -f --drop-db
-> ```
 
 ## Exception codes
 
@@ -85,12 +59,13 @@ developers expect;
 
 ## Docker
 
-To provide a development environment, Wordless offers the following containers:
+To provide a development environment, Wordless Framework offers the following containers:
 
 ### Workspace
 
-This is the main container, where you can access PHP, Composer, and the Wordless CLI console. Generally, this is where 
-you will interact with your application most of the time.
+This is the main container, where you can access PHP, Composer, NPM and the Wordless CLI console. Generally, this is
+where you will interact with your application most of the time. To access it follow the
+[access guide](#accessing-containers) after you have [started the containers](#starting-containers).
 
 ### MariaDB
 
@@ -98,14 +73,14 @@ This container is responsible for creating and managing your database.
 
 ### Adminer
 
-Adminer is a container that allows interaction with the database through the browser, providing an interface to perform 
+Adminer is a container that allows database interactions through the browser, providing an interface to perform 
 various tasks necessary for database-related development.
 
 ### Commands
 
-#### Starting containers 
-To start the containers, use the `up` command, which will initiate each container. If the containers haven't been created, 
-this command will also build them.
+#### Starting containers
+To start the containers, use the `up` command, which will initiate each container. If the containers haven't been
+created, this command will also build them.
 
 > The `-d` flag allows you to execute this command in non-verbose mode. In other words, you won't receive the outputs of 
 > your containers, leaving the terminal free for other tasks.
@@ -113,13 +88,14 @@ this command will also build them.
 > docker compose up -d
 > ```
 
-#### Executing Containers
+#### Accessing containers
 Once the containers are created and started, you can navigate inside them using the `exec` command. Inside each 
 container, you can leverage all its specific functionalities characteristic of each container. Specify which container 
 to execute; in this case, we are executing the workspace.
 
-> The `--user` flag indicates the user to be used for logging into the container. Usually, `laradock` is the default, 
-> but in some cases where a profile with greater responsibility is needed, you can use `root`.
+> The `--user` flag indicates the user for logging into the container. Usually, `laradock` is the default, but in some
+> cases where a profile with greater responsibility is needed, you can use `root` by just don't using this flag.
 > ```shell
 > docker compose exec --user=laradock workspace bash
+> docker compose exec workspace bash # as root
 > ```
