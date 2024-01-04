@@ -25,7 +25,7 @@ trait SignalResolver
         return $this->has_been_interrupted;
     }
 
-    protected function resolveInterruption(): void
+    protected function resolveCommandIfInterrupted(): void
     {
         if ($this->has_been_interrupted) {
             $this->writelnComment('Gracefully exiting script.');

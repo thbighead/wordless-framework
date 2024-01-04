@@ -6,8 +6,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Dotenv\Dotenv;
@@ -20,7 +18,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
-use Wordless\Application\Commands\Traits\WunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangePathPermissions;
@@ -65,19 +63,22 @@ class WordlessInstall extends ConsoleCommand
     private const WORDPRESS_SALT_URL_GETTER = 'https://api.wordpress.org/secret-key/1.1/salt/';
 
     private array $fresh_new_env_content;
-    private QuestionHelper $questionHelper;
     private array $wp_languages;
     private bool $maintenance_mode;
 
+    /**
+     * @param int $signal
+     * @return void
+     * @throws CommandNotFoundException
+     * @throws ExceptionInterface
+     * @throws InvalidArgumentException
+     * @throws WpCliCommandReturnedNonZero
+     */
     public function handleSignal(int $signal): void
     {
         parent::handleSignal($signal);
 
-        try {
-            $this->switchingMaintenanceMode(false);
-        } catch (WpCliCommandReturnedNonZero $exception) {
-
-        }
+        $this->switchingMaintenanceMode(false);
     }
 
     /**
@@ -151,14 +152,11 @@ class WordlessInstall extends ConsoleCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return void
-     * @throws InvalidArgumentException
-     * @throws LogicException
      */
     protected function setup(InputInterface $input, OutputInterface $output): void
     {
         parent::setup($input, $output);
 
-        $this->questionHelper = $this->getHelper('question');
         $this->maintenance_mode = false;
     }
 
@@ -711,6 +709,14 @@ class WordlessInstall extends ConsoleCommand
         return $this;
     }
 
+    /**
+     * @param bool $switch
+     * @return void
+     * @throws CommandNotFoundException
+     * @throws ExceptionInterface
+     * @throws InvalidArgumentException
+     * @throws WpCliCommandReturnedNonZero
+     */
     private function switchingMaintenanceMode(bool $switch): void
     {
         $switch_string = $switch ? 'activate' : 'deactivate';
@@ -721,7 +727,7 @@ class WordlessInstall extends ConsoleCommand
             return;
         }
 
-        $this->runWpCliCommand("maintenance-mode $switch_string", true);
+        $this->runWpCliCommand("maintenance-mode $switch_string");
 
         $this->maintenance_mode = $switch;
     }
