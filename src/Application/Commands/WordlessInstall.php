@@ -69,6 +69,17 @@ class WordlessInstall extends ConsoleCommand
     private array $wp_languages;
     private bool $maintenance_mode;
 
+    public function handleSignal(int $signal): void
+    {
+        parent::handleSignal($signal);
+
+        try {
+            $this->switchingMaintenanceMode(false);
+        } catch (WpCliCommandReturnedNonZero $exception) {
+
+        }
+    }
+
     /**
      * @return ArgumentDTO[]
      */
@@ -700,15 +711,6 @@ class WordlessInstall extends ConsoleCommand
         return $this;
     }
 
-    /**
-     * @param bool $switch
-     * @return void
-     * @throws CliReturnedNonZero
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
-     * @throws WpCliCommandReturnedNonZero
-     */
     private function switchingMaintenanceMode(bool $switch): void
     {
         $switch_string = $switch ? 'activate' : 'deactivate';
@@ -719,7 +721,7 @@ class WordlessInstall extends ConsoleCommand
             return;
         }
 
-        $this->runWpCliCommand("maintenance-mode $switch_string");
+        $this->runWpCliCommand("maintenance-mode $switch_string", true);
 
         $this->maintenance_mode = $switch;
     }

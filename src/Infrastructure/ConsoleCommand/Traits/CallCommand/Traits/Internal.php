@@ -6,52 +6,87 @@ use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Response;
 
 trait Internal
 {
     /**
      * @param string $command_name
      * @param array $inputs
-     * @param bool $return_script_code
-     * @return int|string
+     * @return Response
      * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
      * @throws ExceptionInterface
      */
-    protected function callConsoleCommand(
-        string $command_name,
-        array  $inputs = [],
-        bool   $return_script_code = false
-    ): int|string
+    protected function callConsoleCommand(string $command_name, array $inputs = []): Response
     {
-        $command = $this->getConsoleCommandInstance($command_name);
-        $inputs = new ArrayInput($inputs);
+        $consoleResponse = new Response($this->runConsoleCommand(
+            $command = $this->getConsoleCommandInstance($command_name),
+            $inputs
+        ));
 
-        return $return_script_code ?
-            $this->runCommandReturningResultCode($command, $inputs) :
-            $this->runCommandReturningOutput($command, $inputs);
+        if ($consoleResponse->failed()) {
+            throw new CliReturnedNonZero($command, $consoleResponse);
+        }
+
+        return $consoleResponse;
     }
 
     /**
      * @param string $command_name
      * @param array $inputs
-     * @return string
+     * @return Response
+     * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
      * @throws ExceptionInterface
      */
-    protected function callConsoleCommandReturningOutputWithoutInterruption(
-        string $command_name,
-        array  $inputs = []
-    ): string
+    protected function callConsoleCommandSilently(string $command_name, array $inputs = []): Response
+    {
+        $consoleResponse = new Response($this->runConsoleCommand(
+            $command = $this->getConsoleCommandInstance($command_name),
+            $inputs,
+            $bufferedOutput = $this->mountBufferedOutput()
+        ), $bufferedOutput->fetch());
+
+        if ($consoleResponse->failed()) {
+            throw new CliReturnedNonZero($command, $consoleResponse);
+        }
+
+        return $consoleResponse;
+    }
+
+    /**
+     * @param string $command_name
+     * @param array $inputs
+     * @return Response
+     * @throws CommandNotFoundException
+     * @throws ExceptionInterface
+     */
+    protected function callConsoleCommandSilentlyWithoutInterrupt(string $command_name, array $inputs = []): Response
+    {
+        try {
+            return $this->callConsoleCommandSilently($command_name, $inputs);
+        } catch (CliReturnedNonZero $exception) {
+            return $exception->commandResponse;
+        }
+    }
+
+    /**
+     * @param string $command_name
+     * @param array $inputs
+     * @return Response
+     * @throws CommandNotFoundException
+     * @throws ExceptionInterface
+     */
+    protected function callConsoleCommandWithoutInterrupt(string $command_name, array $inputs = []): Response
     {
         try {
             return $this->callConsoleCommand($command_name, $inputs);
         } catch (CliReturnedNonZero $exception) {
-            $this->writelnWarningWhenVerbose($exception->getMessage());
-
-            return $exception->script_result_output;
+            return $exception->commandResponse;
         }
     }
 
@@ -62,31 +97,17 @@ trait Internal
 
     /**
      * @param ConsoleCommand $command
-     * @param ArrayInput $inputs
-     * @return string
-     * @throws CliReturnedNonZero
-     * @throws ExceptionInterface
-     */
-    private function runCommandReturningOutput(ConsoleCommand $command, ArrayInput $inputs): string
-    {
-        $script_result_code = $command->run($inputs, $bufferedOutput = $this->mountBufferedOutput());
-        $script_result_output = $bufferedOutput->fetch();
-
-        if ($script_result_code !== self::SUCCESS) {
-            throw new CliReturnedNonZero($command, $script_result_code, $script_result_output);
-        }
-
-        return $script_result_output;
-    }
-
-    /**
-     * @param ConsoleCommand $command
-     * @param ArrayInput $inputs
+     * @param array $inputs
+     * @param OutputInterface|null $output
      * @return int
      * @throws ExceptionInterface
      */
-    private function runCommandReturningResultCode(ConsoleCommand $command, ArrayInput $inputs): int
+    private function runConsoleCommand(
+        ConsoleCommand $command,
+        array $inputs = [],
+        ?OutputInterface $output = null
+    ): int
     {
-        return $command->run($inputs, $this->output);
+        return $command->run(new ArrayInput($inputs), $output ?? $this->output);
     }
 }

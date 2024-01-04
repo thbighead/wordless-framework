@@ -32,6 +32,7 @@
     "php": "^8.2",
     "ext-json": "*",
     "ext-openssl": "*",
+    "ext-pcntl": "*",
     "doctrine/inflector": "^2.0",
     "lcobucci/jwt": "^5.2",
     "ramsey/uuid": "^4.7",

@@ -6,40 +6,94 @@ use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Process;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Response;
 
 trait External
 {
     /**
      * @param string $full_command
-     * @param bool $return_script_result_code
-     * @return int|string
+     * @return Response
      * @throws CliReturnedNonZero
      * @throws InvalidArgumentException
      * @throws LogicException
      */
-    protected function callExternalCommand(string $full_command, bool $return_script_result_code = false): int|string
+    protected function callExternalCommand(string $full_command): Response
     {
         $process = $this->mountCommandProcess($full_command);
 
-        return $return_script_result_code ?
-            $this->runProcessReturningResultCode($process) :
-            $this->runProcessReturningOutput($process);
+        $commandResponse = new Response($process->run(
+            function ($type, $buffer): void {
+                if (empty($buffer)) {
+                    return;
+                }
+
+                echo $buffer;
+            }
+        ));
+
+        if ($commandResponse->failed()) {
+            throw new CliReturnedNonZero($process->getCommandLine(), $commandResponse);
+        }
+
+        return $commandResponse;
     }
 
     /**
      * @param string $full_command
-     * @return string
+     * @return Response
+     * @throws CliReturnedNonZero
      * @throws InvalidArgumentException
      * @throws LogicException
      */
-    protected function callExternalCommandReturningOutputWithoutInterruption(string $full_command): string
+    protected function callExternalCommandSilently(string $full_command): Response
+    {
+        $process = $this->mountCommandProcess($full_command);
+        $command_output = '';
+
+        $commandResponse = new Response($process->run(
+            function ($type, $buffer) use (&$command_output): void {
+                if (empty($buffer)) {
+                    return;
+                }
+
+                $command_output .= $buffer;
+            }
+        ), $command_output);
+
+        if ($commandResponse->failed()) {
+            throw new CliReturnedNonZero($process->getCommandLine(), $commandResponse);
+        }
+
+        return $commandResponse;
+    }
+
+    /**
+     * @param string $full_command
+     * @return Response
+     * @throws InvalidArgumentException
+     * @throws LogicException
+     */
+    protected function callExternalCommandSilentlyWithoutInterruption(string $full_command): Response
+    {
+        try {
+            return $this->callExternalCommandSilently($full_command);
+        } catch (CliReturnedNonZero $exception) {
+            return $exception->commandResponse;
+        }
+    }
+
+    /**
+     * @param string $full_command
+     * @return Response
+     * @throws InvalidArgumentException
+     * @throws LogicException
+     */
+    protected function callExternalCommandWithoutInterruption(string $full_command): Response
     {
         try {
             return $this->callExternalCommand($full_command);
         } catch (CliReturnedNonZero $exception) {
-            $this->writelnWarningWhenVerbose($exception->getMessage());
-
-            return $exception->script_result_output;
+            return $exception->commandResponse;
         }
     }
 
@@ -54,49 +108,5 @@ trait External
         return Process::fromShellCommandline($full_command)
             ->setTimeout(null)
             ->setTty(true);
-    }
-
-    /**
-     * @param Process $process
-     * @return string
-     * @throws CliReturnedNonZero
-     * @throws LogicException
-     */
-    private function runProcessReturningOutput(Process $process): string
-    {
-        $script_result_output = '';
-        $script_result_code = $process->run(
-            function ($type, $buffer) use (&$script_result_output): void {
-                if (empty($buffer)) {
-                    return;
-                }
-
-                $script_result_output .= $buffer;
-            }
-        );
-
-        if ($script_result_code !== self::SUCCESS) {
-            throw new CliReturnedNonZero($process->getCommandLine(), $script_result_code, $script_result_output);
-        }
-
-        return $script_result_output;
-    }
-
-    /**
-     * @param Process $process
-     * @return int
-     * @throws LogicException
-     */
-    private function runProcessReturningResultCode(Process $process): int
-    {
-        return $process->run(
-            function ($type, $buffer): void {
-                if (empty($buffer)) {
-                    return;
-                }
-
-                echo $buffer;
-            }
-        );
     }
 }
