@@ -57,13 +57,13 @@ class WpCliCaller extends ConsoleCommand
         $wp_cli_filepath = $this->chooseWpCliScriptByOperationalSystem();
         $wp_cli_full_command_string = $this->input->getArgument(self::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME);
 
-        $this->treatWpCliCommand($wp_cli_full_command_string);
+        $this->resolveWpCliCommand($wp_cli_full_command_string);
 
         $full_command = "$wp_cli_filepath $wp_cli_full_command_string";
 
         $this->writelnInfoWhenVerbose("Executing $full_command...");
 
-        return $this->callExternalCommand($full_command, true);
+        return $this->callExternalCommand($full_command)->result_code;
     }
 
     protected function help(): string
@@ -105,7 +105,7 @@ class WpCliCaller extends ConsoleCommand
         return $this->guessOperationalSystem() === self::WINDOWS_OS;
     }
 
-    private function treatRewriteStructureOnWindows(string &$wp_cli_full_command_string): void
+    private function resolveRewriteStructureOnWindows(string &$wp_cli_full_command_string): void
     {
         if ($this->isOnWindows()
             && Str::beginsWith($wp_cli_full_command_string, self::PARTIAL_REWRITE_STRUCTURE_COMMAND)) {
@@ -122,8 +122,8 @@ class WpCliCaller extends ConsoleCommand
         }
     }
 
-    private function treatWpCliCommand(string &$wp_cli_full_command_string): void
+    private function resolveWpCliCommand(string &$wp_cli_full_command_string): void
     {
-        $this->treatRewriteStructureOnWindows($wp_cli_full_command_string);
+        $this->resolveRewriteStructureOnWindows($wp_cli_full_command_string);
     }
 }
