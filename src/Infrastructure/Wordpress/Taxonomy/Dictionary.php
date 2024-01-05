@@ -5,20 +5,20 @@ namespace Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
 use WP_Term;
 
-class Dictionary extends Singleton
+abstract class Dictionary extends Singleton
 {
     /**
-     * @var WP_Term[]
+     * @var array<int, WP_Term>
      */
-    private static array $taxonomy_terms_keyed_by_id = [];
+    private static array $taxonomy_terms_keyed_by_id;
     /**
-     * @var WP_Term[]
+     * @var array<string, WP_Term>
      */
-    private static array $taxonomy_terms_keyed_by_name = [];
+    private static array $taxonomy_terms_keyed_by_name;
     /**
-     * @var WP_Term[]
+     * @var array<string, WP_Term>
      */
-    private static array $taxonomy_terms_keyed_by_slug = [];
+    private static array $taxonomy_terms_keyed_by_slug;
     private static bool $loaded = false;
 
     public function __construct(string $taxonomy)
@@ -34,11 +34,16 @@ class Dictionary extends Singleton
             return;
         }
 
+        self::$taxonomy_terms_keyed_by_id = [];
+        self::$taxonomy_terms_keyed_by_name = [];
+        self::$taxonomy_terms_keyed_by_slug = [];
+
         foreach (get_terms(['taxonomy' => $taxonomy]) as $taxonomyTerm) {
             /** @var WP_Term $taxonomyTerm */
             self::$taxonomy_terms_keyed_by_id[$taxonomyTerm->term_id] = $taxonomyTerm;
-            self::$taxonomy_terms_keyed_by_name[$taxonomyTerm->name] = $taxonomyTerm;
-            self::$taxonomy_terms_keyed_by_slug[$taxonomyTerm->slug] = $taxonomyTerm;
+            self::$taxonomy_terms_keyed_by_name[$taxonomyTerm->name] =
+            self::$taxonomy_terms_keyed_by_slug[$taxonomyTerm->slug] =
+            &self::$taxonomy_terms_keyed_by_id[$taxonomyTerm->term_id];
         }
 
         self::$loaded = true;

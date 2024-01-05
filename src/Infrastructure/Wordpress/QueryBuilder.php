@@ -9,23 +9,10 @@ use WP_Query;
 
 abstract class QueryBuilder
 {
+    abstract public function first(): mixed;
+    abstract public function get(): array;
+
     protected array $arguments = [];
-    private mixed $query;
-
-    public static function fromPostEntity(StandardType|PostType|null $post_type = null): PostQueryBuilder
-    {
-        return new PostQueryBuilder($post_type);
-    }
-
-    public function __construct(WP_Query $wpQuery)
-    {
-        $this->query = $wpQuery;
-    }
-
-    public function get(): array
-    {
-        return $this->getQuery()->query($this->buildArguments());
-    }
 
     /**
      * @return array<string, string|int|bool|array>
@@ -33,10 +20,5 @@ abstract class QueryBuilder
     protected function buildArguments(): array
     {
         return $this->arguments;
-    }
-
-    protected function getQuery()
-    {
-        return $this->query;
     }
 }

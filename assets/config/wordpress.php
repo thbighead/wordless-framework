@@ -10,6 +10,7 @@ use Wordless\Application\Providers\WpSpeedUpProvider;
 use Wordless\Core\Bootstrapper;
 use Wordless\Wordpress\Enums\StartOfWeek;
 use Wordless\Wordpress\Models\Role;
+use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 
 return [
     'languages' => [],
@@ -22,8 +23,8 @@ return [
         DoNotLoadWpAdminBarOutsidePanel::SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY => true,
         ChooseImageEditor::IMAGE_LIBRARY_CONFIG_KEY => ChooseImageEditor::IMAGE_LIBRARY_CONFIG_VALUE_IMAGICK,
         HideDiagnosticsFromUserRoles::SHOW_DIAGNOSTICS_CONFIG_KEY => [
-            Role::ADMIN => true,
-            Role::AUTHOR => false,
+            DefaultRole::admin->value => true,
+            DefaultRole::author->value => false,
         ],
         CustomLoginUrl::WP_REDIRECT_URL_KEY => false,
         CustomLoginUrl::WP_CUSTOM_LOGIN_URL_KEY => false,
@@ -43,7 +44,7 @@ return [
 //            'custom_cap_1' => true,
 //            'custom_cap_2' => true,
 //        ],
-//        Role::EDITOR => [
+//        DefaultRole::editor->value => [
 //            'moderate_comments' => true,
 //            'upload_files' => false,
 //            'custom_capability' => true,

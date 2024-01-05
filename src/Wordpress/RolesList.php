@@ -9,6 +9,7 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\Wordpress\ApiController;
+use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Wordpress\Models\CustomTaxonomyTerm;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\Role;
@@ -89,7 +90,7 @@ class RolesList extends WP_Roles
 
     public static function syncCustomTaxonomiesPermissionsToRole(Role $role): void
     {
-        foreach (CustomTaxonomyTerm::getAllCustom() as $customPostType) {
+        foreach (Taxonomy::getAllCustom() as $customPostType) {
             $role->syncCapabilities(array_combine(
                 $permissions = array_values($customPostType->getPermissions()),
                 array_fill(0, count($permissions), true)

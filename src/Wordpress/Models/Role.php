@@ -2,30 +2,17 @@
 
 namespace Wordless\Wordpress\Models;
 
-use Wordless\Application\Helpers\ProjectPath;
+use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 use Wordless\Wordpress\RolesList;
 use WP_Role;
 
-require_once ProjectPath::wpCore('wp-includes/class-wp-role.php');
-
 class Role extends WP_Role
 {
-    public const ADMIN = 'administrator';
-    public const AUTHOR = 'author';
-    public const CONTRIBUTOR = 'contributor';
-    public const EDITOR = 'editor';
-    public const KEY = 'role';
-    public const SUBSCRIBER = 'subscriber';
-    private const DEFAULT = [
-        self::ADMIN => self::ADMIN,
-        self::AUTHOR => self::AUTHOR,
-        self::CONTRIBUTOR => self::CONTRIBUTOR,
-        self::EDITOR => self::EDITOR,
-        self::SUBSCRIBER => self::SUBSCRIBER,
-    ];
+    final public const KEY = 'role';
 
     private static RolesList $wpRolesRepository;
     private bool $is_default;
@@ -80,6 +67,7 @@ class Role extends WP_Role
      * @param bool[] $capabilities
      * @return Role
      * @throws FailedToCreateRole
+     * @throws InvalidArgumentException
      */
     public static function create(string $name, array $capabilities = []): Role
     {
@@ -92,6 +80,11 @@ class Role extends WP_Role
         return new static($newRole);
     }
 
+    /**
+     * @param string $role
+     * @return void
+     * @throws InvalidArgumentException
+     */
     public static function delete(string $role): void
     {
         self::getRepository()->remove_role(Str::slugCase($role));
@@ -101,6 +94,7 @@ class Role extends WP_Role
      * @param string $role
      * @return Role|null
      * @throws FailedToFindRole
+     * @throws InvalidArgumentException
      */
     public static function find(string $role): ?Role
     {
@@ -111,14 +105,23 @@ class Role extends WP_Role
         throw new FailedToFindRole($role);
     }
 
+    /**
+     * @return bool
+     * @throws InvalidArgumentException
+     */
     public function isDefault(): bool
     {
         return $this->is_default ?? $this->is_default = self::isDefaultByName($this->name);
     }
 
+    /**
+     * @param string $role
+     * @return bool
+     * @throws InvalidArgumentException
+     */
     public static function isDefaultByName(string $role): bool
     {
-        return (bool)(self::DEFAULT[Str::slugCase($role)] ?? false);
+        return DefaultRole::tryFrom(Str::slugCase($role)) !== null;
     }
 
     public function removeCapability(string $capability): void
