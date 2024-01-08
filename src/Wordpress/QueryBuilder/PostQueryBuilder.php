@@ -2,10 +2,10 @@
 
 namespace Wordless\Wordpress\QueryBuilder;
 
+use stdClass;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Enums\QueryComparison;
 use Wordless\Enums\QueryOrderByDirection;
-use Wordless\Enums\WpQueryFields;
 use Wordless\Enums\WpQueryMeta;
 use Wordless\Enums\WpQueryOrderByParameter;
 use Wordless\Enums\WpQueryStatus;
@@ -19,6 +19,8 @@ use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Pagination\Posts;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PaginationArgumentsBuilder;
 use WP_Post;
 use WP_Query;
 
@@ -36,8 +38,6 @@ class PostQueryBuilder extends WpQueryBuilder
     final public const KEY_POST_PASSWORD = 'post_password';
     final public const KEY_SEARCH = 's';
 
-    private bool $load_acfs = false;
-    private bool $limited = false;
     /** @var array<string, bool> $search_words */
     private array $search_words = [];
 
@@ -49,20 +49,17 @@ class PostQueryBuilder extends WpQueryBuilder
     public function __construct(StandardType|PostType|null $post_type = null)
     {
         $this->whereType($post_type)
-            ->withoutStickyPosts();
-        $this->arguments[WpQueryFields::FIELDS_KEY] = WpQueryFields::LIST_OF_POSTS;
-        $this->arguments[static::KEY_NO_FOUND_ROWS] = true;
-        $this->arguments[static::KEY_NO_PAGING] = true;
+            ->withoutStickyPosts()
+            ->deactivatePagination()
+            ->setPostsFormat(PostsListFormat::all_fields);
 
         parent::__construct(new WP_Query);
     }
 
     public function count(): int
     {
-        $this->arguments[static::KEY_NO_FOUND_ROWS] = false;
-
         if (!$this->arePostsAlreadyLoaded()) {
-            $this->query();
+            $this->getIds([self::KEY_NO_FOUND_ROWS => true]);
         }
 
         return $this->getQuery()->found_posts;
@@ -76,23 +73,21 @@ class PostQueryBuilder extends WpQueryBuilder
      */
     public function first(bool $with_acfs = false): ?Post
     {
-        $this->load_acfs = $with_acfs;
-
         return $this->get($with_acfs)[0] ?? null;
     }
 
     /**
      * @param bool $with_acfs
+     * @param array $extra_arguments
      * @return Post[]
-     * @throws PostTypeNotRegistered
      * @throws InitializingModelWithWrongPostType
+     * @throws PostTypeNotRegistered
      */
-    public function get(bool $with_acfs = false): array
+    public function get(bool $with_acfs = false, array $extra_arguments = []): array
     {
-        $this->load_acfs = $with_acfs;
         $posts = [];
 
-        foreach ($this->query() as $post) {
+        foreach ($this->query($extra_arguments) as $post) {
             /** @var WP_Post $post */
             $posts[$post->ID] = new Post($post, $with_acfs);
         }
@@ -101,46 +96,31 @@ class PostQueryBuilder extends WpQueryBuilder
     }
 
     /**
+     * @param array $extra_arguments
      * @return int[]
      */
-    public function getIds(): array
+    public function getIds(array $extra_arguments = []): array
     {
-        $this->load_acfs = false;
-        $this->arguments[WpQueryFields::FIELDS_KEY] = WpQueryFields::LIST_OF_POSTS_IDS;
-
-        return $this->query();
+        return $this->setPostsFormat(PostsListFormat::only_ids)
+            ->query($extra_arguments);
     }
 
-    public function isPaginated(): bool
+    /**
+     * @return array<int, stdClass>
+     */
+    public function getParentsKeyedByChildId(): array
     {
-        return !($this->arguments[static::KEY_NO_PAGING] ?? false);
+        return $this->setPostsFormat(PostsListFormat::parents_keyed_by_child_ids)
+            ->query();
     }
 
     public function getNumberOfPages(): ?int
     {
-        if (!$this->isPaginated()) {
-            return null;
-        }
-
         if (!$this->arePostsAlreadyLoaded()) {
             $this->query();
         }
 
         return $this->getQuery()->max_num_pages;
-    }
-
-    /**
-     * @return $this
-     */
-    public function onlyWithPassword(?string $password): PostQueryBuilder
-    {
-        $this->arguments[self::KEY_HAS_PASSWORD] = true;
-
-        if ($password !== null) {
-            $this->arguments[self::KEY_POST_PASSWORD] = $password;
-        }
-
-        return $this;
     }
 
     /**
@@ -158,12 +138,26 @@ class PostQueryBuilder extends WpQueryBuilder
     }
 
     /**
+     * @return $this
+     */
+    public function onlyWithPassword(?string $password): PostQueryBuilder
+    {
+        $this->arguments[self::KEY_HAS_PASSWORD] = true;
+
+        if ($password !== null) {
+            $this->arguments[self::KEY_POST_PASSWORD] = $password;
+        }
+
+        return $this;
+    }
+
+    /**
      * @param string|string[]|array<string,string> $columns use WpQueryOrderByParameter constants to avoid errors
      * @param string $direction ignored if $columns is an associative array
      * @return PostQueryBuilder
      */
     public function orderBy(
-        array|string $columns,
+        string|array $columns,
         string       $direction = QueryOrderByDirection::ASCENDING
     ): PostQueryBuilder
     {
@@ -198,36 +192,24 @@ class PostQueryBuilder extends WpQueryBuilder
         return $this;
     }
 
-    public function paginate(int $page = Posts::FIRST_PAGE, bool $with_acfs = false): Posts
-    {
-        $this->load_acfs = $with_acfs;
-        $this->arguments[static::KEY_NO_FOUND_ROWS] = false;
-        $this->arguments[static::KEY_NO_PAGING] = false;
-
-        if (isset($this->arguments[Posts::KEY_POSTS_PER_PAGE])) {
-            $this->setPostsPerPage();
-        }
-
-        return new Posts($this, $this->setPaged($page));
-    }
-
     /**
-     * @param int $page
-     * @return $this
+     * @param PaginationArgumentsBuilder $paginationBuilder
+     * @return Posts
+     * @throws InitializingModelWithWrongPostType
+     * @throws PostTypeNotRegistered
      */
-    public function pagedAt(int $page): PostQueryBuilder
+    public function paginate(PaginationArgumentsBuilder $paginationBuilder): Posts
     {
-        $this->setPaged($page);
-
-        return $this;
+        return new Posts($this, $paginationBuilder);
     }
+
 
     /**
      * @param string|string[] $words
      * @param bool $sorted_by_relevance
      * @return $this
      */
-    public function searchFor(array|string $words, bool $sorted_by_relevance = true): PostQueryBuilder
+    public function searchFor(string|array $words, bool $sorted_by_relevance = true): PostQueryBuilder
     {
         return $this->search($words, $sorted_by_relevance);
     }
@@ -237,32 +219,16 @@ class PostQueryBuilder extends WpQueryBuilder
      * @param bool $sorted_by_relevance
      * @return $this
      */
-    public function searchNotFor(array|string $words, bool $sorted_by_relevance = true): PostQueryBuilder
+    public function searchNotFor(string|array $words, bool $sorted_by_relevance = true): PostQueryBuilder
     {
         return $this->search($words, $sorted_by_relevance, false);
-    }
-
-    /**
-     * @param int $posts_per_page
-     * @return $this
-     */
-    public function setPostsPerPage(int $posts_per_page = Posts::DEFAULT_POSTS_PER_PAGE): PostQueryBuilder
-    {
-        $this->arguments[Posts::KEY_POSTS_PER_PAGE] = $posts_per_page;
-
-        return $this;
-    }
-
-    public function shouldLoadAcfs(): bool
-    {
-        return $this->load_acfs;
     }
 
     /**
      * @param int|int[] $ids
      * @return PostQueryBuilder
      */
-    public function whereAuthorId(array|int $ids): PostQueryBuilder
+    public function whereAuthorId(int|array $ids): PostQueryBuilder
     {
         if (is_array($ids)) {
             $ids = implode(',', $ids);
@@ -289,7 +255,7 @@ class PostQueryBuilder extends WpQueryBuilder
      * @param bool $and
      * @return $this
      */
-    public function whereCategoryId(array|int $ids, bool $and = false): PostQueryBuilder
+    public function whereCategoryId(int|array $ids, bool $and = false): PostQueryBuilder
     {
         if (is_array($ids)) {
             $this->arguments[$and ? 'category__and' : 'category__in'] = $ids;
@@ -307,7 +273,7 @@ class PostQueryBuilder extends WpQueryBuilder
      * @param bool $and
      * @return $this
      */
-    public function whereCategoryName(array|string $names, bool $and = false): PostQueryBuilder
+    public function whereCategoryName(string|array $names, bool $and = false): PostQueryBuilder
     {
         $this->arguments['category_name'] = is_array($names) ?
             implode($and ? '+' : ',', $names) : $names;
@@ -319,7 +285,7 @@ class PostQueryBuilder extends WpQueryBuilder
      * @param int|int[] $post_ids
      * @return $this
      */
-    public function whereId(array|int $post_ids): PostQueryBuilder
+    public function whereId(int|array $post_ids): PostQueryBuilder
     {
         if (is_int($post_ids)) {
             $this->arguments['p'] = $post_ids;
@@ -355,7 +321,7 @@ class PostQueryBuilder extends WpQueryBuilder
      * @param int|int[] $ids
      * @return PostQueryBuilder
      */
-    public function whereNotAuthorId(array|int $ids): PostQueryBuilder
+    public function whereNotAuthorId(int|array $ids): PostQueryBuilder
     {
         if (is_array($ids)) {
             $this->arguments['author__not_in'] = $ids;
@@ -372,7 +338,7 @@ class PostQueryBuilder extends WpQueryBuilder
      * @param int|int[] $ids
      * @return $this
      */
-    public function whereNotCategoryId(array|int $ids): PostQueryBuilder
+    public function whereNotCategoryId(int|array $ids): PostQueryBuilder
     {
         if (is_array($ids)) {
             $this->arguments['category__not_in'] = $ids;
@@ -389,7 +355,7 @@ class PostQueryBuilder extends WpQueryBuilder
      * @param int|int[] $post_ids
      * @return $this
      */
-    public function whereNotId(array|int $post_ids): PostQueryBuilder
+    public function whereNotId(int|array $post_ids): PostQueryBuilder
     {
         $post_ids = Arr::wrap($post_ids);
 
@@ -421,7 +387,7 @@ class PostQueryBuilder extends WpQueryBuilder
      * @param string|string[] $slugs
      * @return $this
      */
-    public function whereSlug(array|string $slugs): PostQueryBuilder
+    public function whereSlug(string|array $slugs): PostQueryBuilder
     {
         if (!is_array($slugs)) {
             $this->arguments['name'] = $slugs;
@@ -453,7 +419,7 @@ class PostQueryBuilder extends WpQueryBuilder
      * @param bool $and
      * @return $this
      */
-    public function whereTagId(array|int $ids, bool $and = false): PostQueryBuilder
+    public function whereTagId(int|array $ids, bool $and = false): PostQueryBuilder
     {
         if (is_array($ids)) {
             $this->arguments[$and ? 'tag__and' : 'tag__in'] = $ids;
@@ -471,7 +437,7 @@ class PostQueryBuilder extends WpQueryBuilder
      * @param bool $and
      * @return $this
      */
-    public function whereTagName(array|string $names, bool $and = false): PostQueryBuilder
+    public function whereTagName(string|array $names, bool $and = false): PostQueryBuilder
     {
         $this->arguments['tag'] = is_array($names) ?
             implode($and ? '+' : ',', $names) : $names;
@@ -497,7 +463,7 @@ class PostQueryBuilder extends WpQueryBuilder
      * @param string|string[] $types
      * @return $this
      */
-    public function whereType(array|string $types): PostQueryBuilder
+    public function whereType(string|array $types): PostQueryBuilder
     {
         if ($this->isForTypeAttachment($types) && !$this->isForStatusAny()) {
             $this->arguments[WpQueryStatus::POST_STATUS_KEY] = WpQueryStatus::INHERIT;
@@ -573,7 +539,7 @@ class PostQueryBuilder extends WpQueryBuilder
      */
     public function withMoreThanOrEqualsComments(int $how_many): PostQueryBuilder
     {
-        return $this->withComments($how_many, QueryComparison::GREATER_THAN_OR_EQUAL);
+        return $this->withComments($how_many);
     }
 
     /**
@@ -605,9 +571,10 @@ class PostQueryBuilder extends WpQueryBuilder
     }
 
     /**
+     * @param array $extra_arguments
      * @return array<string, string|int|bool|array>
      */
-    protected function buildArguments(): array
+    protected function buildArguments(array $extra_arguments = []): array
     {
         $arguments = $this->arguments;
 
@@ -619,6 +586,10 @@ class PostQueryBuilder extends WpQueryBuilder
         $taxonomySubQueryBuilder = $this->arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] ?? null;
         if ($taxonomySubQueryBuilder instanceof TaxonomySubQueryBuilder) {
             $arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] = $taxonomySubQueryBuilder->build();
+        }
+
+        foreach ($extra_arguments as $extra_argument_key => $extra_argument_value) {
+            $arguments[$extra_argument_key] = $extra_argument_value;
         }
 
         return $arguments;
@@ -637,6 +608,15 @@ class PostQueryBuilder extends WpQueryBuilder
         return isset($this->getQuery()->posts);
     }
 
+    private function deactivatePagination(): static
+    {
+        $this->arguments[self::KEY_NO_FOUND_ROWS] = true;
+        $this->arguments[self::KEY_NO_PAGING] = true;
+        $this->arguments[Posts::KEY_POSTS_PER_PAGE] = -1;
+
+        return $this;
+    }
+
     private function isForStatusAny(): bool
     {
         return ($this->arguments[WpQueryStatus::POST_STATUS_KEY] ?? null) === WpQueryStatus::ANY;
@@ -646,17 +626,17 @@ class PostQueryBuilder extends WpQueryBuilder
      * @param string|string[] $types
      * @return bool
      */
-    private function isForTypeAttachment(array|string $types): bool
+    private function isForTypeAttachment(string|array $types): bool
     {
         return is_array($types) ?
             Arr::searchValueKey($types, StandardType::attachment->name) : $types === StandardType::attachment->name;
     }
 
-    private function query(): array
+    private function query(array $extra_arguments = []): array
     {
         $this->resolveSearch();
 
-        return $this->getQuery()->query($this->buildArguments());
+        return $this->getQuery()->query($this->buildArguments($extra_arguments));
     }
 
     private function resolveSearch(): void
@@ -676,7 +656,7 @@ class PostQueryBuilder extends WpQueryBuilder
      * @return $this
      */
     private function search(
-        array|string $words,
+        string|array $words,
         bool         $sorted_by_relevance = true,
         bool         $include = true
     ): PostQueryBuilder
@@ -696,12 +676,11 @@ class PostQueryBuilder extends WpQueryBuilder
         return $this;
     }
 
-    private function setPaged(int $page)
+    private function setPostsFormat(PostsListFormat $format): static
     {
-        $this->arguments[static::KEY_NO_FOUND_ROWS] = false;
-        $this->arguments[static::KEY_NO_PAGING] = false;
+        $this->arguments[PostsListFormat::FIELDS_KEY] = $format->value;
 
-        return $this->arguments[Posts::KEY_PAGED] = max($page, Posts::FIRST_PAGE);
+        return $this;
     }
 
     private function sortBySearchRelevance(): void

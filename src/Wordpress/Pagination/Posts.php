@@ -3,9 +3,12 @@
 namespace Wordless\Wordpress\Pagination;
 
 use Wordless\Wordpress\Models\Post;
+use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
+use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PaginationArgumentsBuilder;
 
-class Posts
+final class Posts
 {
     public const KEY_POSTS_PER_PAGE = 'posts_per_page';
     public const KEY_PAGED = 'paged';
@@ -13,25 +16,25 @@ class Posts
     public const FIRST_PAGE = 1;
 
     private Page $currentPage;
-    private int $number_of_pages;
-    private int $total_number_of_posts;
+    public readonly int $number_of_pages;
+    public readonly int $total_number_of_posts;
 
-    private PostQueryBuilder $queryBuilder;
-
-    public function __construct(PostQueryBuilder $queryBuilder, int $begin_at_page = self::FIRST_PAGE)
+    /**
+     * @param PostQueryBuilder $queryBuilder
+     * @param PaginationArgumentsBuilder $paginationBuilder
+     * @throws InitializingModelWithWrongPostType
+     * @throws PostTypeNotRegistered
+     */
+    public function __construct(private readonly PostQueryBuilder $queryBuilder, PaginationArgumentsBuilder $paginationBuilder)
     {
-        $this->queryBuilder = $queryBuilder;
-
-        if (!$this->queryBuilder->isPaginated()) {
-            $this->queryBuilder->setPostsPerPage();
-        }
-
-        $posts = $this->queryBuilder->get($this->queryBuilder->shouldLoadAcfs());
+        $posts = $this->queryBuilder->get(
+            $paginationBuilder->load_acfs,
+            $paginationBuilder->getPaginationArguments()
+        );
 
         $this->total_number_of_posts = $this->queryBuilder->count();
         $this->number_of_pages = $this->queryBuilder->getNumberOfPages();
-
-        $this->currentPage = new Page($begin_at_page, $posts);
+        $this->currentPage = new Page($paginationBuilder->getPaged(), $posts);
     }
 
     /**
@@ -47,33 +50,25 @@ class Posts
         return $this->currentPage->getNumber();
     }
 
-    public function getNumberOfPages(): int
-    {
-        return $this->number_of_pages;
-    }
-
-    public function getTotalNumberOfPosts(): int
-    {
-        return $this->total_number_of_posts;
-    }
-
     /**
      * @param int $page
      * @return $this
+     * @throws InitializingModelWithWrongPostType
+     * @throws PostTypeNotRegistered
      */
     public function goToPage(int $page): Posts
     {
-        if (($page = $this->calculatePageInsideRange($page)) === $this->getCurrentPageNumber()) {
-            return $this;
+        if (($page = $this->calculatePageInsideRange($page)) !== $this->getCurrentPageNumber()) {
+            $this->currentPage = new Page($page, $this->queryBuilder->pagedAt($page)->get());
         }
-
-        $this->currentPage = new Page($page, $this->queryBuilder->pagedAt($page)->get());
 
         return $this;
     }
 
     /**
      * @return $this
+     * @throws InitializingModelWithWrongPostType
+     * @throws PostTypeNotRegistered
      */
     public function nextPage(): Posts
     {
@@ -83,6 +78,8 @@ class Posts
     /**
      * @param int $page
      * @return Post[]
+     * @throws InitializingModelWithWrongPostType
+     * @throws PostTypeNotRegistered
      */
     public function retrievePageItems(int $page): array
     {
@@ -91,6 +88,8 @@ class Posts
 
     /**
      * @return Post[]
+     * @throws InitializingModelWithWrongPostType
+     * @throws PostTypeNotRegistered
      */
     public function retrieveNextPageItems(): array
     {
@@ -103,6 +102,6 @@ class Posts
      */
     private function calculatePageInsideRange(int $page): int
     {
-        return min(max($page, self::FIRST_PAGE), $this->getNumberOfPages());
+        return min(max($page, self::FIRST_PAGE), $this->number_of_pages);
     }
 }
