@@ -24,17 +24,17 @@ use WP_Query;
 
 class PostQueryBuilder extends WpQueryBuilder
 {
-    public const KEY_AUTHOR = 'author';
-    public const KEY_CATEGORY = 'cat';
-    public const KEY_HAS_PASSWORD = 'has_password';
-    public const KEY_IGNORE_STICKY_POSTS = 'ignore_sticky_posts';
-    public const KEY_NO_FOUND_ROWS = 'no_found_rows';
-    public const KEY_NO_PAGING = 'nopaging';
-    public const KEY_ORDER_BY = 'orderby';
-    public const KEY_POST_IN = 'post__in';
-    public const KEY_POST_NOT_IN = 'post__not_in';
-    public const KEY_POST_PASSWORD = 'post_password';
-    public const KEY_SEARCH = 's';
+    final public const KEY_AUTHOR = 'author';
+    final public const KEY_CATEGORY = 'cat';
+    final public const KEY_HAS_PASSWORD = 'has_password';
+    final public const KEY_IGNORE_STICKY_POSTS = 'ignore_sticky_posts';
+    final public const KEY_NO_FOUND_ROWS = 'no_found_rows';
+    final public const KEY_NO_PAGING = 'nopaging';
+    final public const KEY_ORDER_BY = 'orderby';
+    final public const KEY_POST_IN = 'post__in';
+    final public const KEY_POST_NOT_IN = 'post__not_in';
+    final public const KEY_POST_PASSWORD = 'post_password';
+    final public const KEY_SEARCH = 's';
 
     private bool $load_acfs = false;
     private bool $limited = false;
