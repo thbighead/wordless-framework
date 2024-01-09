@@ -20,6 +20,7 @@ use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Pagination\Posts;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Exceptions\TrySetEmptyPostType;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PaginationArgumentsBuilder;
 use WP_Post;
 use WP_Query;
@@ -57,7 +58,7 @@ class PostQueryBuilder extends WpQueryBuilder
         if ($postType instanceof PostType) {
             $post_type = $postType->name;
         }
-        
+
         $this->whereType($post_type)
             ->withoutStickyPosts()
             ->deactivatePagination()
@@ -472,9 +473,14 @@ class PostQueryBuilder extends WpQueryBuilder
     /**
      * @param string|string[] $types
      * @return $this
+     * @throws TrySetEmptyPostType
      */
     public function whereType(string|array $types): PostQueryBuilder
     {
+        if (empty($types)) {
+            throw new TrySetEmptyPostType;
+        }
+
         if ($this->isForTypeAttachment($types) && !$this->isForStatusAny()) {
             $this->arguments[WpQueryStatus::POST_STATUS_KEY] = WpQueryStatus::INHERIT;
         }
@@ -638,8 +644,9 @@ class PostQueryBuilder extends WpQueryBuilder
      */
     private function isForTypeAttachment(string|array $types): bool
     {
-        return is_array($types) ?
-            Arr::searchValueKey($types, StandardType::attachment->name) : $types === StandardType::attachment->name;
+        return (is_array($types) ?
+            Arr::searchValueKey($types, StandardType::attachment->name) :
+            $types === StandardType::attachment->name) ?? false;
     }
 
     private function query(array $extra_arguments = []): array
