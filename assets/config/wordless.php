@@ -8,6 +8,7 @@ use Wordless\Application\Libraries\JWT\Token;
 use Wordless\Application\Providers\CommentsProvider;
 use Wordless\Application\Providers\CoreProvider;
 use Wordless\Application\Providers\EmojiProvider;
+use Wordless\Application\Providers\SeederProvider;
 use Wordless\Infrastructure\Provider;
 
 $current_wp_theme = Config::tryToGetOrDefault('wordpress.theme', 'wordless');
@@ -16,6 +17,7 @@ $providers = [
     CoreProvider::class,
     CommentsProvider::class,
     EmojiProvider::class,
+    SeederProvider::class,
 ];
 
 return [
