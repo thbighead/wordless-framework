@@ -19,6 +19,7 @@ use Wordless\Application\Commands\RunTests;
 use Wordless\Application\Commands\SyncRoles;
 use Wordless\Application\Commands\WordlessInstall;
 use Wordless\Application\Commands\WpCliCaller;
+use Wordless\Application\Commands\WpHelixShell;
 use Wordless\Application\Commands\WpHooksList;
 use Wordless\Application\Listeners\AllowSvgUpload;
 use Wordless\Application\Listeners\BootApiControllers;
@@ -60,6 +61,7 @@ final class CoreProvider extends Provider
             SyncRoles::class,
             WordlessInstall::class,
             WpCliCaller::class,
+            WpHelixShell::class,
             WpHooksList::class,
         ];
     }
