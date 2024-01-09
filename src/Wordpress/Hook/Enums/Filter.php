@@ -864,6 +864,7 @@ enum Filter: string implements FilterHook
     case pre_insert_term = 'pre_insert_term';
     case pre_kses = 'pre_kses';
     case pre_load_script_translations = 'pre_load_script_translations';
+    case pre_load_textdomain = 'pre_load_textdomain';
     case pre_months_dropdown_query = 'pre_months_dropdown_query';
     case pre_move_uploaded_file = 'pre_move_uploaded_file';
     case pre_oembed_result = 'pre_oembed_result';
@@ -882,6 +883,7 @@ enum Filter: string implements FilterHook
     case pre_unschedule_event = 'pre_unschedule_event';
     case pre_unschedule_hook = 'pre_unschedule_hook';
     case pre_untrash_post = 'pre_untrash_post';
+    case pre_unzip_file = 'pre_unzip_file';
     case pre_update_option = 'pre_update_option';
     case pre_upload_error = 'pre_upload_error';
     case pre_user_description = 'pre_user_description';
@@ -895,11 +897,14 @@ enum Filter: string implements FilterHook
     case pre_user_nickname = 'pre_user_nickname';
     case pre_user_url = 'pre_user_url';
     case pre_wp_filesize = 'pre_wp_filesize';
+    case pre_wp_get_https_detection_errors = 'pre_wp_get_https_detection_errors';
+    case pre_wp_get_loading_optimization_attributes = 'pre_wp_get_loading_optimization_attributes';
     case pre_wp_is_site_initialized = 'pre_wp_is_site_initialized';
     case pre_wp_list_authors_post_counts_query = 'pre_wp_list_authors_post_counts_query';
     case pre_wp_load_alloptions = 'pre_wp_load_alloptions';
     case pre_wp_mail = 'pre_wp_mail';
     case pre_wp_nav_menu = 'pre_wp_nav_menu';
+    case pre_wp_setup_nav_menu_item = 'pre_wp_setup_nav_menu_item';
     case pre_wp_unique_filename_file_list = 'pre_wp_unique_filename_file_list';
     case pre_wp_unique_post_slug = 'pre_wp_unique_post_slug';
     case pre_wp_update_comment_count_now = 'pre_wp_update_comment_count_now';
@@ -926,6 +931,8 @@ enum Filter: string implements FilterHook
     case query_vars = 'query_vars';
     case quick_edit_dropdown_authors_args = 'quick_edit_dropdown_authors_args';
     case quick_edit_dropdown_pages_args = 'quick_edit_dropdown_pages_args';
+    case quick_edit_enabled_for_post_type = 'quick_edit_enabled_for_post_type';
+    case quick_edit_enabled_for_taxonomy = 'quick_edit_enabled_for_taxonomy';
     case quick_edit_show_taxonomy = 'quick_edit_show_taxonomy';
     case quicktags_settings = 'quicktags_settings';
     case random_password = 'random_password';
@@ -1054,9 +1061,11 @@ enum Filter: string implements FilterHook
     case sanitize_file_name_chars = 'sanitize_file_name_chars';
     case sanitize_html_class = 'sanitize_html_class';
     case sanitize_key = 'sanitize_key';
+    case sanitize_locale_name = 'sanitize_locale_name';
     case sanitize_mime_type = 'sanitize_mime_type';
     case sanitize_text_field = 'sanitize_text_field';
     case sanitize_textarea_field = 'sanitize_textarea_field';
+    case sanitize_title = 'sanitize_title';
     case sanitize_trackback_urls = 'sanitize_trackback_urls';
     case sanitize_user = 'sanitize_user';
     case schedule_event = 'schedule_event';
@@ -1116,6 +1125,7 @@ enum Filter: string implements FilterHook
     case site_allowed_themes = 'site_allowed_themes';
     case site_by_path_segments_count = 'site_by_path_segments_count';
     case site_details = 'site_details';
+    case site_editor_no_javascript_message = 'site_editor_no_javascript_message';
     case site_health_navigation_tabs = 'site_health_navigation_tabs';
     case site_icon_attachment_metadata = 'site_icon_attachment_metadata';
     case site_icon_image_sizes = 'site_icon_image_sizes';
@@ -1257,6 +1267,7 @@ enum Filter: string implements FilterHook
     case twentytwentytwo_block_pattern_categories = 'twentytwentytwo_block_pattern_categories';
     case twentytwentytwo_block_patterns = 'twentytwentytwo_block_patterns';
     case type_url_form_media = 'type_url_form_media';
+    case unzip_file = 'unzip_file';
     case unzip_file_use_ziparchive = 'unzip_file_use_ziparchive';
     case update_attached_file = 'update_attached_file';
     case update_bulk_plugins_complete_actions = 'update_bulk_plugins_complete_actions';
@@ -1351,6 +1362,8 @@ enum Filter: string implements FilterHook
     case wp_admin_bar_show_site_icons = 'wp_admin_bar_show_site_icons';
     case wp_admin_css = 'wp_admin_css';
     case wp_admin_css_uri = 'wp_admin_css_uri';
+    case wp_admin_notice_args = 'wp_admin_notice_args';
+    case wp_admin_notice_markup = 'wp_admin_notice_markup';
     case wp_ajax_cropped_attachment_id = 'wp_ajax_cropped_attachment_id';
     case wp_ajax_cropped_attachment_metadata = 'wp_ajax_cropped_attachment_metadata';
     case wp_allow_query_attachment_by_filename = 'wp_allow_query_attachment_by_filename';
@@ -1364,6 +1377,7 @@ enum Filter: string implements FilterHook
     case wp_auth_check_load = 'wp_auth_check_load';
     case wp_auth_check_same_domain = 'wp_auth_check_same_domain';
     case wp_authenticate_user = 'wp_authenticate_user';
+    case wp_authorize_application_redirect_url_invalid_protocols = 'wp_authorize_application_redirect_url_invalid_protocols';
     case wp_cache_themes_persistently = 'wp_cache_themes_persistently';
     case wp_calculate_image_sizes = 'wp_calculate_image_sizes';
     case wp_calculate_image_srcset = 'wp_calculate_image_srcset';
@@ -1417,6 +1431,7 @@ enum Filter: string implements FilterHook
     case wp_get_attachment_id3_keys = 'wp_get_attachment_id3_keys';
     case wp_get_attachment_image = 'wp_get_attachment_image';
     case wp_get_attachment_image_attributes = 'wp_get_attachment_image_attributes';
+    case wp_get_attachment_image_context = 'wp_get_attachment_image_context';
     case wp_get_attachment_image_src = 'wp_get_attachment_image_src';
     case wp_get_attachment_link = 'wp_get_attachment_link';
     case wp_get_attachment_link_attributes = 'wp_get_attachment_link_attributes';
@@ -1427,6 +1442,7 @@ enum Filter: string implements FilterHook
     case wp_get_comment_fields_max_lengths = 'wp_get_comment_fields_max_lengths';
     case wp_get_current_commenter = 'wp_get_current_commenter';
     case wp_get_custom_css = 'wp_get_custom_css';
+    case wp_get_loading_optimization_attributes = 'wp_get_loading_optimization_attributes';
     case wp_get_missing_image_subsizes = 'wp_get_missing_image_subsizes';
     case wp_get_nav_menu_items = 'wp_get_nav_menu_items';
     case wp_get_nav_menu_name = 'wp_get_nav_menu_name';
@@ -1491,6 +1507,7 @@ enum Filter: string implements FilterHook
     case wp_list_table_class_name = 'wp_list_table_class_name';
     case wp_list_table_show_post_checkbox = 'wp_list_table_show_post_checkbox';
     case wp_list_users_args = 'wp_list_users_args';
+    case wp_loading_optimization_force_header_contexts = 'wp_loading_optimization_force_header_contexts';
     case wp_login_errors = 'wp_login_errors';
     case wp_mail = 'wp_mail';
     case wp_mail_charset = 'wp_mail_charset';
@@ -1501,12 +1518,14 @@ enum Filter: string implements FilterHook
     case wp_mce_translation = 'wp_mce_translation';
     case wp_mediaelement_fallback = 'wp_mediaelement_fallback';
     case wp_mime_type_icon = 'wp_mime_type_icon';
+    case wp_min_priority_img_pixels = 'wp_min_priority_img_pixels';
     case wp_nav_locations_listed_per_menu = 'wp_nav_locations_listed_per_menu';
     case wp_nav_menu = 'wp_nav_menu';
     case wp_nav_menu_args = 'wp_nav_menu_args';
     case wp_nav_menu_container_allowedtags = 'wp_nav_menu_container_allowedtags';
     case wp_nav_menu_items = 'wp_nav_menu_items';
     case wp_nav_menu_objects = 'wp_nav_menu_objects';
+    case wp_navigation_should_create_fallback = 'wp_navigation_should_create_fallback';
     case wp_network_dashboard_widgets = 'wp_network_dashboard_widgets';
     case wp_new_user_notification_email = 'wp_new_user_notification_email';
     case wp_new_user_notification_email_admin = 'wp_new_user_notification_email_admin';
@@ -1519,6 +1538,7 @@ enum Filter: string implements FilterHook
     case wp_password_change_notification_email = 'wp_password_change_notification_email';
     case wp_php_error_args = 'wp_php_error_args';
     case wp_php_error_message = 'wp_php_error_message';
+    case wp_post_revision_meta_keys = 'wp_post_revision_meta_keys';
     case wp_post_revision_title_expanded = 'wp_post_revision_title_expanded';
     case wp_pre_insert_user_data = 'wp_pre_insert_user_data';
     case wp_preload_resources = 'wp_preload_resources';
