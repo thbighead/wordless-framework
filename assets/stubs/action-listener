@@ -2,10 +2,11 @@
 
 namespace App\Listeners;
 
-use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
-use Wordless\Wordpress\Hook\Contracts\FilterHook;
+use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
+use Wordless\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Wordpress\Hook\Enums\Action;
 
-class DummyListener extends FilterListener
+class DummyActionListener extends ActionListener
 {
     /**
      * The function which shall be executed during hook
@@ -17,8 +18,8 @@ class DummyListener extends FilterListener
         // Do something. This is only called if you add this class to config/bootables.php.
     }
 
-    protected static function hook(): FilterHook
+    protected static function hook(): ActionHook
     {
-        // TODO: Implement hook() method.
+        return Action::init;
     }
 }

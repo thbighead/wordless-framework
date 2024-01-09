@@ -2,7 +2,9 @@
 
 namespace Wordless\Application\Commands;
 
+use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
@@ -11,11 +13,13 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\ActionListenerStubMounter;
 use Wordless\Application\Mounters\Stub\FilterListenerStubMounter;
+use Wordless\Application\Mounters\Stub\ListenerStubMounter;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
+use Wordless\Infrastructure\Mounters\StubMounter;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
 class MakeListener extends ConsoleCommand
@@ -33,7 +37,7 @@ class MakeListener extends ConsoleCommand
     protected function arguments(): array
     {
         return [
-            new ArgumentDTO(
+            ArgumentDTO::make(
                 self::LISTENER_CLASS_ARGUMENT_NAME,
                 'The class name of your new hooker file in pascal case.',
                 ArgumentMode::required
@@ -43,12 +47,12 @@ class MakeListener extends ConsoleCommand
 
     protected function description(): string
     {
-        return 'Creates a listener script.';
+        return 'Creates a hook listener.';
     }
 
     protected function help(): string
     {
-        return 'Creates a listener script file based on its class name.';
+        return 'If no type is defined through options, a generic listener class is created.';
     }
 
     /**
@@ -57,9 +61,14 @@ class MakeListener extends ConsoleCommand
     protected function options(): array
     {
         return [
-            new OptionDTO(
+            OptionDTO::make(
                 self::LISTENER_FILTER_MODE,
-                'Generates a filter listener instead of action.',
+                'Generates a filter listener.',
+                mode: OptionMode::no_value
+            ),
+            OptionDTO::make(
+                self::LISTENER_ACTION_MODE,
+                'Generates an action listener.',
                 mode: OptionMode::no_value
             ),
         ];
@@ -68,30 +77,61 @@ class MakeListener extends ConsoleCommand
     /**
      * @return int
      * @throws FailedToCopyStub
-     * @throws PathNotFoundException
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
+     * @throws PathNotFoundException
+     * @throws InvalidArgumentException
+     * @throws SymfonyInvalidArgumentException
      */
     protected function runIt(): int
     {
-        $listener_class_name = Str::pascalCase($this->input->getArgument(self::LISTENER_CLASS_ARGUMENT_NAME));
-        $listener_stub_type = $this->isFilterListener() ?
-            FilterListenerStubMounter::class : ActionListenerStubMounter::class;
+        $listenerStubMounter = $this->mountStubMounter(
+            $listener_class_name = Str::pascalCase($this->input->getArgument(self::LISTENER_CLASS_ARGUMENT_NAME))
+        );
 
         $this->wrapScriptWithMessages(
             "Creating $listener_class_name...",
-            function () use ($listener_class_name, $listener_stub_type) {
-                $listener_stub_type::make(ProjectPath::listeners() . "/$listener_class_name.php")
-                    ->setReplaceContentDictionary(['DummyListener' => $listener_class_name])
-                    ->mountNewFile();
+            function () use ($listenerStubMounter) {
+                $listenerStubMounter->mountNewFile();
             }
         );
 
         return Command::SUCCESS;
     }
 
+    /**
+     * @return bool
+     * @throws SymfonyInvalidArgumentException
+     */
     private function isFilterListener(): bool
     {
         return (bool)$this->input->getOption(self::LISTENER_FILTER_MODE);
+    }
+
+    /**
+     * @param string $listener_class_name
+     * @return StubMounter
+     * @throws PathNotFoundException
+     * @throws SymfonyInvalidArgumentException
+     */
+    private function mountStubMounter(string $listener_class_name): StubMounter
+    {
+        $mounter_new_file_path = ProjectPath::listeners() . "/$listener_class_name.php";
+
+        switch (true) {
+            case $this->input->getOption(self::LISTENER_ACTION_MODE):
+                $stubMounter = ActionListenerStubMounter::make($mounter_new_file_path);
+                $listener_class_name_key = 'DummyActionListener';
+                break;
+            case $this->input->getOption(self::LISTENER_FILTER_MODE):
+                $stubMounter = FilterListenerStubMounter::make($mounter_new_file_path);
+                $listener_class_name_key = 'DummyFilterListener';
+                break;
+            default:
+                $stubMounter = ListenerStubMounter::make($mounter_new_file_path);
+                $listener_class_name_key = 'DummyListener';
+        }
+
+        return $stubMounter->setReplaceContentDictionary([$listener_class_name_key => $listener_class_name]);
     }
 }

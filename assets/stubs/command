@@ -11,8 +11,6 @@ class DummyCommand extends ConsoleCommand
 {
     final public const COMMAND_NAME = 'command:name';
 
-    protected static $defaultName = self::COMMAND_NAME;
-
     /**
      * @return ArgumentDTO[]
      */

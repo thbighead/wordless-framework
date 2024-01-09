@@ -8,11 +8,11 @@ class DummyController extends ApiController
 {
     protected function resourceName(): string
     {
-        // TODO: Implement resourceName() method.
+        return 'dummy_resource';
     }
 
     protected function version(): ?string
     {
-        // TODO: Implement version() method.
+        return null;
     }
 }

@@ -30,7 +30,7 @@ class MakeMigration extends ConsoleCommand
     protected function arguments(): array
     {
         return [
-            new ArgumentDTO(
+            ArgumentDTO::make(
                 self::MIGRATION_CLASS_ARGUMENT_NAME,
                 'The name of your new migration file in snake case (using _ between words).',
                 ArgumentMode::required

@@ -2,7 +2,9 @@
 
 namespace Wordless\Application\Commands;
 
+use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
@@ -17,6 +19,7 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMo
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Wordpress\Models\Role;
+use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 
 class MakeController extends ConsoleCommand
@@ -28,7 +31,7 @@ class MakeController extends ConsoleCommand
     protected function arguments(): array
     {
         return [
-            new ArgumentDTO(
+            ArgumentDTO::make(
                 self::CONTROLLER_CLASS_ARGUMENT_NAME,
                 'The class name of your new controller file in pascal case.',
                 ArgumentMode::required
@@ -49,7 +52,7 @@ class MakeController extends ConsoleCommand
     protected function options(): array
     {
         return [
-            new OptionDTO(
+            OptionDTO::make(
                 self::NO_PERMISSIONS_MODE,
                 'Don\'t auto register CPT permissions into admin role.',
                 mode: OptionMode::no_value
@@ -60,20 +63,30 @@ class MakeController extends ConsoleCommand
     /**
      * @return int
      * @throws FailedToCopyStub
-     * @throws PathNotFoundException
      * @throws FailedToCreateDirectory
+     * @throws FailedToFindRole
      * @throws FailedToGetDirectoryPermissions
+     * @throws PathNotFoundException
+     * @throws InvalidArgumentException
+     * @throws SymfonyInvalidArgumentException
      */
     protected function runIt(): int
     {
-        $controller_class_name = Str::pascalCase($this->input->getArgument(self::CONTROLLER_CLASS_ARGUMENT_NAME));
+        $controller_suffix = 'Controller';
+        $controllerClassNameSubject = Str::of(
+            $this->input->getArgument(self::CONTROLLER_CLASS_ARGUMENT_NAME)
+        )->pascalCase()->finishWith($controller_suffix);
+        $controller_class_name = (string)$controllerClassNameSubject;
+        $resource_name = (string)$controllerClassNameSubject->beforeLast($controller_suffix)->snakeCase();
 
         $this->wrapScriptWithMessages(
             "Creating $controller_class_name...",
-            function () use ($controller_class_name) {
+            function () use ($controller_class_name, $resource_name) {
                 ControllerStubMounter::make(ProjectPath::controllers() . "/$controller_class_name.php")
-                    ->setReplaceContentDictionary(['DummyController' => $controller_class_name])
-                    ->mountNewFile();
+                    ->setReplaceContentDictionary([
+                        'DummyController' => $controller_class_name,
+                        'dummy_resource' => $resource_name,
+                    ])->mountNewFile();
             }
         );
 
@@ -82,6 +95,10 @@ class MakeController extends ConsoleCommand
         return Command::SUCCESS;
     }
 
+    /**
+     * @return bool
+     * @throws SymfonyInvalidArgumentException
+     */
     private function isNoPermissionsMode(): bool
     {
         return (bool)$this->input->getOption(self::NO_PERMISSIONS_MODE);
@@ -91,6 +108,8 @@ class MakeController extends ConsoleCommand
      * @param string $controller_class_name
      * @return void
      * @throws FailedToFindRole
+     * @throws InvalidArgumentException
+     * @throws SymfonyInvalidArgumentException
      */
     private function resolveNoPermissionsMode(string $controller_class_name): void
     {
@@ -103,8 +122,10 @@ class MakeController extends ConsoleCommand
             function () use ($controller_class_name) {
                 /** @var ApiController $controller_class_guessed_namespace */
                 $controller_class_guessed_namespace = "App\\Controllers\\$controller_class_name";
-                $controller_class_guessed_namespace::getInstance()
-                    ->registerCapabilitiesToRole(Role::find(Role::ADMIN));
+
+                $controller_class_guessed_namespace::getInstance()->registerCapabilitiesToRole(
+                    Role::find(DefaultRole::admin->value)
+                );
             }
         );
     }

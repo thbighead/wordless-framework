@@ -8,6 +8,6 @@ class ActionListenerStubMounter extends StubMounter
 {
     protected function relativeStubFilename(): string
     {
-        return 'action_listener';
+        return 'action-listener';
     }
 }
