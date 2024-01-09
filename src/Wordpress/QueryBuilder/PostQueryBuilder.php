@@ -46,8 +46,18 @@ class PostQueryBuilder extends WpQueryBuilder
         return new static($post_type);
     }
 
-    public function __construct(StandardType|PostType|null $post_type = null)
+    public function __construct(StandardType|PostType|null $postType = null)
     {
+        $post_type = StandardType::ANY;
+
+        if ($postType instanceof StandardType) {
+            $post_type = $postType->name;
+        }
+
+        if ($postType instanceof PostType) {
+            $post_type = $postType->name;
+        }
+        
         $this->whereType($post_type)
             ->withoutStickyPosts()
             ->deactivatePagination()

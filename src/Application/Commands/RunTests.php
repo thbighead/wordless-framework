@@ -64,9 +64,7 @@ class RunTests extends ConsoleCommand
 
         return $this->resolveFilterOptions($phpunit_command)
             ->resolveCoverageOptions($phpunit_command)
-            ->callExternalCommand(
-                "$phpunit_command {$this->getPathArgument()}",
-                true
-            );
+            ->callExternalCommand("$phpunit_command {$this->getPathArgument()}")
+            ->result_code;
     }
 }

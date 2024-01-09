@@ -10,9 +10,9 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Infrastructure\Wordpress\Taxonomy;
-use Wordless\Wordpress\Models\CustomTaxonomyTerm;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\Role;
+use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 use WP_Roles;
@@ -105,7 +105,7 @@ class RolesList extends WP_Roles
      */
     public static function syncPermissionsToAdminAsDefault(): void
     {
-        self::syncCustomPostTypesPermissionsToRole($adminRole = Role::find(Role::ADMIN));
+        self::syncCustomPostTypesPermissionsToRole($adminRole = Role::find(DefaultRole::admin->value));
         self::syncRestResourcesPermissionsToRole($adminRole);
     }
 
