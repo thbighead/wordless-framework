@@ -38,7 +38,7 @@ abstract class Dictionary extends Singleton
         self::$taxonomy_terms_keyed_by_name = [];
         self::$taxonomy_terms_keyed_by_slug = [];
 
-        foreach (get_terms(['taxonomy' => $taxonomy]) as $taxonomyTerm) {
+        foreach (get_terms(['hide_empty' => false,'taxonomy' => $taxonomy]) as $taxonomyTerm) {
             /** @var WP_Term $taxonomyTerm */
             self::$taxonomy_terms_keyed_by_id[$taxonomyTerm->term_id] = $taxonomyTerm;
             self::$taxonomy_terms_keyed_by_name[$taxonomyTerm->name] =
