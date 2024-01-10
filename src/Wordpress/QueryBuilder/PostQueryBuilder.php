@@ -4,7 +4,6 @@ namespace Wordless\Wordpress\QueryBuilder;
 
 use stdClass;
 use Wordless\Application\Helpers\Arr;
-use Wordless\Enums\QueryComparison;
 use Wordless\Enums\WpQueryMeta;
 use Wordless\Enums\WpQueryStatus;
 use Wordless\Enums\WpQueryTaxonomy;
@@ -17,20 +16,30 @@ use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Pagination\Posts;
+use Wordless\Wordpress\QueryBuilder\Enums\OrderByDirection;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Exceptions\TrySetEmptyPostType;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PaginationArgumentsBuilder;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Author;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Category;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Comment;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\ColumnParameter;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Exceptions\InvalidOrderByClause;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Search;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Tag;
 use WP_Post;
 use WP_Query;
 
 class PostQueryBuilder extends WpQueryBuilder
 {
+    use Author;
+    use Category;
+    use Comment;
     use OrderBy;
+    use Search;
+    use Tag;
 
-    final public const KEY_AUTHOR = 'author';
-    final public const KEY_CATEGORY = 'cat';
     final public const KEY_HAS_PASSWORD = 'has_password';
     final public const KEY_IGNORE_STICKY_POSTS = 'ignore_sticky_posts';
     final public const KEY_NO_FOUND_ROWS = 'no_found_rows';
@@ -183,84 +192,6 @@ class PostQueryBuilder extends WpQueryBuilder
         return new Posts($this, $paginationBuilder);
     }
 
-
-    /**
-     * @param string|string[] $words
-     * @param bool $sorted_by_relevance
-     * @return $this
-     */
-    public function searchFor(string|array $words, bool $sorted_by_relevance = true): PostQueryBuilder
-    {
-        return $this->search($words, $sorted_by_relevance);
-    }
-
-    /**
-     * @param string|string[] $words
-     * @param bool $sorted_by_relevance
-     * @return $this
-     */
-    public function searchNotFor(string|array $words, bool $sorted_by_relevance = true): PostQueryBuilder
-    {
-        return $this->search($words, $sorted_by_relevance, false);
-    }
-
-    /**
-     * @param int|int[] $ids
-     * @return PostQueryBuilder
-     */
-    public function whereAuthorId(int|array $ids): PostQueryBuilder
-    {
-        if (is_array($ids)) {
-            $ids = implode(',', $ids);
-        }
-
-        $this->arguments[self::KEY_AUTHOR] = $ids;
-
-        return $this;
-    }
-
-    /**
-     * @param string $author_nice_name
-     * @return $this
-     */
-    public function whereAuthorNiceName(string $author_nice_name): PostQueryBuilder
-    {
-        $this->arguments['author_name'] = $author_nice_name;
-
-        return $this;
-    }
-
-    /**
-     * @param int|int[] $ids
-     * @param bool $and
-     * @return $this
-     */
-    public function whereCategoryId(int|array $ids, bool $and = false): PostQueryBuilder
-    {
-        if (is_array($ids)) {
-            $this->arguments[$and ? 'category__and' : 'category__in'] = $ids;
-
-            return $this;
-        }
-
-        $this->arguments[self::KEY_CATEGORY] = $ids;
-
-        return $this;
-    }
-
-    /**
-     * @param string|string[] $names
-     * @param bool $and
-     * @return $this
-     */
-    public function whereCategoryName(string|array $names, bool $and = false): PostQueryBuilder
-    {
-        $this->arguments['category_name'] = is_array($names) ?
-            implode($and ? '+' : ',', $names) : $names;
-
-        return $this;
-    }
-
     /**
      * @param int|int[] $post_ids
      * @return $this
@@ -298,40 +229,6 @@ class PostQueryBuilder extends WpQueryBuilder
     }
 
     /**
-     * @param int|int[] $ids
-     * @return PostQueryBuilder
-     */
-    public function whereNotAuthorId(int|array $ids): PostQueryBuilder
-    {
-        if (is_array($ids)) {
-            $this->arguments['author__not_in'] = $ids;
-
-            return $this;
-        }
-
-        $this->arguments[self::KEY_AUTHOR] = -$ids;
-
-        return $this;
-    }
-
-    /**
-     * @param int|int[] $ids
-     * @return $this
-     */
-    public function whereNotCategoryId(int|array $ids): PostQueryBuilder
-    {
-        if (is_array($ids)) {
-            $this->arguments['category__not_in'] = $ids;
-
-            return $this;
-        }
-
-        $this->arguments[self::KEY_CATEGORY] = -$ids;
-
-        return $this;
-    }
-
-    /**
      * @param int|int[] $post_ids
      * @return $this
      */
@@ -348,17 +245,6 @@ class PostQueryBuilder extends WpQueryBuilder
         if (isset($this->arguments[self::KEY_POST_IN])) {
             unset($this->arguments[self::KEY_POST_IN]);
         }
-
-        return $this;
-    }
-
-    /**
-     * @param int[] $ids
-     * @return $this
-     */
-    public function whereNotTagId(array $ids): PostQueryBuilder
-    {
-        $this->arguments['tag__not_in'] = $ids;
 
         return $this;
     }
@@ -390,37 +276,6 @@ class PostQueryBuilder extends WpQueryBuilder
         }
 
         $this->arguments[WpQueryStatus::POST_STATUS_KEY] = $status;
-
-        return $this;
-    }
-
-    /**
-     * @param int|int[] $ids
-     * @param bool $and
-     * @return $this
-     */
-    public function whereTagId(int|array $ids, bool $and = false): PostQueryBuilder
-    {
-        if (is_array($ids)) {
-            $this->arguments[$and ? 'tag__and' : 'tag__in'] = $ids;
-
-            return $this;
-        }
-
-        $this->arguments['tag_id'] = $ids;
-
-        return $this;
-    }
-
-    /**
-     * @param string|string[] $names
-     * @param bool $and
-     * @return $this
-     */
-    public function whereTagName(string|array $names, bool $and = false): PostQueryBuilder
-    {
-        $this->arguments['tag'] = is_array($names) ?
-            implode($and ? '+' : ',', $names) : $names;
 
         return $this;
     }
@@ -457,82 +312,6 @@ class PostQueryBuilder extends WpQueryBuilder
         $this->arguments[PostType::QUERY_TYPE_KEY] = $types;
 
         return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function withAnyComments(): PostQueryBuilder
-    {
-        return $this->withComments();
-    }
-
-    /**
-     * @param int $how_many
-     * @param string $comparison use QueryComparisons constants to avoid errors
-     * @return $this
-     */
-    public function withComments(
-        int    $how_many = 1,
-        string $comparison = QueryComparison::GREATER_THAN_OR_EQUAL
-    ): PostQueryBuilder
-    {
-        $this->arguments['comment_count'] = ['compare' => $comparison, 'value' => $how_many];
-
-        return $this;
-    }
-
-    /**
-     * @param int $how_many
-     * @return $this
-     */
-    public function withDifferentThanComments(int $how_many): PostQueryBuilder
-    {
-        return $this->withComments($how_many, QueryComparison::DIFFERENT);
-    }
-
-    /**
-     * @param int $how_many
-     * @return $this
-     */
-    public function withLessThanComments(int $how_many): PostQueryBuilder
-    {
-        return $this->withComments($how_many, QueryComparison::LESS_THAN);
-    }
-
-    /**
-     * @param int $how_many
-     * @return $this
-     */
-    public function withLessThanOrEqualsComments(int $how_many): PostQueryBuilder
-    {
-        return $this->withComments($how_many, QueryComparison::LESS_THAN_OR_EQUAL);
-    }
-
-    /**
-     * @param int $how_many
-     * @return $this
-     */
-    public function withMoreThanComments(int $how_many): PostQueryBuilder
-    {
-        return $this->withComments($how_many, QueryComparison::GREATER_THAN);
-    }
-
-    /**
-     * @param int $how_many
-     * @return $this
-     */
-    public function withMoreThanOrEqualsComments(int $how_many): PostQueryBuilder
-    {
-        return $this->withComments($how_many);
-    }
-
-    /**
-     * @return $this
-     */
-    public function withoutComments(): PostQueryBuilder
-    {
-        return $this->withComments(0, QueryComparison::EQUAL);
     }
 
     /**
@@ -625,43 +404,6 @@ class PostQueryBuilder extends WpQueryBuilder
         return $this->getQuery()->query($this->buildArguments($extra_arguments));
     }
 
-    private function resolveSearch(): void
-    {
-        foreach ($this->search_words as $word => $is_included) {
-            $this->arguments[self::KEY_SEARCH] = isset($this->arguments[self::KEY_SEARCH]) ?
-                "{$this->arguments[self::KEY_SEARCH]} " : '';
-
-            $this->arguments[self::KEY_SEARCH] .= $is_included ? $word : "-$word";
-        }
-    }
-
-    /**
-     * @param string|string[] $words
-     * @param bool $sorted_by_relevance
-     * @param bool $include
-     * @return $this
-     */
-    private function search(
-        string|array $words,
-        bool         $sorted_by_relevance = true,
-        bool         $include = true
-    ): PostQueryBuilder
-    {
-        if (empty($words)) {
-            return $this;
-        }
-
-        foreach (Arr::wrap($words) as $word) {
-            $this->search_words[$word] = $include;
-        }
-
-        if ($sorted_by_relevance) {
-            $this->sortBySearchRelevance();
-        }
-
-        return $this;
-    }
-
     private function setPostsFormat(PostsListFormat $format): static
     {
         $this->arguments[PostsListFormat::FIELDS_KEY] = $format->value;
@@ -669,6 +411,10 @@ class PostQueryBuilder extends WpQueryBuilder
         return $this;
     }
 
+    /**
+     * @return void
+     * @throws InvalidOrderByClause
+     */
     private function sortBySearchRelevance(): void
     {
         $original_arguments = [];
@@ -679,7 +425,7 @@ class PostQueryBuilder extends WpQueryBuilder
             unset($this->arguments[self::KEY_ORDER_BY]);
         }
 
-        $this->orderBy(ColumnParameter::SEARCH_RELEVANCE, QueryOrderByDirection::DESCENDING);
+        $this->orderBy(ColumnParameter::search_relevance, OrderByDirection::descending);
 
         // ensuring the relevance will be the first parameter of ordering
         $this->arguments[self::KEY_ORDER_BY] = $this->arguments[self::KEY_ORDER_BY] + $original_arguments;
