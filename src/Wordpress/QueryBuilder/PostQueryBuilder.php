@@ -5,9 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder;
 use stdClass;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Enums\QueryComparison;
-use Wordless\Enums\QueryOrderByDirection;
 use Wordless\Enums\WpQueryMeta;
-use Wordless\Enums\WpQueryOrderByParameter;
 use Wordless\Enums\WpQueryStatus;
 use Wordless\Enums\WpQueryTaxonomy;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
@@ -22,18 +20,21 @@ use Wordless\Wordpress\Pagination\Posts;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Exceptions\TrySetEmptyPostType;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PaginationArgumentsBuilder;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\ColumnParameter;
 use WP_Post;
 use WP_Query;
 
 class PostQueryBuilder extends WpQueryBuilder
 {
+    use OrderBy;
+
     final public const KEY_AUTHOR = 'author';
     final public const KEY_CATEGORY = 'cat';
     final public const KEY_HAS_PASSWORD = 'has_password';
     final public const KEY_IGNORE_STICKY_POSTS = 'ignore_sticky_posts';
     final public const KEY_NO_FOUND_ROWS = 'no_found_rows';
     final public const KEY_NO_PAGING = 'nopaging';
-    final public const KEY_ORDER_BY = 'orderby';
     final public const KEY_POST_IN = 'post__in';
     final public const KEY_POST_NOT_IN = 'post__not_in';
     final public const KEY_POST_PASSWORD = 'post_password';
@@ -42,11 +43,20 @@ class PostQueryBuilder extends WpQueryBuilder
     /** @var array<string, bool> $search_words */
     private array $search_words = [];
 
+    /**
+     * @param StandardType|PostType|null $post_type
+     * @return static
+     * @throws TrySetEmptyPostType
+     */
     public static function getInstance(StandardType|PostType|null $post_type = null): static
     {
         return new static($post_type);
     }
 
+    /**
+     * @param StandardType|PostType|null $postType
+     * @throws TrySetEmptyPostType
+     */
     public function __construct(StandardType|PostType|null $postType = null)
     {
         $post_type = StandardType::ANY;
@@ -157,47 +167,6 @@ class PostQueryBuilder extends WpQueryBuilder
 
         if ($password !== null) {
             $this->arguments[self::KEY_POST_PASSWORD] = $password;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string|string[]|array<string,string> $columns use WpQueryOrderByParameter constants to avoid errors
-     * @param string $direction ignored if $columns is an associative array
-     * @return PostQueryBuilder
-     */
-    public function orderBy(
-        string|array $columns,
-        string       $direction = QueryOrderByDirection::ASCENDING
-    ): PostQueryBuilder
-    {
-        if (!isset($this->arguments[self::KEY_ORDER_BY])) {
-            $this->arguments[self::KEY_ORDER_BY] = [];
-        }
-
-        if (!is_array($columns)) {
-            $columns = [$columns => $direction];
-        }
-
-        if (!Arr::isAssociative($columns)) {
-            $order_by = [];
-
-            foreach ($columns as $column) {
-                $order_by[$column] = $direction;
-            }
-
-            $columns = $order_by;
-            unset($order_by);
-        }
-
-        foreach ($columns as $column => $order_direction) {
-            // ensuring the order of columns (if you ask it again it goes to the end of line)
-            if (isset($this->arguments[self::KEY_ORDER_BY][$column])) {
-                unset($this->arguments[self::KEY_ORDER_BY][$column]);
-            }
-
-            $this->arguments[self::KEY_ORDER_BY][$column] = $order_direction;
         }
 
         return $this;
@@ -710,7 +679,7 @@ class PostQueryBuilder extends WpQueryBuilder
             unset($this->arguments[self::KEY_ORDER_BY]);
         }
 
-        $this->orderBy(WpQueryOrderByParameter::SEARCH_RELEVANCE, QueryOrderByDirection::DESCENDING);
+        $this->orderBy(ColumnParameter::SEARCH_RELEVANCE, QueryOrderByDirection::DESCENDING);
 
         // ensuring the relevance will be the first parameter of ordering
         $this->arguments[self::KEY_ORDER_BY] = $this->arguments[self::KEY_ORDER_BY] + $original_arguments;
