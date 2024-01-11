@@ -39,6 +39,7 @@ abstract class BaseCreateDummyCommand extends ConsoleCommand
             OptionDTO::make(
                 self::OPTION_TOTAL,
                 'Specify the quantity of objects to be created.',
+                '-t',
                 mode: OptionMode::optional_value
             ),
         ];

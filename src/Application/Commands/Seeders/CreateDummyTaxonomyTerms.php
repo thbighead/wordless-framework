@@ -11,6 +11,7 @@ use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Commands\WpCliCaller;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 
 class CreateDummyTaxonomyTerms extends BaseCreateDummyCommand
 {
@@ -33,14 +34,7 @@ class CreateDummyTaxonomyTerms extends BaseCreateDummyCommand
 
     protected function options(): array
     {
-        return [
-            new OptionDTO(
-                self::OPTION_TOTAL,
-                'Specify the quantity of posts to be created.',
-                mode: OptionMode::optional_value,
-                default: null,
-            ),
-        ];
+        return [];
     }
 
     /**
@@ -51,10 +45,12 @@ class CreateDummyTaxonomyTerms extends BaseCreateDummyCommand
     protected function runIt(): int
     {
         $this->wrapScriptWithMessages('Creating Taxonomy Terms ...', function () {
-            foreach ($this->getCustomTaxonomies() as $taxonomy) {
+            foreach (TaxonomyQueryBuilder::getInstance()->get() as $taxonomy) {
                 $term_name = $this->faker->word();
                 $term_description = $this->faker->paragraph();
-                $full_command = "term create $taxonomy $term_name --description='$term_description' --quiet";
+                $taxonomy_name = $taxonomy->name;
+
+                $full_command = "term create $taxonomy_name $term_name --description='$term_description' --quiet";
 
                 $this->callConsoleCommand(
                     WpCliCaller::COMMAND_NAME,

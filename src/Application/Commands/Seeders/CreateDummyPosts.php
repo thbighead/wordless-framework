@@ -3,6 +3,7 @@
 namespace Wordless\Application\Commands\Seeders;
 
 
+use Carbon\Carbon;
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\ExceptionInterface;
@@ -41,11 +42,10 @@ class CreateDummyPosts extends BaseCreateDummyCommand
                     CreateDummyTaxonomyTerms::COMMAND_NAME,
                 );
             }
-
             foreach (Category::all() as $category) {
-                for ($i = 0; $i < self::HOW_MANY_POSTS_PER_CATEGORY; $i++) {
-                    $date = date('Y-m-d', strtotime($i > 0 ? "-$i days" : 'now'));
-                    $uuid = Str::uuid();
+                for ($i = 0; $i < $this->getTotalPostsToCreate(); $i++) {
+                    $post_date = Carbon::now()->subDays($i)->format('Y-m-d H:i:s');
+                    $post_title = $this->faker->sentence();
                     $post_content = str_replace(["\n", "\r"], '', nl2br($this->faker->paragraphs(
                         self::HOW_MANY_PARAGRAPHS_PER_POST,
                         true
@@ -53,7 +53,7 @@ class CreateDummyPosts extends BaseCreateDummyCommand
                     $post_excerpt = $this->faker->paragraph();
                     $category_name = $category->name;
 
-                    $full_command = "post create --post_status=publish --post_date=$date --post_title=Post-$category_name-$uuid --post_content='$post_content' --post_excerpt='$post_excerpt' --post_category=$category_name --quiet";
+                    $full_command = "post create --post_status=publish --post_date='$post_date' --post_title='Post-$post_title' --post_content='$post_content' --post_excerpt='$post_excerpt' --post_category='$category_name' --quiet";
 
                     $this->callConsoleCommand(
                         WpCliCaller::COMMAND_NAME,
@@ -66,5 +66,10 @@ class CreateDummyPosts extends BaseCreateDummyCommand
         });
 
         return Command::SUCCESS;
+    }
+
+    private function getTotalPostsToCreate(): int
+    {
+        return (int)(($this->input->getOption(self::OPTION_TOTAL) ?: null) ?? self::HOW_MANY_POSTS_PER_CATEGORY);
     }
 }
