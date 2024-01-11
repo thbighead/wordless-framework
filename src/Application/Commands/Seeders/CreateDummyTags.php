@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Application\Commands\Seeder;
+namespace Wordless\Application\Commands\Seeders;
 
 
 use Exception;
@@ -9,7 +9,7 @@ use Symfony\Component\Console\Exception\ExceptionInterface;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Enums\StandardTaxonomy;
 
-class CreateDummyTags extends CreateDummyTaxonomyTerm
+class CreateDummyTags extends CreateDummyTaxonomyTerms
 {
     use LoadWpConfig;
 
@@ -30,9 +30,9 @@ class CreateDummyTags extends CreateDummyTaxonomyTerm
     protected function runIt(): int
     {
         $this->callConsoleCommand(
-            CreateDummyTaxonomyTerm::COMMAND_NAME,
+            CreateDummyTaxonomyTerms::COMMAND_NAME,
             [
-                CreateDummyTaxonomyTerm::OPTION_TAXONOMY_SHORTCUT => [StandardTaxonomy::tag->name],
+                CreateDummyTaxonomyTerms::OPTION_TAXONOMY_SHORTCUT => [StandardTaxonomy::tag->name],
                 '--total' => $this->getTotalTagsToCreate()
             ],
         );

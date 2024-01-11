@@ -1,15 +1,16 @@
 <?php
 
-namespace Wordless\Application\Commands\Seeder;
+namespace Wordless\Application\Commands\Seeders;
 
 
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\ExceptionInterface;
+use Wordless\Application\Commands\Seeders\Contracts\BaseCreateDummyCommand;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Enums\StandardTaxonomy;
 
-class CreateDummyCategories extends Seeder
+class CreateDummyCategories extends BaseCreateDummyCommand
 {
     use LoadWpConfig;
 
@@ -29,9 +30,9 @@ class CreateDummyCategories extends Seeder
     protected function runIt(): int
     {
         $this->callConsoleCommand(
-            CreateDummyTaxonomyTerm::COMMAND_NAME,
+            CreateDummyTaxonomyTerms::COMMAND_NAME,
             [
-                CreateDummyTaxonomyTerm::OPTION_TAXONOMY_SHORTCUT => [StandardTaxonomy::category->name],
+                CreateDummyTaxonomyTerms::OPTION_TAXONOMY_SHORTCUT => [StandardTaxonomy::category->name],
                 '--total' => $this->getTotalCategoriesToCreate()
             ],
         );

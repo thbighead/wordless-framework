@@ -2,11 +2,11 @@
 
 namespace Wordless\Application\Providers;
 
-use Wordless\Application\Commands\Seeder\CreateDummyCategories;
-use Wordless\Application\Commands\Seeder\CreateDummyComments;
-use Wordless\Application\Commands\Seeder\CreateDummyPosts;
-use Wordless\Application\Commands\Seeder\CreateDummyTags;
-use Wordless\Application\Commands\Seeder\CreateDummyTaxonomyTerm;
+use Wordless\Application\Commands\Seeders\CreateDummyCategories;
+use Wordless\Application\Commands\Seeders\CreateDummyComments;
+use Wordless\Application\Commands\Seeders\CreateDummyPosts;
+use Wordless\Application\Commands\Seeders\CreateDummyTags;
+use Wordless\Application\Commands\Seeders\CreateDummyTaxonomyTerms;
 use Wordless\Infrastructure\Provider;
 
 final class SeederProvider extends Provider
@@ -18,7 +18,7 @@ final class SeederProvider extends Provider
             CreateDummyComments::class,
             CreateDummyPosts::class,
             CreateDummyTags::class,
-            CreateDummyTaxonomyTerm::class,
+            CreateDummyTaxonomyTerms::class,
         ];
     }
 }

@@ -1,18 +1,18 @@
 <?php
 
-namespace Wordless\Application\Commands\Seeder;
+namespace Wordless\Application\Commands\Seeders;
 
 
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\ExceptionInterface;
+use Wordless\Application\Commands\Seeders\Contracts\BaseCreateDummyCommand;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Commands\WpCliCaller;
-use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 
-class CreateDummyTaxonomyTerm extends Seeder
+class CreateDummyTaxonomyTerms extends BaseCreateDummyCommand
 {
     use LoadWpConfig;
 
@@ -55,8 +55,8 @@ class CreateDummyTaxonomyTerm extends Seeder
     {
         $this->wrapScriptWithMessages('Creating Taxonomies and terms...', function () {
             foreach ($this->getCustomTaxonomies() as $taxonomy) {
-                $term_name = self::$faker->word();
-                $term_description = self::$faker->paragraph();
+                $term_name = $this->faker->word();
+                $term_description = $this->faker->paragraph();
                 $full_command = "term create $taxonomy $term_name --description='$term_description' --quiet";
 
                 $this->callConsoleCommand(
@@ -77,6 +77,6 @@ class CreateDummyTaxonomyTerm extends Seeder
             return $custom_taxonomies;
         }
 
-        return self::$faker->words(self::HOW_MANY_TAXONOMIES);
+        return $this->faker->words(self::HOW_MANY_TAXONOMIES);
     }
 }

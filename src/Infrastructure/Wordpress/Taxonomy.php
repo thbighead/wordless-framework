@@ -14,6 +14,7 @@ use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use WP_Taxonomy;
 use WP_Term;
 
@@ -53,7 +54,7 @@ abstract class Taxonomy implements IRelatedMetaData
             throw new InitializingModelWithWrongTaxonomyName($this, $with_acfs);
         }
 
-        $this->wpTaxonomy = Helper::get($this->name());
+        $this->wpTaxonomy = TaxonomyQueryBuilder::getInstance()->andWhereName($this->name())->first();
 
         if ($with_acfs) {
             $this->loadTermAcfs($this->wpTerm->term_id);

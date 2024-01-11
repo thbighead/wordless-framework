@@ -1,16 +1,16 @@
 <?php
 
-namespace Wordless\Application\Commands\Seeder;
+namespace Wordless\Application\Commands\Seeders;
 
 
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\ExceptionInterface;
+use Wordless\Application\Commands\Seeders\Contracts\BaseCreateDummyCommand;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Commands\WpCliCaller;
-use Wordless\Application\Helpers\Str;
 
-class CreateDummyUsers extends Seeder
+class CreateDummyUsers extends BaseCreateDummyCommand
 {
     use LoadWpConfig;
 
@@ -32,8 +32,8 @@ class CreateDummyUsers extends Seeder
     {
         $this->wrapScriptWithMessages('Creating Users...', function () {
             for ($i = 0; $i < $this->getTotalCategoriesToCreate(); $i++) {
-                $user_name = self::$faker->userName();
-                $user_email = self::$faker->safeEmail();
+                $user_name = $this->faker->userName();
+                $user_email = $this->faker->safeEmail();
                 $full_command = "user create $user_name $user_email --porcelain --quiet";
 
                 $this->callConsoleCommand(

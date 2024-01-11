@@ -1,37 +1,34 @@
 <?php
 
-namespace Wordless\Application\Commands\Seeder;
+namespace Wordless\Application\Commands\Seeders;
 
 
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\ExceptionInterface;
+use Symfony\Component\Console\Exception\LogicException;
+use Wordless\Application\Commands\Seeders\Contracts\BaseCreateDummyCommand;
 use Wordless\Application\Commands\WpCliCaller;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Wordpress\Models\Category;
 
-class CreateDummyPosts extends Seeder
+class CreateDummyPosts extends BaseCreateDummyCommand
 {
-
-    public const COMMAND_NAME = 'generate:posts';
+    final public const COMMAND_NAME = 'generate:posts';
     private const HOW_MANY_PARAGRAPHS_PER_POST = 3;
     private const HOW_MANY_POSTS_PER_CATEGORY = 20;
     private const UNCATEGORIZED_CATEGORY = 'uncategorized';
 
-    /**
-     * @throws PathNotFoundException
-     */
-    public function __construct(string $name = null)
-    {
-        parent::__construct($name);
-        require_once ProjectPath::wpCore('wp-admin/includes/taxonomy.php');
-    }
-
     protected function description(): string
     {
-        return 'A custom command to create dummy posts to each category.';
+        return 'Creates dummy posts.';
+    }
+
+    protected function help(): string
+    {
+        return '';
     }
 
     /**
@@ -52,11 +49,11 @@ class CreateDummyPosts extends Seeder
                 for ($i = 0; $i < self::HOW_MANY_POSTS_PER_CATEGORY; $i++) {
                     $date = date('Y-m-d', strtotime($i > 0 ? "-$i days" : 'now'));
                     $uuid = Str::uuid();
-                    $post_content = str_replace(["\n", "\r"], '', nl2br(self::$faker->paragraphs(
+                    $post_content = str_replace(["\n", "\r"], '', nl2br($this->faker->paragraphs(
                         self::HOW_MANY_PARAGRAPHS_PER_POST,
                         true
                     )));
-                    $post_excerpt = self::$faker->paragraph();
+                    $post_excerpt = $this->faker->paragraph();
                     $category_name = $category->name;
 
                     $full_command = "post create --post_status=publish --post_date=$date --post_title=Post-$category_name-$uuid --post_content='$post_content' --post_excerpt='$post_excerpt' --post_category=$category_name --quiet";

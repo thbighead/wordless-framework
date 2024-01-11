@@ -1,17 +1,18 @@
 <?php
 
-namespace Wordless\Application\Commands\Seeder;
+namespace Wordless\Application\Commands\Seeders;
 
 
 use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\ExceptionInterface;
+use Wordless\Application\Commands\Seeders\Contracts\BaseCreateDummyCommand;
 use Wordless\Application\Commands\WpCliCaller;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Wordpress\Models\Post;
 
-class CreateDummyComments extends Seeder
+class CreateDummyComments extends BaseCreateDummyCommand
 {
 
     public const COMMAND_NAME = 'generate:comments';
@@ -48,8 +49,8 @@ class CreateDummyComments extends Seeder
             foreach (Post::getAll() as $post) {
                 for ($i = 0; $i < self::HOW_MANY_COMMENTS_PER_POST; $i++) {
                     $post_id = $post->ID;
-                    $comment_author = self::$faker->name;
-                    $comment_content = self::$faker->paragraph();
+                    $comment_author = $this->faker->name;
+                    $comment_content = $this->faker->paragraph();
                     $full_command = "comment create --comment_post_ID=$post_id --comment_content='$comment_content' --comment_author='$comment_author' --quiet";
 
                     $this->callConsoleCommand(
