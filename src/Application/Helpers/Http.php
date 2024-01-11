@@ -2,7 +2,6 @@
 
 namespace Wordless\Application\Helpers;
 
-use Symfony\Component\HttpFoundation\Request;
 use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
 use Wordless\Application\Helpers\Http\Traits\Internal;
 use Wordless\Infrastructure\Http\Request\Enums\Verb;
@@ -89,7 +88,7 @@ class Http
      * @throws RequestFailed
      */
     public static function request(
-        Verb $httpVerb,
+        Verb   $httpVerb,
         string $endpoint,
         array  $body = [],
         array  $headers = [],

@@ -5,7 +5,6 @@ namespace Wordless\Wordpress\Models;
 use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Enums\StandardTaxonomy;
 use Wordless\Wordpress\Models\Category\Dictionary;
-use WP_Term;
 
 class Category extends Taxonomy
 {

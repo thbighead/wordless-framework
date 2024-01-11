@@ -9,9 +9,9 @@ class FailedToUpdateOption extends Exception
 {
     public function __construct(
         public readonly string $option_key,
-        public readonly mixed $option_value,
-        public readonly mixed $autoload,
-        ?Throwable $previous = null
+        public readonly mixed  $option_value,
+        public readonly mixed  $autoload,
+        ?Throwable             $previous = null
     )
     {
         parent::__construct("Failed to update option with key $this->option_key", 0, $previous);

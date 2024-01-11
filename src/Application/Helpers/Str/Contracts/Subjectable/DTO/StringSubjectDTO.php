@@ -88,12 +88,12 @@ final class StringSubjectDTO extends SubjectDTO
      */
     public function contains(string|array $needles, bool $any = true): bool
     {
-        return Str::contains( $this->subject, $needles, $any);
+        return Str::contains($this->subject, $needles, $any);
     }
 
     public function countSubstring(string $substring): int
     {
-        return Str::countSubstring( $this->subject, $substring);
+        return Str::countSubstring($this->subject, $substring);
     }
 
     public function endsWith(string $substring): bool

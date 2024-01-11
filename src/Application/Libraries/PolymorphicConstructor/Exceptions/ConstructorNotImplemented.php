@@ -12,7 +12,7 @@ class ConstructorNotImplemented extends BadMethodCallException
     public function __construct(
         private readonly string $namespaced_class,
         private readonly string $constructor_method,
-        ?Throwable $previous = null
+        ?Throwable              $previous = null
     )
     {
         parent::__construct(

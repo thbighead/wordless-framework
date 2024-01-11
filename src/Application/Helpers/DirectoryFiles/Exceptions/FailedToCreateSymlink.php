@@ -4,7 +4,6 @@ namespace Wordless\Application\Helpers\DirectoryFiles\Exceptions;
 
 use ErrorException;
 use Throwable;
-use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToCreateSymlink extends ErrorException
 {

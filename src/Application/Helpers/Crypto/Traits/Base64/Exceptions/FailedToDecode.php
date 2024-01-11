@@ -9,8 +9,8 @@ class FailedToDecode extends InvalidArgumentException
 {
     public function __construct(
         public readonly string $string_to_decode,
-        public readonly bool $ignoring_invalid_characters,
-        ?Throwable $previous = null
+        public readonly bool   $ignoring_invalid_characters,
+        ?Throwable             $previous = null
     )
     {
         parent::__construct(

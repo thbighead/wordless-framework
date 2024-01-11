@@ -87,7 +87,7 @@ class NestedAnd extends MetaSubQueryBuilder
         string $taxonomy,
         string $column,
                $values,
-        bool $include_children = true
+        bool   $include_children = true
     ): NestedAnd
     {
         $this->setConditionToSubQuery($this->mountCondition(
@@ -112,7 +112,7 @@ class NestedAnd extends MetaSubQueryBuilder
         string $taxonomy,
         string $column,
                $values,
-        bool $include_children = true
+        bool   $include_children = true
     ): NestedAnd
     {
         $this->setConditionToSubQuery($this->mountCondition(
@@ -137,7 +137,7 @@ class NestedAnd extends MetaSubQueryBuilder
         string $taxonomy,
         string $column,
                $values,
-        bool $include_children = true
+        bool   $include_children = true
     ): NestedAnd
     {
         $this->setConditionToSubQuery($this->mountCondition(

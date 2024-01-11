@@ -103,8 +103,8 @@ trait Internal
      * @throws ExceptionInterface
      */
     private function runConsoleCommand(
-        ConsoleCommand $command,
-        array $inputs = [],
+        ConsoleCommand   $command,
+        array            $inputs = [],
         ?OutputInterface $output = null
     ): int
     {

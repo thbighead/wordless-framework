@@ -6,7 +6,6 @@ use ErrorException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 use Wordless\Infrastructure\Provider;
-use Wordless\Infrastructure\Wordpress\Menu;
 
 class InvalidProviderClass extends ErrorException
 {

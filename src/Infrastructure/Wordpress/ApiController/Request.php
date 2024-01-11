@@ -2,7 +2,6 @@
 
 namespace Wordless\Infrastructure\Wordpress\ApiController;
 
-use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Wordless\Infrastructure\Http\MutableHeaderBag;
 use WP_REST_Request;
 

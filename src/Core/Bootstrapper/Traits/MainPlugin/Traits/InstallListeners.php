@@ -2,7 +2,6 @@
 
 namespace Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits;
 
-use Wordless\Core\Bootstrapper;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
 use Wordless\Infrastructure\Wordpress\Listener;

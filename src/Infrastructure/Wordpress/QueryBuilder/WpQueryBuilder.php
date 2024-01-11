@@ -3,9 +3,6 @@
 namespace Wordless\Infrastructure\Wordpress\QueryBuilder;
 
 use Wordless\Infrastructure\Wordpress\QueryBuilder;
-use Wordless\Wordpress\Models\PostType;
-use Wordless\Wordpress\Models\PostType\Enums\StandardType;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use WP_Comment_Query;
 use WP_Query;
 use WP_Term_Query;

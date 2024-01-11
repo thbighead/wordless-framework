@@ -12,7 +12,7 @@ class FailedToFindCachedKey extends InvalidArgumentException
     public function __construct(
         private readonly string $full_key_string,
         private readonly string $partial_key_which_failed,
-        ?Throwable $previous = null
+        ?Throwable              $previous = null
     )
     {
         parent::__construct(

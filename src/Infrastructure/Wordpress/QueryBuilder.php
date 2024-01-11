@@ -2,14 +2,10 @@
 
 namespace Wordless\Infrastructure\Wordpress;
 
-use Wordless\Wordpress\Models\PostType;
-use Wordless\Wordpress\Models\PostType\Enums\StandardType;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
-use WP_Query;
-
 abstract class QueryBuilder
 {
     abstract public function first(): mixed;
+
     abstract public function get(): array;
 
     protected array $arguments = [];

@@ -2,7 +2,6 @@
 
 namespace Wordless\Infrastructure\Wordpress\ApiController;
 
-use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Http\MutableHeaderBag;
 use Wordless\Infrastructure\Http\Response\Enums\StatusCode;

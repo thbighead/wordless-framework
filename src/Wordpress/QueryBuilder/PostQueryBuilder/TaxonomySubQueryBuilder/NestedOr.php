@@ -36,7 +36,7 @@ class NestedOr extends TaxonomySubQueryBuilder
         string $taxonomy,
         string $column,
                $values,
-        bool $include_children = true
+        bool   $include_children = true
     ): NestedOr
     {
         $this->setConditionToSubQuery($this->mountCondition(
@@ -61,7 +61,7 @@ class NestedOr extends TaxonomySubQueryBuilder
         string $taxonomy,
         string $column,
                $values,
-        bool $include_children = true
+        bool   $include_children = true
     ): NestedOr
     {
         $this->setConditionToSubQuery($this->mountCondition(
@@ -86,7 +86,7 @@ class NestedOr extends TaxonomySubQueryBuilder
         string $taxonomy,
         string $column,
                $values,
-        bool $include_children = true
+        bool   $include_children = true
     ): NestedOr
     {
         $this->setConditionToSubQuery($this->mountCondition(
@@ -111,7 +111,7 @@ class NestedOr extends TaxonomySubQueryBuilder
         string $taxonomy,
         string $column,
                $values,
-        bool $include_children = true
+        bool   $include_children = true
     ): NestedOr
     {
         $this->setConditionToSubQuery($this->mountCondition(
@@ -136,7 +136,7 @@ class NestedOr extends TaxonomySubQueryBuilder
         string $taxonomy,
         string $column,
                $values,
-        bool $include_children = true
+        bool   $include_children = true
     ): NestedOr
     {
         $this->setConditionToSubQuery($this->mountCondition(

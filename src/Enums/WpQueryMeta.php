@@ -3,7 +3,6 @@
 namespace Wordless\Enums;
 
 use Wordless\Application\Helpers\Str;
-use Wordless\Wordpress\QueryBuilder\Enums\Operator;
 
 class WpQueryMeta
 {

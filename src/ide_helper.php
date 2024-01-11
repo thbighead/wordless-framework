@@ -1,4 +1,5 @@
-<?php declare(strict_types=1); /** @noinspection PhpUnused */
+<?php declare(strict_types=1);
+/** @noinspection PhpUnused */
 /** @noinspection PhpIllegalPsrClassPathInspection */
 
 /**
