@@ -6,52 +6,93 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 
 trait Category
 {
-    final public const KEY_CATEGORY = 'cat';
+    private const KEY_CATEGORY = 'cat';
+    private const KEY_CATEGORY_NAME = 'category_name';
 
     /**
-     * @param int|int[] $ids
-     * @param bool $and
+     * @param int $id
+     * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereCategoryId(int|array $ids, bool $and = false): PostQueryBuilder
+    public function whereNotCategoryId(int $id, int ...$ids): PostQueryBuilder
     {
-        if (is_array($ids)) {
-            $this->arguments[$and ? 'category__and' : 'category__in'] = $ids;
+        if (!empty($ids)) {
+            array_unshift($ids, $id);
 
-            return $this;
-        }
-
-        $this->arguments[self::KEY_CATEGORY] = $ids;
-
-        return $this;
-    }
-
-    /**
-     * @param string|string[] $names
-     * @param bool $and
-     * @return PostQueryBuilder
-     */
-    public function whereCategoryName(string|array $names, bool $and = false): PostQueryBuilder
-    {
-        $this->arguments['category_name'] = is_array($names) ?
-            implode($and ? '+' : ',', $names) : $names;
-
-        return $this;
-    }
-
-    /**
-     * @param int|int[] $ids
-     * @return PostQueryBuilder
-     */
-    public function whereNotCategoryId(int|array $ids): PostQueryBuilder
-    {
-        if (is_array($ids)) {
             $this->arguments['category__not_in'] = $ids;
 
             return $this;
         }
 
-        $this->arguments[self::KEY_CATEGORY] = -$ids;
+        $this->arguments[self::KEY_CATEGORY] = -$id;
+
+        return $this;
+    }
+
+    /**
+     * @param int $id
+     * @param int ...$ids
+     * @return PostQueryBuilder
+     */
+    public function whereRelatesToAllCategoryId(int $id, int ...$ids): PostQueryBuilder
+    {
+        if (!empty($ids)) {
+            array_unshift($ids, $id);
+
+            $this->arguments['category__and'] = $ids;
+
+            return $this;
+        }
+
+        $this->arguments[self::KEY_CATEGORY] = $id;
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string ...$names
+     * @return PostQueryBuilder
+     */
+    public function whereRelatesToAllCategoryName(string $name, string ...$names): PostQueryBuilder
+    {
+        $this->arguments[self::KEY_CATEGORY_NAME] = !empty($names) ?
+            implode('+', array_merge([$name], $names)) :
+            $name;
+
+        return $this;
+    }
+
+    /**
+     * @param int $id
+     * @param int ...$ids
+     * @return PostQueryBuilder
+     */
+    public function whereRelatesToAnyCategoryId(int $id, int ...$ids): PostQueryBuilder
+    {
+        if (!empty($ids)) {
+            array_unshift($ids, $id);
+
+            $this->arguments['category__in'] = $ids;
+
+            return $this;
+        }
+
+        $this->arguments[self::KEY_CATEGORY] = $id;
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string ...$names
+     * @return PostQueryBuilder
+     */
+    public function whereRelatesToAnyCategoryName(string $name, string ...$names): PostQueryBuilder
+    {
+        $this->arguments[self::KEY_CATEGORY_NAME] = !empty($names) ?
+            implode(',', array_merge([$name], $names)) :
+            $name;
 
         return $this;
     }

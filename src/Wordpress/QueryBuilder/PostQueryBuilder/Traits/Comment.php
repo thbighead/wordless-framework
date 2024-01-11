@@ -14,12 +14,12 @@ trait Comment
 
     /**
      * @param int $how_many
-     * @param string $comparison use QueryComparisons constants to avoid errors
+     * @param Operator $comparison
      * @return PostQueryBuilder
      */
     public function withComments(
         int    $how_many = 1,
-        string $comparison = Operator::greater_than_or_equal->value
+        Operator $comparison = Operator::greater_than_or_equal
     ): PostQueryBuilder
     {
         $this->arguments['comment_count'] = ['compare' => $comparison, 'value' => $how_many];
@@ -33,7 +33,7 @@ trait Comment
      */
     public function withDifferentThanComments(int $how_many): PostQueryBuilder
     {
-        return $this->withComments($how_many, Operator::different->value);
+        return $this->withComments($how_many, Operator::different);
     }
 
     /**
@@ -42,7 +42,7 @@ trait Comment
      */
     public function withLessThanComments(int $how_many): PostQueryBuilder
     {
-        return $this->withComments($how_many, Operator::less_than->value);
+        return $this->withComments($how_many, Operator::less_than);
     }
 
     /**
@@ -51,7 +51,7 @@ trait Comment
      */
     public function withLessThanOrEqualsComments(int $how_many): PostQueryBuilder
     {
-        return $this->withComments($how_many, QueryComparison::LESS_THAN_OR_EQUAL);
+        return $this->withComments($how_many, Operator::less_than_or_equal);
     }
 
     /**
@@ -60,7 +60,7 @@ trait Comment
      */
     public function withMoreThanComments(int $how_many): PostQueryBuilder
     {
-        return $this->withComments($how_many, QueryComparison::GREATER_THAN);
+        return $this->withComments($how_many, Operator::greater_than);
     }
 
     /**
@@ -72,11 +72,8 @@ trait Comment
         return $this->withComments($how_many);
     }
 
-    /**
-     * @return PostQueryBuilder
-     */
     public function withoutComments(): PostQueryBuilder
     {
-        return $this->withComments(0, QueryComparison::EQUAL);
+        return $this->withComments(0, Operator::equal);
     }
 }

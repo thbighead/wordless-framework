@@ -6,44 +6,87 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 
 trait Tag
 {
+    private const KEY_TAG_ID = 'tag_id';
+    private const KEY_TAG = 'tag';
+
     /**
-     * @param int[] $ids
+     * @param int $id
+     * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereNotTagId(array $ids): PostQueryBuilder
+    public function whereNotTagId(int $id, int ...$ids): PostQueryBuilder
     {
+        array_unshift($ids, $id);
+
         $this->arguments['tag__not_in'] = $ids;
 
         return $this;
     }
 
     /**
-     * @param int|int[] $ids
-     * @param bool $and
+     * @param int $id
+     * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereTagId(int|array $ids, bool $and = false): PostQueryBuilder
+    public function whereRelatesToAllTagId(int $id, int ...$ids): PostQueryBuilder
     {
-        if (is_array($ids)) {
-            $this->arguments[$and ? 'tag__and' : 'tag__in'] = $ids;
+        if (!empty($ids)) {
+            array_unshift($ids, $id);
+
+            $this->arguments['tag__and'] = $ids;
 
             return $this;
         }
 
-        $this->arguments['tag_id'] = $ids;
+        $this->arguments[self::KEY_TAG_ID] = $id;
 
         return $this;
     }
 
     /**
-     * @param string|string[] $names
-     * @param bool $and
+     * @param int $id
+     * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereTagName(string|array $names, bool $and = false): PostQueryBuilder
+    public function whereRelatesToAnyTagId(int $id, int ...$ids): PostQueryBuilder
     {
-        $this->arguments['tag'] = is_array($names) ?
-            implode($and ? '+' : ',', $names) : $names;
+        if (!empty($ids)) {
+            array_unshift($ids, $id);
+
+            $this->arguments['tag__in'] = $ids;
+
+            return $this;
+        }
+
+        $this->arguments[self::KEY_TAG_ID] = $id;
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string ...$names
+     * @return PostQueryBuilder
+     */
+    public function whereRelatesToAllTagName(string $name, string ...$names): PostQueryBuilder
+    {
+        $this->arguments[self::KEY_TAG] = !empty($names) ?
+            implode('+', array_merge([$name], $names)) :
+            $name;
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string ...$names
+     * @return PostQueryBuilder
+     */
+    public function whereRelatesToAnyTagName(string $name, string ...$names): PostQueryBuilder
+    {
+        $this->arguments[self::KEY_TAG] = !empty($names) ?
+            implode(',', array_merge([$name], $names)) :
+            $name;
 
         return $this;
     }

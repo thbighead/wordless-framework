@@ -6,7 +6,7 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 
 trait Author
 {
-    final public const KEY_AUTHOR = 'author';
+    private const KEY_AUTHOR = 'author';
 
     /**
      * @param int $id
@@ -15,7 +15,7 @@ trait Author
      */
     public function whereAuthorId(int $id, int ...$ids): PostQueryBuilder
     {
-        $this->arguments[self::KEY_AUTHOR] = implode(',', array_merge([$id], $ids));
+        $this->arguments[self::KEY_AUTHOR] = empty($ids) ? $id : implode(',', array_merge([$id], $ids));
 
         return $this;
     }
@@ -32,18 +32,21 @@ trait Author
     }
 
     /**
-     * @param int|int[] $ids
+     * @param int $id
+     * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereNotAuthorId(int ...$ids): PostQueryBuilder
+    public function whereNotAuthorId(int $id, int ...$ids): PostQueryBuilder
     {
-        if (count($ids) > 1) {
+        if (!empty($ids)) {
+            array_unshift($ids, $id);
+
             $this->arguments['author__not_in'] = $ids;
 
             return $this;
         }
 
-        $this->arguments[self::KEY_AUTHOR] = -$ids[0];
+        $this->arguments[self::KEY_AUTHOR] = -$id;
 
         return $this;
     }
