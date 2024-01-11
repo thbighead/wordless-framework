@@ -3,25 +3,10 @@
 namespace Wordless\Enums;
 
 use Wordless\Application\Helpers\Str;
+use Wordless\Wordpress\QueryBuilder\Enums\Operator;
 
 class WpQueryMeta
 {
-    public const COMPARE_DIFFERENT = QueryComparison::DIFFERENT;
-    public const COMPARE_BETWEEN = 'BETWEEN';
-    public const COMPARE_EQUAL = QueryComparison::EQUAL;
-    public const COMPARE_EXISTS = 'EXISTS';
-    public const COMPARE_GREATER_THAN = QueryComparison::GREATER_THAN;
-    public const COMPARE_GREATER_THAN_OR_EQUAL = QueryComparison::GREATER_THAN_OR_EQUAL;
-    public const COMPARE_IN = 'IN';
-    public const COMPARE_LESS_THAN = QueryComparison::LESS_THAN;
-    public const COMPARE_LESS_THAN_OR_EQUAL = QueryComparison::LESS_THAN_OR_EQUAL;
-    public const COMPARE_LIKE = QueryComparison::LIKE;
-    public const COMPARE_NOT_BETWEEN = 'NOT BETWEEN';
-    public const COMPARE_NOT_EXISTS = 'NOT EXISTS';
-    public const COMPARE_NOT_LIKE = 'NOT LIKE';
-    public const COMPARE_NOT_IN = 'NOT IN';
-    public const COMPARE_REGEX = 'REGEXP';
-    public const COMPARE_LIKE_REGEX = 'RLIKE';
     public const KEY_COMPARE = 'compare';
     public const KEY_META_KEY = 'key';
     public const KEY_META_QUERY = 'meta_query';
@@ -41,16 +26,6 @@ class WpQueryMeta
     public const TYPE_TIME = 'TIME';
     public const TYPE_UNSIGNED = 'UNSIGNED';
     public const ZERO_VALUE_KEY = '_wp_zero_value';
-    private const ONLY_FOR_ARRAY_COMPARISONS = [
-        self::COMPARE_IN => true,
-        self::COMPARE_NOT_IN => true,
-        self::COMPARE_BETWEEN => true,
-        self::COMPARE_NOT_BETWEEN => true,
-    ];
-    private const AVAILABLE_FOR_META_KEY_COMPARISONS = [
-        self::COMPARE_EXISTS => true,
-        self::COMPARE_NOT_EXISTS => true,
-    ];
 
     public static function isArrayableValue($value): bool
     {
