@@ -40,7 +40,6 @@ abstract class Taxonomy implements IRelatedMetaData
     /**
      * @param WP_Term|int|string $term
      * @param bool $with_acfs
-     * @throws TaxonomyNotRegistered
      * @throws InitializingModelWithWrongTaxonomyName
      * @throws InvalidArgumentException
      */
