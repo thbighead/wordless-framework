@@ -7,6 +7,9 @@ use Wordless\Exceptions\TryingToMakeNonArrayComparisonWithArrayableValues;
 use Wordless\Exceptions\TryingToMakeOnlyForArrayComparisonWithNonArrayableValues;
 use Wordless\Exceptions\UnexpectedMetaSubQueryClosureReturn;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\InitializedMetaSubQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\Comparator;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\Key;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\Type;
 
 abstract class MetaSubQueryBuilder
 {
@@ -60,10 +63,10 @@ abstract class MetaSubQueryBuilder
      * @throws TryingToMakeOnlyForArrayComparisonWithNonArrayableValues
      */
     protected function mountCondition(
-        string $key,
-        string $comparison,
-               $values = [],
-        string $value_typed_as = WpQueryMeta::TYPE_CHAR
+        string     $key,
+        Comparator $comparison,
+                   $values = [],
+        Type       $value_typed_as = Type::type_char
     ): array
     {
         if ($this->isTryingToCompareKeyExistenceWithoutValues($comparison, $values)) {
@@ -85,36 +88,36 @@ abstract class MetaSubQueryBuilder
 
     protected function mountKeyCompare(): string
     {
-        return WpQueryMeta::KEY_COMPARE;
+        return Key::key_compare->value;
     }
 
     protected function mountKeyMetaKey(): string
     {
-        return WpQueryMeta::KEY_META_KEY;
+        return Key::key_meta_key->value;
     }
 
     protected function mountKeyMetaValue(): string
     {
-        return WpQueryMeta::KEY_META_VALUE;
+        return Key::key_meta_value->value;
     }
 
     protected function mountKeyValueType(): string
     {
-        return WpQueryMeta::KEY_VALUE_TYPE;
+        return Key::key_value_type->value;
     }
 
     protected function prepareValues($values)
     {
         if ($values === '0' || $values === 0) {
-            return WpQueryMeta::ZERO_VALUE_KEY;
+            return Key::zero_value_key->value;
         }
 
         return $values;
     }
 
-    private function isTryingToCompareKeyExistenceWithoutValues(string $comparison, $values): bool
+    private function isTryingToCompareKeyExistenceWithoutValues(Comparator $comparison, $values): bool
     {
-        return WpQueryMeta::isAvailableForMetaKeyComparison($comparison) && is_array($values) && empty($values);
+        return $comparison->isAvailableForMetaKeyComparison() && is_array($values) && empty($values);
     }
 
     /**
@@ -124,9 +127,9 @@ abstract class MetaSubQueryBuilder
      * @throws TryingToMakeNonArrayComparisonWithArrayableValues
      * @throws TryingToMakeOnlyForArrayComparisonWithNonArrayableValues
      */
-    private function validateValueComparison(string $comparison, $values): void
+    private function validateValueComparison(Comparator $comparison, $values): void
     {
-        if (WpQueryMeta::isOnlyForArraysComparison($comparison) && !WpQueryMeta::isArrayableValue($values)) {
+        if ($comparison->isOnlyForArraysComparison() && !WpQueryMeta::isArrayableValue($values)) {
             throw new TryingToMakeOnlyForArrayComparisonWithNonArrayableValues($comparison, $values);
         }
 

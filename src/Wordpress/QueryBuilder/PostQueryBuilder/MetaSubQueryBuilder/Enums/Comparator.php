@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums;
 
+use Wordless\Application\Helpers\Str;
 use Wordless\Wordpress\QueryBuilder\Enums\Operator;
 
 enum Comparator: string
@@ -22,4 +23,31 @@ enum Comparator: string
     case compare_not_in = 'NOT IN';
     case compare_regex = 'REGEXP';
     case compare_like_regex = 'RLIKE';
+
+    public function isAvailableForMetaKeyComparison(): bool
+    {
+        return in_array($this, [
+            self::compare_exists,
+            self::compare_not_exists
+        ]);
+    }
+
+    public function isOnlyForArraysComparison(): bool
+    {
+        return in_array($this, [
+            self::compare_in,
+            self::compare_not_in,
+            self::compare_between,
+            self::compare_not_between,
+        ]);
+    }
+
+    public function isArrayableValue($value): bool
+    {
+        if (is_array($value)) {
+            return true;
+        }
+
+        return is_string($value) && Str::contains($value, ',');
+    }
 }
