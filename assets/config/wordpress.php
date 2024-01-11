@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Listeners\ChooseImageEditor;

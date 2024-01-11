@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-use Wordless\Application\Commands\DatabaseOverwrite\DTO\UserDTO;
+use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Libraries\JWT\Enums\CryptoAlgorithm;
@@ -8,6 +8,7 @@ use Wordless\Application\Libraries\JWT\Token;
 use Wordless\Application\Providers\CommentsProvider;
 use Wordless\Application\Providers\CoreProvider;
 use Wordless\Application\Providers\EmojiProvider;
+use Wordless\Application\Providers\MigrationsProvider;
 use Wordless\Application\Providers\SeedersProvider;
 use Wordless\Infrastructure\Provider;
 
@@ -17,6 +18,7 @@ $providers = [
     CoreProvider::class,
     CommentsProvider::class,
     EmojiProvider::class,
+    MigrationsProvider::class,
     SeedersProvider::class,
 ];
 
