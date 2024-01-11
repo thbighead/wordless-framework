@@ -15,7 +15,7 @@ use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 
-class Seeder extends ConsoleCommand
+abstract class Seeder extends ConsoleCommand
 {
     use LoadWpConfig;
 

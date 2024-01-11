@@ -9,16 +9,17 @@ use Symfony\Component\Console\Exception\ExceptionInterface;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Enums\StandardTaxonomy;
 
-class CreateDummyCategories extends Seeder
+class CreateDummyTags extends CreateDummyTaxonomyTerm
 {
     use LoadWpConfig;
 
-    public const COMMAND_NAME = 'generate:categories';
-    private const HOW_MANY_CATEGORIES = 5;
+    public const COMMAND_NAME = 'generate:tags';
+
+    private const HOW_MANY_TAGS = 5;
 
     protected function description(): string
     {
-        return 'A custom command to create dummy categories.';
+        return 'A custom command to create dummy tags.';
     }
 
     /**
@@ -31,16 +32,16 @@ class CreateDummyCategories extends Seeder
         $this->callConsoleCommand(
             CreateDummyTaxonomyTerm::COMMAND_NAME,
             [
-                CreateDummyTaxonomyTerm::OPTION_TAXONOMY_SHORTCUT => [StandardTaxonomy::category->name],
-                '--total' => $this->getTotalCategoriesToCreate()
+                CreateDummyTaxonomyTerm::OPTION_TAXONOMY_SHORTCUT => [StandardTaxonomy::tag->name],
+                '--total' => $this->getTotalTagsToCreate()
             ],
         );
 
         return Command::SUCCESS;
     }
 
-    private function getTotalCategoriesToCreate(): int
+    private function getTotalTagsToCreate(): int
     {
-        return (int)(($this->input->getOption(self::OPTION_TOTAL) ?: null) ?? self::HOW_MANY_CATEGORIES);
+        return (int)(($this->input->getOption(self::OPTION_TOTAL) ?: null) ?? self::HOW_MANY_TAGS);
     }
 }

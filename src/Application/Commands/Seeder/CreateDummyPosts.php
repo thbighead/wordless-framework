@@ -17,7 +17,8 @@ class CreateDummyPosts extends Seeder
 
     public const COMMAND_NAME = 'generate:posts';
     private const HOW_MANY_PARAGRAPHS_PER_POST = 3;
-    private const HOW_MANY_POSTS_PER_CATEGORY = 5;
+    private const HOW_MANY_POSTS_PER_CATEGORY = 20;
+    private const UNCATEGORIZED_CATEGORY = 'uncategorized';
 
     /**
      * @throws PathNotFoundException
@@ -30,7 +31,7 @@ class CreateDummyPosts extends Seeder
 
     protected function description(): string
     {
-        return 'A custom command to create dummy posts to this theme categories';
+        return 'A custom command to create dummy posts to each category.';
     }
 
     /**
@@ -41,13 +42,13 @@ class CreateDummyPosts extends Seeder
     protected function runIt(): int
     {
         $this->wrapScriptWithMessages('Creating Posts...', function () {
-            if (count(get_categories()) < 2) {
+            if (count($categories = Category::all()) <= 1 && $categories[1]->slug === self::UNCATEGORIZED_CATEGORY) {
                 $this->callConsoleCommand(
                     CreateDummyCategories::COMMAND_NAME,
                 );
             }
 
-            foreach (get_categories() as $category) {
+            foreach (Category::all() as $category) {
                 for ($i = 0; $i < self::HOW_MANY_POSTS_PER_CATEGORY; $i++) {
                     $date = date('Y-m-d', strtotime($i > 0 ? "-$i days" : 'now'));
                     $uuid = Str::uuid();
