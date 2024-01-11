@@ -4,8 +4,6 @@ namespace Wordless\Infrastructure\Wordpress;
 
 use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Application\Helpers\Taxonomy as Helper;
-use Wordless\Application\Helpers\Taxonomy\Exceptions\TaxonomyNotRegistered;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\MixinWpTerm;
