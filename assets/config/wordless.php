@@ -19,7 +19,7 @@ $providers = [
     CommentsProvider::class,
     EmojiProvider::class,
     MigrationsProvider::class,
-    SeedersProvider::class,
+//    SeedersProvider::class,
 ];
 
 return [

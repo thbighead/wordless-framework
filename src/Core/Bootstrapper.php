@@ -64,7 +64,7 @@ final class Bootstrapper extends Singleton
         }
 
         foreach ($provider->registerProviders() as $provider_class_namespace) {
-            $this->loadProvider($provider_class_namespace);
+            $this->loaded_providers[] = $this->loadProvider($provider_class_namespace);
         }
 
         return $provider;
