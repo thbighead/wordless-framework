@@ -4,7 +4,6 @@ namespace Wordless\Wordpress\QueryBuilder;
 
 use stdClass;
 use Wordless\Application\Helpers\Arr;
-use Wordless\Enums\WpQueryMeta;
 use Wordless\Enums\WpQueryStatus;
 use Wordless\Enums\WpQueryTaxonomy;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
@@ -17,8 +16,10 @@ use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Pagination\Posts;
 use Wordless\Wordpress\QueryBuilder\Enums\OrderByDirection;
+use Wordless\Wordpress\QueryBuilder\Enums\Status;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Exceptions\TrySetEmptyPostType;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\Key;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PaginationArgumentsBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Author;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Category;
@@ -223,7 +224,7 @@ class PostQueryBuilder extends WpQueryBuilder
 
     public function whereMeta(MetaSubQueryBuilder $subQuery): PostQueryBuilder
     {
-        $this->arguments[WpQueryMeta::KEY_META_QUERY] = $subQuery;
+        $this->arguments[Key::key_meta_query->value] = $subQuery;
 
         return $this;
     }
@@ -268,14 +269,9 @@ class PostQueryBuilder extends WpQueryBuilder
         return $this;
     }
 
-    public function whereStatus(string $status): PostQueryBuilder
+    public function whereStatus(Status $status): PostQueryBuilder
     {
-        if ($this->isForTypeAttachment($this->arguments[PostType::QUERY_TYPE_KEY]) &&
-            !($status === WpQueryStatus::ANY || $status === WpQueryStatus::INHERIT)) {
-            $status = WpQueryStatus::INHERIT;
-        }
-
-        $this->arguments[WpQueryStatus::POST_STATUS_KEY] = $status;
+        $this->arguments[Status::post_status_key->value] = $status->value;
 
         return $this;
     }
@@ -295,23 +291,37 @@ class PostQueryBuilder extends WpQueryBuilder
     }
 
     /**
-     * @param string|string[] $types
+     * @param StandardType|PostType|string $type
+     * @param StandardType|PostType|string ...$types
      * @return $this
-     * @throws TrySetEmptyPostType
      */
-    public function whereType(string|array $types): PostQueryBuilder
+    public function whereType(
+        StandardType|PostType|string $type,
+        StandardType|PostType|string ...$types
+    ): PostQueryBuilder
     {
-        if (empty($types)) {
-            throw new TrySetEmptyPostType;
+        $full_types = [$this->retrieveTypeAsString($type)];
+
+        foreach ($types as $type) {
+            $full_types[] = $this->retrieveTypeAsString($type);
         }
 
-        if ($this->isForTypeAttachment($types) && !$this->isForStatusAny()) {
-            $this->arguments[WpQueryStatus::POST_STATUS_KEY] = WpQueryStatus::INHERIT;
-        }
-
-        $this->arguments[PostType::QUERY_TYPE_KEY] = $types;
+        $this->arguments[PostType::QUERY_TYPE_KEY] = $full_types;
 
         return $this;
+    }
+
+    private function retrieveTypeAsString(StandardType|PostType|string $type): string
+    {
+        if ($type instanceof StandardType) {
+            return $type->name;
+        }
+
+        if ($type instanceof PostType) {
+            return $type->name;
+        }
+
+        return $type;
     }
 
     /**
@@ -340,11 +350,13 @@ class PostQueryBuilder extends WpQueryBuilder
      */
     protected function buildArguments(array $extra_arguments = []): array
     {
+        $this->fixArguments();
+
         $arguments = $this->arguments;
 
-        $metaSubQueryBuilder = $this->arguments[WpQueryMeta::KEY_META_QUERY] ?? null;
+        $metaSubQueryBuilder = $this->arguments[Key::key_meta_query->value] ?? null;
         if ($metaSubQueryBuilder instanceof MetaSubQueryBuilder) {
-            $arguments[WpQueryMeta::KEY_META_QUERY] = $metaSubQueryBuilder->build();
+            $arguments[Key::key_meta_query->value] = $metaSubQueryBuilder->build();
         }
 
         $taxonomySubQueryBuilder = $this->arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] ?? null;
@@ -357,6 +369,15 @@ class PostQueryBuilder extends WpQueryBuilder
         }
 
         return $arguments;
+    }
+
+    protected function fixArguments(): void
+    {
+        if ($this->isForTypeAttachment(...$this->arguments[PostType::QUERY_TYPE_KEY]) &&
+            !($this->arguments[Status::post_status_key->value] === Status::any->value ||
+                $this->arguments[Status::post_status_key->value] === Status::inherit->value)) {
+            $this->arguments[Status::post_status_key->value] = Status::inherit;
+        }
     }
 
     /**
@@ -387,14 +408,39 @@ class PostQueryBuilder extends WpQueryBuilder
     }
 
     /**
-     * @param string|string[] $types
+     * @param StandardType|PostType|string $type
+     * @param StandardType|PostType|string ...$types
      * @return bool
      */
-    private function isForTypeAttachment(string|array $types): bool
+    private function isForTypeAttachment(
+        StandardType|PostType|string $type,
+        StandardType|PostType|string ...$types
+    ): bool
     {
-        return (is_array($types) ?
-            Arr::searchValueKey($types, StandardType::attachment->name) :
-            $types === StandardType::attachment->name) ?? false;
+        if ($this->isTypeAttachment($type)) {
+            return true;
+        }
+
+        foreach ($types as $type) {
+            if ($this->isTypeAttachment($type)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isTypeAttachment(StandardType|PostType|string $type): bool
+    {
+        if ($type instanceof StandardType) {
+            return $type === StandardType::attachment;
+        }
+
+        if ($type instanceof PostType) {
+            return $type->is(StandardType::attachment->name);
+        }
+
+        return $type === StandardType::attachment->name;
     }
 
     private function query(array $extra_arguments = []): array

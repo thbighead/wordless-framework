@@ -86,7 +86,7 @@ trait OrderBy
     private function validateColumnsAsAssociativeArray(array $columns): array
     {
         foreach ($columns as $column => $orderDirection) {
-            if (ColumnParameter::tryFrom($column) === null || !($orderDirection instanceof OrderByDirection)) {
+            if (ColumnParameter::tryFrom((string)$column) === null || !($orderDirection instanceof OrderByDirection)) {
                 throw new InvalidOrderByClause($column, $orderDirection);
             }
         }
