@@ -10,8 +10,8 @@ use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\Initial
 use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\MixinWpTerm;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository;
+use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
-use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
 use WP_Taxonomy;
@@ -33,9 +33,9 @@ abstract class Taxonomy implements IRelatedMetaData
 
     public readonly WP_Taxonomy $wpTaxonomy;
 
-    final public static function objectType(): MetableObjectType
+    final public static function objectType(): ObjectType
     {
-        return MetableObjectType::term;
+        return ObjectType::term;
     }
 
     /**

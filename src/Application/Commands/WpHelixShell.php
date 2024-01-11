@@ -16,7 +16,7 @@ class WpHelixShell extends ConsoleCommand
     use LoadWpConfig;
     use RunWpCliCommand;
 
-    final public const COMMAND_NAME = 'wp:helix';
+    final public const COMMAND_NAME = 'helix';
 
     /**
      * @return ArgumentDTO[]

@@ -6,10 +6,19 @@ use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\La
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Rewrite;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
+use Wordless\Wordpress\Enums\ObjectType;
 
 trait Register
 {
     use Labels, Rewrite, Validation;
+
+    /**
+     * @return ObjectType[]
+     */
+    public static function availableTo(): array
+    {
+        return [ObjectType::post];
+    }
 
     /**
      * https://developer.wordpress.org/reference/functions/register_taxonomy/#additional-parameter-information
@@ -106,7 +115,7 @@ trait Register
     {
         self::validateNameKey();
 
-        register_taxonomy(static::getNameKey(), self::mountArguments());
+        register_taxonomy(static::NAME_KEY, static::availableTo(), self::mountArguments());
     }
 
     /**
@@ -131,7 +140,7 @@ trait Register
      * https://developer.wordpress.org/reference/functions/register_taxonomy/#additional-parameter-information
      * @return bool|string|null
      */
-    protected static function getUrlQueryParameterName()
+    protected static function getUrlQueryParameterName(): bool|string|null
     {
         return null;
     }

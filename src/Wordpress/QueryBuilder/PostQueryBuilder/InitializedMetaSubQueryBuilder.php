@@ -4,11 +4,11 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 
 use Closure;
 use Wordless\Enums\WpQueryTaxonomy;
-use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\NestedAnd;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\NestedOr;
 
-class InitializedMetaSubQueryBuilder extends TaxonomySubQueryBuilder
+class InitializedMetaSubQueryBuilder extends MetaSubQueryBuilder
 {
     public function __construct(array $taxonomy_sub_query_arguments)
     {

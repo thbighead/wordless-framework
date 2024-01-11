@@ -2,8 +2,8 @@
 
 namespace Wordless\Wordpress\Models;
 
+use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
-use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\Post\Traits\Categories;
@@ -40,9 +40,9 @@ class Post implements IRelatedMetaData
         return new static($post, $with_acfs);
     }
 
-    public static function objectType(): MetableObjectType
+    public static function objectType(): ObjectType
     {
-        return MetableObjectType::post;
+        return ObjectType::post;
     }
 
     /**

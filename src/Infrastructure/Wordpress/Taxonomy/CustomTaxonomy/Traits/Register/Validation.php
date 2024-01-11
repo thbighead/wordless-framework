@@ -16,7 +16,7 @@ trait Validation
     {
         if (preg_match(
                 '/^[\w-]{1,' . self::TAXONOMY_NAME_MAX_LENGTH . '}$/',
-                $type_key = static::getNameKey() ?? ''
+                $type_key = static::NAME_KEY ?? ''
             ) !== 1) {
             throw new InvalidCustomTaxonomyName($type_key);
         }
@@ -28,7 +28,7 @@ trait Validation
      */
     private static function validateNotReserved(): void
     {
-        if (Reserved::isTaxonomyUsedByWordPress($type_key = static::getNameKey())) {
+        if (Reserved::isTaxonomyUsedByWordPress($type_key = static::NAME_KEY)) {
             throw new ReservedCustomTaxonomyName($type_key);
         }
     }

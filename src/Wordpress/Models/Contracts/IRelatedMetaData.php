@@ -2,11 +2,11 @@
 
 namespace Wordless\Wordpress\Models\Contracts;
 
-use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
+use Wordless\Wordpress\Enums\ObjectType;
 
 interface IRelatedMetaData
 {
-    public static function objectType(): MetableObjectType;
+    public static function objectType(): ObjectType;
 
     public function getMetaField(string $meta_key, mixed $default = null): mixed;
 

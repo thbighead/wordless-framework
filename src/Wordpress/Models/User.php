@@ -2,8 +2,8 @@
 
 namespace Wordless\Wordpress\Models;
 
+use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
-use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Enums\MetableObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
 use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
@@ -13,9 +13,9 @@ class User extends WP_User implements IRelatedMetaData
 {
     use WithAcfs, WithMetaData;
 
-    public static function objectType(): MetableObjectType
+    public static function objectType(): ObjectType
     {
-        return MetableObjectType::user;
+        return ObjectType::user;
     }
 
     /**

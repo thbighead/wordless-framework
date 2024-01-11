@@ -6,7 +6,7 @@ use Wordless\Wordpress\Pagination\Posts;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PaginationArgumentsBuilder\Exceptions\InvalidPostsPerPage;
 
-final class PaginationArgumentsBuilder
+class PaginationArgumentsBuilder
 {
     private array $pagination_arguments = [
         PostQueryBuilder::KEY_NO_FOUND_ROWS => false,
