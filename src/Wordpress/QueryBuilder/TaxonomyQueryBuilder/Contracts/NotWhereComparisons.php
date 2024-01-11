@@ -35,7 +35,7 @@ interface NotWhereComparisons
 
     public function notWhereCanBeUsedBy(ObjectType $objectType): NotComparison;
 
-    public function notWhereCanOnlyBeUsedBy(ObjectType ...$objectTypes): NotComparison;
+    public function notWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): NotComparison;
 
     public function notWhereDeletePermission(string $capability): NotComparison;
 

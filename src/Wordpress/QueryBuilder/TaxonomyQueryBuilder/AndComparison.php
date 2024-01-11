@@ -86,8 +86,10 @@ final class AndComparison extends BaseTaxonomyQueryBuilder implements AndWhereCo
         return $this->whereCanBeUsedBy($objectType);
     }
 
-    public function andWhereCanOnlyBeUsedBy(ObjectType ...$objectTypes): AndComparison
+    public function andWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): AndComparison
     {
+        array_unshift($objectTypes, $objectType);
+
         return $this->whereCanOnlyBeUsedBy(...$objectTypes);
     }
 

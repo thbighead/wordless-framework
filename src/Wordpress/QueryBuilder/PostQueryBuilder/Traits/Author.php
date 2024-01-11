@@ -9,16 +9,13 @@ trait Author
     final public const KEY_AUTHOR = 'author';
 
     /**
-     * @param int|int[] $ids
+     * @param int $id
+     * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereAuthorId(int|array $ids): PostQueryBuilder
+    public function whereAuthorId(int $id, int ...$ids): PostQueryBuilder
     {
-        if (is_array($ids)) {
-            $ids = implode(',', $ids);
-        }
-
-        $this->arguments[self::KEY_AUTHOR] = $ids;
+        $this->arguments[self::KEY_AUTHOR] = implode(',', array_merge([$id], $ids));
 
         return $this;
     }
@@ -38,15 +35,15 @@ trait Author
      * @param int|int[] $ids
      * @return PostQueryBuilder
      */
-    public function whereNotAuthorId(int|array $ids): PostQueryBuilder
+    public function whereNotAuthorId(int ...$ids): PostQueryBuilder
     {
-        if (is_array($ids)) {
+        if (count($ids) > 1) {
             $this->arguments['author__not_in'] = $ids;
 
             return $this;
         }
 
-        $this->arguments[self::KEY_AUTHOR] = -$ids;
+        $this->arguments[self::KEY_AUTHOR] = -$ids[0];
 
         return $this;
     }

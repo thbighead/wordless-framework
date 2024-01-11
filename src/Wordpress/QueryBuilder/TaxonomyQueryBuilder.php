@@ -101,8 +101,10 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
         return new AndComparison($this->whereCanBeUsedBy($objectType));
     }
 
-    public function andWhereCanOnlyBeUsedBy(ObjectType ...$objectTypes): AndComparison
+    public function andWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): AndComparison
     {
+        array_unshift($objectTypes, $objectType);
+
         return new AndComparison($this->whereCanOnlyBeUsedBy(...$objectTypes));
     }
 
@@ -201,8 +203,10 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
         return new NotComparison($this->whereCanBeUsedBy($objectType));
     }
 
-    public function notWhereCanOnlyBeUsedBy(ObjectType ...$objectTypes): NotComparison
+    public function notWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): NotComparison
     {
+        array_unshift($objectTypes, $objectType);
+
         return new NotComparison($this->whereCanOnlyBeUsedBy(...$objectTypes));
     }
 
@@ -301,8 +305,10 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
         return new OrComparison($this->whereCanBeUsedBy($objectType));
     }
 
-    public function orWhereCanOnlyBeUsedBy(ObjectType ...$objectTypes): OrComparison
+    public function orWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): OrComparison
     {
+        array_unshift($objectTypes, $objectType);
+
         return new OrComparison($this->whereCanOnlyBeUsedBy(...$objectTypes));
     }
 

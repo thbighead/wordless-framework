@@ -86,8 +86,10 @@ final class NotComparison extends BaseTaxonomyQueryBuilder implements NotWhereCo
         return $this->whereCanBeUsedBy($objectType);
     }
 
-    public function notWhereCanOnlyBeUsedBy(ObjectType ...$objectTypes): NotComparison
+    public function notWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): NotComparison
     {
+        array_unshift($objectTypes, $objectType);
+
         return $this->whereCanOnlyBeUsedBy(...$objectTypes);
     }
 

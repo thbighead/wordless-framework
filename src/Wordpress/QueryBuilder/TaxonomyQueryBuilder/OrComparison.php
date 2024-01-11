@@ -86,8 +86,10 @@ final class OrComparison extends BaseTaxonomyQueryBuilder implements OrWhereComp
         return $this->whereCanBeUsedBy($objectType);
     }
 
-    public function orWhereCanOnlyBeUsedBy(ObjectType ...$objectTypes): OrComparison
+    public function orWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): OrComparison
     {
+        array_unshift($objectTypes, $objectType);
+
         return $this->whereCanOnlyBeUsedBy(...$objectTypes);
     }
 

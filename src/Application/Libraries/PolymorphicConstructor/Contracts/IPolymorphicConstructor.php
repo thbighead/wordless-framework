@@ -36,7 +36,6 @@ interface IPolymorphicConstructor
      * ]
      *
      * @return string[]
-     * @noinspection SpellCheckingInspection
      */
     public static function constructorsDictionary(): array;
 }

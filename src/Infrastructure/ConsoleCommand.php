@@ -90,12 +90,15 @@ abstract class ConsoleCommand extends Command implements SignalableCommandInterf
     }
 
     /**
+     * @param ArgumentDTO $argument
      * @param ArgumentDTO ...$arguments
      * @return $this
      * @throws InvalidArgumentException
      */
-    private function setArguments(ArgumentDTO ...$arguments): static
+    private function setArguments(ArgumentDTO $argument, ArgumentDTO ...$arguments): static
     {
+        array_unshift($arguments, $argument);
+
         foreach ($arguments as $argument) {
             $this->addArgument(
                 $argument->name,
@@ -109,12 +112,15 @@ abstract class ConsoleCommand extends Command implements SignalableCommandInterf
     }
 
     /**
+     * @param OptionDTO $option
      * @param OptionDTO ...$options
      * @return $this
      * @throws InvalidArgumentException
      */
-    private function setOptions(OptionDTO ...$options): static
+    private function setOptions(OptionDTO $option, OptionDTO ...$options): static
     {
+        array_unshift($options, $option);
+
         foreach ($options as $option) {
             $optionMode = $option->mode;
 

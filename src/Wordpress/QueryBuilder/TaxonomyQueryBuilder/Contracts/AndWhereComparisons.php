@@ -35,7 +35,7 @@ interface AndWhereComparisons
 
     public function andWhereCanBeUsedBy(ObjectType $objectType): AndComparison;
 
-    public function andWhereCanOnlyBeUsedBy(ObjectType ...$objectTypes): AndComparison;
+    public function andWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): AndComparison;
 
     public function andWhereDeletePermission(string $capability): AndComparison;
 

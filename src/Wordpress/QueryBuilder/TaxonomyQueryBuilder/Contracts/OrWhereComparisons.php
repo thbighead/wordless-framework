@@ -35,7 +35,7 @@ interface OrWhereComparisons
 
     public function orWhereCanBeUsedBy(ObjectType $objectType): OrComparison;
 
-    public function orWhereCanOnlyBeUsedBy(ObjectType ...$objectTypes): OrComparison;
+    public function orWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): OrComparison;
 
     public function orWhereDeletePermission(string $capability): OrComparison;
 

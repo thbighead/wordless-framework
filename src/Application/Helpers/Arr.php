@@ -69,29 +69,15 @@ class Arr
         return null;
     }
 
-    public static function recursiveJoin(array ...$arrays): array
+    public static function recursiveJoin(array $array_1, array $array_2, array ...$arrays): array
     {
         $joined_array = [];
 
+        self::resolveRecursiveJoin($array_1, $joined_array);
+        self::resolveRecursiveJoin($array_2, $joined_array);
+
         foreach ($arrays as $array) {
-            foreach ($array as $key => $value) {
-                if (!isset($joined_array[$key])) {
-                    $joined_array[$key] = $value;
-                    continue;
-                }
-
-                if (!is_array($joined_array[$key])) {
-                    $joined_array[$key] = $value;
-                    continue;
-                }
-
-                if (!is_array($value)) {
-                    $joined_array[$key][] = $value;
-                    continue;
-                }
-
-                $joined_array[$key] = static::recursiveJoin($joined_array[$key], $value);
-            }
+            self::resolveRecursiveJoin($array, $joined_array);
         }
 
         return $joined_array;
@@ -119,5 +105,27 @@ class Arr
         }
 
         return [$something];
+    }
+
+    private static function resolveRecursiveJoin(array $array, array &$joined_array): void
+    {
+        foreach ($array as $key => $value) {
+            if (!isset($joined_array[$key])) {
+                $joined_array[$key] = $value;
+                continue;
+            }
+
+            if (!is_array($joined_array[$key])) {
+                $joined_array[$key] = $value;
+                continue;
+            }
+
+            if (!is_array($value)) {
+                $joined_array[$key][] = $value;
+                continue;
+            }
+
+            $joined_array[$key] = static::recursiveJoin($joined_array[$key], $value);
+        }
     }
 }
