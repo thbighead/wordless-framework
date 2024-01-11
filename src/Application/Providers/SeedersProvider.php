@@ -9,7 +9,7 @@ use Wordless\Application\Commands\Seeders\CreateDummyTags;
 use Wordless\Application\Commands\Seeders\CreateDummyTaxonomyTerms;
 use Wordless\Infrastructure\Provider;
 
-final class SeederProvider extends Provider
+final class SeedersProvider extends Provider
 {
     public function registerCommands(): array
     {
