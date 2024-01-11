@@ -20,11 +20,15 @@ class CreateDummyTaxonomyTerms extends BaseCreateDummyCommand
 
     private const HOW_MANY_TAXONOMIES = 5;
     private const OPTION_TAXONOMY = 'taxonomy';
-    public const OPTION_TAXONOMY_SHORTCUT = '-t';
 
     protected function description(): string
     {
         return 'A custom command to create dummy taxonomy and terms.';
+    }
+
+    protected function help(): string
+    {
+        return 'This command will help create terms for the registered taxonomies.';
     }
 
     protected function options(): array
@@ -36,13 +40,6 @@ class CreateDummyTaxonomyTerms extends BaseCreateDummyCommand
                 mode: OptionMode::optional_value,
                 default: null,
             ),
-            new OptionDTO(
-                self::OPTION_TAXONOMY,
-                'Specify the names of the taxonomies to be created.',
-                self::OPTION_TAXONOMY_SHORTCUT,
-                OptionMode::array_required_values,
-                []
-            ),
         ];
     }
 
@@ -53,7 +50,7 @@ class CreateDummyTaxonomyTerms extends BaseCreateDummyCommand
      */
     protected function runIt(): int
     {
-        $this->wrapScriptWithMessages('Creating Taxonomies and terms...', function () {
+        $this->wrapScriptWithMessages('Creating Taxonomy Terms ...', function () {
             foreach ($this->getCustomTaxonomies() as $taxonomy) {
                 $term_name = $this->faker->word();
                 $term_description = $this->faker->paragraph();
@@ -69,14 +66,5 @@ class CreateDummyTaxonomyTerms extends BaseCreateDummyCommand
         });
 
         return Command::SUCCESS;
-    }
-
-    private function getCustomTaxonomies(): array
-    {
-        if (!empty($custom_taxonomies = $this->input->getOption(self::OPTION_TAXONOMY))) {
-            return $custom_taxonomies;
-        }
-
-        return $this->faker->words(self::HOW_MANY_TAXONOMIES);
     }
 }

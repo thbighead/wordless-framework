@@ -25,7 +25,7 @@ class CreateDummyPosts extends BaseCreateDummyCommand
 
     protected function help(): string
     {
-        return '';
+        return 'This command will help create posts in the database.';
     }
 
     /**
@@ -38,7 +38,7 @@ class CreateDummyPosts extends BaseCreateDummyCommand
         $this->wrapScriptWithMessages('Creating Posts...', function () {
             if (count($categories = Category::all()) <= 1 && $categories[1]->slug === self::UNCATEGORIZED_CATEGORY) {
                 $this->callConsoleCommand(
-                    CreateDummyCategories::COMMAND_NAME,
+                    CreateDummyTaxonomyTerms::COMMAND_NAME,
                 );
             }
 

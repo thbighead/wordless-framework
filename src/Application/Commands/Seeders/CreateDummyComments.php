@@ -18,18 +18,14 @@ class CreateDummyComments extends BaseCreateDummyCommand
     public const COMMAND_NAME = 'generate:comments';
     private const HOW_MANY_COMMENTS_PER_POST = 5;
 
-    /**
-     * @throws PathNotFoundException
-     */
-    public function __construct(string $name = null)
-    {
-        parent::__construct($name);
-        require_once ProjectPath::wpCore('wp-admin/includes/taxonomy.php');
-    }
-
     protected function description(): string
     {
         return 'A custom command to create dummy comments to all posts.';
+    }
+
+    protected function help(): string
+    {
+        return 'This command will help create comments to all posts in the database.';
     }
 
     /**

@@ -14,13 +14,13 @@ class CreateDummyUsers extends BaseCreateDummyCommand
 {
     use LoadWpConfig;
 
-    public const COMMAND_NAME = 'generate:categories';
+    public const COMMAND_NAME = 'generate:users';
 
     private const HOW_MANY_USERS = 20;
 
     protected function description(): string
     {
-        return 'A custom command to create dummy categories';
+        return 'A command to create dummy users.';
     }
 
     /**
@@ -51,5 +51,10 @@ class CreateDummyUsers extends BaseCreateDummyCommand
     private function getTotalCategoriesToCreate(): int
     {
         return (int)$this->input->getOption(self::OPTION_TOTAL) ?? self::HOW_MANY_USERS;
+    }
+
+    protected function help(): string
+    {
+       return 'This command will create users in the database.';
     }
 }
