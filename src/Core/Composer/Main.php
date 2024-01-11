@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+<?php declare(strict_types=1); /** @noinspection PhpMultipleClassDeclarationsInspection */
 
 namespace Wordless\Core\Composer;
 

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Core\Composer\Traits\SetHostFromNginx\Exceptions;
 

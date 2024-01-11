@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Enums;
 

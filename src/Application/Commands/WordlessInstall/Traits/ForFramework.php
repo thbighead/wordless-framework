@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Commands\WordlessInstall\Traits;
 
@@ -33,7 +33,7 @@ CSS
         DirectoryFiles::createFileAt(
             ProjectPath::wpContent() . '/themes/wordless/index.php',
             <<<PHP
-<?php
+<?php declare(strict_types=1);
 
 PHP
         );
