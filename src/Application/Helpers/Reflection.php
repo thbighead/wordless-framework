@@ -12,34 +12,39 @@ use Wordless\Application\Helpers\Reflection\Contracts\Subjectable;
 class Reflection extends Subjectable
 {
     /**
-     * @param object $object
+     * @param object|string $object
      * @param string $method
      * @param string ...$arguments
      * @return mixed
      * @throws ReflectionException
      */
-    public static function callNonPublicMethod(object $object, string $method, string ...$arguments): mixed
+    public static function callNonPublicMethod(object|string $object, string $method, string ...$arguments): mixed
     {
         return (new ReflectionMethod($object, $method))->invoke($object, ...$arguments);
     }
 
     /**
-     * @param object $object
+     * @param object|string $object
      * @param string $property
      * @return mixed
      * @throws ReflectionException
      */
-    public static function getNonPublicPropertyValue(object $object, string $property): mixed
+    public static function getNonPublicPropertyValue(object|string $object, string $property): mixed
     {
         return (new ReflectionProperty($object, $property))->getValue($object);
     }
 
-    public static function getNonPublicConstValue(object $object, string $constant): mixed
+    public static function getNonPublicConstValue(object|string $object, string $constant): mixed
     {
         return (new ReflectionClassConstant($object, $constant))->getValue();
     }
 
-    public static function getReflectionClass(object $object): ReflectionClass
+    /**
+     * @param object|string $object
+     * @return ReflectionClass
+     * @throws ReflectionException
+     */
+    public static function getReflectionClass(object|string $object): ReflectionClass
     {
         return new ReflectionClass($object);
     }

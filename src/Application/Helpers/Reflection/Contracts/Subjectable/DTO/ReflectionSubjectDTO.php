@@ -9,28 +9,28 @@ use Wordless\Infrastructure\Helper\Contracts\Subjectable\DTO\SubjectDTO;
 
 final class ReflectionSubjectDTO extends SubjectDTO
 {
-    public function __construct(object $subject)
+    public function __construct(object|string $subject)
     {
         parent::__construct($subject);
     }
 
     /**
-     * @return string
+     * @return object|string
      */
-    public function getOriginalSubject(): string
+    public function getOriginalSubject(): object|string
     {
         return parent::getOriginalSubject();
     }
 
     /**
-     * @return object
+     * @return object|string
      */
-    public function getSubject(): object
+    public function getSubject(): object|string
     {
         return parent::getSubject();
     }
 
-    public function getNonPublicConstValue(string $constant)
+    public function getNonPublicConstValue(string $constant): mixed
     {
         return Reflection::getNonPublicConstValue($this->getSubject(), $constant);
     }
@@ -55,6 +55,10 @@ final class ReflectionSubjectDTO extends SubjectDTO
         return Reflection::getNonPublicPropertyValue($this->getSubject(), $property);
     }
 
+    /**
+     * @return ReflectionClass
+     * @throws ReflectionException
+     */
     public function getReflectionClass(): ReflectionClass
     {
         return Reflection::getReflectionClass($this->getSubject());

@@ -8,10 +8,10 @@ use Wordless\Infrastructure\Wordpress\QueryBuilder;
 use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\AuthorTest;
 use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\CategoryTest;
 use Wordless\Tests\WordlessTestCase;
+use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Pagination\Posts;
-use Wordless\Wordpress\QueryBuilder\Enums\Status;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\ColumnReference;
@@ -248,28 +248,30 @@ class PostQueryBuilderTest extends WordlessTestCase
      */
     public function testWhereStatusQuery()
     {
+        $key_post_status = Reflection::getNonPublicConstValue(PostQueryBuilder::class, 'KEY_POST_STATUS');
+
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, [Status::post_status_key->value => Status::any->value]),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)->whereStatus(Status::any))
+            array_merge(self::DEFAULT_ARGUMENTS, [$key_post_status => StandardStatus::ANY]),
+            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)->whereStatus(StandardStatus::ANY))
         );
 
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, [
-                Status::post_status_key->value => Status::any->value,
+                $key_post_status => StandardStatus::ANY,
                 PostType::QUERY_TYPE_KEY => [StandardType::attachment->name],
             ]),
             self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
-                ->whereStatus(Status::any)
+                ->whereStatus(StandardStatus::ANY)
                 ->whereType(StandardType::attachment))
         );
 
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, [
-                Status::post_status_key->value => Status::inherit->value,
+                $key_post_status => StandardStatus::inherit->value,
                 PostType::QUERY_TYPE_KEY => [StandardType::attachment->name],
             ]),
             self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
-                ->whereStatus(Status::publish)
+                ->whereStatus(StandardStatus::publish)
                 ->whereType(StandardType::attachment))
         );
     }
