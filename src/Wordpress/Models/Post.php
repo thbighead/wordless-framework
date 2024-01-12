@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\Models;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
+use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\Post\Traits\Categories;
 use Wordless\Wordpress\Models\Post\Traits\MixinWpPost;
@@ -28,6 +29,7 @@ class Post implements IRelatedMetaData
     private const TYPE_KEY = StandardType::post->name;
 
     protected PostType $type;
+    protected PostStatus $status;
 
     /**
      * @param WP_Post|int $post
@@ -54,7 +56,6 @@ class Post implements IRelatedMetaData
     public function __construct(WP_Post|int $post, bool $with_acfs = true)
     {
         $this->wpPost = $post instanceof WP_Post ? $post : get_post($post);
-
         $this->type = new PostType($this->post_type);
 
         if (!$this->type->is(static::TYPE_KEY)) {
@@ -64,6 +65,11 @@ class Post implements IRelatedMetaData
         if ($with_acfs) {
             $this->loadAcfs($this->wpPost->ID);
         }
+    }
+
+    public function getStatus(): PostStatus
+    {
+        return $this->status ?? $this->status = new PostStatus($this->post_status);
     }
 
     public function getType(): PostType

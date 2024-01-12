@@ -1,19 +1,19 @@
 <?php
 
-namespace Wordless\Wordpress\QueryBuilder\Enums;
+namespace Wordless\Wordpress\Models\Post\Enums;
 
-enum Status: string
+enum StandardStatus: string
 {
-    case auto = 'auto';
+    public const TRULY_ANY = 'any,inherit,trash,auto-draft';
     /** retrieves any status except for ‘inherit’, ‘trash’ and ‘auto-draft’ */
-    case any = 'any';
+    public const ANY = 'any';
+
+    case auto = 'auto-draft';
     case draft = 'draft';
     case future = 'future';
     case inherit = 'inherit';
     case pending = 'pending';
-    case post_status_key = 'post_status';
     case private = 'private';
     case publish = 'publish';
     case trash = 'trash';
-    case truly_any = 'any,inherit,trash,auto-draft';
 }

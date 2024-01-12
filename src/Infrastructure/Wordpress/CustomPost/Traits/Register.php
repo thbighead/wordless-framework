@@ -5,7 +5,7 @@ namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits;
 use Wordless\Application\Guessers\CustomPostTypeKeyGuesser;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Enums\CustomPostTypeMenuPosition;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Enums\MenuPosition;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Labels;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Rewrite;
@@ -96,9 +96,9 @@ trait Register
 
     /**
      * https://developer.wordpress.org/reference/functions/register_post_type/#menu_position
-     * @return CustomPostTypeMenuPosition|null
+     * @return MenuPosition|null
      */
-    protected static function getAdminMenuPosition(): ?CustomPostTypeMenuPosition
+    protected static function getAdminMenuPosition(): ?MenuPosition
     {
         return null; // bellow Comments
     }

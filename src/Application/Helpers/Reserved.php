@@ -9,6 +9,11 @@ class Reserved
 {
     use Internal;
 
+    public static function isPostStatusUsedByWordPress(string $post_status): bool
+    {
+        return (self::isUsedByWordpressCore($post_status) ?? false) !== false;
+    }
+
     public static function isPostTypeUsedByWordPress(string $post_type): bool
     {
         return (self::isUsedByWordpressCore($post_type) ??

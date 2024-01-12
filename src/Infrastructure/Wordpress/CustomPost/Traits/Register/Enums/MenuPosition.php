@@ -2,7 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Enums;
 
-enum CustomPostTypeMenuPosition: int
+enum MenuPosition: int
 {
     case bellow_posts = 5;
     case bellow_media = 10;
