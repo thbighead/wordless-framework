@@ -62,9 +62,15 @@ abstract class ConsoleCommand extends Command implements SignalableCommandInterf
      */
     protected function configure(): void
     {
-        $this->setArguments(...$this->arguments())
-            ->setOptions(...$this->options())
-            ->setDescription($this->description())
+        if (!empty($this->options())) {
+            $this->setOptions(...$this->options());
+        }
+
+        if (!empty($this->arguments())) {
+            $this->setArguments(...$this->arguments());
+        }
+
+        $this->setDescription($this->description())
             ->setHelp($this->help());
     }
 
