@@ -14,7 +14,7 @@ trait Category
      * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereNotCategoryId(int $id, int ...$ids): PostQueryBuilder
+    public function whereNotCategoryId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
             array_unshift($ids, $id);
@@ -34,7 +34,7 @@ trait Category
      * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereRelatesToAllCategoryId(int $id, int ...$ids): PostQueryBuilder
+    public function whereRelatesToAllCategoryId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
             array_unshift($ids, $id);
@@ -54,7 +54,7 @@ trait Category
      * @param string ...$names
      * @return PostQueryBuilder
      */
-    public function whereRelatesToAllCategoryName(string $name, string ...$names): PostQueryBuilder
+    public function whereRelatesToAllCategoryName(string $name, string ...$names): static
     {
         $this->arguments[self::KEY_CATEGORY_NAME] = !empty($names) ?
             implode('+', array_merge([$name], $names)) :
@@ -68,7 +68,7 @@ trait Category
      * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereRelatesToAnyCategoryId(int $id, int ...$ids): PostQueryBuilder
+    public function whereRelatesToAnyCategoryId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
             array_unshift($ids, $id);
@@ -88,7 +88,7 @@ trait Category
      * @param string ...$names
      * @return PostQueryBuilder
      */
-    public function whereRelatesToAnyCategoryName(string $name, string ...$names): PostQueryBuilder
+    public function whereRelatesToAnyCategoryName(string $name, string ...$names): static
     {
         $this->arguments[self::KEY_CATEGORY_NAME] = !empty($names) ?
             implode(',', array_merge([$name], $names)) :

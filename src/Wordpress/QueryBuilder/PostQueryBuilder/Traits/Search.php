@@ -2,29 +2,49 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
-use Wordless\Application\Helpers\Arr;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
-
 trait Search
 {
-    /**
-     * @param string|string[] $words
-     * @param bool $sorted_by_relevance
-     * @return PostQueryBuilder
-     */
-    public function searchFor(string|array $words, bool $sorted_by_relevance = true): PostQueryBuilder
+    private const KEY_SEARCH = 's';
+
+    /** @var array<string, bool> $search_words */
+    private array $search_words = [];
+
+    public function search(string $word, string ...$words): static
     {
-        return $this->search($words, $sorted_by_relevance);
+        array_unshift($words, $word);
+
+        foreach ($words as $word) {
+            $this->search_words[$word] = true;
+        }
+
+        return $this;
     }
 
-    /**
-     * @param string|string[] $words
-     * @param bool $sorted_by_relevance
-     * @return PostQueryBuilder
-     */
-    public function searchNotFor(string|array $words, bool $sorted_by_relevance = true): PostQueryBuilder
+    public function searchMissing(string $word, string ...$words): static
     {
-        return $this->search($words, $sorted_by_relevance, false);
+        array_unshift($words, $word);
+
+        foreach ($words as $word) {
+            $this->search_words[$word] = false;
+        }
+
+        return $this;
+    }
+
+    public function searchMissingSortingByRelevance(string $word, string ...$words): static
+    {
+        $this->searchMissing($word, ...$words)
+            ->orderBySearchRelevance();
+
+        return $this;
+    }
+
+    public function searchSortingByRelevance(string $word, string ...$words): static
+    {
+        $this->search($word, ...$words)
+            ->orderBySearchRelevance();
+
+        return $this;
     }
 
     private function resolveSearch(): void
@@ -35,32 +55,5 @@ trait Search
 
             $this->arguments[self::KEY_SEARCH] .= $is_included ? $word : "-$word";
         }
-    }
-
-    /**
-     * @param string|string[] $words
-     * @param bool $sorted_by_relevance
-     * @param bool $include
-     * @return PostQueryBuilder
-     */
-    private function search(
-        string|array $words,
-        bool         $sorted_by_relevance = true,
-        bool         $include = true
-    ): PostQueryBuilder
-    {
-        if (empty($words)) {
-            return $this;
-        }
-
-        foreach (Arr::wrap($words) as $word) {
-            $this->search_words[$word] = $include;
-        }
-
-        if ($sorted_by_relevance) {
-            $this->sortBySearchRelevance();
-        }
-
-        return $this;
     }
 }

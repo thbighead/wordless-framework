@@ -2,95 +2,78 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
-use Wordless\Application\Helpers\Arr;
-use Wordless\Wordpress\QueryBuilder\Enums\OrderByDirection;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\ColumnParameter;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Exceptions\InvalidOrderByClause;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\ColumnReference;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\Direction;
 
 trait OrderBy
 {
     private const KEY_ORDER_BY = 'orderby';
 
     /**
-     * @param ColumnParameter|ColumnParameter[]|array<ColumnParameter|string,OrderByDirection> $columns
-     * @param OrderByDirection $direction ignored if $columns is an associative array
+     * @param ColumnReference $column
+     * @param Direction $direction
      * @return PostQueryBuilder
-     * @throws InvalidOrderByClause
      */
-    public function orderBy(
-        ColumnParameter|array $columns,
-        OrderByDirection      $direction = OrderByDirection::ascending
-    ): PostQueryBuilder
+    public function orderBy(ColumnReference $column, Direction $direction = Direction::ascending): static
     {
         if (!isset($this->arguments[self::KEY_ORDER_BY])) {
             $this->arguments[self::KEY_ORDER_BY] = [];
         }
 
-        if ($columns instanceof ColumnParameter) {
-            $columns = $this->formatColumnsFromColumnParameter($columns, $direction);
-        }
+        $this->arguments[self::KEY_ORDER_BY][$column->value] = $direction;
 
-        $columns = Arr::isAssociative($columns) ?
-            $this->validateColumnsAsAssociativeArray($columns) :
-            $this->formatColumnsFromList($columns, $direction);
+        return $this;
+    }
 
-        foreach ($columns as $column => $orderDirection) {
-            // ensuring the order of columns (if you ask it again it goes to the end of line)
-            if (isset($this->arguments[self::KEY_ORDER_BY][$column])) {
-                unset($this->arguments[self::KEY_ORDER_BY][$column]);
-            }
+    public function orderByAscending(ColumnReference $column, ColumnReference ...$columns): static
+    {
+        array_unshift($columns, $column);
 
-            $this->arguments[self::KEY_ORDER_BY][$column] = $orderDirection->value;
+        foreach ($columns as $column) {
+            $this->orderBy($column);
         }
 
         return $this;
     }
 
-    /**
-     * @param ColumnParameter $columns
-     * @param OrderByDirection $direction
-     * @return array<ColumnParameter|string, OrderByDirection>
-     */
-    private function formatColumnsFromColumnParameter(ColumnParameter $columns, OrderByDirection $direction): array
+    public function orderByDescending(ColumnReference $column, ColumnReference ...$columns): static
     {
-        return [$columns->value => $direction];
-    }
-
-    /**
-     * @param array $columns
-     * @param OrderByDirection $direction
-     * @return array
-     * @throws InvalidOrderByClause
-     */
-    private function formatColumnsFromList(array $columns, OrderByDirection $direction): array
-    {
-        $order_by = [];
+        array_unshift($columns, $column);
 
         foreach ($columns as $column) {
-            if (!($column instanceof ColumnParameter)) {
-                throw new InvalidOrderByClause($column, $direction);
-            }
-
-            $order_by[$column->value] = $direction;
+            $this->orderBy($column, Direction::descending);
         }
 
-        return $order_by;
+        return $this;
     }
 
-    /**
-     * @param array $columns
-     * @return array<ColumnParameter|string,OrderByDirection>
-     * @throws InvalidOrderByClause
-     */
-    private function validateColumnsAsAssociativeArray(array $columns): array
+    private function isOrderedBySearchRelevance(): bool
     {
-        foreach ($columns as $column => $orderDirection) {
-            if (ColumnParameter::tryFrom((string)$column) === null || !($orderDirection instanceof OrderByDirection)) {
-                throw new InvalidOrderByClause($column, $orderDirection);
-            }
+        $first_ordering_column = array_key_first($this->arguments[self::KEY_ORDER_BY] ?? []);
+
+        if ($first_ordering_column === null || $first_ordering_column !== ColumnReference::search_relevance->value) {
+            return false;
         }
 
-        return $columns;
+        return $this->arguments[self::KEY_ORDER_BY][$first_ordering_column] === Direction::descending;
+    }
+
+    private function orderBySearchRelevance(): void
+    {
+        if ($this->isOrderedBySearchRelevance()) {
+            return;
+        }
+
+        if (empty($this->arguments[self::KEY_ORDER_BY] ?? [])) {
+            $this->orderBy(ColumnReference::search_relevance, Direction::descending);
+
+            return;
+        }
+
+        // ensuring the relevance will be the very first parameter of ordering
+        $this->arguments[self::KEY_ORDER_BY] = [
+                ColumnReference::search_relevance->value => Direction::descending,
+            ] + $this->arguments[self::KEY_ORDER_BY];
     }
 }

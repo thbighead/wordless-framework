@@ -13,7 +13,7 @@ trait Author
      * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereAuthorId(int $id, int ...$ids): PostQueryBuilder
+    public function whereAuthorId(int $id, int ...$ids): static
     {
         $this->arguments[self::KEY_AUTHOR] = empty($ids) ? $id : implode(',', array_merge([$id], $ids));
 
@@ -24,7 +24,7 @@ trait Author
      * @param string $author_nice_name
      * @return PostQueryBuilder
      */
-    public function whereAuthorNiceName(string $author_nice_name): PostQueryBuilder
+    public function whereAuthorNiceName(string $author_nice_name): static
     {
         $this->arguments['author_name'] = $author_nice_name;
 
@@ -36,7 +36,7 @@ trait Author
      * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereNotAuthorId(int $id, int ...$ids): PostQueryBuilder
+    public function whereNotAuthorId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
             array_unshift($ids, $id);

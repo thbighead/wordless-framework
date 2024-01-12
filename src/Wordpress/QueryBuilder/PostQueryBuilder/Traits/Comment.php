@@ -7,7 +7,7 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 
 trait Comment
 {
-    public function withAnyComments(): PostQueryBuilder
+    public function withAnyComments(): static
     {
         return $this->withComments();
     }
@@ -20,7 +20,7 @@ trait Comment
     public function withComments(
         int    $how_many = 1,
         Operator $comparison = Operator::greater_than_or_equal
-    ): PostQueryBuilder
+    ): static
     {
         $this->arguments['comment_count'] = ['compare' => $comparison, 'value' => $how_many];
 
@@ -31,7 +31,7 @@ trait Comment
      * @param int $how_many
      * @return PostQueryBuilder
      */
-    public function withDifferentThanComments(int $how_many): PostQueryBuilder
+    public function withDifferentThanComments(int $how_many): static
     {
         return $this->withComments($how_many, Operator::different);
     }
@@ -40,7 +40,7 @@ trait Comment
      * @param int $how_many
      * @return PostQueryBuilder
      */
-    public function withLessThanComments(int $how_many): PostQueryBuilder
+    public function withLessThanComments(int $how_many): static
     {
         return $this->withComments($how_many, Operator::less_than);
     }
@@ -49,7 +49,7 @@ trait Comment
      * @param int $how_many
      * @return PostQueryBuilder
      */
-    public function withLessThanOrEqualsComments(int $how_many): PostQueryBuilder
+    public function withLessThanOrEqualsComments(int $how_many): static
     {
         return $this->withComments($how_many, Operator::less_than_or_equal);
     }
@@ -58,7 +58,7 @@ trait Comment
      * @param int $how_many
      * @return PostQueryBuilder
      */
-    public function withMoreThanComments(int $how_many): PostQueryBuilder
+    public function withMoreThanComments(int $how_many): static
     {
         return $this->withComments($how_many, Operator::greater_than);
     }
@@ -67,12 +67,12 @@ trait Comment
      * @param int $how_many
      * @return PostQueryBuilder
      */
-    public function withMoreThanOrEqualsComments(int $how_many): PostQueryBuilder
+    public function withMoreThanOrEqualsComments(int $how_many): static
     {
         return $this->withComments($how_many);
     }
 
-    public function withoutComments(): PostQueryBuilder
+    public function withoutComments(): static
     {
         return $this->withComments(0, Operator::equal);
     }

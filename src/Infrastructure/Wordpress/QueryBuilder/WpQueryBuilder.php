@@ -10,11 +10,18 @@ use WP_User_Query;
 
 abstract class WpQueryBuilder extends QueryBuilder
 {
+    abstract protected function mountNewWpQuery(): WP_Query|WP_Term_Query|WP_Comment_Query|WP_User_Query;
+
     private WP_Query|WP_Term_Query|WP_Comment_Query|WP_User_Query $query;
 
-    public function __construct(WP_Query|WP_Term_Query|WP_Comment_Query|WP_User_Query $wpQuery)
+    public function __construct()
     {
-        $this->query = $wpQuery;
+        $this->query = $this->mountNewWpQuery();
+    }
+
+    public function __clone(): void
+    {
+        $this->query = $this->mountNewWpQuery();
     }
 
     protected function getQuery(): WP_User_Query|WP_Query|WP_Term_Query|WP_Comment_Query

@@ -25,16 +25,16 @@ final class Posts
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */
-    public function __construct(private readonly PostQueryBuilder $queryBuilder, PaginationArgumentsBuilder $paginationBuilder)
+    public function __construct(
+        private readonly PostQueryBuilder $queryBuilder,
+        private readonly PaginationArgumentsBuilder $paginationBuilder
+    )
     {
-        $posts = $this->queryBuilder->get(
-            $paginationBuilder->load_acfs,
-            $paginationBuilder->getPaginationArguments()
-        );
+        $posts = $this->query();
 
         $this->total_number_of_posts = $this->queryBuilder->count();
         $this->number_of_pages = $this->queryBuilder->getNumberOfPages();
-        $this->currentPage = new Page($paginationBuilder->getPaged(), $posts);
+        $this->currentPage = new Page($this->paginationBuilder->getPaged(), $posts);
     }
 
     /**
@@ -59,7 +59,8 @@ final class Posts
     public function goToPage(int $page): Posts
     {
         if (($page = $this->calculatePageInsideRange($page)) !== $this->getCurrentPageNumber()) {
-            $this->currentPage = new Page($page, $this->queryBuilder->pagedAt($page)->get());
+            $this->paginationBuilder->setPaged($page);
+            $this->currentPage = new Page($page, $this->query());
         }
 
         return $this;
@@ -103,5 +104,18 @@ final class Posts
     private function calculatePageInsideRange(int $page): int
     {
         return min(max($page, self::FIRST_PAGE), $this->number_of_pages);
+    }
+
+    /**
+     * @return Post[]
+     * @throws InitializingModelWithWrongPostType
+     * @throws PostTypeNotRegistered
+     */
+    private function query(): array
+    {
+        return $this->queryBuilder->get(
+            $this->paginationBuilder->load_acfs,
+            $this->paginationBuilder->getPaginationArguments()
+        );
     }
 }

@@ -14,7 +14,7 @@ trait Tag
      * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereNotTagId(int $id, int ...$ids): PostQueryBuilder
+    public function whereNotTagId(int $id, int ...$ids): static
     {
         array_unshift($ids, $id);
 
@@ -28,7 +28,7 @@ trait Tag
      * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereRelatesToAllTagId(int $id, int ...$ids): PostQueryBuilder
+    public function whereRelatesToAllTagId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
             array_unshift($ids, $id);
@@ -48,7 +48,7 @@ trait Tag
      * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereRelatesToAnyTagId(int $id, int ...$ids): PostQueryBuilder
+    public function whereRelatesToAnyTagId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
             array_unshift($ids, $id);
@@ -68,7 +68,7 @@ trait Tag
      * @param string ...$names
      * @return PostQueryBuilder
      */
-    public function whereRelatesToAllTagName(string $name, string ...$names): PostQueryBuilder
+    public function whereRelatesToAllTagName(string $name, string ...$names): static
     {
         $this->arguments[self::KEY_TAG] = !empty($names) ?
             implode('+', array_merge([$name], $names)) :
@@ -82,7 +82,7 @@ trait Tag
      * @param string ...$names
      * @return PostQueryBuilder
      */
-    public function whereRelatesToAnyTagName(string $name, string ...$names): PostQueryBuilder
+    public function whereRelatesToAnyTagName(string $name, string ...$names): static
     {
         $this->arguments[self::KEY_TAG] = !empty($names) ?
             implode(',', array_merge([$name], $names)) :

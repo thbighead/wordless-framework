@@ -15,7 +15,6 @@ use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Pagination\Posts;
-use Wordless\Wordpress\QueryBuilder\Enums\OrderByDirection;
 use Wordless\Wordpress\QueryBuilder\Enums\Status;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Exceptions\TrySetEmptyPostType;
@@ -25,8 +24,6 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Author;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Category;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Comment;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\ColumnParameter;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Exceptions\InvalidOrderByClause;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Search;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Tag;
 use WP_Post;
@@ -41,27 +38,17 @@ class PostQueryBuilder extends WpQueryBuilder
     use Search;
     use Tag;
 
-    final public const KEY_HAS_PASSWORD = 'has_password';
-    final public const KEY_IGNORE_STICKY_POSTS = 'ignore_sticky_posts';
     final public const KEY_NO_FOUND_ROWS = 'no_found_rows';
     final public const KEY_NO_PAGING = 'nopaging';
-    final public const KEY_POST_IN = 'post__in';
-    final public const KEY_POST_NOT_IN = 'post__not_in';
-    final public const KEY_POST_PASSWORD = 'post_password';
-    final public const KEY_SEARCH = 's';
-
-    /** @var array<string, bool> $search_words */
-    private array $search_words = [];
-
-    /**
-     * @param StandardType|PostType|null $post_type
-     * @return static
-     * @throws TrySetEmptyPostType
-     */
-    public static function getInstance(StandardType|PostType|null $post_type = null): static
-    {
-        return new static($post_type);
-    }
+    private const KEY_PAGE_ID = 'page_id';
+    private const KEY_PAGE_SLUG = 'pagename';
+    private const KEY_POST_ID = 'p';
+    private const KEY_POST_SLUG = 'name';
+    private const KEY_HAS_PASSWORD = 'has_password';
+    private const KEY_IGNORE_STICKY_POSTS = 'ignore_sticky_posts';
+    private const KEY_POST_IN = 'post__in';
+    private const KEY_POST_NOT_IN = 'post__not_in';
+    private const KEY_POST_PASSWORD = 'post_password';
 
     /**
      * @param StandardType|PostType|null $postType
@@ -69,22 +56,12 @@ class PostQueryBuilder extends WpQueryBuilder
      */
     public function __construct(StandardType|PostType|null $postType = null)
     {
-        $post_type = StandardType::ANY;
-
-        if ($postType instanceof StandardType) {
-            $post_type = $postType->name;
-        }
-
-        if ($postType instanceof PostType) {
-            $post_type = $postType->name;
-        }
-
-        $this->whereType($post_type)
+        $this->whereType($postType ?? StandardType::ANY)
             ->withoutStickyPosts()
             ->deactivatePagination()
             ->setPostsFormat(PostsListFormat::all_fields);
 
-        parent::__construct(new WP_Query);
+        parent::__construct();
     }
 
     public function count(): int
@@ -157,13 +134,11 @@ class PostQueryBuilder extends WpQueryBuilder
     /**
      * @return $this
      */
-    public function onlyWithoutPassword(): PostQueryBuilder
+    public function onlyWithoutPassword(): static
     {
         $this->arguments[self::KEY_HAS_PASSWORD] = false;
 
-        if (isset($this->arguments[self::KEY_POST_PASSWORD])) {
-            unset($this->arguments[self::KEY_POST_PASSWORD]);
-        }
+        unset($this->arguments[self::KEY_POST_PASSWORD]);
 
         return $this;
     }
@@ -171,7 +146,7 @@ class PostQueryBuilder extends WpQueryBuilder
     /**
      * @return $this
      */
-    public function onlyWithPassword(?string $password): PostQueryBuilder
+    public function onlyWithPassword(?string $password): static
     {
         $this->arguments[self::KEY_HAS_PASSWORD] = true;
 
@@ -194,35 +169,28 @@ class PostQueryBuilder extends WpQueryBuilder
     }
 
     /**
-     * @param int|int[] $post_ids
+     * @param int $id
+     * @param int ...$ids
      * @return $this
      */
-    public function whereId(int|array $post_ids): PostQueryBuilder
+    public function whereId(int $id, int ...$ids): static
     {
-        if (is_int($post_ids)) {
-            $this->arguments['p'] = $post_ids;
+        if (empty($ids)) {
+            $this->arguments[static::KEY_POST_ID] = $id;
 
             return $this;
         }
 
-        if (empty($post_ids)) {
-            return $this;
-        }
+        array_unshift($ids, $id);
 
-        if (count($post_ids) === 1) {
-            return $this->whereId($post_ids[0]);
-        }
+        $this->arguments[static::KEY_POST_IN] = $ids;
 
-        $this->arguments[self::KEY_POST_IN] = $post_ids;
-
-        if (isset($this->arguments[self::KEY_POST_NOT_IN])) {
-            unset($this->arguments[self::KEY_POST_NOT_IN]);
-        }
+        unset($this->arguments[static::KEY_POST_NOT_IN]);
 
         return $this;
     }
 
-    public function whereMeta(MetaSubQueryBuilder $subQuery): PostQueryBuilder
+    public function whereMeta(MetaSubQueryBuilder $subQuery): static
     {
         $this->arguments[Key::key_meta_query->value] = $subQuery;
 
@@ -230,60 +198,62 @@ class PostQueryBuilder extends WpQueryBuilder
     }
 
     /**
-     * @param int|int[] $post_ids
+     * @param int $id
+     * @param int ...$ids
      * @return $this
      */
-    public function whereNotId(int|array $post_ids): PostQueryBuilder
+    public function whereNotId(int $id, int ...$ids): static
     {
-        $post_ids = Arr::wrap($post_ids);
+        if (empty($ids)) {
+            $this->arguments[static::KEY_POST_ID] = $id;
 
-        if (empty($post_ids)) {
             return $this;
         }
 
-        $this->arguments[self::KEY_POST_NOT_IN] = $post_ids;
+        array_unshift($ids, $id);
 
-        if (isset($this->arguments[self::KEY_POST_IN])) {
-            unset($this->arguments[self::KEY_POST_IN]);
-        }
+        $this->arguments[static::KEY_POST_NOT_IN] = $ids;
+
+        unset($this->arguments[static::KEY_POST_IN]);
 
         return $this;
     }
 
     /**
-     * @param string|string[] $slugs
+     * @param string $slug
+     * @param string ...$slugs
      * @return $this
      */
-    public function whereSlug(string|array $slugs): PostQueryBuilder
+    public function whereSlug(string $slug, string ...$slugs): static
     {
-        if (!is_array($slugs)) {
-            $this->arguments['name'] = $slugs;
+        if (empty($slugs)) {
+            $this->arguments[static::KEY_POST_SLUG] = $slug;
 
             return $this;
         }
 
-        if (!empty($slugs)) {
-            $this->arguments['post_name__in'] = $slugs;
-        }
+        array_unshift($slugs, $slug);
+
+        $this->arguments['post_name__in'] = $slugs;
 
         return $this;
     }
 
-    public function whereStatus(Status $status): PostQueryBuilder
+    public function whereStatus(Status $status): static
     {
         $this->arguments[Status::post_status_key->value] = $status->value;
 
         return $this;
     }
 
-    public function whereTaxonomy(TaxonomySubQueryBuilder $subQuery): PostQueryBuilder
+    public function whereTaxonomy(TaxonomySubQueryBuilder $subQuery): static
     {
         $this->arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] = $subQuery;
 
         return $this;
     }
 
-    public function whereTitle(string $title): PostQueryBuilder
+    public function whereTitle(string $title): static
     {
         $this->arguments['title'] = $title;
 
@@ -298,7 +268,7 @@ class PostQueryBuilder extends WpQueryBuilder
     public function whereType(
         StandardType|PostType|string $type,
         StandardType|PostType|string ...$types
-    ): PostQueryBuilder
+    ): static
     {
         $full_types = [$this->retrieveTypeAsString($type)];
 
@@ -324,20 +294,14 @@ class PostQueryBuilder extends WpQueryBuilder
         return $type;
     }
 
-    /**
-     * @return $this
-     */
-    public function withStickyPosts(): PostQueryBuilder
+    public function withStickyPosts(): static
     {
         $this->arguments[self::KEY_IGNORE_STICKY_POSTS] = false;
 
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function withoutStickyPosts(): PostQueryBuilder
+    public function withoutStickyPosts(): static
     {
         $this->arguments[self::KEY_IGNORE_STICKY_POSTS] = true;
 
@@ -386,6 +350,11 @@ class PostQueryBuilder extends WpQueryBuilder
     protected function getQuery(): WP_Query
     {
         return parent::getQuery();
+    }
+
+    protected function mountNewWpQuery(): WP_Query
+    {
+        return new WP_Query;
     }
 
     private function arePostsAlreadyLoaded(): bool
@@ -455,25 +424,5 @@ class PostQueryBuilder extends WpQueryBuilder
         $this->arguments[PostsListFormat::FIELDS_KEY] = $format->value;
 
         return $this;
-    }
-
-    /**
-     * @return void
-     * @throws InvalidOrderByClause
-     */
-    private function sortBySearchRelevance(): void
-    {
-        $original_arguments = [];
-
-        // ensuring the relevance will be the first parameter of ordering
-        if (isset($this->arguments[self::KEY_ORDER_BY])) {
-            $original_arguments = $this->arguments[self::KEY_ORDER_BY];
-            unset($this->arguments[self::KEY_ORDER_BY]);
-        }
-
-        $this->orderBy(ColumnParameter::search_relevance, OrderByDirection::descending);
-
-        // ensuring the relevance will be the first parameter of ordering
-        $this->arguments[self::KEY_ORDER_BY] = $this->arguments[self::KEY_ORDER_BY] + $original_arguments;
     }
 }

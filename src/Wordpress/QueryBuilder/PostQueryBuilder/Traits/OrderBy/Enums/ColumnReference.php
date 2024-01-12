@@ -2,7 +2,7 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums;
 
-enum ColumnParameter: string
+enum ColumnReference: string
 {
     case id = 'ID';
     case author = 'author';
