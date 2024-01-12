@@ -2,50 +2,45 @@
 
 namespace Wordless\Application\Helpers;
 
-use BadMethodCallException;
 use ReflectionClass;
+use ReflectionClassConstant;
 use ReflectionException;
+use ReflectionMethod;
+use ReflectionProperty;
+use Wordless\Application\Helpers\Reflection\Contracts\Subjectable;
 
-/**
- * @mixin self
- */
-class Reflection
+class Reflection extends Subjectable
 {
-    private readonly object $classInstance;
-    private readonly ReflectionClass $reflectionClass;
-
     /**
-     * @param object|string $objectOrClass
+     * @param object $object
+     * @param string $method
+     * @param string ...$arguments
+     * @return mixed
      * @throws ReflectionException
      */
-    public function __construct(object|string $objectOrClass)
+    public static function callNonPublicMethod(object $object, string $method, string ...$arguments): mixed
     {
-        $this->classInstance = is_string($objectOrClass) ? new $objectOrClass : $objectOrClass;
-        $this->reflectionClass = new ReflectionClass($this->classInstance);
-    }
-
-    public function getReflectionClass(): ReflectionClass
-    {
-        return $this->reflectionClass;
-    }
-
-    public function callPrivateMethod(string $method, array $args = [])
-    {
-        $method = $this->getReflectionClass()->getMethod($method);
-        /** @noinspection PhpExpressionResultUnusedInspection */
-        $method->setAccessible(true);
-
-        return $method->invoke($this->classInstance, ...$args);
-
+        return (new ReflectionMethod($object, $method))->invoke($object, ...$arguments);
     }
 
     /**
+     * @param object $object
      * @param string $property
      * @return mixed
      * @throws ReflectionException
      */
-    public function getPropertyValue(string $property): mixed
+    public static function getNonPublicPropertyValue(object $object, string $property): mixed
     {
-        return $this->getReflectionClass()->getProperty($property)->getValue($this->classInstance);
+        return (new ReflectionProperty($object, $property))->getValue($object);
+    }
+
+    public static function getNonPublicConstValue(object $object, string $constant): mixed
+    {
+        return (new ReflectionClassConstant($object, $constant))->getValue();
+    }
+
+    public static function getReflectionClass(object $object): ReflectionClass
+    {
+        return new ReflectionClass($object);
     }
 }

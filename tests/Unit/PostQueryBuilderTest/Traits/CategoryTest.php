@@ -3,39 +3,54 @@
 namespace Wordless\Tests\Unit\PostQueryBuilderTest\Traits;
 
 use ReflectionException;
-use Wordless\Application\Helpers\Reflection;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 
 trait CategoryTest
 {
+    private const DUMMY_CATEGORY_IDS = [1, 2, 3, 4];
+    private const DUMMY_CATEGORY_NAMES = ['cat1', 'cat2', 'cat3'];
+    private const KEY_CATEGORY_NAME = 'category_name';
+    private const KEY_CATEGORY_ID = 'cat';
+
     /**
      * @return void
      * @throws ReflectionException
      */
-    public function testWhereCategoryIdQuery(): void
+    public function testWhereRelatesToAnyCategoryNameQuery(): void
     {
-        $categories_ids = [1, 2, 3];
-
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['cat' => $categories_ids[0]]),
-            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)
-                ->whereCategoryId($categories_ids[0]))
+            array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_CATEGORY_NAME => self::DUMMY_CATEGORY_NAMES[0]]),
+            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder())
+                ->whereRelatesToAnyCategoryName(self::DUMMY_CATEGORY_NAMES[0]))
         );
 
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['category__in' => $categories_ids]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereCategoryId($categories_ids),
-                self::ARGUMENTS_KEY
-            )
+            array_merge(
+                self::DEFAULT_ARGUMENTS,
+                [self::KEY_CATEGORY_NAME => implode(',', self::DUMMY_CATEGORY_NAMES)]
+            ),
+            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder())
+                ->whereRelatesToAnyCategoryName(...self::DUMMY_CATEGORY_NAMES))
+        );
+    }
+
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testWhereRelatesToAnyCategoryIdQuery(): void
+    {
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_CATEGORY_ID => self::DUMMY_CATEGORY_IDS[0]]),
+            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+                ->whereRelatesToAnyCategoryId(self::DUMMY_CATEGORY_IDS[0]))
         );
 
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['category__and' => $categories_ids]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereCategoryId($categories_ids, true),
-                self::ARGUMENTS_KEY
-            )
+            array_merge(self::DEFAULT_ARGUMENTS, ['category__in' => self::DUMMY_CATEGORY_IDS]),
+            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+                ->whereRelatesToAnyCategoryId(...self::DUMMY_CATEGORY_IDS))
         );
     }
 
@@ -43,32 +58,40 @@ trait CategoryTest
      * @return void
      * @throws ReflectionException
      */
-    public function testWhereCategoryNameQuery(): void
+    public function testWhereRelatesToAllCategoryNameQuery(): void
     {
-        $categories = ['cat1', 'cat2', 'cat3'];
-
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['category_name' => $categories[0]]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereCategoryName($categories[0]),
-                self::ARGUMENTS_KEY
-            )
+            array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_CATEGORY_NAME => self::DUMMY_CATEGORY_NAMES[0]]),
+            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+                ->whereRelatesToAllCategoryName(self::DUMMY_CATEGORY_NAMES[0]))
         );
 
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['category_name' => implode(',', $categories)]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereCategoryName($categories),
-                self::ARGUMENTS_KEY
-            )
+            array_merge(
+                self::DEFAULT_ARGUMENTS,
+                [self::KEY_CATEGORY_NAME => implode('+', self::DUMMY_CATEGORY_NAMES)]
+            ),
+            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+                ->whereRelatesToAllCategoryName(...self::DUMMY_CATEGORY_NAMES))
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testWhereRelatesToAllCategoryIdQuery(): void
+    {
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_CATEGORY_ID => self::DUMMY_CATEGORY_IDS[0]]),
+            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+                ->whereRelatesToAllCategoryId(self::DUMMY_CATEGORY_IDS[0]))
         );
 
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['category_name' => implode('+', $categories)]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereCategoryName($categories, true),
-                self::ARGUMENTS_KEY
-            )
+            array_merge(self::DEFAULT_ARGUMENTS, ['category__and' => self::DUMMY_CATEGORY_IDS]),
+            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+                ->whereRelatesToAllCategoryId(...self::DUMMY_CATEGORY_IDS))
         );
     }
 
@@ -78,20 +101,16 @@ trait CategoryTest
      */
     public function testWhereNotCategoryIdQuery(): void
     {
-        $categories_ids = [1, 2, 3];
-
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['cat' => -$categories_ids[0]]),
-            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)
-                ->whereNotCategoryId($categories_ids[0]))
+            array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_CATEGORY_ID => -self::DUMMY_CATEGORY_IDS[0]]),
+            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+                ->whereNotCategoryId(self::DUMMY_CATEGORY_IDS[0]))
         );
 
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['category__not_in' => $categories_ids]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereNotCategoryId($categories_ids),
-                self::ARGUMENTS_KEY
-            )
+            array_merge(self::DEFAULT_ARGUMENTS, ['category__not_in' => self::DUMMY_CATEGORY_IDS]),
+            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+                ->whereNotCategoryId(...self::DUMMY_CATEGORY_IDS))
         );
     }
 }
