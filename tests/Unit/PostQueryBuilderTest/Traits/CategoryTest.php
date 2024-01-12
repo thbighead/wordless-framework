@@ -18,10 +18,8 @@ trait CategoryTest
 
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, ['cat' => $categories_ids[0]]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereCategoryId($categories_ids[0]),
-                self::ARGUMENTS_KEY
-            )
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)
+                ->whereCategoryId($categories_ids[0]))
         );
 
         $this->assertEquals(
@@ -84,10 +82,8 @@ trait CategoryTest
 
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, ['cat' => -$categories_ids[0]]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereNotCategoryId($categories_ids[0]),
-                self::ARGUMENTS_KEY
-            )
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)
+                ->whereNotCategoryId($categories_ids[0]))
         );
 
         $this->assertEquals(

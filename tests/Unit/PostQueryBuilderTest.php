@@ -10,16 +10,16 @@ use Wordless\Tests\WordlessTestCase;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Pagination\Posts;
+use Wordless\Wordpress\QueryBuilder\Enums\OrderByDirection;
+use Wordless\Wordpress\QueryBuilder\Enums\Status;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Exceptions\TrySetEmptyPostType;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\ColumnReference;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\Direction;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\ColumnParameter;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Exceptions\InvalidOrderByClause;
 
 class PostQueryBuilderTest extends WordlessTestCase
 {
-//    use AuthorTest, CategoryTest;
+    use AuthorTest, CategoryTest;
 
     private const DEFAULT_ARGUMENTS = [
         PostType::QUERY_TYPE_KEY => [StandardType::ANY],
@@ -34,252 +34,36 @@ class PostQueryBuilderTest extends WordlessTestCase
     private const KEY_AUTHOR = 'author';
     private const KEY_AUTHOR_NICE_NAME = 'author_name';
     private const CUSTOM_POST_TYPES = ['first_type', 'second_type'];
-//
-//    /**
-//     * @return void
-//     * @throws ReflectionException
-//     */
-//    public function testEmptyQuery(): void
-//    {
-//        $this->assertEquals(
-//            self::DEFAULT_ARGUMENTS,
-//            Reflection::getClassPropertyValue(new PostQueryBuilder, self::ARGUMENTS_KEY)
-//        );
-//    }
-//
-//    /**
-//     * @return void
-//     * @throws ReflectionException
-//     */
-//    public function testWhereTypeQuery(): void
-//    {
-//        $this->assertEquals(
-//            array_merge(self::DEFAULT_ARGUMENTS, [PostType::QUERY_TYPE_KEY => [self::CUSTOM_POST_TYPES[0]]]),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->whereType(self::CUSTOM_POST_TYPES[0]),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//
-//        $this->assertEquals(
-//            array_merge(self::DEFAULT_ARGUMENTS, [PostType::QUERY_TYPE_KEY => self::CUSTOM_POST_TYPES]),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->whereType(...self::CUSTOM_POST_TYPES),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//    }
-//
-//    /**
-//     * @return void
-//     * @throws PostQueryBuilder\Traits\OrderBy\Exceptions\InvalidOrderByClause
-//     * @throws ReflectionException
-//     */
-//    public function testOrderByQuery(): void
-//    {
-//        $this->assertEquals(
-//            array_merge(
-//                self::DEFAULT_ARGUMENTS,
-//                [self::KEY_ORDER_BY => [ColumnParameter::author->value => OrderByDirection::ascending->value]]
-//            ),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->orderBy(ColumnParameter::author),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//
-//        $this->assertEquals(
-//            array_merge(
-//                self::DEFAULT_ARGUMENTS,
-//                [self::KEY_ORDER_BY => [ColumnParameter::author->value => OrderByDirection::descending->value]]
-//            ),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->orderBy([ColumnParameter::author->value => OrderByDirection::descending]),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//
-//        $this->assertEquals(
-//            array_merge(
-//                self::DEFAULT_ARGUMENTS,
-//                [self::KEY_ORDER_BY => [
-//                    ColumnParameter::author->value => OrderByDirection::descending->value,
-//                    ColumnParameter::name->value => OrderByDirection::ascending->value,
-//                ]]
-//            ),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->orderBy([
-//                    ColumnParameter::author->value => OrderByDirection::descending,
-//                    ColumnParameter::name->value => OrderByDirection::ascending,
-//                ]),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//
-//        $this->assertEquals(
-//            array_merge(
-//                self::DEFAULT_ARGUMENTS,
-//                [self::KEY_ORDER_BY => [
-//                    ColumnParameter::author->value => OrderByDirection::ascending->value,
-//                    ColumnParameter::name->value => OrderByDirection::ascending->value,
-//                ]]
-//            ),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->orderBy([
-//                    ColumnParameter::author,
-//                    ColumnParameter::name,
-//                ]),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//
-//        $this->assertEquals(
-//            array_merge(
-//                self::DEFAULT_ARGUMENTS,
-//                [self::KEY_ORDER_BY => [
-//                    ColumnParameter::author->value => OrderByDirection::descending->value,
-//                    ColumnParameter::name->value => OrderByDirection::descending->value,
-//                ]]
-//            ),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->orderBy([
-//                    ColumnParameter::author,
-//                    ColumnParameter::name,
-//                ], OrderByDirection::descending),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//
-//        $this->expectException(InvalidOrderByClause::class);
-//        (new PostQueryBuilder)->orderBy([
-//            ColumnParameter::author->value => OrderByDirection::descending,
-//            ColumnParameter::name->value => OrderByDirection::ascending,
-//            ColumnParameter::date->value,
-//        ]);
-//    }
-//
-//    /**
-//     * @return void
-//     * @throws ReflectionException
-//     */
-//    public function testWhereIdQuery()
-//    {
-//        $post_ids = [1, 2, 3, 4, 5];
-//
-//        $this->assertEquals(
-//            array_merge(self::DEFAULT_ARGUMENTS, ['p' => $post_ids[0]]),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->whereId($post_ids[0]),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//
-//        $this->assertEquals(
-//            array_merge(self::DEFAULT_ARGUMENTS, [PostQueryBuilder::KEY_POST_IN => $post_ids]),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->whereId($post_ids),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//    }
-//
-//    /**
-//     * @return void
-//     * @throws ReflectionException
-//     */
-//    public function testWhereNotIdQuery()
-//    {
-//        $post_ids = [1, 2, 3, 4];
-//
-//        $this->assertEquals(
-//            array_merge(self::DEFAULT_ARGUMENTS, ['post__not_in' => [$post_ids[0]]]),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->whereNotId($post_ids[0]),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//
-//        $this->assertEquals(
-//            array_merge(self::DEFAULT_ARGUMENTS, ['post__not_in' => $post_ids]),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->whereNotId($post_ids),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//    }
-//
-//    /**
-//     * @return void
-//     * @throws ReflectionException
-//     */
-//    public function testWhereSlugQuery()
-//    {
-//        $slugs = ['slug_1', 'slug_2', 'slug_3'];
-//
-//        $this->assertEquals(
-//            array_merge(self::DEFAULT_ARGUMENTS, ['name' => $slugs[0]]),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->whereSlug($slugs[0]),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//
-//        $this->assertEquals(
-//            array_merge(self::DEFAULT_ARGUMENTS, ['post_name__in' => $slugs]),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->whereSlug($slugs),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//    }
 
     /**
      * @return void
      * @throws ReflectionException
      */
-    public function testWhereStatusQuery()
+    public function testEmptyQuery(): void
     {
-//        $this->assertEquals(
-//            array_merge(self::DEFAULT_ARGUMENTS, [Status::post_status_key->value => Status::any->value]),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->whereStatus(Status::any),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-//
-//        $this->assertEquals(
-//            array_merge(self::DEFAULT_ARGUMENTS, [
-//                Status::post_status_key->value => Status::any->value,
-//                PostType::QUERY_TYPE_KEY => [StandardType::attachment->name],
-//            ]),
-//            Reflection::getClassPropertyValue(
-//                (new PostQueryBuilder)->whereStatus(Status::any)->whereType(StandardType::attachment),
-//                self::ARGUMENTS_KEY
-//            )
-//        );
-
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, [
-                Status::post_status_key->value => Status::inherit->value,
-                PostType::QUERY_TYPE_KEY => [StandardType::attachment->name],
-            ]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereStatus(Status::publish)->whereType(StandardType::attachment),
-                (new PostQueryBuilder)->whereType(self::CUSTOM_POST_TYPES[0]),
-                self::ARGUMENTS_KEY
-            )
+            self::DEFAULT_ARGUMENTS,
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder))
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testWhereTypeQuery(): void
+    {
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, [PostType::QUERY_TYPE_KEY => [self::CUSTOM_POST_TYPES[0]]]),
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)
+                ->whereType(self::CUSTOM_POST_TYPES[0]))
         );
 
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, [PostType::QUERY_TYPE_KEY => self::CUSTOM_POST_TYPES]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereType(self::CUSTOM_POST_TYPES),
-                self::ARGUMENTS_KEY
-            )
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)
+                ->whereType(...self::CUSTOM_POST_TYPES))
         );
-
-        $this->expectException(TrySetEmptyPostType::class);
-        (new PostQueryBuilder)->whereType([]);
     }
 
     /**
@@ -292,81 +76,70 @@ class PostQueryBuilderTest extends WordlessTestCase
         $this->assertEquals(
             array_merge(
                 self::DEFAULT_ARGUMENTS,
-                [self::KEY_ORDER_BY => [ColumnReference::author->value => Direction::ascending->value]]
+                [self::KEY_ORDER_BY => [ColumnParameter::author->value => OrderByDirection::ascending->value]]
             ),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->orderBy(ColumnReference::author),
-                self::ARGUMENTS_KEY
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)
+                ->orderBy(ColumnParameter::author)
             )
         );
 
         $this->assertEquals(
             array_merge(
                 self::DEFAULT_ARGUMENTS,
-                [self::KEY_ORDER_BY => [ColumnReference::author->value => Direction::descending->value]]
+                [self::KEY_ORDER_BY => [ColumnParameter::author->value => OrderByDirection::descending->value]]
             ),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->orderBy([ColumnReference::author->value => Direction::descending]),
-                self::ARGUMENTS_KEY
-            )
-        );
-
-        $this->assertEquals(
-            array_merge(
-                self::DEFAULT_ARGUMENTS,
-                [self::KEY_ORDER_BY => [
-                    ColumnReference::author->value => Direction::descending->value,
-                    ColumnReference::name->value => Direction::ascending->value,
-                ]]
-            ),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->orderBy([
-                    ColumnReference::author->value => Direction::descending,
-                    ColumnReference::name->value => Direction::ascending,
-                ]),
-                self::ARGUMENTS_KEY
-            )
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)->orderBy([
+                ColumnParameter::author->value => OrderByDirection::descending
+            ]))
         );
 
         $this->assertEquals(
             array_merge(
                 self::DEFAULT_ARGUMENTS,
                 [self::KEY_ORDER_BY => [
-                    ColumnReference::author->value => Direction::ascending->value,
-                    ColumnReference::name->value => Direction::ascending->value,
+                    ColumnParameter::author->value => OrderByDirection::descending->value,
+                    ColumnParameter::name->value => OrderByDirection::ascending->value,
                 ]]
             ),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->orderBy([
-                    ColumnReference::author,
-                    ColumnReference::name,
-                ]),
-                self::ARGUMENTS_KEY
-            )
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)->orderBy([
+                ColumnParameter::author->value => OrderByDirection::descending,
+                ColumnParameter::name->value => OrderByDirection::ascending,
+            ]))
         );
 
         $this->assertEquals(
             array_merge(
                 self::DEFAULT_ARGUMENTS,
                 [self::KEY_ORDER_BY => [
-                    ColumnReference::author->value => Direction::descending->value,
-                    ColumnReference::name->value => Direction::descending->value,
+                    ColumnParameter::author->value => OrderByDirection::ascending->value,
+                    ColumnParameter::name->value => OrderByDirection::ascending->value,
                 ]]
             ),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->orderBy([
-                    ColumnReference::author,
-                    ColumnReference::name,
-                ], Direction::descending),
-                self::ARGUMENTS_KEY
-            )
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)->orderBy([
+                ColumnParameter::author,
+                ColumnParameter::name,
+            ]))
+        );
+
+        $this->assertEquals(
+            array_merge(
+                self::DEFAULT_ARGUMENTS,
+                [self::KEY_ORDER_BY => [
+                    ColumnParameter::author->value => OrderByDirection::descending->value,
+                    ColumnParameter::name->value => OrderByDirection::descending->value,
+                ]]
+            ),
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)->orderBy([
+                ColumnParameter::author,
+                ColumnParameter::name,
+            ], OrderByDirection::descending))
         );
 
         $this->expectException(InvalidOrderByClause::class);
         (new PostQueryBuilder)->orderBy([
-            ColumnReference::author->value => Direction::descending,
-            ColumnReference::name->value => Direction::ascending,
-            ColumnReference::date->value,
+            ColumnParameter::author->value => OrderByDirection::descending,
+            ColumnParameter::name->value => OrderByDirection::ascending,
+            ColumnParameter::date->value,
         ]);
     }
 
@@ -374,24 +147,18 @@ class PostQueryBuilderTest extends WordlessTestCase
      * @return void
      * @throws ReflectionException
      */
-    public function testWhereAuthorIdQuery()
+    public function testWhereIdQuery()
     {
+        $post_ids = [1, 2, 3, 4, 5];
+
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_AUTHOR => 1]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereAuthorId(1),
-                self::ARGUMENTS_KEY
-            )
+            array_merge(self::DEFAULT_ARGUMENTS, ['p' => $post_ids[0]]),
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)->whereId($post_ids[0]))
         );
 
-        $authors_ids = [1, 2, 3, 4, 5];
-
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_AUTHOR => implode(',', $authors_ids)]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereAuthorId($authors_ids),
-                self::ARGUMENTS_KEY
-            )
+            array_merge(self::DEFAULT_ARGUMENTS, [PostQueryBuilder::KEY_POST_IN => $post_ids]),
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)->whereId($post_ids))
         );
     }
 
@@ -399,126 +166,82 @@ class PostQueryBuilderTest extends WordlessTestCase
      * @return void
      * @throws ReflectionException
      */
-    public function testWhereAuthorNiceNameQuery()
-    {
-        $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_AUTHOR_NICE_NAME => 'author_name_1']),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereAuthorNiceName('author_name_1'),
-                self::ARGUMENTS_KEY
-            )
-        );
-    }
-
-    /**
-     * @return void
-     * @throws ReflectionException
-     */
-    public function testWhereCategoryIdQuery()
-    {
-        $categories_ids = [1, 2, 3];
-
-        $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['cat' => $categories_ids[0]]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereCategoryId($categories_ids[0]),
-                self::ARGUMENTS_KEY
-            )
-        );
-
-        $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['category__in' => $categories_ids]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereCategoryId($categories_ids),
-                self::ARGUMENTS_KEY
-            )
-        );
-
-        $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['category__and' => $categories_ids]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereCategoryId($categories_ids, true),
-                self::ARGUMENTS_KEY
-            )
-        );
-    }
-
-    /**
-     * @return void
-     * @throws ReflectionException
-     */
-    public function testWhereCategoryNameQuery()
-    {
-        $categories = ['cat1', 'cat2', 'cat3'];
-
-        $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['category_name' => $categories[0]]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereCategoryName($categories[0]),
-                self::ARGUMENTS_KEY
-            )
-        );
-
-        $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['category_name' => implode(',', $categories)]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereCategoryName($categories),
-                self::ARGUMENTS_KEY
-            )
-        );
-
-        $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['category_name' => implode('+', $categories)]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereCategoryName($categories, true),
-                self::ARGUMENTS_KEY
-            )
-        );
-    }
-
-    /**
-     * @return void
-     * @throws ReflectionException
-     */
-    public function testWhereNotCategoryIdQuery()
-    {
-        $categories_ids = [1, 2, 3];
-
-        $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['cat' => -$categories_ids[0]]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereNotCategoryId($categories_ids[0]),
-                self::ARGUMENTS_KEY
-            )
-        );
-
-        $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, ['category__not_in' => $categories_ids]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereNotCategoryId($categories_ids),
-                self::ARGUMENTS_KEY
-            )
-        );
-    }
-
     public function testWhereNotIdQuery()
     {
         $post_ids = [1, 2, 3, 4];
 
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, ['post__not_in' => [$post_ids[0]]]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereNotId($post_ids[0]),
-                self::ARGUMENTS_KEY
-            )
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)->whereNotId($post_ids[0]))
         );
 
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, ['post__not_in' => $post_ids]),
-            Reflection::getClassPropertyValue(
-                (new PostQueryBuilder)->whereNotId($post_ids),
-                self::ARGUMENTS_KEY
-            )
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)->whereNotId($post_ids))
         );
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testWhereSlugQuery()
+    {
+        $slugs = ['slug_1', 'slug_2', 'slug_3'];
+
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, ['name' => $slugs[0]]),
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)->whereSlug($slugs[0]))
+        );
+
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, ['post_name__in' => $slugs]),
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)->whereSlug($slugs))
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testWhereStatusQuery()
+    {
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, [Status::post_status_key->value => Status::any->value]),
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)->whereStatus(Status::any))
+        );
+
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, [
+                Status::post_status_key->value => Status::any->value,
+                PostType::QUERY_TYPE_KEY => [StandardType::attachment->name],
+            ]),
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)
+                ->whereStatus(Status::any)
+                ->whereType(StandardType::attachment))
+        );
+
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, [
+                Status::post_status_key->value => Status::inherit->value,
+                PostType::QUERY_TYPE_KEY => [StandardType::attachment->name],
+            ]),
+            self::getArgumentsFromReflectionPostQueryBuilder((new PostQueryBuilder)
+                ->whereStatus(Status::publish)
+                ->whereType(StandardType::attachment))
+        );
+    }
+
+    /**
+     * @param PostQueryBuilder $postQueryBuilder
+     * @return mixed
+     * @throws ReflectionException
+     */
+    public static function getArgumentsFromReflectionPostQueryBuilder(PostQueryBuilder $postQueryBuilder): mixed
+    {
+        $reflectionClass = (new Reflection($postQueryBuilder));
+        $reflectionClass->callPrivateMethod('buildArguments');
+
+        return $reflectionClass->getPropertyValue(self::ARGUMENTS_KEY);
     }
 }

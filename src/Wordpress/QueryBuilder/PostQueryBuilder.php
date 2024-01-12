@@ -340,7 +340,7 @@ class PostQueryBuilder extends WpQueryBuilder
         if ($this->isForTypeAttachment(...$this->arguments[PostType::QUERY_TYPE_KEY]) &&
             !($this->arguments[Status::post_status_key->value] === Status::any->value ||
                 $this->arguments[Status::post_status_key->value] === Status::inherit->value)) {
-            $this->arguments[Status::post_status_key->value] = Status::inherit;
+            $this->arguments[Status::post_status_key->value] = Status::inherit->value;
         }
     }
 
@@ -373,7 +373,7 @@ class PostQueryBuilder extends WpQueryBuilder
 
     private function isForStatusAny(): bool
     {
-        return ($this->arguments[WpQueryStatus::POST_STATUS_KEY] ?? null) === WpQueryStatus::ANY;
+        return ($this->arguments[WpQueryStatus::POST_STATUS_KEY] ?? null) === Status::any->value;
     }
 
     /**
