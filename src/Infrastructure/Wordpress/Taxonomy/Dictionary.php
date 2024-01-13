@@ -21,6 +21,11 @@ abstract class Dictionary extends Singleton
     private static array $taxonomy_terms_keyed_by_slug;
     private static bool $loaded = false;
 
+    public static function getInstance(): static
+    {
+        return parent::getInstance();
+    }
+
     public function __construct(string $taxonomy)
     {
         parent::__construct();

@@ -4,6 +4,8 @@ namespace Wordless\Infrastructure\ConsoleCommand\Traits;
 
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\DecoratedMessage;
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\DecoratedMessage\Enums\Decoration\Contracts\IDecoration;
+use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\OutputSection;
+use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\ProgressBar;
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\TabledMessage;
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\VerboseOption;
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\WrappedScript;
@@ -11,6 +13,8 @@ use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\WrappedScript;
 trait OutputMessage
 {
     use DecoratedMessage;
+    use OutputSection;
+    use ProgressBar;
     use TabledMessage;
     use VerboseOption;
     use WrappedScript;

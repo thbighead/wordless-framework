@@ -89,7 +89,7 @@ abstract class ConsoleCommand extends Command implements SignalableCommandInterf
     protected function setup(InputInterface $input, OutputInterface $output): void
     {
         $this->input = $input;
-        $this->output = $output;
+        $this->output = $this->rootOutput = $output;
 
         $this->setupOutputStyles()
             ->turnOnDecoratedOutputs();

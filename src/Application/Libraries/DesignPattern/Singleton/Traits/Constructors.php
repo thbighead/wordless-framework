@@ -8,7 +8,7 @@ trait Constructors
 {
     private static array $instances = [];
 
-    public static function getInstance()
+    public static function getInstance(): static
     {
         return self::$instances[static::class] ?? self::$instances[static::class] = new static;
     }

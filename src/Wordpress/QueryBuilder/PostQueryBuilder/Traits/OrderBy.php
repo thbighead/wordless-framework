@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
+use Wordless\Application\Helpers\Arr;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\ColumnReference;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\Direction;
@@ -50,7 +51,7 @@ trait OrderBy
 
     private function isOrderedBySearchRelevance(): bool
     {
-        $first_ordering_column = array_key_first($this->arguments[self::KEY_ORDER_BY] ?? []);
+        $first_ordering_column = Arr::getFirstKey($this->arguments[self::KEY_ORDER_BY] ?? []);
 
         if ($first_ordering_column === null || $first_ordering_column !== ColumnReference::search_relevance->value) {
             return false;

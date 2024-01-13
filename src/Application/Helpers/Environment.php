@@ -96,6 +96,11 @@ STRING;
         return !static::isProduction();
     }
 
+    public static function isNotRemote(): bool
+    {
+        return !static::isRemote();
+    }
+
     public static function isNotStaging(): bool
     {
         return !static::isStaging();
@@ -104,6 +109,11 @@ STRING;
     public static function isProduction(): bool
     {
         return static::get('APP_ENV') === self::PRODUCTION;
+    }
+
+    public static function isRemote(): bool
+    {
+        return static::isProduction() && static::isStaging();
     }
 
     public static function isStaging(): bool

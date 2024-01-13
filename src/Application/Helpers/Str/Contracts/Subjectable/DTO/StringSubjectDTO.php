@@ -3,6 +3,7 @@
 namespace Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO;
 
 use Doctrine\Inflector\Language;
+use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Helper\Contracts\Subjectable\DTO\SubjectDTO;
 
@@ -113,6 +114,10 @@ final class StringSubjectDTO extends SubjectDTO
         return Str::isSurroundedBy($this->subject, $prefix, $suffix);
     }
 
+    /**
+     * @return $this
+     * @throws InvalidArgumentException
+     */
     public function kebabCase(): StringSubjectDTO
     {
         $this->subject = Str::kebabCase($this->subject);
@@ -134,6 +139,10 @@ final class StringSubjectDTO extends SubjectDTO
         return $this;
     }
 
+    /**
+     * @return $this
+     * @throws InvalidArgumentException
+     */
     public function pascalCase(): StringSubjectDTO
     {
         $this->subject = Str::pascalCase($this->subject);
@@ -141,6 +150,11 @@ final class StringSubjectDTO extends SubjectDTO
         return $this;
     }
 
+    /**
+     * @param string $language
+     * @return $this
+     * @throws InvalidArgumentException
+     */
     public function plural(string $language = Language::ENGLISH): StringSubjectDTO
     {
         $this->subject = Str::plural($this->subject, $language);
@@ -151,6 +165,17 @@ final class StringSubjectDTO extends SubjectDTO
     public function removeSuffix(string $suffix): StringSubjectDTO
     {
         $this->subject = Str::removeSuffix($this->subject, $suffix);
+
+        return $this;
+    }
+
+    /**
+     * @param string|string[] $search_to_remove
+     * @return $this
+     */
+    public function remove(string|array $search_to_remove): StringSubjectDTO
+    {
+        $this->subject = Str::remove($this->subject, $search_to_remove);
 
         return $this;
     }
@@ -167,6 +192,11 @@ final class StringSubjectDTO extends SubjectDTO
         return $this;
     }
 
+    /**
+     * @param string $language
+     * @return $this
+     * @throws InvalidArgumentException
+     */
     public function singular(string $language = Language::ENGLISH): StringSubjectDTO
     {
         $this->subject = Str::singular($this->subject, $language);
@@ -174,6 +204,10 @@ final class StringSubjectDTO extends SubjectDTO
         return $this;
     }
 
+    /**
+     * @return $this
+     * @throws InvalidArgumentException
+     */
     public function slugCase(): StringSubjectDTO
     {
         $this->subject = Str::slugCase($this->subject);
@@ -181,6 +215,11 @@ final class StringSubjectDTO extends SubjectDTO
         return $this;
     }
 
+    /**
+     * @param string $delimiter
+     * @return $this
+     * @throws InvalidArgumentException
+     */
     public function snakeCase(string $delimiter = '_'): StringSubjectDTO
     {
         $this->subject = Str::snakeCase($this->subject, $delimiter);
@@ -195,6 +234,10 @@ final class StringSubjectDTO extends SubjectDTO
         return $this;
     }
 
+    /**
+     * @return $this
+     * @throws InvalidArgumentException
+     */
     public function titleCase(): StringSubjectDTO
     {
         $this->subject = Str::titleCase($this->subject);

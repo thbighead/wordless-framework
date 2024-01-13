@@ -4,6 +4,10 @@ namespace Wordless\Wordpress\Models\Post\Traits;
 
 trait Repository
 {
+    /**
+     * @param bool $with_acfs
+     * @return static[]
+     */
     public static function getAll(bool $with_acfs = true): array
     {
         $all = [];
@@ -13,5 +17,10 @@ trait Repository
         }
 
         return $all;
+    }
+
+    public static function noneCreated(): bool
+    {
+        return count(static::getAll(false)) <= 1;
     }
 }

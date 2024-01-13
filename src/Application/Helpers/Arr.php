@@ -20,6 +20,11 @@ class Arr
         return array_diff_key($array, $except_array);
     }
 
+    public static function first(array $array): mixed
+    {
+        return $array[static::getFirstKey($array) ?? 0] ?? null;
+    }
+
     public static function get(array $array, int|string $key, mixed $default = null): mixed
     {
         try {
@@ -27,6 +32,11 @@ class Arr
         } catch (FailedToFindArrayKey) {
             return $default;
         }
+    }
+
+    public static function getFirstKey(array $array): string|int|null
+    {
+        return array_key_first($array);
     }
 
     /**
@@ -39,7 +49,7 @@ class Arr
     {
         $key = (string)$key;
         $key_pathing = explode('.', $key);
-        $first_key = array_key_first($key_pathing);
+        $first_key = Arr::getFirstKey($key_pathing);
         $pointer = $array[$first_key] ?? throw new FailedToFindArrayKey($array, $key, $first_key);
 
         foreach ($key_pathing as $key_path) {

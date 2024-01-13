@@ -40,6 +40,16 @@ trait Mutators
 
     /**
      * @param string $string
+     * @param string|string[] $search_to_remove
+     * @return string
+     */
+    public static function remove(string $string, string|array $search_to_remove): string
+    {
+        return static::replace($string, $search_to_remove, '');
+    }
+
+    /**
+     * @param string $string
      * @param string|string[] $search
      * @param string|string[] $replace
      * @return string

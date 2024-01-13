@@ -18,7 +18,7 @@ trait Runners
      * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
-    private function runWpCliCommand(string $wp_cli_command): Response
+    protected function runWpCliCommand(string $wp_cli_command): Response
     {
         return $this->resolveCommandModifiers($wp_cli_command)
             ->callWpCliCommand($wp_cli_command);
@@ -32,7 +32,7 @@ trait Runners
      * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
-    private function runWpCliCommandSilently(string $wp_cli_command): Response
+    protected function runWpCliCommandSilently(string $wp_cli_command): Response
     {
         return $this->resolveCommandModifiers($wp_cli_command)
             ->callWpCliCommandSilently($wp_cli_command);
@@ -45,7 +45,7 @@ trait Runners
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
      */
-    private function runWpCliCommandSilentlyWithoutInterruption(string $wp_cli_command): Response
+    protected function runWpCliCommandSilentlyWithoutInterruption(string $wp_cli_command): Response
     {
         return $this->resolveCommandModifiers($wp_cli_command)
             ->callWpCliCommandSilentlyWithoutInterruption($wp_cli_command);
@@ -58,7 +58,7 @@ trait Runners
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
      */
-    private function runWpCliCommandWithoutInterruption(string $wp_cli_command): Response
+    protected function runWpCliCommandWithoutInterruption(string $wp_cli_command): Response
     {
         return $this->resolveCommandModifiers($wp_cli_command)
             ->callWpCliCommandWithoutInterruption($wp_cli_command);
