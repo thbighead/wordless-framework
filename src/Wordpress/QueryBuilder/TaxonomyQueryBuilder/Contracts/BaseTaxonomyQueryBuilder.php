@@ -156,9 +156,7 @@ abstract class BaseTaxonomyQueryBuilder extends QueryBuilder
      */
     final protected function whereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): static
     {
-        array_unshift($objectTypes, $objectType);
-
-        $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] = Arr::wrap($objectTypes);
+        $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] = Arr::prepend($objectTypes, $objectType);
 
         return $this;
     }

@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
+use Wordless\Application\Helpers\Arr;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 
 trait Author
@@ -39,9 +40,7 @@ trait Author
     public function whereNotAuthorId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
-            array_unshift($ids, $id);
-
-            $this->arguments['author__not_in'] = $ids;
+            $this->arguments['author__not_in'] = Arr::prepend($ids, $id);
 
             return $this;
         }

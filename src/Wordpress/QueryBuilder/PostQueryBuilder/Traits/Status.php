@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
+use Wordless\Application\Helpers\Arr;
 use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostStatus;
 
@@ -14,13 +15,11 @@ trait Status
         StandardStatus|PostStatus|string ...$statuses
     ): static
     {
-        array_unshift($statuses, $status);
-
         if (!isset($this->arguments[self::KEY_POST_STATUS]) || $this->isWhereStatusAny()) {
             $this->arguments[self::KEY_POST_STATUS] = [];
         }
 
-        foreach ($statuses as $status) {
+        foreach (Arr::prepend($statuses, $status) as $status) {
             if (!is_string($status)) {
                 $status = $this->extractStatusString($status);
             }

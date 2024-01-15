@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\SignalableCommandInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
@@ -103,9 +104,7 @@ abstract class ConsoleCommand extends Command implements SignalableCommandInterf
      */
     private function setArguments(ArgumentDTO $argument, ArgumentDTO ...$arguments): static
     {
-        array_unshift($arguments, $argument);
-
-        foreach ($arguments as $argument) {
+        foreach (Arr::prepend($arguments, $argument) as $argument) {
             $this->addArgument(
                 $argument->name,
                 $argument->mode?->value,
@@ -125,9 +124,7 @@ abstract class ConsoleCommand extends Command implements SignalableCommandInterf
      */
     private function setOptions(OptionDTO $option, OptionDTO ...$options): static
     {
-        array_unshift($options, $option);
-
-        foreach ($options as $option) {
+        foreach (Arr::prepend($options, $option) as $option) {
             $optionMode = $option->mode;
 
             $this->addOption(

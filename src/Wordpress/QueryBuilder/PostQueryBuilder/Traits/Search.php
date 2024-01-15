@@ -2,6 +2,8 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
+use Wordless\Application\Helpers\Arr;
+
 trait Search
 {
     private const KEY_SEARCH = 's';
@@ -11,9 +13,7 @@ trait Search
 
     public function search(string $word, string ...$words): static
     {
-        array_unshift($words, $word);
-
-        foreach ($words as $word) {
+        foreach (Arr::prepend($words, $word) as $word) {
             $this->search_words[$word] = true;
         }
 
@@ -22,9 +22,7 @@ trait Search
 
     public function searchMissing(string $word, string ...$words): static
     {
-        array_unshift($words, $word);
-
-        foreach ($words as $word) {
+        foreach (Arr::prepend($words, $word) as $word) {
             $this->search_words[$word] = false;
         }
 

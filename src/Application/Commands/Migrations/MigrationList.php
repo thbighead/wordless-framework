@@ -3,9 +3,11 @@
 namespace Wordless\Application\Commands\Migrations;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
+use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -42,6 +44,10 @@ class MigrationList extends ConsoleCommand
         return [];
     }
 
+    /**
+     * @return int
+     * @throws InvalidArgumentException
+     */
     protected function runIt(): int
     {
         $outputTable = $this->mountTable();
@@ -65,7 +71,7 @@ class MigrationList extends ConsoleCommand
                 $chunk_rows[] = [$executed_file];
             }
 
-            array_unshift(
+            $chunk_rows[0] = Arr::prepend(
                 $chunk_rows[0],
                 new TableCell($datetime, ['rowspan' => $how_many_files_were_executed])
             );

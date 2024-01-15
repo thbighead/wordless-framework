@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 
+use Wordless\Application\Helpers\Arr;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\AndWhereComparisons;
@@ -89,9 +90,7 @@ final class AndComparison extends ComparisonTaxonomyQueryBuilder implements AndW
 
     public function andWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): AndComparison
     {
-        array_unshift($objectTypes, $objectType);
-
-        return $this->whereCanOnlyBeUsedBy(...$objectTypes);
+        return $this->whereCanOnlyBeUsedBy(...Arr::prepend($objectTypes, $objectType));
     }
 
     public function andWhereDeletePermission(string $capability): AndComparison

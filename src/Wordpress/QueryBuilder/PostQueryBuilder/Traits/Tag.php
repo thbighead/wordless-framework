@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
+use Wordless\Application\Helpers\Arr;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 
 trait Tag
@@ -16,9 +17,7 @@ trait Tag
      */
     public function whereNotTagId(int $id, int ...$ids): static
     {
-        array_unshift($ids, $id);
-
-        $this->arguments['tag__not_in'] = $ids;
+        $this->arguments['tag__not_in'] = Arr::prepend($ids, $id);
 
         return $this;
     }
@@ -31,9 +30,7 @@ trait Tag
     public function whereRelatesToAllTagId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
-            array_unshift($ids, $id);
-
-            $this->arguments['tag__and'] = $ids;
+            $this->arguments['tag__and'] = Arr::prepend($ids, $id);
 
             return $this;
         }
@@ -51,9 +48,7 @@ trait Tag
     public function whereRelatesToAnyTagId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
-            array_unshift($ids, $id);
-
-            $this->arguments['tag__in'] = $ids;
+            $this->arguments['tag__in'] = Arr::prepend($ids, $id);
 
             return $this;
         }

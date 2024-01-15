@@ -8,19 +8,19 @@ use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQ
 use Wordless\Infrastructure\Wordpress\QueryBuilder\WpQueryBuilder;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
-use Wordless\Wordpress\Pagination\Posts;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\Key;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Author;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Category;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Comment;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Id;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Search;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Slug;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Status;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Tag;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Type;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\WhereId;
 use WP_Query;
 
 class PostQueryBuilder extends WpQueryBuilder
@@ -28,18 +28,15 @@ class PostQueryBuilder extends WpQueryBuilder
     use Author;
     use Category;
     use Comment;
+    use Id;
     use OrderBy;
     use Resolver;
     use Search;
+    use Slug;
     use Status;
     use Tag;
     use Type;
-    use WhereId;
 
-    final public const KEY_NO_FOUND_ROWS = 'no_found_rows';
-    final public const KEY_NO_PAGING = 'nopaging';
-    private const KEY_PAGE_SLUG = 'pagename';
-    private const KEY_POST_SLUG = 'name';
     private const KEY_HAS_PASSWORD = 'has_password';
     private const KEY_IGNORE_STICKY_POSTS = 'ignore_sticky_posts';
     private const KEY_POST_PASSWORD = 'post_password';
@@ -77,26 +74,6 @@ class PostQueryBuilder extends WpQueryBuilder
     public function whereMeta(MetaSubQueryBuilder $subQuery): static
     {
         $this->arguments[Key::key_meta_query->value] = $subQuery;
-
-        return $this;
-    }
-
-    /**
-     * @param string $slug
-     * @param string ...$slugs
-     * @return $this
-     */
-    public function whereSlug(string $slug, string ...$slugs): static
-    {
-        if (empty($slugs)) {
-            $this->arguments[static::KEY_POST_SLUG] = $slug;
-
-            return $this;
-        }
-
-        array_unshift($slugs, $slug);
-
-        $this->arguments['post_name__in'] = $slugs;
 
         return $this;
     }
@@ -145,15 +122,6 @@ class PostQueryBuilder extends WpQueryBuilder
     private function arePostsAlreadyLoaded(): bool
     {
         return isset($this->getQuery()->posts);
-    }
-
-    private function deactivatePagination(): static
-    {
-        $this->arguments[self::KEY_NO_FOUND_ROWS] = true;
-        $this->arguments[self::KEY_NO_PAGING] = true;
-        $this->arguments[Posts::KEY_POSTS_PER_PAGE] = -1;
-
-        return $this;
     }
 
     private function query(array $extra_arguments = []): array

@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 
+use Wordless\Application\Helpers\Arr;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\ComparisonTaxonomyQueryBuilder;
@@ -89,9 +90,7 @@ final class NotComparison extends ComparisonTaxonomyQueryBuilder implements NotW
 
     public function notWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): NotComparison
     {
-        array_unshift($objectTypes, $objectType);
-
-        return $this->whereCanOnlyBeUsedBy(...$objectTypes);
+        return $this->whereCanOnlyBeUsedBy(...Arr::prepend($objectTypes, $objectType));
     }
 
     public function notWhereDeletePermission(string $capability): NotComparison

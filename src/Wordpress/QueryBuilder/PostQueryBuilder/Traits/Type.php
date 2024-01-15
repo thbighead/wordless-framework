@@ -20,9 +20,7 @@ trait Type
             $this->arguments[PostType::QUERY_TYPE_KEY] = [];
         }
 
-        array_unshift($types, $type);
-
-        foreach ($types as $type) {
+        foreach (Arr::prepend($types, $type) as $type) {
             if ($this->isTypeAny($type = $this->retrieveTypeAsString($type))) {
                 $this->arguments[PostType::QUERY_TYPE_KEY] = StandardType::ANY;
 

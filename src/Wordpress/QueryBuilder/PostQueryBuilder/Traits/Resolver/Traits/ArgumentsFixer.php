@@ -10,6 +10,7 @@ trait ArgumentsFixer
     {
         $this->fixPostStatusArgumentBasedOnPostTypeArgument()
             ->fixPostIdArgumentsBasedOnPostTypeArgument()
+            ->fixPostSlugArgumentsBasedOnPostTypeArgument()
             ->fixPostStatusArgument();
 
         return $this->arguments;
@@ -25,6 +26,21 @@ trait ArgumentsFixer
 
         if (!$this->isWhereTypeIncludingPage()) {
             unset($this->arguments[self::KEY_PAGE_ID]);
+        }
+
+        return $this;
+    }
+
+    private function fixPostSlugArgumentsBasedOnPostTypeArgument(): static
+    {
+        if ($this->isWhereTypePage()) {
+            unset($this->arguments[self::KEY_POST_SLUG]);
+
+            return $this;
+        }
+
+        if (!$this->isWhereTypeIncludingPage()) {
+            unset($this->arguments[self::KEY_PAGE_SLUG]);
         }
 
         return $this;

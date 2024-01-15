@@ -6,6 +6,13 @@ use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
 
 class Arr
 {
+    public static function append(array $array, $value): array
+    {
+        $array[] = $value;
+
+        return $array;
+    }
+
     public static function except(array $array, array $except_keys): array
     {
         $except_array = $except_keys;
@@ -97,6 +104,13 @@ class Arr
         }
 
         return $filtered_array;
+    }
+
+    public static function prepend(array $array, $value): array
+    {
+        array_unshift($array, $value);
+
+        return $array;
     }
 
     public static function recursiveJoin(array $array_1, array $array_2, array ...$arrays): array

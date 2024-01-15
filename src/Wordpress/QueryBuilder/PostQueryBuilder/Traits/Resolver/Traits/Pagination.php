@@ -9,6 +9,9 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PaginationArgumentsBuilder;
 
 trait Pagination
 {
+    final public const KEY_NO_FOUND_ROWS = 'no_found_rows';
+    final public const KEY_NO_PAGING = 'nopaging';
+
     public function getNumberOfPages(): ?int
     {
         if (!$this->arePostsAlreadyLoaded()) {
@@ -27,5 +30,14 @@ trait Pagination
     public function paginate(PaginationArgumentsBuilder $paginationBuilder): Posts
     {
         return new Posts($this, $paginationBuilder);
+    }
+
+    private function deactivatePagination(): static
+    {
+        $this->arguments[self::KEY_NO_FOUND_ROWS] = true;
+        $this->arguments[self::KEY_NO_PAGING] = true;
+        $this->arguments[Posts::KEY_POSTS_PER_PAGE] = -1;
+
+        return $this;
     }
 }

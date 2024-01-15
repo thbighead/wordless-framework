@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
+use Wordless\Application\Helpers\Arr;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 
 trait Category
@@ -17,9 +18,7 @@ trait Category
     public function whereNotCategoryId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
-            array_unshift($ids, $id);
-
-            $this->arguments['category__not_in'] = $ids;
+            $this->arguments['category__not_in'] = Arr::prepend($ids, $id);
 
             return $this;
         }
@@ -37,9 +36,7 @@ trait Category
     public function whereRelatesToAllCategoryId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
-            array_unshift($ids, $id);
-
-            $this->arguments['category__and'] = $ids;
+            $this->arguments['category__and'] = Arr::prepend($ids, $id);
 
             return $this;
         }
@@ -71,9 +68,7 @@ trait Category
     public function whereRelatesToAnyCategoryId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
-            array_unshift($ids, $id);
-
-            $this->arguments['category__in'] = $ids;
+            $this->arguments['category__in'] = Arr::prepend($ids, $id);
 
             return $this;
         }

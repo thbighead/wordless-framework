@@ -29,9 +29,7 @@ trait OrderBy
 
     public function orderByAscending(ColumnReference $column, ColumnReference ...$columns): static
     {
-        array_unshift($columns, $column);
-
-        foreach ($columns as $column) {
+        foreach (Arr::prepend($columns, $column) as $column) {
             $this->orderBy($column);
         }
 
@@ -40,9 +38,7 @@ trait OrderBy
 
     public function orderByDescending(ColumnReference $column, ColumnReference ...$columns): static
     {
-        array_unshift($columns, $column);
-
-        foreach ($columns as $column) {
+        foreach (Arr::prepend($columns, $column) as $column) {
             $this->orderBy($column, Direction::descending);
         }
 

@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\QueryBuilder;
 
+use Wordless\Application\Helpers\Arr;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\AndWhereComparisons;
@@ -98,9 +99,7 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
 
     public function andWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): AndComparison
     {
-        array_unshift($objectTypes, $objectType);
-
-        return new AndComparison($this->whereCanOnlyBeUsedBy(...$objectTypes));
+        return new AndComparison($this->whereCanOnlyBeUsedBy(...Arr::prepend($objectTypes, $objectType)));
     }
 
     public function andWhereDeletePermission(string $capability): AndComparison
@@ -210,9 +209,7 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
 
     public function notWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): NotComparison
     {
-        array_unshift($objectTypes, $objectType);
-
-        return new NotComparison($this->whereCanOnlyBeUsedBy(...$objectTypes));
+        return new NotComparison($this->whereCanOnlyBeUsedBy(...Arr::prepend($objectTypes, $objectType)));
     }
 
     public function notWhereDeletePermission(string $capability): NotComparison
@@ -312,9 +309,7 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
 
     public function orWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): OrComparison
     {
-        array_unshift($objectTypes, $objectType);
-
-        return new OrComparison($this->whereCanOnlyBeUsedBy(...$objectTypes));
+        return new OrComparison($this->whereCanOnlyBeUsedBy(...Arr::prepend($objectTypes, $objectType)));
     }
 
     public function orWhereDeletePermission(string $capability): OrComparison
