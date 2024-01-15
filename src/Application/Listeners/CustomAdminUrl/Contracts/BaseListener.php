@@ -15,6 +15,7 @@ abstract class BaseListener extends Listener
      * The function which shall be executed during hook
      */
     final protected const FUNCTION = 'load';
+    private const CONFIG_PREFIX = 'wordpress.admin.';
     private const DEFAULT_CUSTOM_ADMIN_URL = 'wordless';
 
     /**
@@ -23,7 +24,7 @@ abstract class BaseListener extends Listener
      */
     protected static function canHook(): bool
     {
-        return !empty((string)Config::tryToGetOrDefault('wordpress.admin.' . self::CUSTOM_ADMIN_URL_KEY));
+        return !empty((string)Config::tryToGetOrDefault(self::CONFIG_PREFIX . self::CUSTOM_ADMIN_URL_KEY));
     }
 
     /**
@@ -59,7 +60,7 @@ abstract class BaseListener extends Listener
      */
     protected static function newLoginSlug(): string|false
     {
-        return Config::tryToGetOrDefault('wordpress.admin.' . static::CUSTOM_ADMIN_URL_KEY, false);
+        return Config::tryToGetOrDefault(self::CONFIG_PREFIX . static::CUSTOM_ADMIN_URL_KEY, false);
     }
 
     /**
@@ -83,7 +84,7 @@ abstract class BaseListener extends Listener
     protected static function newRedirectUrl(): string
     {
         $configured_custom_url = (string)Config::tryToGetOrDefault(
-            'wordpress.admin.' . self::REDIRECT_FROM_DEFAULTS_TO_URL_KEY
+            self::CONFIG_PREFIX . self::REDIRECT_FROM_DEFAULTS_TO_URL_KEY
         );
 
         return empty($configured_custom_url) ? self::DEFAULT_CUSTOM_ADMIN_URL : $configured_custom_url;
