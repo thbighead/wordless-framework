@@ -12,11 +12,13 @@ use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\Key;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver\Traits\ArgumentsFixer;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver\Traits\Pagination;
 use WP_Post;
 
 trait Resolver
 {
+    use ArgumentsFixer;
     use Pagination;
 
     public function count(): int
@@ -91,17 +93,6 @@ trait Resolver
             ->resolveExtraArguments($arguments, $extra_arguments);
 
         return $arguments;
-    }
-
-    private function fixArguments(): array
-    {
-        if ($this->isForTypeAttachment() &&
-            !($this->arguments[self::KEY_POST_STATUS] === StandardStatus::ANY ||
-                $this->arguments[self::KEY_POST_STATUS] === StandardStatus::inherit->value)) {
-            $this->arguments[self::KEY_POST_STATUS] = StandardStatus::inherit->value;
-        }
-
-        return $this->arguments;
     }
 
     private function resolveExtraArguments(array &$arguments, array $extra_arguments): static

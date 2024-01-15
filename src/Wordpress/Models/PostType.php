@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\Models;
 
+use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Models\PostType\Traits\MixinWpPostType;
 use Wordless\Wordpress\Models\PostType\Traits\Repository;
@@ -40,8 +41,12 @@ class PostType
         return (array)$this->cap;
     }
 
-    public function is(string $type): bool
+    public function is(StandardType|string $type): bool
     {
+        if ($type instanceof StandardType) {
+            $type = $type->name;
+        }
+
         return $this->name === $type;
     }
 }

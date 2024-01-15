@@ -63,20 +63,40 @@ class Arr
         return $pointer;
     }
 
+    public static function hasAnyOtherValueThan(array $array, mixed $forbidden_value): bool
+    {
+        foreach ($array as $item) {
+            if ($item !== $forbidden_value) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static function hasValue(array $array, mixed $value): bool
+    {
+        return in_array($value, $array, true);
+    }
+
     public static function isAssociative(array $array): bool
     {
         return array_keys($array) !== range(0, count($array) - 1);
     }
 
-    public static function searchValueKey(array $array, $value): int|string|null
+    public static function only(array $array, array $only_keys): array
     {
-        foreach ($array as $key => $item) {
-            if ($item === $value) {
-                return $key;
+        $filtered_array = [];
+
+        foreach ($only_keys as $key_to_filter) {
+            try {
+                $filtered_array[$key_to_filter] = static::getOrFail($array, $key_to_filter);
+            } catch (FailedToFindArrayKey) {
+                continue;
             }
         }
 
-        return null;
+        return $filtered_array;
     }
 
     public static function recursiveJoin(array $array_1, array $array_2, array ...$arrays): array
@@ -93,19 +113,15 @@ class Arr
         return $joined_array;
     }
 
-    public static function only(array $array, array $only_keys): array
+    public static function searchValueKey(array $array, $value): int|string|null
     {
-        $filtered_array = [];
-
-        foreach ($only_keys as $key_to_filter) {
-            try {
-                $filtered_array[$key_to_filter] = static::getOrFail($array, $key_to_filter);
-            } catch (FailedToFindArrayKey) {
-                continue;
+        foreach ($array as $key => $item) {
+            if ($item === $value) {
+                return $key;
             }
         }
 
-        return $filtered_array;
+        return null;
     }
 
     public static function wrap($something): array

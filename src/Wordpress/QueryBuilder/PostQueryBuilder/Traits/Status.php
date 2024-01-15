@@ -16,13 +16,19 @@ trait Status
     {
         array_unshift($statuses, $status);
 
-        if (!isset($this->arguments[self::KEY_POST_STATUS])) {
+        if (!isset($this->arguments[self::KEY_POST_STATUS]) || $this->isWhereStatusAny()) {
             $this->arguments[self::KEY_POST_STATUS] = [];
         }
 
         foreach ($statuses as $status) {
             if (!is_string($status)) {
                 $status = $this->extractStatusString($status);
+            }
+
+            if ($this->isStatusAny($status)) {
+                $this->arguments[self::KEY_POST_STATUS] = StandardStatus::ANY;
+
+                return $this;
             }
 
             $this->arguments[self::KEY_POST_STATUS][$status] = $status;
@@ -39,17 +45,31 @@ trait Status
         };
     }
 
-    private function isForStatus(StandardStatus|PostStatus|string $status): bool
+    private function isStatusAny(StandardStatus|PostStatus|string $status): bool
+    {
+        return $this->extractStatusString($status) === StandardStatus::ANY;
+    }
+
+    private function isWhereStatusAny(): bool
+    {
+        return !is_null($this->arguments[self::KEY_POST_STATUS][StandardStatus::ANY] ?? null);
+    }
+
+    private function isWhereStatusIncluding(StandardStatus|PostStatus|string $status): bool
     {
         if (!is_string($status)) {
             $status = $this->extractStatusString($status);
         }
 
+        if ($this->isStatusAny($status)) {
+            return true;
+        }
+
         return ($this->arguments[self::KEY_POST_STATUS][$status] ?? null) === $status;
     }
 
-    private function isForStatusAny(): bool
+    private function isWhereStatusIncludingPublish(): bool
     {
-        return $this->isForStatus(StandardStatus::ANY);
+        return $this->isWhereStatusIncluding(StandardStatus::publish);
     }
 }

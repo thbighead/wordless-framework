@@ -19,6 +19,7 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Search;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Status;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Tag;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Type;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\WhereId;
 use WP_Query;
 
@@ -32,6 +33,7 @@ class PostQueryBuilder extends WpQueryBuilder
     use Search;
     use Status;
     use Tag;
+    use Type;
     use WhereId;
 
     final public const KEY_NO_FOUND_ROWS = 'no_found_rows';
@@ -113,39 +115,6 @@ class PostQueryBuilder extends WpQueryBuilder
         return $this;
     }
 
-    /**
-     * @param StandardType|PostType|string $type
-     * @param StandardType|PostType|string ...$types
-     * @return $this
-     */
-    public function whereType(StandardType|PostType|string $type, StandardType|PostType|string ...$types): static
-    {
-        if (!isset($this->arguments[PostType::QUERY_TYPE_KEY])) {
-            $this->arguments[PostType::QUERY_TYPE_KEY] = [];
-        }
-
-        array_unshift($types, $type);
-
-        foreach ($types as $type) {
-            $this->arguments[PostType::QUERY_TYPE_KEY][] = $this->retrieveTypeAsString($type);
-        }
-
-        return $this;
-    }
-
-    private function retrieveTypeAsString(StandardType|PostType|string $type): string
-    {
-        if ($type instanceof StandardType) {
-            return $type->name;
-        }
-
-        if ($type instanceof PostType) {
-            return $type->name;
-        }
-
-        return $type;
-    }
-
     public function withStickyPosts(): static
     {
         $this->arguments[self::KEY_IGNORE_STICKY_POSTS] = false;
@@ -185,34 +154,6 @@ class PostQueryBuilder extends WpQueryBuilder
         $this->arguments[Posts::KEY_POSTS_PER_PAGE] = -1;
 
         return $this;
-    }
-
-    private function isForTypeAttachment(): bool
-    {
-        if (!isset($this->arguments[PostType::QUERY_TYPE_KEY])) {
-            return false;
-        }
-
-        foreach ($this->arguments[PostType::QUERY_TYPE_KEY] as $type) {
-            if ($this->isTypeAttachment($type)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function isTypeAttachment(StandardType|PostType|string $type): bool
-    {
-        if ($type instanceof StandardType) {
-            return $type === StandardType::attachment;
-        }
-
-        if ($type instanceof PostType) {
-            return $type->is(StandardType::attachment->name);
-        }
-
-        return $type === StandardType::attachment->name;
     }
 
     private function query(array $extra_arguments = []): array

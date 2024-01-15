@@ -181,6 +181,7 @@ if (Environment::get('WORDLESS_CSP', false)) {
         header('Strict-Transport-Security: max-age=63072000; includeSubDomains; preload');
         header('X-Content-Type-Options: nosniff');
         header('X-XSS-Protection: 1; mode=block');
+        /** @noinspection PhpUnhandledExceptionInspection */
         CSPBuilder::fromArray(Config::get(Config::KEY_CSP))->sendCSPHeader();
     }
 }
