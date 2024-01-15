@@ -13,6 +13,8 @@ class Config
 {
     use Internal;
 
+    final public const KEY_CSP = 'csp';
+
     /**
      * @param string $key
      * @return mixed

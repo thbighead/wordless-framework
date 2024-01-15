@@ -8,7 +8,7 @@ use Wordless\Application\Commands\Migrations\MigrateRollback;
 use Wordless\Application\Commands\Migrations\MigrationList;
 use Wordless\Infrastructure\Provider;
 
-final class MigrationsProvider extends Provider
+class MigrationsProvider extends Provider
 {
     public function registerCommands(): array
     {

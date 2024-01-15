@@ -23,7 +23,7 @@ $providers = [
 ];
 
 return [
-    'csp' => [
+    Config::KEY_CSP => [
         'default-src' => ['self' => true],
         'frame-ancestors' => [],
         'upgrade-insecure-requests' => true,

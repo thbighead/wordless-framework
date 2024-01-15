@@ -9,7 +9,7 @@ use Wordless\Application\Commands\Makers\MakeListener;
 use Wordless\Application\Commands\Makers\MakeMigration;
 use Wordless\Infrastructure\Provider;
 
-final class MakersProvider extends Provider
+class MakersProvider extends Provider
 {
     public function registerCommands(): array
     {

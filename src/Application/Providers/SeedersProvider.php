@@ -8,7 +8,7 @@ use Wordless\Application\Commands\Seeders\Seed;
 use Wordless\Application\Commands\Seeders\TaxonomyTermsSeeder;
 use Wordless\Infrastructure\Provider;
 
-final class SeedersProvider extends Provider
+class SeedersProvider extends Provider
 {
     public function registerCommands(): array
     {

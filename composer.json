@@ -36,6 +36,7 @@
     "doctrine/inflector": "^2.0",
     "lcobucci/jwt": "^5.2",
     "nesbot/carbon": "^2.72",
+    "paragonie/csp-builder": "^3.0",
     "ramsey/uuid": "^4.7",
     "roots/wordpress": "^6.4",
     "symfony/console": "^6.3",

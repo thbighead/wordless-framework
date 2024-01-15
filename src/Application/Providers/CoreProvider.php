@@ -26,7 +26,7 @@ use Wordless\Application\Listeners\ShowCustomFrontPageAtAdminSideMenu;
 use Wordless\Application\Listeners\WordlessVersionOnAdmin;
 use Wordless\Infrastructure\Provider;
 
-final class CoreProvider extends Provider
+class CoreProvider extends Provider
 {
     public function registerCommands(): array
     {

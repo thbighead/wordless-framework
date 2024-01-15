@@ -9,7 +9,7 @@ use Wordless\Application\Commands\Utility\WpHooksList;
 use Wordless\Application\Commands\HelixShell;
 use Wordless\Infrastructure\Provider;
 
-final class UtilityProvider extends Provider
+class UtilityProvider extends Provider
 {
     public function registerCommands(): array
     {

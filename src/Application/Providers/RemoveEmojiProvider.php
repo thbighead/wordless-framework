@@ -13,7 +13,7 @@ use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Wordpress\Hook\Enums\Action;
 use Wordless\Wordpress\Hook\Enums\Filter;
 
-final class RemoveEmojiProvider extends Provider
+class RemoveEmojiProvider extends Provider
 {
     final public const CONFIG_KEY_REMOVE_WP_EMOJIS = 'remove_wp_emojis';
     private const FUNCTION_PRINT_EMOJI_DETECTION_SCRIPT = 'print_emoji_detection_script';

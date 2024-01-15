@@ -2,7 +2,7 @@
 
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Listeners\ChooseImageEditor;
-use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener as CustomAdminUrl;
+use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener as CustomAdminUrlListener;
 use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
 use Wordless\Application\Providers\RemoveEmojiProvider;
@@ -26,8 +26,8 @@ return [
             DefaultRole::admin->value => true,
             DefaultRole::author->value => false,
         ],
-        CustomAdminUrl::REDIRECT_FROM_DEFAULTS_TO_URL_KEY => false,
-        CustomAdminUrl::CUSTOM_ADMIN_URL_KEY => false,
+        CustomAdminUrlListener::REDIRECT_FROM_DEFAULTS_TO_URL_KEY => null,
+        CustomAdminUrlListener::CUSTOM_ADMIN_URL_KEY => null,
         'enable_comments' => false,
         Bootstrapper::ERROR_REPORTING_KEY => Environment::isProduction()
             ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
