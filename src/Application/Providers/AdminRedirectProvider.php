@@ -4,17 +4,18 @@ namespace Wordless\Application\Providers;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Listeners\CustomLoginUrl\LoadCustomLoginUrl;
-use Wordless\Application\Listeners\CustomLoginUrl\NetworkSiteUrlCustomLoginUrl;
-use Wordless\Application\Listeners\CustomLoginUrl\RedirectCustomLoginUrl;
-use Wordless\Application\Listeners\CustomLoginUrl\SiteUrlCustomLoginUrl;
-use Wordless\Application\Listeners\CustomLoginUrl\WpLoadedCustomLoginUrl;
+use Wordless\Application\Listeners\CustomAdminUrl\LoadCustomLoginUrl;
+use Wordless\Application\Listeners\CustomAdminUrl\NetworkSiteUrlCustomLoginUrl;
+use Wordless\Application\Listeners\CustomAdminUrl\RedirectCustomLoginUrl;
+use Wordless\Application\Listeners\CustomAdminUrl\SiteUrlCustomLoginUrl;
+use Wordless\Application\Listeners\CustomAdminUrl\WpLoadedCustomAdminUrl;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO\Exceptions\TriedToSetFunctionWhenRemovingListener;
 use Wordless\Infrastructure\Wordpress\Listener;
+use Wordless\Wordpress\Hook\Enums\Action;
 
-class LoginRedirectProvider extends Provider
+class AdminRedirectProvider extends Provider
 {
     private const CONFIG_PREFIX = 'wordpress.admin.';
 
@@ -28,7 +29,7 @@ class LoginRedirectProvider extends Provider
 
         if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . 'wp_custom_login_url', false)) {
             $additional_hooks_configs[] = LoadCustomLoginUrl::class;
-            $additional_hooks_configs[] = WpLoadedCustomLoginUrl::class;
+            $additional_hooks_configs[] = WpLoadedCustomAdminUrl::class;
             $additional_hooks_configs[] = SiteUrlCustomLoginUrl::class;
             $additional_hooks_configs[] = NetworkSiteUrlCustomLoginUrl::class;
             $additional_hooks_configs[] = RedirectCustomLoginUrl::class;
@@ -47,7 +48,7 @@ class LoginRedirectProvider extends Provider
         $hooks_to_remove = [];
 
         if (Config::tryToGetOrDefault(self::CONFIG_PREFIX . 'wp_custom_login_url', false)) {
-            $hooks_to_remove[] = RemoveHookDTO::make('template_redirect')
+            $hooks_to_remove[] = RemoveHookDTO::make(Action::template_redirect->value)
                 ->setFunction('wp_redirect_admin_locations', 1000);
         }
 

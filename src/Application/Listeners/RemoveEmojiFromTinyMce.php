@@ -17,7 +17,6 @@ class RemoveEmojiFromTinyMce extends FilterListener
     public static function removeEmojis($plugins): array
     {
         if (is_array($plugins)) {
-            /** @noinspection SpellCheckingInspection */
             return array_diff($plugins, ['wpemoji']);
         }
 

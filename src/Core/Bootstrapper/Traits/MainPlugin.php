@@ -82,6 +82,10 @@ trait MainPlugin
             $customTaxonomyClassNamespace::register();
         }
 
+        foreach ($provider->registerPostStatus() as $customPostStatusClassNamespace) {
+            $customPostStatusClassNamespace::register();
+        }
+
         foreach ($provider->registerPostTypes() as $customPostTypeClassNamespace) {
             $customPostTypeClassNamespace::register();
         }

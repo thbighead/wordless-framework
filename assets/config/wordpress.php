@@ -2,14 +2,14 @@
 
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Listeners\ChooseImageEditor;
-use Wordless\Application\Listeners\CustomLoginUrl\Contracts\BaseListener as CustomLoginUrl;
+use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener as CustomAdminUrl;
 use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
+use Wordless\Application\Providers\RemoveEmojiProvider;
 use Wordless\Application\Providers\RestApiProvider;
 use Wordless\Application\Providers\WpSpeedUpProvider;
 use Wordless\Core\Bootstrapper;
 use Wordless\Wordpress\Enums\StartOfWeek;
-use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 
 return [
@@ -18,7 +18,7 @@ return [
     'version' => 'latest',
     'permalink' => '/%postname%/',
     'admin' => [
-        WpSpeedUpProvider::CONFIG_KEY_REMOVE_WP_EMOJIS => false,
+        RemoveEmojiProvider::CONFIG_KEY_REMOVE_WP_EMOJIS => false,
         WpSpeedUpProvider::CONFIG_KEY_SPEED_UP_WP => true,
         DoNotLoadWpAdminBarOutsidePanel::SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY => true,
         ChooseImageEditor::IMAGE_LIBRARY_CONFIG_KEY => ChooseImageEditor::IMAGE_LIBRARY_CONFIG_VALUE_IMAGICK,
@@ -26,8 +26,8 @@ return [
             DefaultRole::admin->value => true,
             DefaultRole::author->value => false,
         ],
-        CustomLoginUrl::WP_REDIRECT_URL_KEY => false,
-        CustomLoginUrl::WP_CUSTOM_LOGIN_URL_KEY => false,
+        CustomAdminUrl::REDIRECT_FROM_DEFAULTS_TO_URL_KEY => false,
+        CustomAdminUrl::CUSTOM_ADMIN_URL_KEY => false,
         'enable_comments' => false,
         Bootstrapper::ERROR_REPORTING_KEY => Environment::isProduction()
             ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED

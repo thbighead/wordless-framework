@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Listeners\CustomLoginUrl\Contracts;
+namespace Wordless\Application\Listeners\CustomAdminUrl\Contracts;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -9,20 +9,21 @@ use Wordless\Infrastructure\Wordpress\Listener;
 
 abstract class BaseListener extends Listener
 {
-    final public const WP_CUSTOM_LOGIN_URL_KEY = 'wp_custom_login_url';
-    final public const WP_REDIRECT_URL_KEY = 'wp_redirect_url';
+    final public const CUSTOM_ADMIN_URL_KEY = 'custom_admin_url';
+    final public const REDIRECT_FROM_DEFAULTS_TO_URL_KEY = 'redirect_from_defaults_to_url';
     /**
      * The function which shall be executed during hook
      */
     final protected const FUNCTION = 'load';
+    private const DEFAULT_CUSTOM_ADMIN_URL = 'wordless';
 
     /**
-     * @return string|false
+     * @return bool
      * @throws PathNotFoundException
      */
-    protected static function canHook(): string|false
+    protected static function canHook(): bool
     {
-        return Config::tryToGetOrDefault('wordpress.admin.' . static::WP_CUSTOM_LOGIN_URL_KEY, false);
+        return !empty((string)Config::tryToGetOrDefault('wordpress.admin.' . self::CUSTOM_ADMIN_URL_KEY));
     }
 
     /**
@@ -58,7 +59,7 @@ abstract class BaseListener extends Listener
      */
     protected static function newLoginSlug(): string|false
     {
-        return Config::tryToGetOrDefault('wordpress.admin.' . static::WP_CUSTOM_LOGIN_URL_KEY, false);
+        return Config::tryToGetOrDefault('wordpress.admin.' . static::CUSTOM_ADMIN_URL_KEY, false);
     }
 
     /**
@@ -76,11 +77,15 @@ abstract class BaseListener extends Listener
     }
 
     /**
-     * @return bool
+     * @return string
      * @throws PathNotFoundException
      */
-    protected static function newRedirectUrl(): bool
+    protected static function newRedirectUrl(): string
     {
-        return Config::tryToGetOrDefault('wordpress.admin.' . self::WP_REDIRECT_URL_KEY, false);
+        $configured_custom_url = (string)Config::tryToGetOrDefault(
+            'wordpress.admin.' . self::REDIRECT_FROM_DEFAULTS_TO_URL_KEY
+        );
+
+        return empty($configured_custom_url) ? self::DEFAULT_CUSTOM_ADMIN_URL : $configured_custom_url;
     }
 }

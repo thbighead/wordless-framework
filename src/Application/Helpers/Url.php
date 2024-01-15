@@ -4,7 +4,7 @@ namespace Wordless\Application\Helpers;
 
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Url\Traits\Internal;
-use Wordless\Application\Listeners\CustomLoginUrl\Contracts\BaseListener;
+use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener;
 
 class Url
 {
@@ -50,7 +50,7 @@ class Url
     public static function isCurrentAdminLogin(): bool
     {
         $custom_admin_login_uri = Config::tryToGetOrDefault(
-            'wordpress.admin.' . BaseListener::WP_CUSTOM_LOGIN_URL_KEY
+            'wordpress.admin.' . BaseListener::CUSTOM_ADMIN_URL_KEY
         );
 
         if (empty($custom_admin_login_uri)) {

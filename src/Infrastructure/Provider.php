@@ -7,6 +7,7 @@ use Wordless\Infrastructure\Provider\Traits\EnqueueablesRegistration;
 use Wordless\Infrastructure\Provider\Traits\ListenersRegistration;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Infrastructure\Wordpress\CustomPost;
+use Wordless\Infrastructure\Wordpress\CustomPostStatus;
 use Wordless\Infrastructure\Wordpress\Menu;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
 
@@ -52,6 +53,14 @@ abstract class Provider
      * @return string[]
      */
     public function registerMigrations(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return string[]|CustomPostStatus[]
+     */
+    public function registerPostStatus(): array
     {
         return [];
     }

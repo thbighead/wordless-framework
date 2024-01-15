@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Listeners\CustomLoginUrl;
+namespace Wordless\Application\Listeners\CustomAdminUrl;
 
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Listeners\CustomLoginUrl\Contracts\BaseListener;
+use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener\Traits\Adapter as ActionListener;
 use Wordless\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Wordpress\Hook\Enums\Action;

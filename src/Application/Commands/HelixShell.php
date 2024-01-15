@@ -11,7 +11,7 @@ use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 
-class WpHelixShell extends ConsoleCommand
+class HelixShell extends ConsoleCommand
 {
     use LoadWpConfig;
     use RunWpCliCommand;

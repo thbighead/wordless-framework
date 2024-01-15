@@ -36,7 +36,7 @@ use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFil
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Application\Listeners\CustomLoginUrl\Contracts\BaseListener as CustomLoginUrl;
+use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener as CustomLoginUrl;
 use Wordless\Application\Mounters\Stub\RobotsTxtStubMounter;
 use Wordless\Application\Mounters\Stub\WordlessPluginStubMounter;
 use Wordless\Application\Mounters\Stub\WpConfigStubMounter;
@@ -311,7 +311,7 @@ class WordlessInstall extends ConsoleCommand
         );
 
         $custom_login_url = Config::tryToGetOrDefault(
-            'wordpress.admin.' . CustomLoginUrl::WP_CUSTOM_LOGIN_URL_KEY,
+            'wordpress.admin.' . CustomLoginUrl::CUSTOM_ADMIN_URL_KEY,
             false
         );
 

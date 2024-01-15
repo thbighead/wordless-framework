@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Listeners\CustomLoginUrl;
+namespace Wordless\Application\Listeners\CustomAdminUrl;
 
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Listeners\CustomLoginUrl\Contracts\BaseListener;
+use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener\Traits\Adapter as ActionListener;
 use Wordless\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Wordpress\Hook\Enums\Action;
 
-class WpLoadedCustomLoginUrl extends BaseListener
+class WpLoadedCustomAdminUrl extends BaseListener
 {
     use ActionListener;
 
@@ -72,16 +72,17 @@ class WpLoadedCustomLoginUrl extends BaseListener
     }
 
     /**
+     * @return void
      * @throws PathNotFoundException
      */
     private static function redirectToFrontPageOrCustomRedirectUrl(): void
     {
         if ($redirect_to = static::newRedirectUrl()) {
             wp_safe_redirect("/$redirect_to");
-            die();
+            die;
         }
 
         wp_safe_redirect('/');
-        die();
+        die;
     }
 }

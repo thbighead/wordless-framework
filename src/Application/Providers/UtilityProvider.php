@@ -6,7 +6,7 @@ use Wordless\Application\Commands\Utility\DatabaseOverwrite;
 use Wordless\Application\Commands\Utility\ReplaceBaseUrls;
 use Wordless\Application\Commands\Utility\RunTests;
 use Wordless\Application\Commands\Utility\WpHooksList;
-use Wordless\Application\Commands\WpHelixShell;
+use Wordless\Application\Commands\HelixShell;
 use Wordless\Infrastructure\Provider;
 
 final class UtilityProvider extends Provider
@@ -17,7 +17,7 @@ final class UtilityProvider extends Provider
             DatabaseOverwrite::class,
             ReplaceBaseUrls::class,
             RunTests::class,
-            WpHelixShell::class,
+            HelixShell::class,
             WpHooksList::class,
         ];
     }

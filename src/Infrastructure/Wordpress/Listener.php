@@ -23,7 +23,7 @@ abstract class Listener
             static::hook()->value,
             [static::class, static::FUNCTION],
             static::priority(),
-            static::functionNumberOfArgumentsAccepted()
+            abs(static::functionNumberOfArgumentsAccepted())
         );
     }
 
