@@ -4,16 +4,17 @@ namespace Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\ComparisonTaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\NotWhereComparisons;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\WhereOperator;
 
-final class NotComparison extends BaseTaxonomyQueryBuilder implements NotWhereComparisons
+final class NotComparison extends ComparisonTaxonomyQueryBuilder implements NotWhereComparisons
 {
     public function __construct(TaxonomyQueryBuilder $taxonomyQueryBuilder)
     {
-        $this->format = $taxonomyQueryBuilder->getResultFormat();
         $this->operator = WhereOperator::not;
+
+        parent::__construct($taxonomyQueryBuilder);
     }
 
     public function notOnlyAvailableInAdminMenu(): NotComparison

@@ -4,16 +4,17 @@ namespace Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\ComparisonTaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\OrWhereComparisons;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\WhereOperator;
 
-final class OrComparison extends BaseTaxonomyQueryBuilder implements OrWhereComparisons
+final class OrComparison extends ComparisonTaxonomyQueryBuilder implements OrWhereComparisons
 {
     public function __construct(TaxonomyQueryBuilder $taxonomyQueryBuilder)
     {
-        $this->format = $taxonomyQueryBuilder->getResultFormat();
         $this->operator = WhereOperator::or;
+
+        parent::__construct($taxonomyQueryBuilder);
     }
 
     public function orOnlyAvailableInAdminMenu(): OrComparison

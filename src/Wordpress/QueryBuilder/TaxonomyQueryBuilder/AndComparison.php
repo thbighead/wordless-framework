@@ -5,15 +5,16 @@ namespace Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\AndWhereComparisons;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\ComparisonTaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\WhereOperator;
 
-final class AndComparison extends BaseTaxonomyQueryBuilder implements AndWhereComparisons
+final class AndComparison extends ComparisonTaxonomyQueryBuilder implements AndWhereComparisons
 {
     public function __construct(TaxonomyQueryBuilder $taxonomyQueryBuilder)
     {
-        $this->format = $taxonomyQueryBuilder->getResultFormat();
         $this->operator = WhereOperator::and;
+
+        parent::__construct($taxonomyQueryBuilder);
     }
 
     public function andOnlyAvailableInAdminMenu(): AndComparison

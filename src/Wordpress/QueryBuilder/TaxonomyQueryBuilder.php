@@ -26,11 +26,6 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
         $this->format = $format;
     }
 
-    public function getResultFormat(): ResultFormat
-    {
-        return $this->format;
-    }
-
     public function andOnlyAvailableInAdminMenu(): AndComparison
     {
         return new AndComparison($this->onlyAvailableInAdminMenu());
@@ -131,6 +126,16 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
     public function andWhereUrlQueryVariable(string $query_variable): AndComparison
     {
         return new AndComparison($this->whereUrlQueryVariable($query_variable));
+    }
+
+    public function getArguments(): array
+    {
+        return $this->arguments;
+    }
+
+    public function getResultFormat(): ResultFormat
+    {
+        return $this->format;
     }
 
     public function notOnlyAvailableInAdminMenu(): NotComparison
@@ -247,7 +252,7 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
 
     public function orOnlyAvailableInTagCloud(): OrComparison
     {
-        return new OrComparison($this->onlyAvailableInTagCloud());
+        return new OrComparison($this->onlyAvailableInAdminMenu());
     }
 
     public function orOnlyCustom(): OrComparison
