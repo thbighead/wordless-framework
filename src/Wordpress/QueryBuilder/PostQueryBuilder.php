@@ -15,6 +15,7 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Category;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Comment;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Id;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Password;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Search;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Slug;
@@ -30,6 +31,7 @@ class PostQueryBuilder extends WpQueryBuilder
     use Comment;
     use Id;
     use OrderBy;
+    use Password;
     use Resolver;
     use Search;
     use Slug;
@@ -37,9 +39,7 @@ class PostQueryBuilder extends WpQueryBuilder
     use Tag;
     use Type;
 
-    private const KEY_HAS_PASSWORD = 'has_password';
     private const KEY_IGNORE_STICKY_POSTS = 'ignore_sticky_posts';
-    private const KEY_POST_PASSWORD = 'post_password';
 
     public function __construct(StandardType|PostType|null $postType = null)
     {
@@ -49,26 +49,6 @@ class PostQueryBuilder extends WpQueryBuilder
             ->setPostsFormat(PostsListFormat::all_fields);
 
         parent::__construct();
-    }
-
-    public function onlyWithoutPassword(): static
-    {
-        $this->arguments[self::KEY_HAS_PASSWORD] = false;
-
-        unset($this->arguments[self::KEY_POST_PASSWORD]);
-
-        return $this;
-    }
-
-    public function onlyWithPassword(?string $password): static
-    {
-        $this->arguments[self::KEY_HAS_PASSWORD] = true;
-
-        if ($password !== null) {
-            $this->arguments[self::KEY_POST_PASSWORD] = $password;
-        }
-
-        return $this;
     }
 
     public function whereMeta(MetaSubQueryBuilder $subQuery): static
