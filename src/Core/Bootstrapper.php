@@ -33,8 +33,9 @@ final class Bootstrapper extends Singleton
      * @throws InvalidConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
+     * @noinspection PhpUnnecessaryStaticReferenceInspection
      */
-    public static function getInstance(): self
+    public static function getInstance(): static
     {
         return parent::getInstance()->load();
     }
