@@ -56,7 +56,7 @@ trait Boolean
             }
         }
 
-        return $contains;
+        return (bool)$contains;
     }
 
     /**
