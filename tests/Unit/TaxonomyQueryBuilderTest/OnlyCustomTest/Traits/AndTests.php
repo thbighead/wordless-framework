@@ -1,26 +1,25 @@
 <?php
 
-namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest;
+namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyCustomTest\Traits;
 
 use ReflectionException;
-use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 
-class AndOnlyHiddenInTagCloudTest extends TaxonomyBuilderTestCase
+trait AndTests
 {
     /**
      * @return void
      * @throws ReflectionException
      */
-    public function testAndOnlyHiddenInTagCloud(): void
+    public function testAndOnlyCustom(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andOnlyHiddenFromTagCloud();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andOnlyCustom();
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
         $this->assertEquals(
-            ['show_tagcloud' => false],
+            ['_builtin' => false],
             $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
         );
     }
@@ -29,16 +28,16 @@ class AndOnlyHiddenInTagCloudTest extends TaxonomyBuilderTestCase
      * @return void
      * @throws ReflectionException
      */
-    public function testAndOnlyHiddenInTagCloudWhereAlreadySet(): void
+    public function testAndOnlyCustomWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andOnlyAvailableInTagCloud()
-            ->andOnlyHiddenFromTagCloud();
+            ->andOnlyDefault()
+            ->andOnlyCustom();
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
         $this->assertEquals(
-            ['show_tagcloud' => false],
+            ['_builtin' => false],
             $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
         );
     }
@@ -47,20 +46,18 @@ class AndOnlyHiddenInTagCloudTest extends TaxonomyBuilderTestCase
      * @return void
      * @throws ReflectionException
      */
-    public function testAndOnlyHiddenInTagCloudWhitSomeArguments(): void
+    public function testAndOnlyCustomWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
             ->andWhereName('name')
-            ->andOnlyDefault()
-            ->andOnlyHiddenFromTagCloud();
+            ->andOnlyCustom();
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
-                'show_tagcloud' => false,
                 'name' => 'name',
-                '_builtin' => true,
+                '_builtin' => false,
             ],
             $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
         );

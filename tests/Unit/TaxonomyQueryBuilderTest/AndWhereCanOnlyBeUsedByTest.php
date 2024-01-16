@@ -4,41 +4,25 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest;
 
 use ReflectionException;
 use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
+use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 
-class AndOnlyAvailableInRestApiTest extends TaxonomyBuilderTestCase
+class AndWhereCanOnlyBeUsedByTest extends TaxonomyBuilderTestCase
 {
     /**
      * @return void
      * @throws ReflectionException
      */
-    public function testAndOnlyAvailableInRestApi(): void
-    {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andOnlyAvailableInRestApi();
-
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
-
-        $this->assertEquals(
-            ['show_in_rest' => true],
-            $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
-        );
-    }
-
-    /**
-     * @return void
-     * @throws ReflectionException
-     */
-    public function testAndOnlyAvailableInRestApiWhereAlreadySet(): void
+    public function testAndWhereCanOnlyBeUsedBy(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andOnlyHiddenFromRestApi()
-            ->andOnlyAvailableInRestApi();
+            ->andWhereCanOnlyBeUsedBy(ObjectType::post);
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
         $this->assertEquals(
-            ['show_in_rest' => true],
+            ['object_type' => [ObjectType::post->name]],
             $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
         );
     }
@@ -47,18 +31,54 @@ class AndOnlyAvailableInRestApiTest extends TaxonomyBuilderTestCase
      * @return void
      * @throws ReflectionException
      */
-    public function testAndOnlyAvailableInRestApiWhitSomeArguments(): void
+    public function testAndWhereCanOnlyBeUsedByWhereSameAlreadySet(): void
+    {
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+            ->andWhereCanOnlyBeUsedBy(ObjectType::post)
+            ->andWhereCanOnlyBeUsedBy(ObjectType::post);
+
+        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+
+        $this->assertEquals(
+            ['object_type' => [ObjectType::post->name]],
+            $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testAndWhereCanOnlyBeUsedByWhereAlreadySet(): void
+    {
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+            ->andWhereCanOnlyBeUsedBy(ObjectType::post)
+            ->andWhereCanOnlyBeUsedBy(ObjectType::comment);
+
+        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+
+        $this->assertEquals(
+            ['object_type' => [ObjectType::comment->name]],
+            $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testAndWhereCanOnlyBeUsedByWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
             ->andWhereName('name')
             ->andOnlyDefault()
-            ->andOnlyAvailableInRestApi();
+            ->andWhereCanOnlyBeUsedBy(ObjectType::post);
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
-                'show_in_rest' => true,
+                'object_type' => [ObjectType::post->name],
                 'name' => 'name',
                 '_builtin' => true,
             ],

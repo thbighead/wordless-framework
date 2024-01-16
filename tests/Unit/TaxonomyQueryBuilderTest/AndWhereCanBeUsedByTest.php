@@ -4,23 +4,24 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest;
 
 use ReflectionException;
 use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
+use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 
-class AndOnlyHiddenInTagCloudTest extends TaxonomyBuilderTestCase
+class AndWhereCanBeUsedByTest extends TaxonomyBuilderTestCase
 {
     /**
      * @return void
      * @throws ReflectionException
      */
-    public function testAndOnlyHiddenInTagCloud(): void
+    public function testAndWhereCanBeUsedBy(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andOnlyHiddenFromTagCloud();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andWhereCanBeUsedBy(ObjectType::post);
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
         $this->assertEquals(
-            ['show_tagcloud' => false],
+            ['object_type' => [ObjectType::post->name]],
             $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
         );
     }
@@ -29,16 +30,16 @@ class AndOnlyHiddenInTagCloudTest extends TaxonomyBuilderTestCase
      * @return void
      * @throws ReflectionException
      */
-    public function testAndOnlyHiddenInTagCloudWhereAlreadySet(): void
+    public function testAndWhereCanBeUsedByWhereSameAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andOnlyAvailableInTagCloud()
-            ->andOnlyHiddenFromTagCloud();
+            ->andWhereCanBeUsedBy(ObjectType::post)
+            ->andWhereCanBeUsedBy(ObjectType::post);
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
         $this->assertEquals(
-            ['show_tagcloud' => false],
+            ['object_type' => [ObjectType::post->name]],
             $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
         );
     }
@@ -47,18 +48,36 @@ class AndOnlyHiddenInTagCloudTest extends TaxonomyBuilderTestCase
      * @return void
      * @throws ReflectionException
      */
-    public function testAndOnlyHiddenInTagCloudWhitSomeArguments(): void
+    public function testAndWhereCanBeUsedByWhereAlreadySet(): void
+    {
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+            ->andWhereCanBeUsedBy(ObjectType::post)
+            ->andWhereCanBeUsedBy(ObjectType::comment);
+
+        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+
+        $this->assertEquals(
+            ['object_type' => [ObjectType::post->name, ObjectType::comment->name]],
+            $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testAndWhereCanBeUsedByWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
             ->andWhereName('name')
             ->andOnlyDefault()
-            ->andOnlyHiddenFromTagCloud();
+            ->andWhereCanBeUsedBy(ObjectType::post);
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
-                'show_tagcloud' => false,
+                'object_type' => [ObjectType::post->name],
                 'name' => 'name',
                 '_builtin' => true,
             ],

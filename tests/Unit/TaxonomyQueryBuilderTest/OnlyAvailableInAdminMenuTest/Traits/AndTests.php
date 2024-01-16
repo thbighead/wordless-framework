@@ -1,26 +1,25 @@
 <?php
 
-namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest;
+namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInAdminMenuTest\Traits;
 
 use ReflectionException;
-use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 
-class AndOnlyHiddenInTagCloudTest extends TaxonomyBuilderTestCase
+trait AndTests
 {
     /**
      * @return void
      * @throws ReflectionException
      */
-    public function testAndOnlyHiddenInTagCloud(): void
+    public function testAndOnlyAvailableInAdminMenu(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andOnlyHiddenFromTagCloud();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andOnlyAvailableInAdminMenu();
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
         $this->assertEquals(
-            ['show_tagcloud' => false],
+            ['show_ui' => true],
             $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
         );
     }
@@ -29,16 +28,16 @@ class AndOnlyHiddenInTagCloudTest extends TaxonomyBuilderTestCase
      * @return void
      * @throws ReflectionException
      */
-    public function testAndOnlyHiddenInTagCloudWhereAlreadySet(): void
+    public function testAndOnlyAvailableInAdminMenuWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andOnlyAvailableInTagCloud()
-            ->andOnlyHiddenFromTagCloud();
+            ->andOnlyHiddenFromAdminMenu()
+            ->andOnlyAvailableInAdminMenu();
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
         $this->assertEquals(
-            ['show_tagcloud' => false],
+            ['show_ui' => true],
             $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
         );
     }
@@ -47,18 +46,18 @@ class AndOnlyHiddenInTagCloudTest extends TaxonomyBuilderTestCase
      * @return void
      * @throws ReflectionException
      */
-    public function testAndOnlyHiddenInTagCloudWhitSomeArguments(): void
+    public function testAndOnlyAvailableInAdminMenuWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
             ->andWhereName('name')
             ->andOnlyDefault()
-            ->andOnlyHiddenFromTagCloud();
+            ->andOnlyAvailableInAdminMenu();
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
-                'show_tagcloud' => false,
+                'show_ui' => true,
                 'name' => 'name',
                 '_builtin' => true,
             ],

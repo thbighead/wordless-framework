@@ -7,38 +7,21 @@ use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 
-class AndOnlyAvailableInAdminMenuTest extends TaxonomyBuilderTestCase
+class AndWhereManagePermissionTest extends TaxonomyBuilderTestCase
 {
     /**
      * @return void
      * @throws ReflectionException
      */
-    public function testAndOnlyAvailableInAdminMenu(): void
-    {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andOnlyAvailableInAdminMenu();
-
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
-
-        $this->assertEquals(
-            ['show_ui' => true],
-            $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
-        );
-    }
-
-    /**
-     * @return void
-     * @throws ReflectionException
-     */
-    public function testAndOnlyAvailableInAdminMenuWhereAlreadySet(): void
+    public function testAndWhereManagePermission(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andOnlyHiddenFromAdminMenu()
-            ->andOnlyAvailableInAdminMenu();
+            ->andWhereManagePermission('capability');
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
         $this->assertEquals(
-            ['show_ui' => true],
+            ['manage_cap' => 'capability'],
             $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
         );
     }
@@ -47,18 +30,54 @@ class AndOnlyAvailableInAdminMenuTest extends TaxonomyBuilderTestCase
      * @return void
      * @throws ReflectionException
      */
-    public function testAndOnlyAvailableInAdminMenuWhitSomeArguments(): void
+    public function testAndWhereManagePermissionWhereSameAlreadySet(): void
+    {
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+            ->andWhereManagePermission('capability')
+            ->andWhereManagePermission('capability');
+
+        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+
+        $this->assertEquals(
+            ['manage_cap' => 'capability'],
+            $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testAndWhereManagePermissionWhereAlreadySet(): void
+    {
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+            ->andWhereManagePermission('capability_1')
+            ->andWhereManagePermission('capability_2');
+
+        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+
+        $this->assertEquals(
+            ['manage_cap' => 'capability_2'],
+            $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder)
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testAndWhereManagePermissionWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
             ->andWhereName('name')
             ->andOnlyDefault()
-            ->andOnlyAvailableInAdminMenu();
+            ->andWhereManagePermission('capability');
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
-                'show_ui' => true,
+                'manage_cap' => 'capability',
                 'name' => 'name',
                 '_builtin' => true,
             ],

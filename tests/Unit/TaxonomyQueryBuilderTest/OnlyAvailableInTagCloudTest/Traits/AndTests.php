@@ -1,13 +1,12 @@
 <?php
 
-namespace TaxonomyQueryBuilderTest;
+namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInTagCloudTest\Traits;
 
 use ReflectionException;
-use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 
-class AndOnlyAvailableInTagCloudTest extends TaxonomyBuilderTestCase
+trait AndTests
 {
     /**
      * @return void

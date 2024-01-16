@@ -249,7 +249,7 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
 
     public function orOnlyAvailableInTagCloud(): OrComparison
     {
-        return new OrComparison($this->onlyAvailableInAdminMenu());
+        return new OrComparison($this->onlyAvailableInTagCloud());
     }
 
     public function orOnlyCustom(): OrComparison

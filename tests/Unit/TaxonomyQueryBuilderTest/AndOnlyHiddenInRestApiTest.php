@@ -1,6 +1,6 @@
 <?php
 
-namespace TaxonomyQueryBuilderTest;
+namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest;
 
 use ReflectionException;
 use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
