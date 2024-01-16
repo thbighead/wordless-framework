@@ -16,7 +16,7 @@ class HideContentEditorForCustomFrontPageAtAdmin extends ActionListener
 
     public static function removeContentEditorFeatureFromCustomFrontPage(): void
     {
-        $post_id = $_GET['post'] ?: $_POST['post_ID'];
+        $post_id = $_GET['post'] ?? $_POST['post_ID'] ?? null;
 
         if (!is_numeric($post_id)) {
             return;

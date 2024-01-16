@@ -2,15 +2,12 @@
 
 namespace Wordless\Application\Guessers;
 
-use Wordless\Core\Main;
+use Wordless\Core\Composer\Main;
 use Wordless\Infrastructure\Guesser;
 
 class WordlessFrameworkVersionGuesser extends Guesser
 {
-    /**
-     * @inheritDoc
-     */
-    protected function guessValue()
+    protected function guessValue(): string
     {
         return Main::getFrameworkInstalledVersion();
     }
