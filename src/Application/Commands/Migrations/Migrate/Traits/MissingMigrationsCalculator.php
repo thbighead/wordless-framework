@@ -9,13 +9,13 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\InvalidMigrationFilename;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
-use Wordless\Infrastructure\Migration\Script;
+use Wordless\Infrastructure\Migration;
 
 trait MissingMigrationsCalculator
 {
     /** @var array<string, string[]> $executed_migrations_list */
     private array $executed_migrations_list;
-    /** @var array<string, Script> $migrations_missing_execution */
+    /** @var array<string, Migration> $migrations_missing_execution */
     private array $migrations_missing_execution;
 
     /**
@@ -63,7 +63,7 @@ trait MissingMigrationsCalculator
     }
 
     /**
-     * @return array<string, Script>
+     * @return array<string, Migration>
      * @throws FailedToFindExecutedMigrationScript
      * @throws InvalidConfigKey
      * @throws InvalidMigrationFilename
@@ -84,7 +84,7 @@ trait MissingMigrationsCalculator
     }
 
     /**
-     * @return array<string, Script>
+     * @return array<string, Migration>
      */
     private function instantiateMigrationScripts(): array
     {

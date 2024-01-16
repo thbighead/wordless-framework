@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-use Wordless\Infrastructure\Migration\Script;
+use Wordless\Infrastructure\Migration;
 
-final class DummyMigration implements Script
+return new class extends Migration
 {
     public function up(): void
     {
@@ -13,4 +13,4 @@ final class DummyMigration implements Script
     {
         // TODO: Implement down() method.
     }
-}
+};
