@@ -8,16 +8,23 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 trait Tag
 {
     private const KEY_TAG_ID = 'tag_id';
-    private const KEY_TAG = 'tag';
+    private const KEY_TAG_ID_AND = 'tag__and';
+    private const KEY_TAG_ID_IN = 'tag__in';
+    private const KEY_TAG_ID_NOT_IN = 'tag__not_in';
+    private const KEY_TAG_SLUG = 'tag';
 
     /**
      * @param int $id
      * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereNotTagId(int $id, int ...$ids): static
+    public function whereNotRelatesToAnyTagId(int $id, int ...$ids): static
     {
-        $this->arguments['tag__not_in'] = Arr::prepend($ids, $id);
+        $this->arguments[self::KEY_TAG_ID_NOT_IN] = Arr::prepend($ids, $id);
+
+        unset($this->arguments[self::KEY_TAG_ID]);
+        unset($this->arguments[self::KEY_TAG_ID_AND]);
+        unset($this->arguments[self::KEY_TAG_ID_IN]);
 
         return $this;
     }
@@ -30,12 +37,16 @@ trait Tag
     public function whereRelatesToAllTagId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
-            $this->arguments['tag__and'] = Arr::prepend($ids, $id);
+            $this->arguments[self::KEY_TAG_ID_AND] = Arr::prepend($ids, $id);
+
+            unset($this->arguments[self::KEY_TAG_ID]);
+            unset($this->arguments[self::KEY_TAG_ID_IN]);
+            unset($this->arguments[self::KEY_TAG_ID_NOT_IN]);
 
             return $this;
         }
 
-        $this->arguments[self::KEY_TAG_ID] = $id;
+        $this->whereTagId($id);
 
         return $this;
     }
@@ -48,40 +59,55 @@ trait Tag
     public function whereRelatesToAnyTagId(int $id, int ...$ids): static
     {
         if (!empty($ids)) {
-            $this->arguments['tag__in'] = Arr::prepend($ids, $id);
+            $this->arguments[self::KEY_TAG_ID_IN] = Arr::prepend($ids, $id);
+
+            unset($this->arguments[self::KEY_TAG_ID]);
+            unset($this->arguments[self::KEY_TAG_ID_AND]);
+            unset($this->arguments[self::KEY_TAG_ID_NOT_IN]);
 
             return $this;
         }
 
+        $this->whereTagId($id);
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string ...$names
+     * @return PostQueryBuilder
+     */
+    public function whereRelatesToAllTagSlug(string $name, string ...$names): static
+    {
+        $names = Arr::prepend($names, $name);
+
+        $this->arguments[self::KEY_TAG_SLUG] = implode('+', $names);
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string ...$names
+     * @return PostQueryBuilder
+     */
+    public function whereRelatesToAnyTagSlug(string $name, string ...$names): static
+    {
+        $names = Arr::prepend($names, $name);
+
+        $this->arguments[self::KEY_TAG_SLUG] = implode(',', $names);
+
+        return $this;
+    }
+
+    public function whereTagId(int $id): static
+    {
         $this->arguments[self::KEY_TAG_ID] = $id;
 
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @param string ...$names
-     * @return PostQueryBuilder
-     */
-    public function whereRelatesToAllTagName(string $name, string ...$names): static
-    {
-        $this->arguments[self::KEY_TAG] = !empty($names) ?
-            implode('+', array_merge([$name], $names)) :
-            $name;
-
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @param string ...$names
-     * @return PostQueryBuilder
-     */
-    public function whereRelatesToAnyTagName(string $name, string ...$names): static
-    {
-        $this->arguments[self::KEY_TAG] = !empty($names) ?
-            implode(',', array_merge([$name], $names)) :
-            $name;
+        unset($this->arguments[self::KEY_TAG_ID_AND]);
+        unset($this->arguments[self::KEY_TAG_ID_IN]);
+        unset($this->arguments[self::KEY_TAG_ID_NOT_IN]);
 
         return $this;
     }

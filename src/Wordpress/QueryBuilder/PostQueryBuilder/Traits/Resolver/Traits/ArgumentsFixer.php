@@ -11,6 +11,7 @@ trait ArgumentsFixer
         $this->fixPostStatusArgumentBasedOnPostTypeArgument()
             ->fixPostIdArgumentsBasedOnPostTypeArgument()
             ->fixPostSlugArgumentsBasedOnPostTypeArgument()
+            ->fixSearchArgument()
             ->fixPostStatusArgument();
 
         return $this->arguments;
@@ -62,6 +63,24 @@ trait ArgumentsFixer
         if ($this->isWhereTypeIncludingAttachment() && $this->isWhereStatusIncludingPublish()) {
             $this->whereStatus(StandardStatus::inherit);
         }
+
+        return $this;
+    }
+
+    private function fixSearchArgument(): static
+    {
+        if (!isset($this->arguments[self::KEY_SEARCH])) {
+            return $this;
+        }
+
+        $unfixed_search_argument = $this->arguments[self::KEY_SEARCH];
+        $this->arguments[self::KEY_SEARCH] = [];
+
+        foreach ($unfixed_search_argument as $word => $is_included) {
+            $this->arguments[self::KEY_SEARCH][] = $is_included ? $word : "-$word";
+        }
+
+        $this->arguments[self::KEY_SEARCH] = implode(' ', $this->arguments[self::KEY_SEARCH]);
 
         return $this;
     }

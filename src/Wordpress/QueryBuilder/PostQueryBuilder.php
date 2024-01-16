@@ -126,8 +126,6 @@ class PostQueryBuilder extends WpQueryBuilder
 
     private function query(array $extra_arguments = []): array
     {
-        $this->resolveSearch();
-
         return $this->getQuery()->query($this->buildArguments($extra_arguments));
     }
 

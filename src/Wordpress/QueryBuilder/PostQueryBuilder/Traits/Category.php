@@ -7,23 +7,40 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 
 trait Category
 {
-    private const KEY_CATEGORY = 'cat';
-    private const KEY_CATEGORY_NAME = 'category_name';
+    private const KEY_CATEGORY_ID = 'cat';
+    private const KEY_CATEGORY_ID_AND = 'category__and';
+    private const KEY_CATEGORY_ID_IN = 'category__in';
+    private const KEY_CATEGORY_ID_NOT_IN = 'category__not_in';
+    private const KEY_CATEGORY_SLUG = 'category_name';
 
     /**
      * @param int $id
      * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereNotCategoryId(int $id, int ...$ids): static
+    public function whereNotRelatesToAnyCategoryId(int $id, int ...$ids): static
     {
-        if (!empty($ids)) {
-            $this->arguments['category__not_in'] = Arr::prepend($ids, $id);
+        $this->arguments[self::KEY_CATEGORY_ID_NOT_IN] = Arr::prepend($ids, $id);
 
-            return $this;
-        }
+        unset($this->arguments[self::KEY_CATEGORY_ID]);
+        unset($this->arguments[self::KEY_CATEGORY_ID_AND]);
+        unset($this->arguments[self::KEY_CATEGORY_ID_IN]);
 
-        $this->arguments[self::KEY_CATEGORY] = -$id;
+        return $this;
+    }
+
+    /**
+     * @param int $id
+     * @param int ...$ids
+     * @return PostQueryBuilder
+     */
+    public function whereNotRelatesToAnyCategoryIdIncludingChildren(int $id, int ...$ids): static
+    {
+        $this->arguments[self::KEY_CATEGORY_ID] = '-' . implode(',-', Arr::prepend($ids, $id));
+
+        unset($this->arguments[self::KEY_CATEGORY_ID_AND]);
+        unset($this->arguments[self::KEY_CATEGORY_ID_NOT_IN]);
+        unset($this->arguments[self::KEY_CATEGORY_ID_IN]);
 
         return $this;
     }
@@ -35,27 +52,23 @@ trait Category
      */
     public function whereRelatesToAllCategoryId(int $id, int ...$ids): static
     {
-        if (!empty($ids)) {
-            $this->arguments['category__and'] = Arr::prepend($ids, $id);
+        $this->arguments[self::KEY_CATEGORY_ID_AND] = Arr::prepend($ids, $id);
 
-            return $this;
-        }
-
-        $this->arguments[self::KEY_CATEGORY] = $id;
+        unset($this->arguments[self::KEY_CATEGORY_ID]);
+        unset($this->arguments[self::KEY_CATEGORY_ID_NOT_IN]);
+        unset($this->arguments[self::KEY_CATEGORY_ID_IN]);
 
         return $this;
     }
 
     /**
-     * @param string $name
-     * @param string ...$names
+     * @param string $slug
+     * @param string ...$slugs
      * @return PostQueryBuilder
      */
-    public function whereRelatesToAllCategoryName(string $name, string ...$names): static
+    public function whereRelatesToAllCategorySlugIncludingChildren(string $slug, string ...$slugs): static
     {
-        $this->arguments[self::KEY_CATEGORY_NAME] = !empty($names) ?
-            implode('+', array_merge([$name], $names)) :
-            $name;
+        $this->arguments[self::KEY_CATEGORY_SLUG] = implode('+', Arr::prepend($slugs, $slug));
 
         return $this;
     }
@@ -67,27 +80,39 @@ trait Category
      */
     public function whereRelatesToAnyCategoryId(int $id, int ...$ids): static
     {
-        if (!empty($ids)) {
-            $this->arguments['category__in'] = Arr::prepend($ids, $id);
+        $this->arguments[self::KEY_CATEGORY_ID_IN] = Arr::prepend($ids, $id);
 
-            return $this;
-        }
-
-        $this->arguments[self::KEY_CATEGORY] = $id;
+        unset($this->arguments[self::KEY_CATEGORY_ID]);
+        unset($this->arguments[self::KEY_CATEGORY_ID_AND]);
+        unset($this->arguments[self::KEY_CATEGORY_ID_NOT_IN]);
 
         return $this;
     }
 
     /**
-     * @param string $name
-     * @param string ...$names
+     * @param int $id
+     * @param int ...$ids
      * @return PostQueryBuilder
      */
-    public function whereRelatesToAnyCategoryName(string $name, string ...$names): static
+    public function whereRelatesToAnyCategoryIdIncludingChildren(int $id, int ...$ids): static
     {
-        $this->arguments[self::KEY_CATEGORY_NAME] = !empty($names) ?
-            implode(',', array_merge([$name], $names)) :
-            $name;
+        $this->arguments[self::KEY_CATEGORY_ID] = implode(',', Arr::prepend($ids, $id));
+
+        unset($this->arguments[self::KEY_CATEGORY_ID_AND]);
+        unset($this->arguments[self::KEY_CATEGORY_ID_NOT_IN]);
+        unset($this->arguments[self::KEY_CATEGORY_ID_IN]);
+
+        return $this;
+    }
+
+    /**
+     * @param string $slug
+     * @param string ...$slugs
+     * @return PostQueryBuilder
+     */
+    public function whereRelatesToAnyCategorySlugIncludingChildren(string $slug, string ...$slugs): static
+    {
+        $this->arguments[self::KEY_CATEGORY_SLUG] = implode(',', Arr::prepend($slugs, $slug));
 
         return $this;
     }

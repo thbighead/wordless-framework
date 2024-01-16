@@ -104,13 +104,13 @@ trait CategoryTest
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_CATEGORY_ID => -self::DUMMY_CATEGORY_IDS[0]]),
             self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
-                ->whereNotCategoryId(self::DUMMY_CATEGORY_IDS[0]))
+                ->whereNotRelatesToAnyCategoryId(self::DUMMY_CATEGORY_IDS[0]))
         );
 
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, ['category__not_in' => self::DUMMY_CATEGORY_IDS]),
             self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
-                ->whereNotCategoryId(...self::DUMMY_CATEGORY_IDS))
+                ->whereNotRelatesToAnyCategoryId(...self::DUMMY_CATEGORY_IDS))
         );
     }
 }

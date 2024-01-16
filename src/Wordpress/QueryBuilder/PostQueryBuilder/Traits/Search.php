@@ -8,13 +8,14 @@ trait Search
 {
     private const KEY_SEARCH = 's';
 
-    /** @var array<string, bool> $search_words */
-    private array $search_words = [];
-
     public function search(string $word, string ...$words): static
     {
+        if (!isset($this->arguments[self::KEY_SEARCH])) {
+            $this->arguments[self::KEY_SEARCH] = [];
+        }
+
         foreach (Arr::prepend($words, $word) as $word) {
-            $this->search_words[$word] = true;
+            $this->arguments[self::KEY_SEARCH][$word] = true;
         }
 
         return $this;
@@ -22,8 +23,12 @@ trait Search
 
     public function searchMissing(string $word, string ...$words): static
     {
+        if (!isset($this->arguments[self::KEY_SEARCH])) {
+            $this->arguments[self::KEY_SEARCH] = [];
+        }
+
         foreach (Arr::prepend($words, $word) as $word) {
-            $this->search_words[$word] = false;
+            $this->arguments[self::KEY_SEARCH][$word] = false;
         }
 
         return $this;
@@ -43,15 +48,5 @@ trait Search
             ->orderBySearchRelevance();
 
         return $this;
-    }
-
-    private function resolveSearch(): void
-    {
-        foreach ($this->search_words as $word => $is_included) {
-            $this->arguments[self::KEY_SEARCH] = isset($this->arguments[self::KEY_SEARCH]) ?
-                "{$this->arguments[self::KEY_SEARCH]} " : '';
-
-            $this->arguments[self::KEY_SEARCH] .= $is_included ? $word : "-$word";
-        }
     }
 }
