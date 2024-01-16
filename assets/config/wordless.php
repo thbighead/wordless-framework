@@ -8,8 +8,8 @@ use Wordless\Application\Libraries\JWT\Enums\CryptoAlgorithm;
 use Wordless\Application\Libraries\JWT\Token;
 use Wordless\Application\Providers\CommentsProvider;
 use Wordless\Application\Providers\CoreProvider;
-use Wordless\Application\Providers\RemoveEmojiProvider;
 use Wordless\Application\Providers\MigrationsProvider;
+use Wordless\Application\Providers\RemoveEmojiProvider;
 use Wordless\Application\Providers\SeedersProvider;
 use Wordless\Infrastructure\Provider;
 
@@ -20,7 +20,7 @@ $providers = [
     CommentsProvider::class,
     RemoveEmojiProvider::class,
     MigrationsProvider::class,
-//    SeedersProvider::class,
+    SeedersProvider::class,
 ];
 
 return [
