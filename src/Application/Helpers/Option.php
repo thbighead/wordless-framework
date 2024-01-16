@@ -38,7 +38,13 @@ class Option
      */
     public static function getOrFail(string $option_key): mixed
     {
-        return get_option($option_key, throw new FailedToFindOption($option_key));
+        $option = get_option($option_key, $exception = new FailedToFindOption($option_key));
+
+        if ($option instanceof FailedToFindOption) {
+            throw $exception;
+        }
+
+        return $option;
     }
 
     /**
