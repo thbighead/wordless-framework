@@ -124,11 +124,6 @@ class PostQueryBuilder extends WpQueryBuilder
         return isset($this->getQuery()->posts);
     }
 
-    private function query(array $extra_arguments = []): array
-    {
-        return $this->getQuery()->query($this->buildArguments($extra_arguments));
-    }
-
     private function setPostsFormat(PostsListFormat $format): static
     {
         $this->arguments[PostsListFormat::FIELDS_KEY] = $format->value;

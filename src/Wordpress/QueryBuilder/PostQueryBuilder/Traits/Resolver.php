@@ -94,6 +94,11 @@ trait Resolver
         return $arguments;
     }
 
+    private function query(array $extra_arguments = []): array
+    {
+        return $this->getQuery()->query($this->buildArguments($extra_arguments));
+    }
+
     private function resolveExtraArguments(array &$arguments, array $extra_arguments): static
     {
         foreach ($extra_arguments as $extra_argument_key => $extra_argument_value) {
