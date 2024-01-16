@@ -141,13 +141,19 @@ abstract class BaseTaxonomyQueryBuilder extends QueryBuilder
 
     /**
      * @param ObjectType $objectType
+     * @param ObjectType ...$objectTypes
      * @return $this
      */
-    final protected function whereCanBeUsedBy(ObjectType $objectType): static
+    final protected function whereCanBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): static
     {
-        isset($this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE]) ?
-            $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE][] = $objectType :
-            $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] = [$objectType];
+        if (isset($this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE])) {
+            $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] = [];
+        }
+
+        $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] = array_merge(
+            $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE],
+            Arr::prepend($objectTypes, $objectType)
+        );
 
         return $this;
     }
