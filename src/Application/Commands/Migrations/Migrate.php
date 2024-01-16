@@ -73,6 +73,7 @@ class Migrate extends ConsoleCommand
 
                 if ($migration_method_to_call === 'down') {
                     $this->removeFromExecutedMigrationsListOption($migration_filename);
+
                     return;
                 }
 
