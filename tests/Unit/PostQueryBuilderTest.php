@@ -89,11 +89,11 @@ class PostQueryBuilderTest extends WordlessTestCase
                 self::DEFAULT_ARGUMENTS,
                 [self::KEY_ORDER_BY => [
                     ColumnReference::author->value => Direction::ascending->value,
-                    ColumnReference::name->value => Direction::ascending->value,
+                    ColumnReference::slug->value => Direction::ascending->value,
                 ]]
             ),
             self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
-                ->orderByAscending(ColumnReference::author, ColumnReference::name)
+                ->orderByAscending(ColumnReference::author, ColumnReference::slug)
             )
         );
 
@@ -112,11 +112,11 @@ class PostQueryBuilderTest extends WordlessTestCase
                 self::DEFAULT_ARGUMENTS,
                 [self::KEY_ORDER_BY => [
                     ColumnReference::author->value => Direction::descending->value,
-                    ColumnReference::name->value => Direction::descending->value,
+                    ColumnReference::slug->value => Direction::descending->value,
                 ]]
             ),
             self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
-                ->orderByDescending(ColumnReference::author, ColumnReference::name)
+                ->orderByDescending(ColumnReference::author, ColumnReference::slug)
             )
         );
 
@@ -125,12 +125,12 @@ class PostQueryBuilderTest extends WordlessTestCase
                 self::DEFAULT_ARGUMENTS,
                 [self::KEY_ORDER_BY => [
                     ColumnReference::author->value => Direction::ascending->value,
-                    ColumnReference::name->value => Direction::descending->value,
+                    ColumnReference::slug->value => Direction::descending->value,
                 ]]
             ),
             self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
                 ->orderByDescending(ColumnReference::author)
-                ->orderByAscending(ColumnReference::name)
+                ->orderByAscending(ColumnReference::slug)
             )
         );
 
@@ -163,12 +163,12 @@ class PostQueryBuilderTest extends WordlessTestCase
                 self::DEFAULT_ARGUMENTS,
                 [self::KEY_ORDER_BY => [
                     ColumnReference::author->value => Direction::ascending->value,
-                    ColumnReference::name->value => Direction::descending->value,
+                    ColumnReference::slug->value => Direction::descending->value,
                 ]]
             ),
             self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
                 ->orderBy(ColumnReference::author)
-                ->orderBy(ColumnReference::name, Direction::descending)
+                ->orderBy(ColumnReference::slug, Direction::descending)
             )
         );
 
@@ -177,13 +177,13 @@ class PostQueryBuilderTest extends WordlessTestCase
                 self::DEFAULT_ARGUMENTS,
                 [self::KEY_ORDER_BY => [
                     ColumnReference::author->value => Direction::ascending->value,
-                    ColumnReference::name->value => Direction::descending->value,
+                    ColumnReference::slug->value => Direction::descending->value,
                     ColumnReference::date->value => Direction::ascending->value,
                 ]]
             ),
             self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
                 ->orderBy(ColumnReference::author)
-                ->orderBy(ColumnReference::name, Direction::descending)
+                ->orderBy(ColumnReference::slug, Direction::descending)
                 ->orderByAscending(ColumnReference::date)
             )
         );

@@ -7,7 +7,7 @@ enum ColumnReference: string
     case id = 'ID';
     case author = 'author';
     case title = 'title';
-    case name = 'name';
+    case slug = 'name';
     case type = 'type';
     case date = 'date';
     case modified = 'modified';
