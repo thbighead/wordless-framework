@@ -72,11 +72,9 @@ class PublishConfigurationFiles extends ConsoleCommand
     {
         $config_filenames = $this->input->getArgument(self::CONFIG_FILENAME_ARGUMENT_NAME);
 
-        if (!empty($config_filenames)) {
-            $this->publishConfigFilesFromCommandArgument($config_filenames);
-        } else {
-            $this->publishConfigFilesFromSrcDirectory();
-        }
+        !empty($config_filenames) ?
+            $this->publishConfigFilesFromCommandArgument($config_filenames) :
+            $this->publishConfigFilesFromVendorPackage();
 
         return Command::SUCCESS;
     }
@@ -107,9 +105,9 @@ class PublishConfigurationFiles extends ConsoleCommand
         foreach ($config_filenames as $config_filename) {
             $config_filename_with_extension = Str::finishWith($config_filename, '.php');
             $config_relative_filepath = "config/$config_filename_with_extension";
-            $config_filepath_from = ProjectPath::src($config_relative_filepath);
+            $config_filepath_from = ProjectPath::assets($config_relative_filepath);
 
-            $this->skipOrCopiedConfigFile($config_filepath_from);
+            $this->skipOrCopyConfigFile($config_filepath_from);
         }
     }
 
@@ -120,10 +118,10 @@ class PublishConfigurationFiles extends ConsoleCommand
      * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
-    private function publishConfigFilesFromSrcDirectory(): void
+    private function publishConfigFilesFromVendorPackage(): void
     {
-        foreach (DirectoryFiles::recursiveRead(ProjectPath::src('config')) as $config_filepath_from) {
-            $this->skipOrCopiedConfigFile($config_filepath_from);
+        foreach (DirectoryFiles::recursiveRead(ProjectPath::assets('config')) as $config_filepath_from) {
+            $this->skipOrCopyConfigFile($config_filepath_from);
         }
     }
 
@@ -132,9 +130,8 @@ class PublishConfigurationFiles extends ConsoleCommand
      * @return void
      * @throws FailedToCopyConfig
      * @throws InvalidArgumentException
-     * @throws PathNotFoundException
      */
-    private function skipOrCopiedConfigFile(string $config_filepath_from): void
+    private function skipOrCopyConfigFile(string $config_filepath_from): void
     {
         $config_relative_filepath = 'config/' . basename($config_filepath_from);
 
@@ -147,8 +144,9 @@ class PublishConfigurationFiles extends ConsoleCommand
 
                 return;
             }
-        } catch (PathNotFoundException) {
-            $config_filepath_to = ProjectPath::root() . DIRECTORY_SEPARATOR . $config_relative_filepath;
+        } catch (PathNotFoundException $exception) {
+            $config_filepath_to = $exception->path;
+
             $this->writeComment("File destination at $config_filepath_to does not exists... ");
         }
 
