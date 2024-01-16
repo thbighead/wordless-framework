@@ -1,8 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Commands\Migrations;
+namespace Wordless\Application\Commands\Migrations\Migrate;
 
 use Symfony\Component\Console\Command\Command;
+use Wordless\Application\Commands\Migrations\Migrate;
 use Wordless\Application\Commands\Migrations\Migrate\Exceptions\FailedToFindMigrationScript;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;

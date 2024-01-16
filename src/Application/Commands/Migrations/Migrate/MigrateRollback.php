@@ -1,11 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Commands\Migrations;
+namespace Wordless\Application\Commands\Migrations\Migrate;
 
 use Symfony\Component\Console\Command\Command;
-use Wordless\Application\Commands\Migrations\Migrate\Exceptions\FailedToFindMigrationScript;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Wordless\Application\Commands\Migrations\Migrate;
+use Wordless\Application\Commands\Migrations\Migrate\Exceptions\FailedToFindExecutedMigrationScript;
+use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
+use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\InvalidMigrationFilename;
+use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
@@ -39,7 +45,7 @@ class MigrateRollback extends Migrate
     protected function options(): array
     {
         return [
-            new OptionDTO(
+            OptionDTO::make(
                 self::NUMBER_OF_CHUNKS_OPTION,
                 'How many chunks you want to rollback. Default is 1.',
                 mode: OptionMode::optional_value
@@ -49,9 +55,14 @@ class MigrateRollback extends Migrate
 
     /**
      * @return int
+     * @throws FailedToFindExecutedMigrationScript
+     * @throws FailedToUpdateOption
+     * @throws InvalidArgumentException
+     * @throws InvalidConfigKey
+     * @throws InvalidMigrationFilename
+     * @throws InvalidProviderClass
+     * @throws MigrationFileNotFound
      * @throws PathNotFoundException
-     * @throws FailedToFindMigrationScript
-     * @throws InvalidDirectory
      */
     protected function runIt(): int
     {
@@ -78,6 +89,10 @@ class MigrateRollback extends Migrate
         return Command::SUCCESS;
     }
 
+    /**
+     * @return int
+     * @throws InvalidArgumentException
+     */
     private function getNumberOfChunks(): int
     {
         if (isset($this->number_of_chunks)) {

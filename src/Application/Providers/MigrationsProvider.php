@@ -2,9 +2,9 @@
 
 namespace Wordless\Application\Providers;
 
-use Wordless\Application\Commands\Migrations\FlushMigrations;
 use Wordless\Application\Commands\Migrations\Migrate;
-use Wordless\Application\Commands\Migrations\MigrateRollback;
+use Wordless\Application\Commands\Migrations\Migrate\FlushMigrations;
+use Wordless\Application\Commands\Migrations\Migrate\MigrateRollback;
 use Wordless\Application\Commands\Migrations\MigrationList;
 use Wordless\Infrastructure\Provider;
 
