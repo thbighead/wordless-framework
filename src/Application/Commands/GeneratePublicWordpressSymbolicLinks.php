@@ -2,10 +2,8 @@
 
 namespace Wordless\Application\Commands;
 
-use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Helpers\Config;
-use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
@@ -13,10 +11,13 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateSymlink
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Helpers\Str;
+use Wordless\Core\PublicSymlink;
+use Wordless\Core\PublicSymlink\Exceptions\InvalidPublicSymlinkTargetWithExceptions;
+use Wordless\Core\PublicSymlink\Resolver;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -25,10 +26,6 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
 {
     final public const COMMAND_NAME = 'wordless:symlinks';
     final public const PUBLIC_SYMLINK_KEY = 'public-symlinks';
-    private const FILTER_RULE = '!';
-    private const SLASH = '/';
-
-    private array $symlinks = [];
 
     /**
      * @return ArgumentDTO[]
@@ -58,17 +55,16 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
 
     /**
      * @return int
-     * @throws EmptyWlsymlinks
+     * @throws FailedToDeletePath
+     * @throws FailedToGetFileContent
+     * @throws InvalidDirectory
      * @throws FailedToChangeDirectoryTo
      * @throws FailedToCreateDirectory
      * @throws FailedToCreateSymlink
-     * @throws FailedToDeletePath
      * @throws FailedToGetCurrentWorkingDirectory
      * @throws FailedToGetDirectoryPermissions
-     * @throws FailedToGetFileContent
-     * @throws InvalidDirectory
-     * @throws InvalidPublicSymlinkTargetWithExceptions
      * @throws PathNotFoundException
+     * @throws InvalidPublicSymlinkTargetWithExceptions
      */
     protected function runIt(): int
     {
@@ -78,8 +74,8 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
         });
 
         $this->wrapScriptWithMessages('Generating public symbolic links...', function () {
-            $symlinks_configured = Config::tryToGetOrDefault('public-symlinks', []);
-            $publicSymlinkResolver = new PublicSymlinksResolver;
+            $symlinks_configured = Config::tryToGetOrDefault('wordless.' . self::PUBLIC_SYMLINK_KEY, []);
+            $publicSymlinkResolver = new Resolver;
 
             foreach ($symlinks_configured as $link_relative_path => $target_relative_path) {
                 $publicSymlinkResolver->addSymlink(new PublicSymlink($link_relative_path, $target_relative_path));
@@ -97,12 +93,12 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
      * @param string $link_relative_path
      * @param string $target_relative_path
      * @return void
+     * @throws FailedToChangeDirectoryTo
      * @throws FailedToCreateDirectory
+     * @throws FailedToCreateSymlink
+     * @throws FailedToGetCurrentWorkingDirectory
      * @throws FailedToGetDirectoryPermissions
      * @throws PathNotFoundException
-     * @throws FailedToCreateSymlink
-     * @throws FailedToChangeDirectoryTo
-     * @throws FailedToGetCurrentWorkingDirectory
      */
     private function createPublicSymlink(string $link_relative_path, string $target_relative_path): void
     {
@@ -126,9 +122,9 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
     /**
      * @param string $link_absolute_path
      * @return void
-     * @throws PathNotFoundException
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
+     * @throws PathNotFoundException
      */
     private function ensureSymlinkDirectoryHierarchyAtPublic(string $link_absolute_path): void
     {

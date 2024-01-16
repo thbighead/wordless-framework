@@ -1,17 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Wordless\Services;
+namespace Wordless\Core;
 
-use Wordless\Exceptions\FailedToGetFileContent;
-use Wordless\Services\PublicSymlink\Exceptions\InvalidPublicSymlinkTargetWithExceptions;
-use Wordless\Exceptions\InvalidDirectory;
-use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\DirectoryFiles;
-use Wordless\Helpers\ProjectPath;
-use Wordless\Helpers\Str;
-use Wordless\Services\Wlsymlink\Exceptions\EmptyWlsymlinks;
+use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
+use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Str;
+use Wordless\Core\PublicSymlink\Exceptions\InvalidPublicSymlinkTargetWithExceptions;
+use Wordless\Core\PublicSymlink\Wlsymlink;
 
-class PublicSymlink
+final class PublicSymlink
 {
     public const EXCEPT_MARKER = '!';
     public const EXCEPT_SEPARATOR_MARKER = ',';
@@ -30,7 +30,6 @@ class PublicSymlink
      * @param string $link_relative_path
      * @param string $target_relative_path
      * @param bool $should_search_for_wlsymlinks
-     * @throws EmptyWlsymlinks
      * @throws FailedToGetFileContent
      * @throws InvalidDirectory
      * @throws InvalidPublicSymlinkTargetWithExceptions
@@ -138,16 +137,17 @@ class PublicSymlink
             $this->getLinkAbsolutePath();
 
             return true;
-        } catch (PathNotFoundException $exception) {
+        } catch (PathNotFoundException) {
             return false;
         }
     }
 
     /**
      * @param string|string[] $exceptions
+     * @param string|null $target_relative_path
      * @return void
      */
-    private function addTargetExceptions($exceptions, ?string $target_relative_path = null)
+    private function addTargetExceptions(string|array $exceptions, ?string $target_relative_path = null): void
     {
         if (!is_array($exceptions)) {
             $exceptions = explode(self::EXCEPT_SEPARATOR_MARKER, $exceptions);
@@ -180,13 +180,12 @@ class PublicSymlink
 
     /**
      * @return void
-     * @throws EmptyWlsymlinks
      * @throws FailedToGetFileContent
      * @throws InvalidDirectory
      * @throws InvalidPublicSymlinkTargetWithExceptions
      * @throws PathNotFoundException
      */
-    private function recursiveSearchWlsymlinks()
+    private function recursiveSearchWlsymlinks(): void
     {
         if (!$this->isTargetingDirectory()) {
             return;

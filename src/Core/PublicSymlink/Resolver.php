@@ -1,11 +1,12 @@
 <?php
 
-namespace Wordless\Services;
+namespace Wordless\Core\PublicSymlink;
 
-use Wordless\Exceptions\InvalidDirectory;
-use Wordless\Helpers\Str;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
+use Wordless\Application\Helpers\Str;
+use Wordless\Core\PublicSymlink;
 
-class PublicSymlinksResolver
+final class Resolver
 {
     private array $symlinks = [];
     private array $target_exceptions = [];
@@ -15,7 +16,7 @@ class PublicSymlinksResolver
      * @return void
      * @throws InvalidDirectory
      */
-    public function addSymlink(PublicSymlink $symlink)
+    public function addSymlink(PublicSymlink $symlink): void
     {
         switch (true) {
             case !$symlink->isTargetingDirectory():
@@ -43,7 +44,7 @@ class PublicSymlinksResolver
      * @return void
      * @throws InvalidDirectory
      */
-    private function extractSymlinksAndExceptionsFrom(PublicSymlink $symlink)
+    private function extractSymlinksAndExceptionsFrom(PublicSymlink $symlink): void
     {
         $this->registerTargetException($symlink->getTargetRelativePath());
 
@@ -118,7 +119,7 @@ class PublicSymlinksResolver
         return (bool)($this->target_exceptions[$target] ?? false);
     }
 
-    private function registerTargetException(string $target_exception_relative_path_from_public)
+    private function registerTargetException(string $target_exception_relative_path_from_public): void
     {
         $this->target_exceptions[$target_exception_relative_path_from_public] =
             $target_exception_relative_path_from_public;

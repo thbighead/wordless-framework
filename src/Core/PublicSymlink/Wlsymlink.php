@@ -1,17 +1,17 @@
 <?php
 
-namespace Wordless\Services;
+namespace Wordless\Core\PublicSymlink;
 
 use Generator;
-use Wordless\Exceptions\FailedToGetFileContent;
-use Wordless\Exceptions\InvalidDirectory;
-use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\DirectoryFiles;
-use Wordless\Helpers\Str;
-use Wordless\Services\PublicSymlink\Exceptions\InvalidPublicSymlinkTargetWithExceptions;
-use Wordless\Services\Wlsymlink\Exceptions\EmptyWlsymlinks;
+use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Str;
+use Wordless\Core\PublicSymlink;
+use Wordless\Core\PublicSymlink\Exceptions\InvalidPublicSymlinkTargetWithExceptions;
 
-class Wlsymlink
+final class Wlsymlink
 {
     public const FILENAME = '.wlsymlinks';
 
@@ -34,7 +34,6 @@ class Wlsymlink
     /**
      * @param string $absolute_filepath
      * @param PublicSymlink $foundFromSymlink
-     * @throws EmptyWlsymlinks
      * @throws FailedToGetFileContent
      * @throws InvalidDirectory
      * @throws InvalidPublicSymlinkTargetWithExceptions
@@ -166,10 +165,9 @@ class Wlsymlink
 
     /**
      * @return PublicSymlink
-     * @throws EmptyWlsymlinks
+     * @throws InvalidPublicSymlinkTargetWithExceptions
      * @throws FailedToGetFileContent
      * @throws InvalidDirectory
-     * @throws InvalidPublicSymlinkTargetWithExceptions
      * @throws PathNotFoundException
      */
     private function mountPublicSymlinkFromFileContent(): PublicSymlink
@@ -191,10 +189,9 @@ class Wlsymlink
     /**
      * @param PublicSymlink $from
      * @return Generator
-     * @throws EmptyWlsymlinks
+     * @throws InvalidPublicSymlinkTargetWithExceptions
      * @throws FailedToGetFileContent
      * @throws InvalidDirectory
-     * @throws InvalidPublicSymlinkTargetWithExceptions
      * @throws PathNotFoundException
      */
     private function mountSymlinksUntilOrigin(PublicSymlink $from): Generator
@@ -222,13 +219,12 @@ class Wlsymlink
 
     /**
      * @return void
-     * @throws EmptyWlsymlinks
      * @throws FailedToGetFileContent
      * @throws InvalidDirectory
      * @throws InvalidPublicSymlinkTargetWithExceptions
      * @throws PathNotFoundException
      */
-    private function setGeneratedSymlinks()
+    private function setGeneratedSymlinks(): void
     {
         $this->generatedSymlinks[] = $fileSymlink = $this->mountPublicSymlinkFromFileContent();
 
