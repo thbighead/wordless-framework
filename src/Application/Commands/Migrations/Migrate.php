@@ -67,9 +67,7 @@ class Migrate extends ConsoleCommand
         $migration_method_to_call = $up ? 'up' : 'down';
 
         $this->wrapScriptWithMessages(
-            'Executing '
-            . $this->getMigrationsMissingExecution()[$migration_filename]::class
-            . "::$migration_method_to_call()...",
+            "Executing $migration_filename::$migration_method_to_call()...",
             function () use ($migration_filename, $migration_method_to_call) {
                 $this->getMigrationsMissingExecution()[$migration_filename]->$migration_method_to_call();
 
