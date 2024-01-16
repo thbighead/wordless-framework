@@ -3,6 +3,7 @@
 namespace Wordless\Core\Composer\Traits;
 
 use Composer\Script\Event;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
@@ -15,11 +16,14 @@ use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 trait SetHostFromNginx
 {
+    private const WORDLESS_APP_HOST_DOT_ENV_VARIABLE = 'APP_HOST';
+
     /**
      * @param Event $composerEvent
      * @return void
      * @throws DotEnvNotSetException
      * @throws FailedToRewriteDotEnvFile
+     * @throws FormatException
      * @throws PathNotFoundException
      */
     public static function setHost(Event $composerEvent): void
@@ -104,9 +108,10 @@ trait SetHostFromNginx
      * @param string $app_host
      * @return void
      * @throws AppHostAlreadySetOnDotEnv
+     * @throws DotEnvNotSetException
      * @throws FailedToRewriteDotEnvFile
      * @throws PathNotFoundException
-     * @throws DotEnvNotSetException
+     * @throws FormatException
      */
     private static function setAppHostValueAtDotEnv(string $app_host): void
     {

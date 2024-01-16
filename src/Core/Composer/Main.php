@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
-/** @noinspection PhpMultipleClassDeclarationsInspection */
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+
+declare(strict_types=1);
 
 namespace Wordless\Core\Composer;
 
+use Composer\Composer;
 use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
@@ -16,16 +18,13 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Composer\Traits\InputOutput;
 use Wordless\Core\Composer\Traits\ManagePlugin;
-use Wordless\Core\Composer\Traits\PackageDiscovery;
 use Wordless\Core\Composer\Traits\SetHostFromNginx;
 
 class Main
 {
-    use InputOutput, ManagePlugin, PackageDiscovery, SetHostFromNginx;
-
-    /** @var string WORDLESS_EXTRA_KEY final */
-    protected const WORDLESS_EXTRA_KEY = 'wordless';
-    private const WORDLESS_APP_HOST_DOT_ENV_VARIABLE = 'APP_HOST';
+    use InputOutput;
+    use ManagePlugin;
+    use SetHostFromNginx;
 
     public static function getFrameworkInstalledVersion(): string
     {
@@ -66,7 +65,7 @@ class Main
         }
     }
 
-    final protected static function defineProjectPath(\Composer\Composer $composer): void
+    final protected static function defineProjectPath(Composer $composer): void
     {
         $root_project_path_constant = 'ROOT_PROJECT_PATH';
 

@@ -8,12 +8,12 @@ use Wordless\Application\Helpers\Str;
 
 trait ManagePlugin
 {
-    public static function activatePlugin(PackageEvent $composerEvent)
+    public static function activatePlugin(PackageEvent $composerEvent): void
     {
         self::managePlugin($composerEvent, 'activate');
     }
 
-    public static function deactivatePlugin(PackageEvent $composerEvent)
+    public static function deactivatePlugin(PackageEvent $composerEvent): void
     {
         self::managePlugin($composerEvent, 'deactivate');
     }
@@ -23,7 +23,7 @@ trait ManagePlugin
         return $package->getType() === 'wordpress-plugin';
     }
 
-    private static function managePlugin(PackageEvent $composerEvent, string $plugin_command)
+    private static function managePlugin(PackageEvent $composerEvent, string $plugin_command): void
     {
         static::initializeIo($composerEvent);
         $package = self::extractPackageFromEvent($composerEvent);
