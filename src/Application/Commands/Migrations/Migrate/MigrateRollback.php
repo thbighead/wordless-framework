@@ -48,7 +48,8 @@ class MigrateRollback extends Migrate
             OptionDTO::make(
                 self::NUMBER_OF_CHUNKS_OPTION,
                 'How many chunks you want to rollback. Default is 1.',
-                mode: OptionMode::optional_value
+                mode: OptionMode::optional_value,
+                default: self::ALL_CHUNKS_VALUE
             ),
         ];
     }
@@ -70,6 +71,8 @@ class MigrateRollback extends Migrate
 
         if (empty($executed_migrations_list)) {
             $this->writelnInfo('Nothing to rollback.');
+
+            return Command::SUCCESS;
         }
 
         if (($executed_migrations_list_size = count($executed_migrations_list)) < $this->getNumberOfChunks()) {
@@ -99,7 +102,7 @@ class MigrateRollback extends Migrate
             return $this->number_of_chunks;
         }
 
-        $chunks_input_option_value = $this->input->getOption(self::NUMBER_OF_CHUNKS_OPTION);
+        $chunks_input_option_value = (string)$this->input->getOption(self::NUMBER_OF_CHUNKS_OPTION);
 
         if (strtolower($chunks_input_option_value) === self::ALL_CHUNKS_VALUE) {
             return PHP_INT_MAX;
