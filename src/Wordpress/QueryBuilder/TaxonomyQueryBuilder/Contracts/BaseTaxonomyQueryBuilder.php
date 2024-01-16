@@ -5,12 +5,15 @@ namespace Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder;
 use Wordless\Wordpress\Enums\ObjectType;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder\Traits\ArgumentsBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\ResultFormat;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\WhereOperator;
 use WP_Taxonomy;
 
 abstract class BaseTaxonomyQueryBuilder extends QueryBuilder
 {
+    use ArgumentsBuilder;
+
     private const ARGUMENT_KEY_BUILT_IN = '_builtin';
     private const ARGUMENT_KEY_OBJECT_TYPE = 'object_type';
     private const ARGUMENT_KEY_PUBLIC = 'public';

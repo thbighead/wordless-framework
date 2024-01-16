@@ -6,15 +6,13 @@ use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 
 trait ArgumentsFixer
 {
-    private function fixArguments(): array
+    private function fixArguments(): void
     {
         $this->fixPostStatusArgumentBasedOnPostTypeArgument()
             ->fixPostIdArgumentsBasedOnPostTypeArgument()
             ->fixPostSlugArgumentsBasedOnPostTypeArgument()
             ->fixSearchArgument()
             ->fixPostStatusArgument();
-
-        return $this->arguments;
     }
 
     private function fixPostIdArgumentsBasedOnPostTypeArgument(): static

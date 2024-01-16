@@ -84,7 +84,9 @@ trait Resolver
      */
     protected function buildArguments(array $extra_arguments = []): array
     {
-        $arguments = $this->fixArguments();
+        $this->fixArguments();
+
+        $arguments = parent::buildArguments();
 
         $this->resolveStatusArgument($arguments)
             ->resolveMetaSubQuery($arguments)
