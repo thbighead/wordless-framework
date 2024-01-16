@@ -24,6 +24,7 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
 {
     final public const COMMAND_NAME = 'wordless:symlinks';
+    final public const PUBLIC_SYMLINK_KEY = 'public-symlinks';
     private const FILTER_RULE = '!';
     private const SLASH = '/';
 
@@ -44,7 +45,7 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
 
     protected function help(): string
     {
-        return 'Reading config/wp-symlinks.php this script creates symbolic links to allow or not direct access through HTTP.';
+        return 'Reading config/wordless.php public-symlinks key this script creates symbolic links to allow or not direct access through HTTP.';
     }
 
     /**
@@ -57,29 +58,35 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
 
     /**
      * @return int
+     * @throws EmptyWlsymlinks
      * @throws FailedToChangeDirectoryTo
      * @throws FailedToCreateDirectory
      * @throws FailedToCreateSymlink
      * @throws FailedToDeletePath
      * @throws FailedToGetCurrentWorkingDirectory
      * @throws FailedToGetDirectoryPermissions
-     * @throws InvalidConfigKey
+     * @throws FailedToGetFileContent
      * @throws InvalidDirectory
+     * @throws InvalidPublicSymlinkTargetWithExceptions
      * @throws PathNotFoundException
      */
     protected function runIt(): int
     {
         $this->wrapScriptWithMessages('Removing old symlinks...', function () {
             DirectoryFiles::recursiveRemoveSymbolicLinks(ProjectPath::public());
+            DirectoryFiles::recursiveDeleteEmptyDirectories(ProjectPath::public(), false);
         });
 
         $this->wrapScriptWithMessages('Generating public symbolic links...', function () {
-            foreach ($this->getMappedSymlinks() as $raw_link_name => $raw_target) {
-                $this->parseSymlink($raw_link_name, $raw_target);
+            $symlinks_configured = Config::tryToGetOrDefault('public-symlinks', []);
+            $publicSymlinkResolver = new PublicSymlinksResolver;
+
+            foreach ($symlinks_configured as $link_relative_path => $target_relative_path) {
+                $publicSymlinkResolver->addSymlink(new PublicSymlink($link_relative_path, $target_relative_path));
             }
 
-            foreach ($this->symlinks as $link_name => $target) {
-                $this->generateSymbolicLink($target, $link_name);
+            foreach ($publicSymlinkResolver->retrieveCleanedSymlinks() as $link_relative_path_from_public => $target_relative_path_from_public) {
+                $this->createPublicSymlink($link_relative_path_from_public, $target_relative_path_from_public);
             }
         });
 
@@ -87,121 +94,48 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
     }
 
     /**
-     * @param string $raw_link_name
-     * @param string $raw_target
+     * @param string $link_relative_path
+     * @param string $target_relative_path
      * @return void
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
-     * @throws InvalidDirectory
      * @throws PathNotFoundException
-     */
-    private function parseSymlink(string $raw_link_name, string $raw_target): void
-    {
-        $target = $this->parseTarget($raw_target);
-
-        if (is_string($target)) {
-            $this->symlinks[$this->parseLinkName($raw_link_name)] = $target;
-            return;
-        }
-
-        foreach ($target as $subtarget) {
-            $this->symlinks[$this->parseLinkName(
-                $raw_link_name,
-                Str::afterLast($subtarget, self::SLASH)
-            )] = $subtarget;
-        }
-    }
-
-    /**
-     * @param string $target
-     * @param string $link_name
-     * @return void
      * @throws FailedToCreateSymlink
-     * @throws PathNotFoundException
      * @throws FailedToChangeDirectoryTo
      * @throws FailedToGetCurrentWorkingDirectory
      */
-    private function generateSymbolicLink(string $target, string $link_name): void
+    private function createPublicSymlink(string $link_relative_path, string $target_relative_path): void
     {
-        DirectoryFiles::changeWorkingDirectoryDoAndGoBack('public', function () use ($link_name, $target) {
-            DirectoryFiles::createSymbolicLink($link_name, $target);
-        });
+        $this->writelnInfoWhenVerbose(
+            "Creating \"$link_relative_path\" from public pointing to \"$target_relative_path\" from public..."
+        );
+
+        $target_absolute_path = ProjectPath::public($target_relative_path);
+
+        $this->ensureSymlinkDirectoryHierarchyAtPublic(
+            $link_absolute_path = ProjectPath::public() . DIRECTORY_SEPARATOR . $link_relative_path
+        );
+
+        DirectoryFiles::createSymbolicLink($link_relative_path, $target_relative_path, ProjectPath::public());
+
+        $this->writelnSuccessWhenVerbose(
+            "\"$link_absolute_path\" pointing to \"$target_absolute_path\" created."
+        );
     }
 
     /**
-     * @return array
-     * @throws InvalidConfigKey
+     * @param string $link_absolute_path
+     * @return void
      * @throws PathNotFoundException
-     */
-    private function getMappedSymlinks(): array
-    {
-        return Config::get('wordless.public-symlinks');
-    }
-
-    /**
-     * @param string $link_name
-     * @param string $target
-     * @return string
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
-     * @throws PathNotFoundException
      */
-    private function parseLinkName(string $link_name, string $target = ''): string
+    private function ensureSymlinkDirectoryHierarchyAtPublic(string $link_absolute_path): void
     {
-        $link_name = trim($link_name, self::SLASH);
-        $link_name = empty($target) ? $link_name : trim("$link_name/$target", self::SLASH);
-        $link_name_relative_path = Str::beforeLast($link_name, self::SLASH);
+        $link_absolute_parent_path = dirname($link_absolute_path);
 
-        if ($link_name_relative_path === $link_name) {
-            return $link_name;
+        if (!is_dir($link_absolute_parent_path) && !is_link($link_absolute_parent_path)) {
+            DirectoryFiles::createDirectoryAt($link_absolute_parent_path);
         }
-
-        $permissions = DirectoryFiles::getPermissions($public_path = ProjectPath::public());
-
-        $link_name_full_path = "$public_path/$link_name_relative_path";
-
-        if (is_dir($link_name_full_path)) {
-            $this->writelnCommentWhenVerbose("Directory $link_name_full_path already created, skipping.");
-
-            return $link_name;
-        }
-
-        DirectoryFiles::createDirectoryAt($link_name_full_path, $permissions);
-
-        return $link_name;
-    }
-
-    /**
-     * @param string $target
-     * @return string[]|string
-     * @throws PathNotFoundException
-     * @throws InvalidDirectory
-     */
-    private function parseTarget(string $target): array|string
-    {
-        if (!Str::contains($target, self::FILTER_RULE)) {
-            return trim($target, self::SLASH);
-        }
-
-        [$target, $exceptions] = explode(self::FILTER_RULE, $target);
-
-        if (Str::contains($exceptions, self::SLASH)) {
-            throw new InvalidArgumentException(
-                'The following target exceptions are invalid because they have one or more "'
-                . self::SLASH
-                . "\": $exceptions"
-            );
-        }
-
-        $targets = [];
-
-        foreach (DirectoryFiles::listFromDirectory(
-            ProjectPath::public($target),
-            explode(',', $exceptions)
-        ) as $filtered_target_subpaths) {
-            $targets[] = trim($target, self::SLASH) . self::SLASH . $filtered_target_subpaths;
-        }
-
-        return $targets;
     }
 }

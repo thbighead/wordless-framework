@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use Wordless\Application\Commands\GeneratePublicWordpressSymbolicLinks;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
@@ -36,7 +37,7 @@ return [
         Token::CONFIG_SIGN_KEY => Environment::get(Token::ENVIRONMENT_SIGN_VARIABLE),
     ],
     'providers' => $providers,
-    'public-symlinks' => [
+    GeneratePublicWordpressSymbolicLinks::PUBLIC_SYMLINK_KEY => [
         'index.php' => '../wp/index.php',
         'wp-content/plugins' => '../wp/wp-content/plugins!.gitignore',
         "wp-content/themes/$current_wp_theme/public" => "../wp/wp-content/themes/$current_wp_theme/public",
