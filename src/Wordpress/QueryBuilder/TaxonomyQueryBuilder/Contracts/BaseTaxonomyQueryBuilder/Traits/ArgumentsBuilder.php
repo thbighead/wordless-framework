@@ -18,10 +18,14 @@ trait ArgumentsBuilder
     private function buildObjectTypeArgument(array &$arguments): static
     {
         if (isset($arguments[self::ARGUMENT_KEY_OBJECT_TYPE])) {
-            foreach ($arguments[self::ARGUMENT_KEY_OBJECT_TYPE] as &$objectType) {
+            $object_types = [];
+
+            foreach ($arguments[self::ARGUMENT_KEY_OBJECT_TYPE] as $objectType) {
                 /** @var ObjectType $objectType */
-                $objectType = $objectType->name;
+                $object_types[$objectType->name] = $objectType->name;
             }
+
+            $arguments[self::ARGUMENT_KEY_OBJECT_TYPE] = array_values($object_types);
         }
 
         return $this;

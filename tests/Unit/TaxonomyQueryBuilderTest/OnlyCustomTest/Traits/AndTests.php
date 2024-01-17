@@ -5,6 +5,7 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyCustomTest\Traits;
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 trait AndTests
 {
@@ -45,6 +46,7 @@ trait AndTests
     /**
      * @return void
      * @throws ReflectionException
+     * @throws EmptyStringParameter
      */
     public function testAndOnlyCustomWhitSomeArguments(): void
     {

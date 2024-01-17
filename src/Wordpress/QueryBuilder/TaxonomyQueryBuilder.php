@@ -7,6 +7,7 @@ use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\AndWhereComparisons;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\NotWhereComparisons;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\OrWhereComparisons;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\ResultFormat;
@@ -77,51 +78,100 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
         return new AndComparison($this->onlyPublic());
     }
 
+    /**
+     * @param string $label
+     * @return AndComparison
+     * @throws EmptyStringParameter
+     */
     public function andWhereAdminMenuLabel(string $label): AndComparison
     {
         return new AndComparison($this->whereAdminMenuLabel($label));
     }
 
+    /**
+     * @param string $singular_label
+     * @return AndComparison
+     * @throws EmptyStringParameter
+     */
     public function andWhereAdminMenuSingularLabel(string $singular_label): AndComparison
     {
         return new AndComparison($this->whereAdminMenuSingularLabel($singular_label));
     }
 
+    /**
+     * @param string $capability
+     * @return AndComparison
+     * @throws EmptyStringParameter
+     */
     public function andWhereAssignPermission(string $capability): AndComparison
     {
         return new AndComparison($this->whereAssignPermission($capability));
     }
 
+    /**
+     * @param ObjectType $objectType
+     * @return AndComparison
+     */
     public function andWhereCanBeUsedBy(ObjectType $objectType): AndComparison
     {
         return new AndComparison($this->whereCanBeUsedBy($objectType));
     }
 
+    /**
+     * @param ObjectType $objectType
+     * @param ObjectType ...$objectTypes
+     * @return AndComparison
+     */
     public function andWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): AndComparison
     {
         return new AndComparison($this->whereCanOnlyBeUsedBy(...Arr::prepend($objectTypes, $objectType)));
     }
 
+    /**
+     * @param string $capability
+     * @return AndComparison
+     * @throws EmptyStringParameter
+     */
     public function andWhereDeletePermission(string $capability): AndComparison
     {
         return new AndComparison($this->whereDeletePermission($capability));
     }
 
+    /**
+     * @param string $capability
+     * @return AndComparison
+     * @throws EmptyStringParameter
+     */
     public function andWhereEditPermission(string $capability): AndComparison
     {
         return new AndComparison($this->whereEditPermission($capability));
     }
 
+    /**
+     * @param string $capability
+     * @return AndComparison
+     * @throws EmptyStringParameter
+     */
     public function andWhereManagePermission(string $capability): AndComparison
     {
         return new AndComparison($this->whereManagePermission($capability));
     }
 
+    /**
+     * @param string $name
+     * @return AndComparison
+     * @throws EmptyStringParameter
+     */
     public function andWhereName(string $name): AndComparison
     {
         return new AndComparison($this->whereName($name));
     }
 
+    /**
+     * @param string $query_variable
+     * @return AndComparison
+     * @throws EmptyStringParameter
+     */
     public function andWhereUrlQueryVariable(string $query_variable): AndComparison
     {
         return new AndComparison($this->whereUrlQueryVariable($query_variable));
@@ -187,16 +237,31 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
         return new NotComparison($this->onlyPublic());
     }
 
+    /**
+     * @param string $label
+     * @return NotComparison
+     * @throws EmptyStringParameter
+     */
     public function notWhereAdminMenuLabel(string $label): NotComparison
     {
         return new NotComparison($this->whereAdminMenuLabel($label));
     }
 
+    /**
+     * @param string $singular_label
+     * @return NotComparison
+     * @throws EmptyStringParameter
+     */
     public function notWhereAdminMenuSingularLabel(string $singular_label): NotComparison
     {
         return new NotComparison($this->whereAdminMenuSingularLabel($singular_label));
     }
 
+    /**
+     * @param string $capability
+     * @return NotComparison
+     * @throws EmptyStringParameter
+     */
     public function notWhereAssignPermission(string $capability): NotComparison
     {
         return new NotComparison($this->whereAssignPermission($capability));
@@ -212,26 +277,51 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
         return new NotComparison($this->whereCanOnlyBeUsedBy(...Arr::prepend($objectTypes, $objectType)));
     }
 
+    /**
+     * @param string $capability
+     * @return NotComparison
+     * @throws EmptyStringParameter
+     */
     public function notWhereDeletePermission(string $capability): NotComparison
     {
         return new NotComparison($this->whereDeletePermission($capability));
     }
 
+    /**
+     * @param string $capability
+     * @return NotComparison
+     * @throws EmptyStringParameter
+     */
     public function notWhereEditPermission(string $capability): NotComparison
     {
         return new NotComparison($this->whereEditPermission($capability));
     }
 
+    /**
+     * @param string $capability
+     * @return NotComparison
+     * @throws EmptyStringParameter
+     */
     public function notWhereManagePermission(string $capability): NotComparison
     {
         return new NotComparison($this->whereManagePermission($capability));
     }
 
+    /**
+     * @param string $name
+     * @return NotComparison
+     * @throws EmptyStringParameter
+     */
     public function notWhereName(string $name): NotComparison
     {
         return new NotComparison($this->whereName($name));
     }
 
+    /**
+     * @param string $query_variable
+     * @return NotComparison
+     * @throws EmptyStringParameter
+     */
     public function notWhereUrlQueryVariable(string $query_variable): NotComparison
     {
         return new NotComparison($this->whereUrlQueryVariable($query_variable));
@@ -287,16 +377,31 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
         return new OrComparison($this->onlyPublic());
     }
 
+    /**
+     * @param string $label
+     * @return OrComparison
+     * @throws EmptyStringParameter
+     */
     public function orWhereAdminMenuLabel(string $label): OrComparison
     {
         return new OrComparison($this->whereAdminMenuLabel($label));
     }
 
+    /**
+     * @param string $singular_label
+     * @return OrComparison
+     * @throws EmptyStringParameter
+     */
     public function orWhereAdminMenuSingularLabel(string $singular_label): OrComparison
     {
         return new OrComparison($this->whereAdminMenuSingularLabel($singular_label));
     }
 
+    /**
+     * @param string $capability
+     * @return OrComparison
+     * @throws EmptyStringParameter
+     */
     public function orWhereAssignPermission(string $capability): OrComparison
     {
         return new OrComparison($this->whereAssignPermission($capability));
@@ -312,26 +417,51 @@ final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements And
         return new OrComparison($this->whereCanOnlyBeUsedBy(...Arr::prepend($objectTypes, $objectType)));
     }
 
+    /**
+     * @param string $capability
+     * @return OrComparison
+     * @throws EmptyStringParameter
+     */
     public function orWhereDeletePermission(string $capability): OrComparison
     {
         return new OrComparison($this->whereDeletePermission($capability));
     }
 
+    /**
+     * @param string $capability
+     * @return OrComparison
+     * @throws EmptyStringParameter
+     */
     public function orWhereEditPermission(string $capability): OrComparison
     {
         return new OrComparison($this->whereEditPermission($capability));
     }
 
+    /**
+     * @param string $capability
+     * @return OrComparison
+     * @throws EmptyStringParameter
+     */
     public function orWhereManagePermission(string $capability): OrComparison
     {
         return new OrComparison($this->whereManagePermission($capability));
     }
 
+    /**
+     * @param string $name
+     * @return OrComparison
+     * @throws EmptyStringParameter
+     */
     public function orWhereName(string $name): OrComparison
     {
         return new OrComparison($this->whereName($name));
     }
 
+    /**
+     * @param string $query_variable
+     * @return OrComparison
+     * @throws EmptyStringParameter
+     */
     public function orWhereUrlQueryVariable(string $query_variable): OrComparison
     {
         return new OrComparison($this->whereUrlQueryVariable($query_variable));

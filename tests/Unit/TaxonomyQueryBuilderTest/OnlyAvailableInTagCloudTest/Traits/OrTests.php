@@ -5,6 +5,7 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInTagCloudTe
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\OrComparison;
 
 trait OrTests
@@ -46,6 +47,7 @@ trait OrTests
     /**
      * @return void
      * @throws ReflectionException
+     * @throws EmptyStringParameter
      */
     public function testOrOnlyAvailableInTagCloudWhitSomeArguments(): void
     {

@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder;
 use Wordless\Wordpress\Enums\ObjectType;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder\Traits\ArgumentsBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\ResultFormat;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\WhereOperator;
@@ -118,23 +119,38 @@ abstract class BaseTaxonomyQueryBuilder extends QueryBuilder
         return $this;
     }
 
+    /**
+     * @param string $label
+     * @return $this
+     * @throws EmptyStringParameter
+     */
     final protected function whereAdminMenuLabel(string $label): static
     {
-        $this->arguments['label'] = $label;
+        $this->arguments['label'] = $this->validateStringParameter($label, __METHOD__);;
 
         return $this;
     }
 
+    /**
+     * @param string $singular_label
+     * @return $this
+     * @throws EmptyStringParameter
+     */
     final protected function whereAdminMenuSingularLabel(string $singular_label): static
     {
-        $this->arguments['singular_label'] = $singular_label;
+        $this->arguments['singular_label'] = $this->validateStringParameter($singular_label, __METHOD__);;
 
         return $this;
     }
 
+    /**
+     * @param string $capability
+     * @return $this
+     * @throws EmptyStringParameter
+     */
     final protected function whereAssignPermission(string $capability): static
     {
-        $this->arguments['assign_cap'] = $capability;
+        $this->arguments['assign_cap'] = $this->validateStringParameter($capability, __METHOD__);;
 
         return $this;
     }
@@ -170,38 +186,78 @@ abstract class BaseTaxonomyQueryBuilder extends QueryBuilder
         return $this;
     }
 
+    /**
+     * @param string $capability
+     * @return $this
+     * @throws EmptyStringParameter
+     */
     final protected function whereDeletePermission(string $capability): static
     {
-        $this->arguments['delete_cap'] = $capability;
+        $this->arguments['delete_cap'] = $this->validateStringParameter($capability, __METHOD__);;
 
         return $this;
     }
 
+    /**
+     * @param string $capability
+     * @return $this
+     * @throws EmptyStringParameter
+     */
     final protected function whereEditPermission(string $capability): static
     {
-        $this->arguments['edit_cap'] = $capability;
+        $this->arguments['edit_cap'] = $this->validateStringParameter($capability, __METHOD__);;
 
         return $this;
     }
 
+    /**
+     * @param string $capability
+     * @return $this
+     * @throws EmptyStringParameter
+     */
     final protected function whereManagePermission(string $capability): static
     {
-        $this->arguments['manage_cap'] = $capability;
+        $this->arguments['manage_cap'] = $this->validateStringParameter($capability, __METHOD__);;
 
         return $this;
     }
 
+    /**
+     * @param string $name
+     * @return $this
+     * @throws EmptyStringParameter
+     */
     final protected function whereName(string $name): static
     {
-        $this->arguments['name'] = $name;
+        $this->arguments['name'] = $this->validateStringParameter($name, __METHOD__);;
 
         return $this;
     }
 
+    /**
+     * @param string $query_variable
+     * @return $this
+     * @throws EmptyStringParameter
+     */
     final protected function whereUrlQueryVariable(string $query_variable): static
     {
-        $this->arguments['query_var'] = $query_variable;
+        $this->arguments['query_var'] = $this->validateStringParameter($query_variable, __METHOD__);
 
         return $this;
+    }
+
+    /**
+     * @param string $parameter_value
+     * @param string $method
+     * @return string
+     * @throws EmptyStringParameter
+     */
+    private function validateStringParameter(string $parameter_value, string $method): string
+    {
+        if ($parameter_value === '') {
+            throw new EmptyStringParameter($method);
+        }
+
+        return $parameter_value;
     }
 }

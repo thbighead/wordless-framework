@@ -4,6 +4,7 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInRestApiTes
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\NotComparison;
 
 trait NotTests
@@ -45,6 +46,7 @@ trait NotTests
     /**
      * @return void
      * @throws ReflectionException
+     * @throws EmptyStringParameter
      */
     public function testNotOnlyAvailableInRestApiWhitSomeArguments(): void
     {
