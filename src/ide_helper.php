@@ -1,6 +1,10 @@
-<?php declare(strict_types=1);
-/** @noinspection PhpUnused */
-/** @noinspection PhpIllegalPsrClassPathInspection */
+<?php /**
+ * @noinspection PhpUnused
+ * @noinspection PhpMultipleClassesDeclarationsInOneFile
+ * @noinspection PhpIllegalPsrClassPathInspection
+ */
+
+declare(strict_types=1);
 
 /**
  * Used just to help IDE to know those constants should be correctly loaded dynamically.
