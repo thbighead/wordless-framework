@@ -86,8 +86,15 @@ class FlushMigrations extends MigrateRollback
     {
         foreach ($this->executedMigrationsOrderedByExecutionDescending() as $executed_migration_filename) {
             try {
-                $this->executeMigration(
-                    require $this->findLoadedMigrationFilepathByFilename($executed_migration_filename)
+                $this->wrapScriptWithMessages(
+                    "Executing $executed_migration_filename::"
+                    . static::MIGRATION_METHOD_TO_EXECUTE
+                    . '()...',
+                    function () use ($executed_migration_filename) {
+                        $this->executeMigration(
+                            require $this->findLoadedMigrationFilepathByFilename($executed_migration_filename)
+                        );
+                    }
                 );
             } catch (FailedToFindExecutedMigrationScript $exception) {
                 $this->writelnComment("{$exception->getMessage()} Skipping.");

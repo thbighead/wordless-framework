@@ -107,6 +107,12 @@ class Migrate extends ConsoleCommand
      */
     final protected function executeFilteredMigrations(): void
     {
+        if (empty($this->filtered_migrations_to_execute)) {
+            $this->writelnInfo('No migrations to execute.');
+
+            return;
+        }
+
         foreach ($this->filtered_migrations_to_execute as $migration_filename => $filteredMigration) {
             $this->wrapScriptWithMessages(
                 "Executing $migration_filename::" . static::MIGRATION_METHOD_TO_EXECUTE . '()...',
