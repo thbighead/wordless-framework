@@ -8,6 +8,7 @@ use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\Arr;
+use Wordless\Application\Helpers\Option;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -50,30 +51,33 @@ class MigrationList extends ConsoleCommand
      */
     protected function runIt(): int
     {
+        $executed_migrations_list = Option::get(Migrate::MIGRATIONS_WP_OPTION_NAME, []);
         $outputTable = $this->mountTable();
+
         $outputTable->setHeaders(['Chunk Datetime', 'Ordered File(s) Executed']);
 
         $is_first_chunk = true;
-        foreach (get_option(Migrate::MIGRATIONS_WP_OPTION_NAME) as $datetime => $chunk) {
+        foreach ($executed_migrations_list as $execution_datetime => $migration_chunk) {
             if (!$is_first_chunk) {
                 $outputTable->addRow(new TableSeparator);
             }
+
             $is_first_chunk = false;
 
-            if (($how_many_files_were_executed = count($chunk)) === 1) {
-                $outputTable->addRow([$datetime, $chunk[0]]);
+            if (($how_many_files_were_executed = count($migration_chunk)) === 1) {
+                $outputTable->addRow([$execution_datetime, $migration_chunk[0]]);
                 continue;
             }
 
             $chunk_rows = [];
 
-            foreach ($chunk as $executed_file) {
+            foreach ($migration_chunk as $executed_file) {
                 $chunk_rows[] = [$executed_file];
             }
 
             $chunk_rows[0] = Arr::prepend(
                 $chunk_rows[0],
-                new TableCell($datetime, ['rowspan' => $how_many_files_were_executed])
+                new TableCell($execution_datetime, ['rowspan' => $how_many_files_were_executed])
             );
 
             $outputTable->addRows($chunk_rows);

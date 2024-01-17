@@ -96,18 +96,22 @@ class MigrateRollback extends Migrate
      * @return void
      * @throws FailedToFindExecutedMigrationScript
      * @throws FailedToUpdateOption
+     * @throws InvalidConfigKey
+     * @throws InvalidMigrationFilename
+     * @throws InvalidProviderClass
+     * @throws MigrationFileNotFound
+     * @throws PathNotFoundException
      */
     final protected function registerMigrationExecution(string $migration_filename): void
     {
         $removed_migration = null;
 
-        foreach ($this->executed_migrations_chunks_list as $execution_datetime => $migration_chunk) {
-            foreach ($migration_chunk as $executed_migration_filename => $executed_migration_absolute_filepath) {
+        foreach ($this->getExecutedMigrationsChunksList() as $execution_datetime => $migration_chunk) {
+            foreach ($migration_chunk as $index => $executed_migration_filename) {
                 if ($executed_migration_filename === $migration_filename) {
-                    $removed_migration =
-                        $this->executed_migrations_chunks_list[$execution_datetime][$executed_migration_filename];
+                    $removed_migration = $this->findLoadedMigrationFilepathByFilename($executed_migration_filename);
 
-                    unset($this->executed_migrations_chunks_list[$execution_datetime][$executed_migration_filename]);
+                    unset($this->executed_migrations_chunks_list[$execution_datetime][$index]);
 
                     if (empty($this->executed_migrations_chunks_list[$execution_datetime])) {
                         unset($this->executed_migrations_chunks_list[$execution_datetime]);
