@@ -52,21 +52,29 @@ class Option
      * @param mixed $option_value
      * @param bool|null $autoload
      * @return bool
-     * @throws FailedToUpdateOption
      */
     public static function update(string $option_key, mixed $option_value, ?bool $autoload = null): bool
     {
         try {
-            if (static::getOrFail($option_key) === $option_value) {
-                return false;
-            }
-        } catch (FailedToFindOption) {
-        } finally {
-            if (!update_option($option_key, $option_value, $autoload)) {
-                throw new FailedToUpdateOption($option_key, $option_value, $autoload);
-            }
-        }
+            static::updateOrFail($option_key, $option_value, $autoload);
 
-        return true;
+            return true;
+        } catch (FailedToUpdateOption) {
+            return false;
+        }
+    }
+
+    /**
+     * @param string $option_key
+     * @param mixed $option_value
+     * @param bool|null $autoload
+     * @return void
+     * @throws FailedToUpdateOption
+     */
+    public static function updateOrFail(string $option_key, mixed $option_value, ?bool $autoload = null): void
+    {
+        if (!update_option($option_key, $option_value, $autoload)) {
+            throw new FailedToUpdateOption($option_key, $option_value, $autoload);
+        }
     }
 }
