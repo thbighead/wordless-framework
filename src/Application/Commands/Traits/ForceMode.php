@@ -7,6 +7,8 @@ use Wordless\Application\Commands\Traits\ForceMode\DTO\ForceModeOptionDTO;
 
 trait ForceMode
 {
+    private const FORCE_MODE = 'force';
+
     /**
      * @return bool
      * @throws InvalidArgumentException

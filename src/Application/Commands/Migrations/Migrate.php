@@ -1,18 +1,17 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Wordless\Application\Commands\Migrations;
 
-use Generator;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
+use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Wordless\Application\Commands\Migrations\Migrate\Exceptions\FailedToFindExecutedMigrationScript;
-use Wordless\Application\Commands\Migrations\Migrate\Exceptions\FailedToFindMigrationScript;
+use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Migrations\Migrate\Traits\ExecutionTimestamp;
 use Wordless\Application\Commands\Migrations\Migrate\Traits\ForceMode;
-use Wordless\Application\Commands\Migrations\Migrate\Traits\MissingMigrationsCalculator;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
+use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Option;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -21,25 +20,25 @@ use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\InvalidMigrationFilename;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
 use Wordless\Infrastructure\ConsoleCommand;
-use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
-use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
+use Wordless\Infrastructure\Migration;
 
 class Migrate extends ConsoleCommand
 {
     use ExecutionTimestamp;
     use ForceMode;
     use LoadWpConfig;
-    use MissingMigrationsCalculator;
 
     public const COMMAND_NAME = 'migrate';
     final public const MIGRATIONS_WP_OPTION_NAME = 'wordless_migrations_already_executed';
+    protected const MIGRATION_METHOD_TO_EXECUTE = 'up';
 
-    /** @var array<string, string> $migrations_paths_provided */
-    private array $migrations_paths_provided;
+    /** @var array<string, string[]> $executed_migrations_chunks_list */
+    protected array $executed_migrations_chunks_list;
+    /** @var array<string, Migration> $filtered_migrations_to_execute */
+    private array $filtered_migrations_to_execute;
+    /** @var array<string, string> $loaded_migrations */
+    private array $loaded_migrations;
 
-    /**
-     * @return ArgumentDTO[]
-     */
     protected function arguments(): array
     {
         return [];
@@ -50,53 +49,6 @@ class Migrate extends ConsoleCommand
         return 'Run missing migration scripts.';
     }
 
-    /**
-     * @param string $migration_filename
-     * @param bool $up
-     * @return void
-     * @throws FailedToFindExecutedMigrationScript
-     * @throws FailedToUpdateOption
-     * @throws InvalidConfigKey
-     * @throws InvalidMigrationFilename
-     * @throws InvalidProviderClass
-     * @throws MigrationFileNotFound
-     * @throws PathNotFoundException
-     */
-    protected function executeMigrationScriptFile(string $migration_filename, bool $up = true): void
-    {
-        $migration_method_to_call = $up ? 'up' : 'down';
-
-        $this->wrapScriptWithMessages(
-            "Executing $migration_filename::$migration_method_to_call()...",
-            function () use ($migration_filename, $migration_method_to_call) {
-                $this->getMigrationsMissingExecution()[$migration_filename]->$migration_method_to_call();
-
-                if ($migration_method_to_call === 'down') {
-                    $this->removeFromExecutedMigrationsListOption($migration_filename);
-
-                    return;
-                }
-
-                $this->addToExecutedMigrationsListOption($migration_filename);
-            }
-        );
-    }
-
-    protected function executedMigrationsOrderedByExecutionDescending(): Generator
-    {
-        foreach (array_reverse($this->getExecutedMigrationsChunksList()) as $chunk) {
-            foreach (array_reverse($chunk) as $migration_filename) {
-                yield $migration_filename;
-            }
-        }
-    }
-
-    protected function getExecutedMigrationsChunksList(): array
-    {
-        return $this->executed_migrations_list ??
-            $this->executed_migrations_list = Option::get(self::MIGRATIONS_WP_OPTION_NAME, []);
-    }
-
     protected function help(): string
     {
         return 'Checks '
@@ -104,9 +56,6 @@ class Migrate extends ConsoleCommand
             . ' option and run every migration script missing from it ordered by filename.';
     }
 
-    /**
-     * @return OptionDTO[]
-     */
     protected function options(): array
     {
         return [
@@ -115,13 +64,29 @@ class Migrate extends ConsoleCommand
     }
 
     /**
+     * @param string $migration_filename
+     * @return void
+     * @throws FailedToUpdateOption
+     */
+    protected function registerMigrationExecution(string $migration_filename): void
+    {
+        if (!isset($this->getExecutedMigrationsChunksList()[$this->getNow()])) {
+            $this->executed_migrations_chunks_list[$this->getNow()] = [];
+        }
+
+        $this->executed_migrations_chunks_list[$this->getNow()][] = $migration_filename;
+
+        $this->updateExecutedMigrationsListOption();
+    }
+
+    /**
      * @return int
-     * @throws FailedToFindExecutedMigrationScript
-     * @throws FailedToFindMigrationScript
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
+     * @throws ExceptionInterface
      * @throws FailedToUpdateOption
      * @throws InvalidArgumentException
      * @throws InvalidConfigKey
-     * @throws InvalidDirectory
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
@@ -130,79 +95,133 @@ class Migrate extends ConsoleCommand
     protected function runIt(): int
     {
         $this->resolveForceMode()
-            ->executeMissingMigrationsScripts();
+            ->filterMigrationsMissingExecution()
+            ->executeFilteredMigrations();
 
         return Command::SUCCESS;
     }
 
     /**
-     * @param string $migration_filename
      * @return void
      * @throws FailedToUpdateOption
      */
-    private function addToExecutedMigrationsListOption(string $migration_filename): void
+    final protected function executeFilteredMigrations(): void
     {
-        if (!isset($this->executed_migrations_list[$this->getNow()])) {
-            $this->executed_migrations_list[$this->getNow()] = [];
-        }
-
-        $this->executed_migrations_list[$this->getNow()][] = $migration_filename;
-
-        $this->updateExecutedMigrationsListOption();
-    }
-
-    /**
-     * @param string $migration_filename
-     * @return void
-     * @throws FailedToFindExecutedMigrationScript
-     * @throws FailedToUpdateOption
-     */
-    private function removeFromExecutedMigrationsListOption(string $migration_filename): void
-    {
-        $removed_migration = null;
-
-        foreach ($this->executed_migrations_list as $chunk_key => $migration_chunk) {
-            foreach ($migration_chunk as $file_key => $executed_migration_filename) {
-                if ($executed_migration_filename === $migration_filename) {
-                    $removed_migration = $this->executed_migrations_list[$chunk_key][$file_key];
-                    unset($this->executed_migrations_list[$chunk_key][$file_key]);
-
-                    if (empty($this->executed_migrations_list[$chunk_key])) {
-                        unset($this->executed_migrations_list[$chunk_key]);
-                    }
-
-                    break;
+        foreach ($this->filtered_migrations_to_execute as $migration_filename => $filteredMigration) {
+            $this->wrapScriptWithMessages(
+                "Executing $migration_filename::" . static::MIGRATION_METHOD_TO_EXECUTE . '()...',
+                function () use ($migration_filename, $filteredMigration) {
+                    $this->executeMigration($filteredMigration)
+                        ->registerMigrationExecution($migration_filename);
                 }
-            }
+            );
         }
+    }
 
-        if ($removed_migration === null) {
-            throw new FailedToFindExecutedMigrationScript($migration_filename);
-        }
+    final protected function executeMigration(Migration $migration): static
+    {
+        $migration->{static::MIGRATION_METHOD_TO_EXECUTE}();
 
-        $this->updateExecutedMigrationsListOption();
+        return $this;
     }
 
     /**
-     * @return void
-     * @throws FailedToUpdateOption
+     * @return array<string, string[]>
      */
-    private function updateExecutedMigrationsListOption(): void
+    final protected function getExecutedMigrationsChunksList(): array
     {
-        Option::update(self::MIGRATIONS_WP_OPTION_NAME, $this->executed_migrations_list);
+        return $this->executed_migrations_chunks_list ??
+            $this->executed_migrations_chunks_list = Option::get(self::MIGRATIONS_WP_OPTION_NAME, []);
     }
 
     /**
      * @return array<string, string>
+     * @throws InvalidProviderClass
+     * @throws InvalidMigrationFilename
+     * @throws MigrationFileNotFound
+     * @throws InvalidConfigKey
+     * @throws PathNotFoundException
+     */
+    final protected function getLoadedMigrations(): array
+    {
+        return $this->loaded_migrations ?? $this->loaded_migrations = Bootstrapper::bootIntoMigrationCommand();
+    }
+
+    /**
+     * @return array<string, string[]>
+     */
+    final protected function getMigrationChunksOrderedDescending(): array
+    {
+        $migrations_chunks_list_ordered_descending = [];
+        $executed_migrations_chunks_list = $this->getExecutedMigrationsChunksList();
+
+        ksort($executed_migrations_chunks_list);
+
+        $executed_migrations_chunks_list = array_reverse($executed_migrations_chunks_list, true);
+
+        foreach ($executed_migrations_chunks_list as $execution_datetime => $migration_chunk) {
+            $migrations_chunks_list_ordered_descending[$execution_datetime] = array_reverse($migration_chunk);
+        }
+
+        return $migrations_chunks_list_ordered_descending;
+    }
+
+    /**
+     * @param array<string, string> $filtered_migrations
+     * @return $this
+     */
+    final protected function instantiateFilteredMigrations(array $filtered_migrations): static
+    {
+        $this->filtered_migrations_to_execute = [];
+
+        foreach ($filtered_migrations as $filtered_migration_filename => $filtered_migration_absolute_filepath) {
+            $this->filtered_migrations_to_execute[$filtered_migration_filename] =
+                require $filtered_migration_absolute_filepath;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return void
+     * @throws FailedToUpdateOption
+     */
+    final protected function updateExecutedMigrationsListOption(): void
+    {
+        Option::update(self::MIGRATIONS_WP_OPTION_NAME, $this->getExecutedMigrationsChunksList());
+    }
+
+    /**
+     * @return $this
      * @throws InvalidConfigKey
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
      * @throws PathNotFoundException
      */
-    private function getMigrationsPathsProvided(): array
+    private function filterMigrationsMissingExecution(): static
     {
-        return $this->migrations_paths_provided ??
-            $this->migrations_paths_provided = Bootstrapper::bootIntoMigrationCommand();
+        $filtered_migrations = [];
+
+        foreach ($this->getLoadedMigrations() as $migration_filename => $migration_absolute_filepath) {
+            if ($this->isMigrationFileAlreadyExecuted($migration_filename)) {
+                continue;
+            }
+
+            $filtered_migrations[$migration_filename] = $migration_absolute_filepath;
+        }
+
+        return $this->instantiateFilteredMigrations($filtered_migrations);
+    }
+
+    private function isMigrationFileAlreadyExecuted(string $migration_filename): bool
+    {
+        foreach ($this->getExecutedMigrationsChunksList() as $chunk) {
+            if (Arr::hasValue($chunk, $migration_filename)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

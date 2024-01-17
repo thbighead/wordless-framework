@@ -22,8 +22,6 @@ class PublishConfigurationFiles extends ConsoleCommand
     use ForceMode;
 
     final public const COMMAND_NAME = 'publish:config';
-
-    private const FORCE_MODE = 'force';
     private const CONFIG_FILENAME_ARGUMENT_NAME = 'config_filename';
 
     /**

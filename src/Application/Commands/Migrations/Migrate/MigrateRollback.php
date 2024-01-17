@@ -9,6 +9,7 @@ use Wordless\Application\Commands\Migrations\Migrate\Exceptions\FailedToFindExec
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\InvalidMigrationFilename;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
@@ -18,7 +19,8 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMo
 
 class MigrateRollback extends Migrate
 {
-    final public const COMMAND_NAME = 'migrate:rollback';
+    public const COMMAND_NAME = 'migrate:rollback';
+    final protected const MIGRATION_METHOD_TO_EXECUTE = 'down';
     private const NUMBER_OF_CHUNKS_OPTION = 'chunks';
     private const ALL_CHUNKS_VALUE = 'all';
 
@@ -67,36 +69,107 @@ class MigrateRollback extends Migrate
      */
     protected function runIt(): int
     {
-        $executed_migrations_list = array_values($this->getExecutedMigrationsChunksList());
-
-        if (empty($executed_migrations_list)) {
-            $this->writelnInfo('Nothing to rollback.');
-
-            return Command::SUCCESS;
-        }
-
-        if (($executed_migrations_list_size = count($executed_migrations_list)) < $this->getNumberOfChunks()) {
-            $this->number_of_chunks = $executed_migrations_list_size;
-        }
-
-        for ($i = 0; $i < $this->getNumberOfChunks(); $i++) {
-            $executed_migrations_chunk = $executed_migrations_list[$i];
-
-            for ($j = count($executed_migrations_chunk) - 1; $j >= 0; $j--) {
-                $executed_migration_filename = $executed_migrations_chunk[$j];
-
-                $this->executeMigrationScriptFile($executed_migration_filename, false);
-            }
-        }
+        $this->filterExecutedMigrationsToRollback()
+            ->executeFilteredMigrations();
 
         return Command::SUCCESS;
     }
 
     /**
+     * @param string $migration_filename
+     * @return string
+     * @throws FailedToFindExecutedMigrationScript
+     * @throws InvalidConfigKey
+     * @throws InvalidMigrationFilename
+     * @throws InvalidProviderClass
+     * @throws MigrationFileNotFound
+     * @throws PathNotFoundException
+     */
+    final protected function findLoadedMigrationFilepathByFilename(string $migration_filename): string
+    {
+        return $this->getLoadedMigrations()[$migration_filename]
+            ?? throw new FailedToFindExecutedMigrationScript($migration_filename);
+    }
+
+    /**
+     * @param string $migration_filename
+     * @return void
+     * @throws FailedToFindExecutedMigrationScript
+     * @throws FailedToUpdateOption
+     */
+    final protected function registerMigrationExecution(string $migration_filename): void
+    {
+        $removed_migration = null;
+
+        foreach ($this->executed_migrations_chunks_list as $execution_datetime => $migration_chunk) {
+            foreach ($migration_chunk as $executed_migration_filename => $executed_migration_absolute_filepath) {
+                if ($executed_migration_filename === $migration_filename) {
+                    $removed_migration =
+                        $this->executed_migrations_chunks_list[$execution_datetime][$executed_migration_filename];
+
+                    unset($this->executed_migrations_chunks_list[$execution_datetime][$executed_migration_filename]);
+
+                    if (empty($this->executed_migrations_chunks_list[$execution_datetime])) {
+                        unset($this->executed_migrations_chunks_list[$execution_datetime]);
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        if ($removed_migration === null) {
+            throw new FailedToFindExecutedMigrationScript($migration_filename);
+        }
+
+        $this->updateExecutedMigrationsListOption();
+    }
+
+    /**
+     * @return $this
+     * @throws FailedToFindExecutedMigrationScript
+     * @throws InvalidArgumentException
+     * @throws InvalidConfigKey
+     * @throws InvalidMigrationFilename
+     * @throws InvalidProviderClass
+     * @throws MigrationFileNotFound
+     * @throws PathNotFoundException
+     */
+    private function filterExecutedMigrationsToRollback(): static
+    {
+        $filtered_migrations = [];
+
+        foreach ($this->getFilteredMigrationChunksOrderedDescending() as $executed_migration_chunk) {
+            foreach ($executed_migration_chunk as $executed_migration_filename) {
+                $filtered_migrations[$executed_migration_filename] =
+                    $this->findLoadedMigrationFilepathByFilename($executed_migration_filename);
+            }
+        }
+
+        return $this->instantiateFilteredMigrations($filtered_migrations);
+    }
+
+    /**
+     * @return array<string[]>
+     * @throws InvalidArgumentException
+     */
+    private function getFilteredMigrationChunksOrderedDescending(): array
+    {
+        $migrations_chunks_list = $this->getMigrationChunksOrderedDescending();
+
+        return array_slice(
+            $this->getMigrationChunksOrderedDescending(),
+            0,
+            $this->getNumberOfChunks(count($migrations_chunks_list))
+        );
+    }
+
+    /**
+     * @param int $max
      * @return int
      * @throws InvalidArgumentException
      */
-    private function getNumberOfChunks(): int
+    private function getNumberOfChunks(int $max): int
     {
         if (isset($this->number_of_chunks)) {
             return $this->number_of_chunks;
@@ -104,8 +177,8 @@ class MigrateRollback extends Migrate
 
         $chunks_input_option_value = (string)$this->input->getOption(self::NUMBER_OF_CHUNKS_OPTION);
 
-        if (strtolower($chunks_input_option_value) === self::ALL_CHUNKS_VALUE) {
-            return PHP_INT_MAX;
+        if (Str::lower($chunks_input_option_value) === self::ALL_CHUNKS_VALUE) {
+            return $max;
         }
 
         return $this->number_of_chunks = max((int)$chunks_input_option_value, 1);
