@@ -21,8 +21,9 @@ class MigrateRollback extends Migrate
 {
     public const COMMAND_NAME = 'migrate:rollback';
     final protected const MIGRATION_METHOD_TO_EXECUTE = 'down';
-    private const NUMBER_OF_CHUNKS_OPTION = 'chunks';
     private const ALL_CHUNKS_VALUE = 'all';
+    private const DEFAULT_CHUNKS_VALUE = 1;
+    private const NUMBER_OF_CHUNKS_OPTION = 'chunks';
 
     private int $number_of_chunks;
 
@@ -49,9 +50,10 @@ class MigrateRollback extends Migrate
         return [
             OptionDTO::make(
                 self::NUMBER_OF_CHUNKS_OPTION,
-                'How many chunks you want to rollback. Default is 1.',
-                mode: OptionMode::optional_value,
-                default: 1
+                'How many chunks you want to rollback. Default is ' . self::DEFAULT_CHUNKS_VALUE . '.',
+                'c',
+                OptionMode::optional_value,
+                self::DEFAULT_CHUNKS_VALUE
             ),
         ];
     }
