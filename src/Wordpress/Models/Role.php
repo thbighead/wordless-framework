@@ -4,37 +4,18 @@ namespace Wordless\Wordpress\Models;
 
 use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Wordpress\Models\Role\Dictionary;
 use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
-use Wordless\Wordpress\RolesList;
 use WP_Role;
 
 class Role extends WP_Role
 {
     final public const KEY = 'role';
 
-    private static RolesList $wpRolesRepository;
+    private static Dictionary $wpRolesRepository;
     private bool $is_default;
-
-    /**
-     * @param string|WP_Role $role
-     * @param bool[] $capabilities
-     */
-    public function __construct($role, array $capabilities = [])
-    {
-        if ($role instanceof WP_Role) {
-            $capabilities = $role->capabilities;
-            $role = $role->name;
-        }
-
-        parent::__construct($role, $capabilities);
-    }
-
-    public function addCapability(string $capability): void
-    {
-        $this->add_cap($capability);
-    }
 
     /**
      * @return Role[]
@@ -55,11 +36,6 @@ class Role extends WP_Role
     public static function allNames(): array
     {
         return self::getRepository()->get_names();
-    }
-
-    public function can(string $capability): bool
-    {
-        return $this->has_cap($capability);
     }
 
     /**
@@ -106,15 +82,6 @@ class Role extends WP_Role
     }
 
     /**
-     * @return bool
-     * @throws InvalidArgumentException
-     */
-    public function isDefault(): bool
-    {
-        return $this->is_default ?? $this->is_default = self::isDefaultByName($this->name);
-    }
-
-    /**
      * @param string $role
      * @return bool
      * @throws InvalidArgumentException
@@ -122,6 +89,44 @@ class Role extends WP_Role
     public static function isDefaultByName(string $role): bool
     {
         return DefaultRole::tryFrom(Str::slugCase($role)) !== null;
+    }
+
+    private static function getRepository(): Dictionary
+    {
+        return self::$wpRolesRepository ?? self::$wpRolesRepository = new Dictionary;
+    }
+
+    /**
+     * @param string|WP_Role $role
+     * @param bool[] $capabilities
+     */
+    public function __construct($role, array $capabilities = [])
+    {
+        if ($role instanceof WP_Role) {
+            $capabilities = $role->capabilities;
+            $role = $role->name;
+        }
+
+        parent::__construct($role, $capabilities);
+    }
+
+    public function addCapability(string $capability): void
+    {
+        $this->add_cap($capability);
+    }
+
+    public function can(string $capability): bool
+    {
+        return $this->has_cap($capability);
+    }
+
+    /**
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function isDefault(): bool
+    {
+        return $this->is_default ?? $this->is_default = self::isDefaultByName($this->name);
     }
 
     public function removeCapability(string $capability): void
@@ -138,10 +143,5 @@ class Role extends WP_Role
         foreach ($capabilities as $capability => $can) {
             $can ? $this->addCapability($capability) : $this->removeCapability($capability);
         }
-    }
-
-    private static function getRepository(): RolesList
-    {
-        return self::$wpRolesRepository ?? self::$wpRolesRepository = new RolesList;
     }
 }

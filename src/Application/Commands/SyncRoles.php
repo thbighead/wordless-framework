@@ -2,15 +2,18 @@
 
 namespace Wordless\Application\Commands;
 
+use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
+use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
+use Wordless\Wordpress\Models\Role\Dictionary;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
-use Wordless\Wordpress\RolesList;
 
 class SyncRoles extends ConsoleCommand
 {
@@ -47,13 +50,16 @@ class SyncRoles extends ConsoleCommand
     /**
      * @return int
      * @throws FailedToCreateRole
-     * @throws PathNotFoundException
      * @throws FailedToFindRole
+     * @throws PathNotFoundException
+     * @throws InvalidArgumentException
+     * @throws InvalidConfigKey
+     * @throws InvalidProviderClass
      */
     protected function runIt(): int
     {
-        $this->wrapScriptWithMessages("Creating or updating roles...", function () {
-            RolesList::sync();
+        $this->wrapScriptWithMessages('Creating or updating roles...', function () {
+            Dictionary::sync();
         });
 
         return Command::SUCCESS;

@@ -58,7 +58,7 @@ abstract class ApiController extends WP_REST_Controller
     abstract protected function version(): ?string;
 
     /**
-     * @return Generator
+     * @return Generator<string>
      * @throws InvalidConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
