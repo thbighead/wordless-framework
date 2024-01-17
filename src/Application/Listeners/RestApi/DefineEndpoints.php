@@ -6,8 +6,8 @@ use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Listeners\RestApi\DefineEndpoints\Exceptions\InvalidRestApiMultipleConfigKey;
 use Wordless\Application\Providers\RestApiProvider;
+use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
-use Wordless\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Wordpress\Hook\Enums\Filter;
 
 class DefineEndpoints extends FilterListener

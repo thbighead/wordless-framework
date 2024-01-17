@@ -5,8 +5,8 @@ namespace Wordless\Application\Listeners;
 use Wordless\Application\Helpers\Http;
 use Wordless\Infrastructure\Wordpress\ApiController\Request;
 use Wordless\Infrastructure\Wordpress\ApiController\Response;
+use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
-use Wordless\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Wordpress\Hook\Enums\Filter;
 use WP_HTTP_Response;
 

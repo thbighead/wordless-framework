@@ -6,10 +6,10 @@
  * Used just to help IDE to know those constants should be correctly loaded dynamically.
  */
 
+use Wordless\Infrastructure\Wordpress\Hook;
+use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener\AjaxListener;
-use Wordless\Wordpress\Hook;
-use Wordless\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Wordpress\Hook\Enums\Action;
 use Wordless\Wordpress\Hook\Enums\Type;
 

@@ -7,8 +7,8 @@ use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Url;
+use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
-use Wordless\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Wordpress\Hook\Enums\Filter;
 use WP_Error;
 

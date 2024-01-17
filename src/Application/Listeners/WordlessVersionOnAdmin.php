@@ -3,8 +3,8 @@
 namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Guessers\WordlessFrameworkVersionGuesser;
+use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
-use Wordless\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Wordpress\Hook\Enums\Filter;
 
 class WordlessVersionOnAdmin extends FilterListener

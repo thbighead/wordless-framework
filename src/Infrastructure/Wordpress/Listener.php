@@ -2,7 +2,6 @@
 
 namespace Wordless\Infrastructure\Wordpress;
 
-use Wordless\Wordpress\Hook;
 use Wordless\Wordpress\Hook\Enums\Type;
 
 abstract class Listener

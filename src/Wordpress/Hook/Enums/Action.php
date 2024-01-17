@@ -2,7 +2,7 @@
 
 namespace Wordless\Wordpress\Hook\Enums;
 
-use Wordless\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 
 enum Action: string implements ActionHook
 {

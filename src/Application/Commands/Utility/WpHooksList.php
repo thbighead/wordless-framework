@@ -13,7 +13,7 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
-use Wordless\Wordpress\Hook;
+use Wordless\Infrastructure\Wordpress\Hook;
 use Wordless\Wordpress\Hook\Enums\Action;
 use Wordless\Wordpress\Hook\Enums\Filter;
 use Wordless\Wordpress\Hook\Enums\Type;

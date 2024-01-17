@@ -2,9 +2,9 @@
 
 namespace Wordless\Infrastructure\Wordpress\Listener;
 
+use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener\Traits\Adapter;
-use Wordless\Wordpress\Hook\Contracts\ActionHook;
 
 abstract class ActionListener extends Listener
 {

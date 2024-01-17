@@ -4,8 +4,8 @@ namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
+use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
-use Wordless\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Wordpress\Hook\Enums\Action;
 use WP_Error;
 use WP_HTTP_Requests_Response;

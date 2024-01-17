@@ -2,7 +2,7 @@
 
 namespace Wordless\Wordpress\Hook\Enums;
 
-use Wordless\Wordpress\Hook\Contracts\FilterHook;
+use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 
 enum Filter: string implements FilterHook
 {
