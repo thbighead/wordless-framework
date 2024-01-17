@@ -4,8 +4,8 @@ namespace Wordless\Application\Listeners\CustomAdminUrl;
 
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener;
+use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener\Traits\Adapter as ActionListener;
-use Wordless\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Wordpress\Hook\Enums\Action;
 
 class LoadCustomLoginUrl extends BaseListener
