@@ -51,7 +51,7 @@ class MigrateRollback extends Migrate
                 self::NUMBER_OF_CHUNKS_OPTION,
                 'How many chunks you want to rollback. Default is 1.',
                 mode: OptionMode::optional_value,
-                default: self::ALL_CHUNKS_VALUE
+                default: 1
             ),
         ];
     }
