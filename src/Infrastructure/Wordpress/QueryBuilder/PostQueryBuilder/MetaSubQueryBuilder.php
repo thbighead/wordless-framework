@@ -7,7 +7,7 @@ use Wordless\Exceptions\TryingToMakeNonArrayComparisonWithArrayableValues;
 use Wordless\Exceptions\TryingToMakeOnlyForArrayComparisonWithNonArrayableValues;
 use Wordless\Exceptions\UnexpectedMetaSubQueryClosureReturn;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\InitializedMetaSubQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\Comparator;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\Comparison;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\Key;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\Type;
 
@@ -64,7 +64,7 @@ abstract class MetaSubQueryBuilder
      */
     protected function mountCondition(
         string     $key,
-        Comparator $comparison,
+        Comparison $comparison,
                    $values = [],
         Type       $value_typed_as = Type::type_char
     ): array
@@ -115,7 +115,7 @@ abstract class MetaSubQueryBuilder
         return $values;
     }
 
-    private function isTryingToCompareKeyExistenceWithoutValues(Comparator $comparison, $values): bool
+    private function isTryingToCompareKeyExistenceWithoutValues(Comparison $comparison, $values): bool
     {
         return $comparison->isAvailableForMetaKeyComparison() && is_array($values) && empty($values);
     }
@@ -127,7 +127,7 @@ abstract class MetaSubQueryBuilder
      * @throws TryingToMakeNonArrayComparisonWithArrayableValues
      * @throws TryingToMakeOnlyForArrayComparisonWithNonArrayableValues
      */
-    private function validateValueComparison(Comparator $comparison, $values): void
+    private function validateValueComparison(Comparison $comparison, $values): void
     {
         if ($comparison->isOnlyForArraysComparison() && !WpQueryMeta::isArrayableValue($values)) {
             throw new TryingToMakeOnlyForArrayComparisonWithNonArrayableValues($comparison, $values);

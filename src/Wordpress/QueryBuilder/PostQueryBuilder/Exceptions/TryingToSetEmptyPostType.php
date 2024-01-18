@@ -5,12 +5,12 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Exceptions;
 use ErrorException;
 use Throwable;
 
-class TrySetEmptyPostType extends ErrorException
+class TryingToSetEmptyPostType extends ErrorException
 {
     public function __construct(?Throwable $previous = null)
     {
         parent::__construct(
-            'Failed on try set empty array for post_type parameter on method "whereType()".',
+            'Empty arrays for post_type parameter is forbidden.',
             previous: $previous
         );
     }

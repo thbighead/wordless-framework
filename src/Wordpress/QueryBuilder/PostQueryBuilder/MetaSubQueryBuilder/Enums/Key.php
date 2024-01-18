@@ -10,6 +10,5 @@ enum Key: string
     case key_meta_value = 'value';
     case key_relation = 'relation';
     case key_value_type = 'type';
-    case meta_prefix = 'meta_';
     case zero_value_key = '_wp_zero_value';
 }
