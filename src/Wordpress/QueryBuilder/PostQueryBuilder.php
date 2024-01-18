@@ -6,6 +6,7 @@ use Wordless\Enums\WpQueryTaxonomy;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\WpQueryBuilder;
+use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
@@ -44,6 +45,7 @@ class PostQueryBuilder extends WpQueryBuilder
     public function __construct(StandardType|PostType|null $postType = null)
     {
         $this->whereType($postType ?? StandardType::ANY)
+            ->whereStatus(StandardStatus::reallyAny())
             ->withoutStickyPosts()
             ->deactivatePagination()
             ->setPostsFormat(PostsListFormat::all_fields);

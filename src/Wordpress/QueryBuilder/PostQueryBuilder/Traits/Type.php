@@ -9,6 +9,13 @@ use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 
 trait Type
 {
+    public function onlyOfType(StandardType|PostType|string $type, StandardType|PostType|string ...$types): static
+    {
+        $this->arguments[PostType::QUERY_TYPE_KEY] = [];
+
+        return $this->whereType(...Arr::prepend($types, $type));
+    }
+
     /**
      * @param StandardType|PostType|string $type
      * @param StandardType|PostType|string ...$types
@@ -99,10 +106,6 @@ trait Type
 
     private function retrieveTypeAsString(StandardType|PostType|string $type): string
     {
-        if (!is_string($type)) {
-            return $type->name;
-        }
-
-        return $type;
+        return is_string($type) ? $type : $type->name;
     }
 }

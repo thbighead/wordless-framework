@@ -10,6 +10,23 @@ trait Status
 {
     private const KEY_POST_STATUS = 'post_status';
 
+    public function onlyWithStatus(
+        StandardStatus|PostStatus|string $status,
+        StandardStatus|PostStatus|string ...$statuses
+    ): static
+    {
+        $this->arguments[self::KEY_POST_STATUS] = [];
+
+        return $this->whereStatus(...Arr::prepend($statuses, $status));
+    }
+
+    public function whereAnyStatus(): static
+    {
+        $this->arguments[self::KEY_POST_STATUS] = [StandardStatus::reallyAny() => StandardStatus::reallyAny()];
+
+        return $this;
+    }
+
     public function whereStatus(
         StandardStatus|PostStatus|string $status,
         StandardStatus|PostStatus|string ...$statuses
@@ -21,9 +38,7 @@ trait Status
 
         foreach (Arr::prepend($statuses, $status) as $status) {
             if ($this->isStatusReallyAny($status)) {
-                $this->arguments[self::KEY_POST_STATUS] = StandardStatus::ANY;
-
-                return $this;
+                return $this->whereAnyStatus();
             }
 
             $status_string = !is_string($status) ? $this->extractStatusString($status) : $status;
