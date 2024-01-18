@@ -15,22 +15,20 @@ trait Status
         StandardStatus|PostStatus|string ...$statuses
     ): static
     {
-        if (!isset($this->arguments[self::KEY_POST_STATUS]) || $this->isWhereStatusAny()) {
+        if (!isset($this->arguments[self::KEY_POST_STATUS]) || $this->isWhereStatusReallyAny()) {
             $this->arguments[self::KEY_POST_STATUS] = [];
         }
 
         foreach (Arr::prepend($statuses, $status) as $status) {
-            if (!is_string($status)) {
-                $status = $this->extractStatusString($status);
-            }
-
-            if ($this->isStatusAny($status)) {
+            if ($this->isStatusReallyAny($status)) {
                 $this->arguments[self::KEY_POST_STATUS] = StandardStatus::ANY;
 
                 return $this;
             }
 
-            $this->arguments[self::KEY_POST_STATUS][$status] = $status;
+            $status_string = !is_string($status) ? $this->extractStatusString($status) : $status;
+
+            $this->arguments[self::KEY_POST_STATUS][$status_string] = $status;
         }
 
         return $this;
@@ -46,7 +44,12 @@ trait Status
 
     private function isStatusAny(StandardStatus|PostStatus|string $status): bool
     {
-        return $this->extractStatusString($status) === StandardStatus::ANY;
+        return (is_string($status) ? $status : $this->extractStatusString($status)) === StandardStatus::ANY;
+    }
+
+    private function isStatusReallyAny(StandardStatus|PostStatus|string $status): bool
+    {
+        return $status === StandardStatus::reallyAny();
     }
 
     private function isWhereStatusAny(): bool
@@ -60,7 +63,7 @@ trait Status
             $status = $this->extractStatusString($status);
         }
 
-        if ($this->isStatusAny($status)) {
+        if ($this->isStatusReallyAny($status)) {
             return true;
         }
 
@@ -70,5 +73,20 @@ trait Status
     private function isWhereStatusIncludingPublish(): bool
     {
         return $this->isWhereStatusIncluding(StandardStatus::publish);
+    }
+
+    private function isWhereStatusReallyAny(): bool
+    {
+        if (!is_null($this->arguments[self::KEY_POST_STATUS][StandardStatus::reallyAny()] ?? null)) {
+            return true;
+        }
+
+        foreach (StandardStatus::REALLY_ANY as $status_string) {
+            if (is_null($this->arguments[self::KEY_POST_STATUS][$status_string] ?? null)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

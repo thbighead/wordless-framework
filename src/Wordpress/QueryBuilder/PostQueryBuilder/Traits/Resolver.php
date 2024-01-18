@@ -124,7 +124,15 @@ trait Resolver
     private function resolveStatusArgument(array &$arguments): static
     {
         if (isset($arguments[self::KEY_POST_STATUS])) {
-            $arguments[self::KEY_POST_STATUS] = array_values($arguments[self::KEY_POST_STATUS]);
+            $resolved_status_argument = [];
+
+            foreach (array_keys($arguments[self::KEY_POST_STATUS]) as $status_string) {
+                foreach (explode(',', $status_string) as $status) {
+                    $resolved_status_argument[] = $status;
+                }
+            }
+
+            $arguments[self::KEY_POST_STATUS] = $resolved_status_argument;
         }
 
         return $this;

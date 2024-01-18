@@ -54,7 +54,7 @@ trait ArgumentsFixer
 
     private function fixPostStatusArgumentBasedOnPostTypeArgument(): static
     {
-        if ($this->isWhereStatusAny()) {
+        if ($this->isWhereStatusReallyAny()) {
             return $this;
         }
 
