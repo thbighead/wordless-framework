@@ -3,9 +3,12 @@
 namespace Wordless\Infrastructure\Enums;
 
 use Wordless\Application\Helpers\Str;
+use Wordless\Infrastructure\Enums\MimeType\Exceptions\InvalidMimeType;
 
 enum MimeType: string
 {
+    final public const VALIDATION_REGEX = '/^[a-z0-9_]+\/[^\/\sA-Z]+$/';
+
     case application_epubzip = 'application/epub+zip';
     case application_gzip = 'application/gzip';
     case application_javaarchive = 'application/java-archive';
@@ -80,6 +83,20 @@ enum MimeType: string
     case video_ogg = 'video/ogg';
     case video_webm = 'video/webm';
     case video_xmsvideo = 'video/x-msvideo';
+
+    /**
+     * @param string $supposed_mime_type
+     * @return string
+     * @throws InvalidMimeType
+     */
+    public static function validate(string $supposed_mime_type): string
+    {
+        if (preg_match(self::VALIDATION_REGEX, $supposed_mime_type) !== 1) {
+            throw new InvalidMimeType($supposed_mime_type);
+        }
+
+        return $supposed_mime_type;
+    }
 
     public function getFileExtension(): string
     {

@@ -88,7 +88,8 @@ trait Resolver
 
         $arguments = parent::buildArguments();
 
-        $this->resolveStatusArgument($arguments)
+        $this->resolveMimeTypeArgument($arguments)
+            ->resolveStatusArgument($arguments)
             ->resolveMetaSubQuery($arguments)
             ->resolveTaxonomySubQuery($arguments)
             ->resolveExtraArguments($arguments, $extra_arguments);
@@ -117,6 +118,29 @@ trait Resolver
         if ($metaSubQueryBuilder instanceof MetaSubQueryBuilder) {
             $arguments[Key::key_meta_query->value] = $metaSubQueryBuilder->build();
         }
+
+        return $this;
+    }
+
+    private function resolveMimeTypeArgument(array &$arguments): static
+    {
+        if (!isset($arguments[self::KEY_ATTACHMENT_MIME_TYPE])) {
+            return $this;
+        }
+
+        if (!$this->isWhereTypeIncludingAttachment()) {
+            unset($arguments[self::KEY_ATTACHMENT_MIME_TYPE]);
+
+            return $this;
+        }
+
+        $resolved_mime_type_argument = [];
+
+        foreach ($arguments[self::KEY_ATTACHMENT_MIME_TYPE] as $mime_type_string => $mimeType) {
+            $resolved_mime_type_argument[] = $mime_type_string;
+        }
+
+        $arguments[self::KEY_ATTACHMENT_MIME_TYPE] = $resolved_mime_type_argument;
 
         return $this;
     }

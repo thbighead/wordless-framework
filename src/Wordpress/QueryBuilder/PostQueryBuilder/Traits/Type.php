@@ -6,9 +6,12 @@ use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Str;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Type\Traits\MimeType;
 
 trait Type
 {
+    use MimeType;
+
     public function onlyOfType(StandardType|PostType|string $type, StandardType|PostType|string ...$types): static
     {
         $this->arguments[PostType::QUERY_TYPE_KEY] = [];
