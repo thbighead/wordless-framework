@@ -3,6 +3,7 @@
 namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Http;
+use Wordless\Infrastructure\Enums\MimeType;
 use Wordless\Infrastructure\Wordpress\ApiController\Request;
 use Wordless\Infrastructure\Wordpress\ApiController\Response;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
@@ -43,8 +44,8 @@ class ManageRestResponseContentTypeHeader extends FilterListener
     private static function isResponseContentTypeApplicationJson(WP_HTTP_Response $response): bool
     {
         $response_content_type = $response->get_headers()[Response::canonicalizeHeaderName(Http::CONTENT_TYPE)] ??
-            Http::CONTENT_TYPE_APPLICATION_JSON;
-        return $response_content_type === Http::CONTENT_TYPE_APPLICATION_JSON;
+            MimeType::application_json->value;
+        return $response_content_type === MimeType::application_json->value;
     }
 
 }

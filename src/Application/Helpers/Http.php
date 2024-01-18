@@ -4,6 +4,7 @@ namespace Wordless\Application\Helpers;
 
 use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
 use Wordless\Application\Helpers\Http\Traits\Internal;
+use Wordless\Infrastructure\Enums\MimeType;
 use Wordless\Infrastructure\Http\Request\Enums\Verb;
 use Wordless\Infrastructure\Http\Response;
 use WP_Error;
@@ -15,7 +16,6 @@ class Http
     final public const ACCEPT = 'Accept';
     final public const BODY = 'body';
     final public const CONTENT_TYPE = 'Content-Type';
-    final public const CONTENT_TYPE_APPLICATION_JSON = 'application/json';
     final public const TIMEOUT = 30; // seconds
 
     /**
@@ -98,7 +98,7 @@ class Http
         $response = self::getWpHttp()->request($endpoint, wp_parse_args([
             'method' => $httpVerb->value,
             'headers' => $headers,
-            self::BODY => str_contains(($headers[static::CONTENT_TYPE] ?? ''), static::CONTENT_TYPE_APPLICATION_JSON) ?
+            self::BODY => str_contains(($headers[static::CONTENT_TYPE] ?? ''), MimeType::application_json->value) ?
                 json_encode($body) : $body,
             'timeout' => static::TIMEOUT,
             'sslverify' => $only_with_ssl ?? Environment::isProduction(),
@@ -109,7 +109,7 @@ class Http
         }
 
         if (is_string($response[self::BODY] ?? false)) {
-            if (!Str::contains(($headers[static::ACCEPT] ?? ''), static::CONTENT_TYPE_APPLICATION_JSON)) {
+            if (!Str::contains(($headers[static::ACCEPT] ?? ''), MimeType::application_json->value)) {
                 $response['original_body'] = $response[self::BODY];
             }
 
