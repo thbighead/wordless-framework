@@ -3,6 +3,7 @@
 namespace Wordless\Application\Listeners;
 
 
+use Wordless\Infrastructure\Enums\MimeType;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
 use Wordless\Wordpress\Hook\Enums\Filter;
@@ -16,7 +17,7 @@ class AllowSvgUpload extends FilterListener
 
     public static function allowSvgMimeType(array $allowed_mimes): array
     {
-        $allowed_mimes['svg'] = 'image/svg+xml';
+        $allowed_mimes['svg'] = MimeType::image_svgxml->value;
 
         return $allowed_mimes;
     }

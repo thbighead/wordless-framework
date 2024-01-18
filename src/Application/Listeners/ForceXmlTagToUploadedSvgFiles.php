@@ -2,7 +2,14 @@
 
 namespace Wordless\Application\Listeners;
 
+use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Infrastructure\Enums\MimeType;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
 use Wordless\Wordpress\Hook\Enums\Filter;
@@ -15,17 +22,25 @@ class ForceXmlTagToUploadedSvgFiles extends FilterListener
      */
     protected const FUNCTION = 'appendXmlTag';
 
-
+    /**
+     * @param array $upload
+     * @return array
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
+     * @throws FailedToGetFileContent
+     * @throws FailedToPutFileContent
+     * @throws PathNotFoundException
+     */
     public static function appendXmlTag(array $upload): array
     {
-        if (($upload['type'] ?? null) !== 'image/svg+xml') {
+        if (($upload['type'] ?? null) !== MimeType::image_svgxml->value) {
             return $upload;
         }
 
-        $contents = file_get_contents($upload[self::UPLOAD_TEMP_PATH_KEY]);
+        $contents = DirectoryFiles::getFileContent($upload[self::UPLOAD_TEMP_PATH_KEY]);
 
         if (!Str::contains($contents, '<?xml')) {
-            file_put_contents(
+            DirectoryFiles::createFileAt(
                 $upload[self::UPLOAD_TEMP_PATH_KEY],
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>$contents"
             );
