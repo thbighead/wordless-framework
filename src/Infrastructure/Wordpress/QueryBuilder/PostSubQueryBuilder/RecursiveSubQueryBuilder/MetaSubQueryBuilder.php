@@ -2,9 +2,9 @@
 
 namespace Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\RecursiveSubQueryBuilder;
 
-use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\RecursiveSubQueryBuilder;
 
-abstract class MetaSubQueryBuilder extends PostSubQueryBuilder
+abstract class MetaSubQueryBuilder extends RecursiveSubQueryBuilder
 {
     final public const ARGUMENT_KEY = 'meta_query';
     final protected const KEY_META_KEY = 'key';

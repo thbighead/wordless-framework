@@ -2,9 +2,9 @@
 
 namespace Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\RecursiveSubQueryBuilder;
 
-use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\RecursiveSubQueryBuilder;
 
-abstract class TaxonomySubQueryBuilder extends PostSubQueryBuilder
+abstract class TaxonomySubQueryBuilder extends RecursiveSubQueryBuilder
 {
     final public const ARGUMENT_KEY = 'tax_query';
 }
