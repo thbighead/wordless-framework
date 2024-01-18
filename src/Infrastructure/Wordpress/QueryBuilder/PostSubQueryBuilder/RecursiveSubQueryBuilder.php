@@ -1,10 +1,10 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder;
 
 use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder;
 
-abstract class MetaSubQueryBuilder extends PostSubQueryBuilder
+abstract class RecursiveSubQueryBuilder extends PostSubQueryBuilder
 {
-    final public const ARGUMENT_KEY = 'meta_query';
+
 }

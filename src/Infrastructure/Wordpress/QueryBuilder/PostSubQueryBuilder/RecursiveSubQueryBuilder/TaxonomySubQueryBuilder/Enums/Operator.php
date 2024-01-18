@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\TaxonomySubQueryBuilder\Enums;
+namespace Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\RecursiveSubQueryBuilder\TaxonomySubQueryBuilder\Enums;
 
 enum Operator: string
 {

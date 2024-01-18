@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\MetaSubQueryBuilder\Enums;
+namespace Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\RecursiveSubQueryBuilder\MetaSubQueryBuilder\Enums;
 
 enum Compare: string
 {

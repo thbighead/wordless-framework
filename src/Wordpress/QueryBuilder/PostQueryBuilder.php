@@ -2,8 +2,8 @@
 
 namespace Wordless\Wordpress\QueryBuilder;
 
-use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\MetaSubQueryBuilder;
-use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\TaxonomySubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\RecursiveSubQueryBuilder\MetaSubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\RecursiveSubQueryBuilder\TaxonomySubQueryBuilder;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\WpQueryBuilder;
 use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType;

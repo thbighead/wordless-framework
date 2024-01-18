@@ -4,10 +4,6 @@ namespace Wordless\Infrastructure\Wordpress;
 
 abstract class QueryBuilder
 {
-    abstract public function first(): mixed;
-
-    abstract public function get(): array;
-
     protected array $arguments = [];
 
     /**

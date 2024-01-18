@@ -4,6 +4,8 @@ namespace Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\Enu
 
 enum Relation
 {
+    public const KEY = 'relation';
+
     case and;
     case or;
 }
