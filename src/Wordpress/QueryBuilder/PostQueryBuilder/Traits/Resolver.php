@@ -3,14 +3,12 @@
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
 use stdClass;
-use Wordless\Enums\WpQueryTaxonomy;
-use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
-use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\MetaSubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\TaxonomySubQueryBuilder;
 use Wordless\Wordpress\Models\Post;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\Key;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver\Traits\ArgumentsFixer;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver\Traits\Pagination;
 use WP_Post;
@@ -113,10 +111,10 @@ trait Resolver
 
     private function resolveMetaSubQuery(array &$arguments): static
     {
-        $metaSubQueryBuilder = $this->arguments[Key::key_meta_query->value] ?? null;
+        $metaSubQueryBuilder = $arguments[MetaSubQueryBuilder::ARGUMENT_KEY] ?? null;
 
         if ($metaSubQueryBuilder instanceof MetaSubQueryBuilder) {
-            $arguments[Key::key_meta_query->value] = $metaSubQueryBuilder->build();
+            $arguments[MetaSubQueryBuilder::ARGUMENT_KEY] = $metaSubQueryBuilder->buildArguments();
         }
 
         return $this;
@@ -164,10 +162,10 @@ trait Resolver
 
     private function resolveTaxonomySubQuery(array &$arguments): static
     {
-        $taxonomySubQueryBuilder = $this->arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] ?? null;
+        $taxonomySubQueryBuilder = $arguments[TaxonomySubQueryBuilder::ARGUMENT_KEY] ?? null;
 
         if ($taxonomySubQueryBuilder instanceof TaxonomySubQueryBuilder) {
-            $arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] = $taxonomySubQueryBuilder->build();
+            $arguments[TaxonomySubQueryBuilder::ARGUMENT_KEY] = $taxonomySubQueryBuilder->buildArguments();
         }
 
         return $this;

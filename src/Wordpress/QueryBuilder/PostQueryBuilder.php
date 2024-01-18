@@ -2,15 +2,13 @@
 
 namespace Wordless\Wordpress\QueryBuilder;
 
-use Wordless\Enums\WpQueryTaxonomy;
-use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
-use Wordless\Infrastructure\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\MetaSubQueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\TaxonomySubQueryBuilder;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\WpQueryBuilder;
 use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\Key;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Author;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Category;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Comment;
@@ -55,14 +53,14 @@ class PostQueryBuilder extends WpQueryBuilder
 
     public function whereMeta(MetaSubQueryBuilder $subQuery): static
     {
-        $this->arguments[Key::key_meta_query->value] = $subQuery;
+        $this->arguments[MetaSubQueryBuilder::ARGUMENT_KEY] = $subQuery;
 
         return $this;
     }
 
     public function whereTaxonomy(TaxonomySubQueryBuilder $subQuery): static
     {
-        $this->arguments[WpQueryTaxonomy::KEY_TAXONOMY_QUERY] = $subQuery;
+        $this->arguments[TaxonomySubQueryBuilder::ARGUMENT_KEY] = $subQuery;
 
         return $this;
     }
