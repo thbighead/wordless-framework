@@ -9,12 +9,12 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\T
 
 trait NotIn
 {
-    public function whereKeyCharValueNotIn(string $value, string ...$values): static
+    public function whereKeyCharValueNotIn(string $key, string $value, string ...$values): static
     {
-        return $this->whereKeyValueNotIn(Arr::prepend($values, $value), Type::char);
+        return $this->whereKeyValueNotIn($key, Arr::prepend($values, $value), Type::char);
     }
 
-    public function whereKeyDateValueNotIn(Carbon $value, Carbon ...$values): static
+    public function whereKeyDateValueNotIn(string $key, Carbon $value, Carbon ...$values): static
     {
         $prepared_values = [];
 
@@ -23,10 +23,10 @@ trait NotIn
             $prepared_values[] = $unpreparedValues->toDateString();
         }
 
-        return $this->whereKeyValueNotIn($prepared_values, Type::date);
+        return $this->whereKeyValueNotIn($key, $prepared_values, Type::date);
     }
 
-    public function whereKeyDateTimeValueNotIn(Carbon $value, Carbon ...$values): static
+    public function whereKeyDateTimeValueNotIn(string $key, Carbon $value, Carbon ...$values): static
     {
         $prepared_values = [];
 
@@ -35,25 +35,25 @@ trait NotIn
             $prepared_values[] = $unpreparedValues->toDateTimeString();
         }
 
-        return $this->whereKeyValueNotIn($prepared_values, Type::datetime);
+        return $this->whereKeyValueNotIn($key, $prepared_values, Type::datetime);
     }
 
-    public function whereKeyDecimalValueNotIn(float $value, float ...$values): static
+    public function whereKeyDecimalValueNotIn(string $key, float $value, float ...$values): static
     {
-        return $this->whereKeyValueNotIn(Arr::prepend($values, $value), Type::decimal);
+        return $this->whereKeyValueNotIn($key, Arr::prepend($values, $value), Type::decimal);
     }
 
-    public function whereKeyNumericValueNotIn(int|float $value, int|float ...$values): static
+    public function whereKeyNumericValueNotIn(string $key, int|float $value, int|float ...$values): static
     {
-        return $this->whereKeyValueNotIn(Arr::prepend($values, $value), Type::numeric);
+        return $this->whereKeyValueNotIn($key, Arr::prepend($values, $value), Type::numeric);
     }
 
-    public function whereKeySignedValueNotIn(int $value, int ...$values): static
+    public function whereKeySignedValueNotIn(string $key, int $value, int ...$values): static
     {
-        return $this->whereKeyValueNotIn(Arr::prepend($values, $value), Type::signed);
+        return $this->whereKeyValueNotIn($key, Arr::prepend($values, $value), Type::signed);
     }
 
-    public function whereKeyTimeValueNotIn(Carbon $value, Carbon ...$values): static
+    public function whereKeyTimeValueNotIn(string $key, Carbon $value, Carbon ...$values): static
     {
         $prepared_values = [];
 
@@ -62,17 +62,17 @@ trait NotIn
             $prepared_values[] = $unpreparedValues->toTimeString();
         }
 
-        return $this->whereKeyValueNotIn($prepared_values, Type::time);
+        return $this->whereKeyValueNotIn($key, $prepared_values, Type::time);
     }
 
-    public function whereKeyUnsignedValueNotIn(int $value, int ...$values): static
+    public function whereKeyUnsignedValueNotIn(string $key, int $value, int ...$values): static
     {
-        return $this->whereKeyValueNotIn(Arr::prepend($values, $value), Type::unsigned);
+        return $this->whereKeyValueNotIn($key, Arr::prepend($values, $value), Type::unsigned);
     }
 
-    private function whereKeyValueNotIn(array $values, Type $valueType): static
+    private function whereKeyValueNotIn(string $key, array $values, Type $valueType): static
     {
-        $this->arguments[] = $this->mountArgument($values, $valueType, compare: Compare::not_in);
+        $this->arguments[] = $this->mountArgument($values, $valueType, $key, Compare::not_in);
 
         return $this;
     }
