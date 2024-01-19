@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Traits\WhereValue\Traits;
 
@@ -24,7 +24,7 @@ trait EqualsTo
 
     public function whereDateTimeValueEqualsTo(Carbon $value): static
     {
-        return $this->whereValueEqualsTo($value->toDateTime(), Type::datetime);
+        return $this->whereValueEqualsTo($value->toDateTimeString(), Type::datetime);
     }
 
     public function whereDecimalValueEqualsTo(float $value): static
@@ -52,12 +52,7 @@ trait EqualsTo
         return $this->whereValueEqualsTo($value, Type::unsigned);
     }
 
-    /**
-     * @param string|int|float|bool|array<int, string|int|float|bool> $value
-     * @param Type $valueType
-     * @return $this
-     */
-    private function whereValueEqualsTo(string|int|float|bool|array $value, Type $valueType): static
+    private function whereValueEqualsTo(string|int|float|bool $value, Type $valueType): static
     {
         $this->arguments[] = $this->mountArgument($value, $valueType);
 

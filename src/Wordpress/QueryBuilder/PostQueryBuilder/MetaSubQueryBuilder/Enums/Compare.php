@@ -18,4 +18,6 @@ enum Compare: string
     case not_exists = 'NOT EXISTS';
     case not_like = 'NOT LIKE';
     case not_in = 'NOT IN';
+    case not_regex = 'NOT REGEXP';
+    case regex = 'REGEXP';
 }

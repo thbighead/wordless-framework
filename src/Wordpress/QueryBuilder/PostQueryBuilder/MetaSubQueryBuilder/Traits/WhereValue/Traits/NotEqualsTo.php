@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Traits\WhereValue\Traits;
 
@@ -25,7 +25,7 @@ trait NotEqualsTo
 
     public function whereDateTimeValueNotEqualsTo(Carbon $value): static
     {
-        return $this->whereValueNotEqualsTo($value->toDateTime(), Type::datetime);
+        return $this->whereValueNotEqualsTo($value->toDateTimeString(), Type::datetime);
     }
 
     public function whereDecimalValueNotEqualsTo(float $value): static
@@ -53,12 +53,7 @@ trait NotEqualsTo
         return $this->whereValueNotEqualsTo($value, Type::unsigned);
     }
 
-    /**
-     * @param string|int|float|bool|array<int, string|int|float|bool> $value
-     * @param Type $valueType
-     * @return $this
-     */
-    private function whereValueNotEqualsTo(string|int|float|bool|array $value, Type $valueType): static
+    private function whereValueNotEqualsTo(string|int|float|bool $value, Type $valueType): static
     {
         $this->arguments[] = $this->mountArgument($value, $valueType, compare: Compare::not_equals);
 
