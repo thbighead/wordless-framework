@@ -8,52 +8,52 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\T
 
 trait NotEqualsTo
 {
-    public function whereBinaryValueNotEqualsTo(string $key, bool $value): static
+    public function whereKeyBinaryValueNotEqualsTo(string $key, bool $value): static
     {
-        return $this->whereValueNotEqualsTo($key, $value, Type::binary);
+        return $this->whereKeyValueNotEqualsTo($key, $value, Type::binary);
     }
 
-    public function whereCharValueNotEqualsTo(string $key, string $value): static
+    public function whereKeyCharValueNotEqualsTo(string $key, string $value): static
     {
-        return $this->whereValueNotEqualsTo($key, $value, Type::char);
+        return $this->whereKeyValueNotEqualsTo($key, $value, Type::char);
     }
 
-    public function whereDateValueNotEqualsTo(string $key, Carbon $value): static
+    public function whereKeyDateValueNotEqualsTo(string $key, Carbon $value): static
     {
-        return $this->whereValueNotEqualsTo($key, $value->toDateString(), Type::date);
+        return $this->whereKeyValueNotEqualsTo($key, $value->toDateString(), Type::date);
     }
 
-    public function whereDateTimeValueNotEqualsTo(string $key, Carbon $value): static
+    public function whereKeyDateTimeValueNotEqualsTo(string $key, Carbon $value): static
     {
-        return $this->whereValueNotEqualsTo($key, $value->toDateTimeString(), Type::datetime);
+        return $this->whereKeyValueNotEqualsTo($key, $value->toDateTimeString(), Type::datetime);
     }
 
-    public function whereDecimalValueNotEqualsTo(string $key, float $value): static
+    public function whereKeyDecimalValueNotEqualsTo(string $key, float $value): static
     {
-        return $this->whereValueNotEqualsTo($key, $value, Type::decimal);
+        return $this->whereKeyValueNotEqualsTo($key, $value, Type::decimal);
     }
 
-    public function whereNumericValueNotEqualsTo(string $key, int|float $value): static
+    public function whereKeyNumericValueNotEqualsTo(string $key, int|float $value): static
     {
-        return $this->whereValueNotEqualsTo($key, $value, Type::numeric);
+        return $this->whereKeyValueNotEqualsTo($key, $value, Type::numeric);
     }
 
-    public function whereSignedValueNotEqualsTo(string $key, int $value): static
+    public function whereKeySignedValueNotEqualsTo(string $key, int $value): static
     {
-        return $this->whereValueNotEqualsTo($key, $value, Type::signed);
+        return $this->whereKeyValueNotEqualsTo($key, $value, Type::signed);
     }
 
-    public function whereTimeValueNotEqualsTo(string $key, Carbon $value): static
+    public function whereKeyTimeValueNotEqualsTo(string $key, Carbon $value): static
     {
-        return $this->whereValueNotEqualsTo($key, $value->toTimeString(), Type::time);
+        return $this->whereKeyValueNotEqualsTo($key, $value->toTimeString(), Type::time);
     }
 
-    public function whereUnsignedValueNotEqualsTo(string $key, int $value): static
+    public function whereKeyUnsignedValueNotEqualsTo(string $key, int $value): static
     {
-        return $this->whereValueNotEqualsTo($key, $value, Type::unsigned);
+        return $this->whereKeyValueNotEqualsTo($key, $value, Type::unsigned);
     }
 
-    private function whereValueNotEqualsTo(string $key, string|int|float|bool $value, Type $valueType): static
+    private function whereKeyValueNotEqualsTo(string $key, string|int|float|bool $value, Type $valueType): static
     {
         $this->arguments[] = $this->mountArgument($value, $valueType, $key, Compare::not_equals);
 

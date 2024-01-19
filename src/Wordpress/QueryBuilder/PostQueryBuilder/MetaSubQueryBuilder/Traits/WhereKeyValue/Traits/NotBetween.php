@@ -8,17 +8,22 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\T
 
 trait NotBetween
 {
-    public function whereCharKeyValueNotBetween(string $key, string $min_value, string $max_value): static
+    public function whereKeyCharValueNotBetween(string $key, string $min_value, string $max_value): static
     {
         return $this->whereKeyValueNotBetween($key, $min_value, $max_value, Type::char);
     }
 
-    public function whereDateKeyValueNotBetween(string $key, Carbon $min_value, Carbon $max_value): static
+    public function whereKeyDateValueNotBetween(string $key, Carbon $min_value, Carbon $max_value): static
     {
-        return $this->whereKeyValueNotBetween($key, $min_value->toDateString(), $max_value->toDateString(), Type::date);
+        return $this->whereKeyValueNotBetween(
+            $key,
+            $min_value->toDateString(),
+            $max_value->toDateString(),
+            Type::date
+        );
     }
 
-    public function whereDateTimeKeyValueNotBetween(string $key, Carbon $min_value, Carbon $max_value): static
+    public function whereKeyDateTimeValueNotBetween(string $key, Carbon $min_value, Carbon $max_value): static
     {
         return $this->whereKeyValueNotBetween(
             $key,
@@ -28,27 +33,32 @@ trait NotBetween
         );
     }
 
-    public function whereDecimalKeyValueNotBetween(string $key, float $min_value, float $max_value): static
+    public function whereKeyDecimalValueNotBetween(string $key, float $min_value, float $max_value): static
     {
         return $this->whereKeyValueNotBetween($key, $min_value, $max_value, Type::decimal);
     }
 
-    public function whereNumericKeyValueNotBetween(string $key, int|float $min_value, int|float $max_value): static
+    public function whereKeyNumericValueNotBetween(string $key, int|float $min_value, int|float $max_value): static
     {
         return $this->whereKeyValueNotBetween($key, $min_value, $max_value, Type::numeric);
     }
 
-    public function whereSignedKeyValueNotBetween(string $key, int $min_value, int $max_value): static
+    public function whereKeySignedValueNotBetween(string $key, int $min_value, int $max_value): static
     {
         return $this->whereKeyValueNotBetween($key, $min_value, $max_value, Type::signed);
     }
 
-    public function whereTimeKeyValueNotBetween(string $key, Carbon $min_value, Carbon $max_value): static
+    public function whereKeyTimeValueNotBetween(string $key, Carbon $min_value, Carbon $max_value): static
     {
-        return $this->whereKeyValueNotBetween($key, $min_value->toTimeString(), $max_value->toTimeString(), Type::time);
+        return $this->whereKeyValueNotBetween(
+            $key,
+            $min_value->toTimeString(),
+            $max_value->toTimeString(),
+            Type::time
+        );
     }
 
-    public function whereUnsignedKeyValueNotBetween(string $key, int $min_value, int $max_value): static
+    public function whereKeyUnsignedValueNotBetween(string $key, int $min_value, int $max_value): static
     {
         return $this->whereKeyValueNotBetween($key, $min_value, $max_value, Type::unsigned);
     }

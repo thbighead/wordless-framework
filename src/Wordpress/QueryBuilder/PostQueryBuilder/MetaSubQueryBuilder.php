@@ -14,9 +14,4 @@ class MetaSubQueryBuilder extends RecursiveSubQueryBuilder
     use WhereValue;
 
     final public const ARGUMENT_KEY = 'meta_query';
-
-    public function whereKeyValue()
-    {
-
-    }
 }

@@ -9,63 +9,63 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\T
 
 trait In
 {
-    public function whereCharKeyValueIn(string $key, string $value, string ...$values): static
+    public function whereKeyCharValueIn(string $key, string $value, string ...$values): static
     {
         return $this->whereKeyValueIn($key, Arr::prepend($values, $value), Type::char);
     }
 
-    public function whereDateKeyValueIn(string $key, Carbon $value, Carbon ...$values): static
+    public function whereKeyDateValueIn(string $key, Carbon $value, Carbon ...$values): static
     {
         $prepared_values = [];
 
-        foreach (Arr::prepend($values, $value) as $unpreparedKeyValues) {
-            /** @var Carbon $unpreparedKeyValues */
-            $prepared_values[] = $unpreparedKeyValues->toDateString();
+        foreach (Arr::prepend($values, $value) as $unpreparedValues) {
+            /** @var Carbon $unpreparedValues */
+            $prepared_values[] = $unpreparedValues->toDateString();
         }
 
         return $this->whereKeyValueIn($key, $prepared_values, Type::date);
     }
 
-    public function whereDateTimeKeyValueIn(string $key, Carbon $value, Carbon ...$values): static
+    public function whereKeyDateTimeValueIn(string $key, Carbon $value, Carbon ...$values): static
     {
         $prepared_values = [];
 
-        foreach (Arr::prepend($values, $value) as $unpreparedKeyValues) {
-            /** @var Carbon $unpreparedKeyValues */
-            $prepared_values[] = $unpreparedKeyValues->toDateTimeString();
+        foreach (Arr::prepend($values, $value) as $unpreparedValues) {
+            /** @var Carbon $unpreparedValues */
+            $prepared_values[] = $unpreparedValues->toDateTimeString();
         }
 
         return $this->whereKeyValueIn($key, $prepared_values, Type::datetime);
     }
 
-    public function whereDecimalKeyValueIn(string $key, float $value, float ...$values): static
+    public function whereKeyDecimalValueIn(string $key, float $value, float ...$values): static
     {
         return $this->whereKeyValueIn($key, Arr::prepend($values, $value), Type::decimal);
     }
 
-    public function whereNumericKeyValueIn(string $key, int|float $value, int|float ...$values): static
+    public function whereKeyNumericValueIn(string $key, int|float $value, int|float ...$values): static
     {
         return $this->whereKeyValueIn($key, Arr::prepend($values, $value), Type::numeric);
     }
 
-    public function whereSignedKeyValueIn(string $key, int $value, int ...$values): static
+    public function whereKeySignedValueIn(string $key, int $value, int ...$values): static
     {
         return $this->whereKeyValueIn($key, Arr::prepend($values, $value), Type::signed);
     }
 
-    public function whereTimeKeyValueIn(string $key, Carbon $value, Carbon ...$values): static
+    public function whereKeyTimeValueIn(string $key, Carbon $value, Carbon ...$values): static
     {
         $prepared_values = [];
 
-        foreach (Arr::prepend($values, $value) as $unpreparedKeyValues) {
-            /** @var Carbon $unpreparedKeyValues */
-            $prepared_values[] = $unpreparedKeyValues->toTimeString();
+        foreach (Arr::prepend($values, $value) as $unpreparedValues) {
+            /** @var Carbon $unpreparedValues */
+            $prepared_values[] = $unpreparedValues->toTimeString();
         }
 
         return $this->whereKeyValueIn($key, $prepared_values, Type::time);
     }
 
-    public function whereUnsignedKeyValueIn(string $key, int $value, int ...$values): static
+    public function whereKeyUnsignedValueIn(string $key, int $value, int ...$values): static
     {
         return $this->whereKeyValueIn($key, Arr::prepend($values, $value), Type::unsigned);
     }

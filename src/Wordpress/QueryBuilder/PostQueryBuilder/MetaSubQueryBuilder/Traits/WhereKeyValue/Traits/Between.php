@@ -9,17 +9,22 @@ use function Sodium\compare;
 
 trait Between
 {
-    public function whereCharKeyValueBetween(string $key, string $min_value, string $max_value): static
+    public function whereKeyCharValueBetween(string $key, string $min_value, string $max_value): static
     {
         return $this->whereKeyValueBetween($key, $min_value, $max_value, Type::char);
     }
 
-    public function whereDateKeyValueBetween(string $key, Carbon $min_value, Carbon $max_value): static
+    public function whereKeyDateValueBetween(string $key, Carbon $min_value, Carbon $max_value): static
     {
-        return $this->whereKeyValueBetween($key, $min_value->toDateString(), $max_value->toDateString(), Type::date);
+        return $this->whereKeyValueBetween(
+            $key,
+            $min_value->toDateString(),
+            $max_value->toDateString(),
+            Type::date
+        );
     }
 
-    public function whereDateTimeKeyValueBetween(string $key, Carbon $min_value, Carbon $max_value): static
+    public function whereKeyDateTimeValueBetween(string $key, Carbon $min_value, Carbon $max_value): static
     {
         return $this->whereKeyValueBetween(
             $key,
@@ -29,27 +34,32 @@ trait Between
         );
     }
 
-    public function whereDecimalKeyValueBetween(string $key, float $min_value, float $max_value): static
+    public function whereKeyDecimalValueBetween(string $key, float $min_value, float $max_value): static
     {
         return $this->whereKeyValueBetween($key, $min_value, $max_value, Type::decimal);
     }
 
-    public function whereNumericKeyValueBetween(string $key, int|float $min_value, int|float $max_value): static
+    public function whereKeyNumericValueBetween(string $key, int|float $min_value, int|float $max_value): static
     {
         return $this->whereKeyValueBetween($key, $min_value, $max_value, Type::numeric);
     }
 
-    public function whereSignedKeyValueBetween(string $key, int $min_value, int $max_value): static
+    public function whereKeySignedValueBetween(string $key, int $min_value, int $max_value): static
     {
         return $this->whereKeyValueBetween($key, $min_value, $max_value, Type::signed);
     }
 
-    public function whereTimeKeyValueBetween(string $key, Carbon $min_value, Carbon $max_value): static
+    public function whereKeyTimeValueBetween(string $key, Carbon $min_value, Carbon $max_value): static
     {
-        return $this->whereKeyValueBetween($key, $min_value->toTimeString(), $max_value->toTimeString(), Type::time);
+        return $this->whereKeyValueBetween(
+            $key,
+            $min_value->toTimeString(),
+            $max_value->toTimeString(),
+            Type::time
+        );
     }
 
-    public function whereUnsignedKeyValueBetween(string $key, int $min_value, int $max_value): static
+    public function whereKeyUnsignedValueBetween(string $key, int $min_value, int $max_value): static
     {
         return $this->whereKeyValueBetween($key, $min_value, $max_value, Type::unsigned);
     }
