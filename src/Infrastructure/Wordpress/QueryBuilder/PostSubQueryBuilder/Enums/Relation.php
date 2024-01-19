@@ -2,10 +2,10 @@
 
 namespace Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\Enums;
 
-enum Relation
+enum Relation: string
 {
     public const KEY = 'relation';
 
-    case and;
-    case or;
+    case and = 'AND';
+    case or = 'OR';
 }

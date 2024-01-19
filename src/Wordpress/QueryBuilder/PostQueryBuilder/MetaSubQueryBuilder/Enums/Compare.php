@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\RecursiveSubQueryBuilder\MetaSubQueryBuilder\Enums;
+namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums;
 
 enum Compare: string
 {
@@ -14,7 +14,7 @@ enum Compare: string
     case like = 'LIKE';
     case in = 'IN';
     case not_between = 'NOT BETWEEN';
-    case not_equalt = '!=';
+    case not_equals = '!=';
     case not_exists = 'NOT EXISTS';
     case not_like = 'NOT LIKE';
     case not_in = 'NOT IN';
