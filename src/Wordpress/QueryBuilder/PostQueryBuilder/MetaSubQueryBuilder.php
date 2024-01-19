@@ -14,4 +14,5 @@ class MetaSubQueryBuilder extends RecursiveSubQueryBuilder
     use WhereValue;
 
     final public const ARGUMENT_KEY = 'meta_query';
+    private const NOT_EXISTS_BUG_VALUE = 'bug #23268';
 }
