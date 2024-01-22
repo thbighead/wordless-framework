@@ -45,8 +45,8 @@ final class FrontPage
             return;
         }
 
-        Option::update(self::FRONT_PAGE_ID_OPTION_KEY, $page->ID);
-        Option::update('show_on_front', 'page');
+        Option::updateOrFail(self::FRONT_PAGE_ID_OPTION_KEY, $page->ID);
+        Option::updateOrFail('show_on_front', 'page');
 
         $this->frontPage = $page;
     }
