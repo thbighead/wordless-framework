@@ -8,8 +8,6 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\T
 
 trait NotExists
 {
-    private const NOT_EXISTS_BUG_VALUE = 'bug #23268';
-
     public function whereKeyBinaryValueNotExists(string $key, bool $value): static
     {
         return $this->whereKeyValueNotExists($key, $value, Type::binary);
@@ -67,7 +65,7 @@ trait NotExists
     ): static
     {
         $this->arguments[] = $this->mountArgument(
-            $value ?? self::NOT_EXISTS_BUG_VALUE,
+            $value,
             $valueType,
             $key,
             Compare::not_exists
