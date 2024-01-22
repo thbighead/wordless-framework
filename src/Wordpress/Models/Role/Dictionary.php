@@ -51,7 +51,7 @@ class Dictionary extends WP_Roles
             } catch (FailedToFindRole) {
                 Role::create(
                     Str::titleCase($role_key),
-                    array_filter($permissions, function (bool $value): bool {
+                    ...array_filter($permissions, function (bool $value): bool {
                         return $value;
                     })
                 );
