@@ -3,467 +3,271 @@
 namespace Wordless\Wordpress\QueryBuilder;
 
 use Wordless\Application\Helpers\Arr;
+use Wordless\Infrastructure\Wordpress\QueryBuilder;
 use Wordless\Wordpress\Enums\ObjectType;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\AndWhereComparisons;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\NotWhereComparisons;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\OrWhereComparisons;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\ResultFormat;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\NotComparison;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\OrComparison;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Traits\ArgumentsBuilder;
+use WP_Taxonomy;
 
-final class TaxonomyQueryBuilder extends BaseTaxonomyQueryBuilder implements AndWhereComparisons,
-    NotWhereComparisons,
-    OrWhereComparisons
+final class TaxonomyQueryBuilder extends QueryBuilder
 {
-    public static function getInstance(ResultFormat $format = ResultFormat::objects): TaxonomyQueryBuilder
+    use ArgumentsBuilder;
+
+    private const ARGUMENT_KEY_BUILT_IN = '_builtin';
+
+    private const ARGUMENT_KEY_OBJECT_TYPE = 'object_type';
+    private const ARGUMENT_KEY_PUBLIC = 'public';
+    private const ARGUMENT_KEY_SHOW_IN_REST = 'show_in_rest';
+    private const ARGUMENT_KEY_SHOW_TAG_CLOUD = 'show_tagcloud';
+    private const ARGUMENT_KEY_SHOW_UI = 'show_ui';
+
+    public static function getInstance(ResultFormat $format = ResultFormat::objects, Operator $operator = Operator::and): TaxonomyQueryBuilder
     {
         return new self($format);
     }
 
-    public function __construct(ResultFormat $format = ResultFormat::objects)
+    public function __construct(
+        private readonly ResultFormat $format = ResultFormat::objects,
+        private readonly Operator $operator = Operator::and
+    )
     {
-        $this->format = $format;
     }
 
-    public function andOnlyAvailableInAdminMenu(): AndComparison
+    public function first(int $quantity = 1, ?ResultFormat $format = null): WP_Taxonomy|array|string|null
     {
-        return new AndComparison($this->onlyAvailableInAdminMenu());
+        $full_result = $this->get($format);
+
+        if ($quantity > 1) {
+            return array_slice($full_result, 0, $quantity);
+        }
+
+        return $full_result[0] ?? null;
     }
 
-    public function andOnlyAvailableInRestApi(): AndComparison
+    /**
+     * @param ResultFormat|null $format
+     * @return string[]|WP_Taxonomy[]
+     */
+    public function get(?ResultFormat $format = null): array
     {
-        return new AndComparison($this->onlyAvailableInRestApi());
+        return get_taxonomies(
+            $this->buildArguments(),
+            $format ?? $this->format->name,
+            $this->operator->name
+        );
     }
 
-    public function andOnlyAvailableInTagCloud(): AndComparison
+    public function onlyAvailableInAdminMenu(): self
     {
-        return new AndComparison($this->onlyAvailableInTagCloud());
+        $this->arguments[self::ARGUMENT_KEY_SHOW_UI] = true;
+
+        return $this;
     }
 
-    public function andOnlyCustom(): AndComparison
+    public function onlyAvailableInRestApi(): self
     {
-        return new AndComparison($this->onlyCustom());
+        $this->arguments[self::ARGUMENT_KEY_SHOW_IN_REST] = true;
+
+        return $this;
     }
 
-    public function andOnlyDefault(): AndComparison
+    public function onlyAvailableInTagCloud(): self
     {
-        return new AndComparison($this->onlyDefault());
+        $this->arguments[self::ARGUMENT_KEY_SHOW_TAG_CLOUD] = true;
+
+        return $this;
     }
 
-    public function andOnlyHiddenFromAdminMenu(): AndComparison
+    public function onlyCustom(): self
     {
-        return new AndComparison($this->onlyHiddenFromAdminMenu());
+        $this->arguments[self::ARGUMENT_KEY_BUILT_IN] = false;
+
+        return $this;
     }
 
-    public function andOnlyHiddenFromTagCloud(): AndComparison
+    public function onlyDefault(): self
     {
-        return new AndComparison($this->onlyHiddenFromTagCloud());
+        $this->arguments[self::ARGUMENT_KEY_BUILT_IN] = true;
+
+        return $this;
     }
 
-    public function andOnlyHiddenFromRestApi(): AndComparison
+    public function onlyHiddenFromAdminMenu(): self
     {
-        return new AndComparison($this->onlyHiddenFromRestApi());
+        $this->arguments[self::ARGUMENT_KEY_SHOW_UI] = false;
+
+        return $this;
     }
 
-    public function andOnlyPrivate(): AndComparison
+    public function onlyHiddenFromTagCloud(): self
     {
-        return new AndComparison($this->onlyPrivate());
+        $this->arguments[self::ARGUMENT_KEY_SHOW_TAG_CLOUD] = false;
+
+        return $this;
     }
 
-    public function andOnlyPublic(): AndComparison
+    public function onlyHiddenFromRestApi(): self
     {
-        return new AndComparison($this->onlyPublic());
+        $this->arguments[self::ARGUMENT_KEY_SHOW_IN_REST] = false;
+
+        return $this;
+    }
+
+    public function onlyPrivate(): self
+    {
+        $this->arguments[self::ARGUMENT_KEY_PUBLIC] = false;
+
+        return $this;
+    }
+
+    public function onlyPublic(): self
+    {
+        $this->arguments[self::ARGUMENT_KEY_PUBLIC] = true;
+
+        return $this;
     }
 
     /**
      * @param string $label
-     * @return AndComparison
+     * @return $this
      * @throws EmptyStringParameter
      */
-    public function andWhereAdminMenuLabel(string $label): AndComparison
+    public function whereAdminMenuLabel(string $label): self
     {
-        return new AndComparison($this->whereAdminMenuLabel($label));
+        $this->arguments['label'] = $this->validateStringParameter($label, __METHOD__);
+
+        return $this;
     }
 
     /**
      * @param string $singular_label
-     * @return AndComparison
+     * @return $this
      * @throws EmptyStringParameter
      */
-    public function andWhereAdminMenuSingularLabel(string $singular_label): AndComparison
+    public function whereAdminMenuSingularLabel(string $singular_label): self
     {
-        return new AndComparison($this->whereAdminMenuSingularLabel($singular_label));
+        $this->arguments['singular_label'] = $this->validateStringParameter($singular_label, __METHOD__);
+
+        return $this;
     }
 
     /**
      * @param string $capability
-     * @return AndComparison
+     * @return $this
      * @throws EmptyStringParameter
      */
-    public function andWhereAssignPermission(string $capability): AndComparison
+    public function whereAssignPermission(string $capability): self
     {
-        return new AndComparison($this->whereAssignPermission($capability));
-    }
+        $this->arguments['assign_cap'] = $this->validateStringParameter($capability, __METHOD__);
 
-    /**
-     * @param ObjectType $objectType
-     * @return AndComparison
-     */
-    public function andWhereCanBeUsedBy(ObjectType $objectType): AndComparison
-    {
-        return new AndComparison($this->whereCanBeUsedBy($objectType));
+        return $this;
     }
 
     /**
      * @param ObjectType $objectType
      * @param ObjectType ...$objectTypes
-     * @return AndComparison
+     * @return $this
      */
-    public function andWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): AndComparison
+    public function whereCanBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): self
     {
-        return new AndComparison($this->whereCanOnlyBeUsedBy(...Arr::prepend($objectTypes, $objectType)));
+        if (!isset($this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE])) {
+            $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] = [];
+        }
+
+        $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] = array_merge(
+            $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE],
+            Arr::prepend($objectTypes, $objectType)
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param ObjectType $objectType
+     * @param ObjectType ...$objectTypes
+     * @return $this
+     */
+    public function whereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): self
+    {
+        $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] = Arr::prepend($objectTypes, $objectType);
+
+        return $this;
     }
 
     /**
      * @param string $capability
-     * @return AndComparison
+     * @return $this
      * @throws EmptyStringParameter
      */
-    public function andWhereDeletePermission(string $capability): AndComparison
+    public function whereDeletePermission(string $capability): self
     {
-        return new AndComparison($this->whereDeletePermission($capability));
+        $this->arguments['delete_cap'] = $this->validateStringParameter($capability, __METHOD__);
+
+        return $this;
     }
 
     /**
      * @param string $capability
-     * @return AndComparison
+     * @return $this
      * @throws EmptyStringParameter
      */
-    public function andWhereEditPermission(string $capability): AndComparison
+    public function whereEditPermission(string $capability): self
     {
-        return new AndComparison($this->whereEditPermission($capability));
+        $this->arguments['edit_cap'] = $this->validateStringParameter($capability, __METHOD__);
+
+        return $this;
     }
 
     /**
      * @param string $capability
-     * @return AndComparison
+     * @return $this
      * @throws EmptyStringParameter
      */
-    public function andWhereManagePermission(string $capability): AndComparison
+    public function whereManagePermission(string $capability): self
     {
-        return new AndComparison($this->whereManagePermission($capability));
+        $this->arguments['manage_cap'] = $this->validateStringParameter($capability, __METHOD__);
+
+        return $this;
     }
 
     /**
      * @param string $name
-     * @return AndComparison
+     * @return $this
      * @throws EmptyStringParameter
      */
-    public function andWhereName(string $name): AndComparison
+    public function whereName(string $name): self
     {
-        return new AndComparison($this->whereName($name));
+        $this->arguments['name'] = $this->validateStringParameter($name, __METHOD__);
+
+        return $this;
     }
 
     /**
      * @param string $query_variable
-     * @return AndComparison
+     * @return $this
      * @throws EmptyStringParameter
      */
-    public function andWhereUrlQueryVariable(string $query_variable): AndComparison
+    public function whereUrlQueryVariable(string $query_variable): self
     {
-        return new AndComparison($this->whereUrlQueryVariable($query_variable));
-    }
+        $this->arguments['query_var'] = $this->validateStringParameter($query_variable, __METHOD__);
 
-    public function getArguments(): array
-    {
-        return $this->arguments;
-    }
-
-    public function getResultFormat(): ResultFormat
-    {
-        return $this->format;
-    }
-
-    public function notOnlyAvailableInAdminMenu(): NotComparison
-    {
-        return new NotComparison($this->onlyAvailableInAdminMenu());
-    }
-
-    public function notOnlyAvailableInRestApi(): NotComparison
-    {
-        return new NotComparison($this->onlyAvailableInRestApi());
-    }
-
-    public function notOnlyAvailableInTagCloud(): NotComparison
-    {
-        return new NotComparison($this->onlyAvailableInTagCloud());
-    }
-
-    public function notOnlyCustom(): NotComparison
-    {
-        return new NotComparison($this->onlyCustom());
-    }
-
-    public function notOnlyDefault(): NotComparison
-    {
-        return new NotComparison($this->onlyDefault());
-    }
-
-    public function notOnlyHiddenFromAdminMenu(): NotComparison
-    {
-        return new NotComparison($this->onlyHiddenFromAdminMenu());
-    }
-
-    public function notOnlyHiddenFromTagCloud(): NotComparison
-    {
-        return new NotComparison($this->onlyHiddenFromTagCloud());
-    }
-
-    public function notOnlyHiddenFromRestApi(): NotComparison
-    {
-        return new NotComparison($this->onlyHiddenFromRestApi());
-    }
-
-    public function notOnlyPrivate(): NotComparison
-    {
-        return new NotComparison($this->onlyPrivate());
-    }
-
-    public function notOnlyPublic(): NotComparison
-    {
-        return new NotComparison($this->onlyPublic());
+        return $this;
     }
 
     /**
-     * @param string $label
-     * @return NotComparison
+     * @param string $parameter_value
+     * @param string $method
+     * @return string
      * @throws EmptyStringParameter
      */
-    public function notWhereAdminMenuLabel(string $label): NotComparison
+    private function validateStringParameter(string $parameter_value, string $method): string
     {
-        return new NotComparison($this->whereAdminMenuLabel($label));
-    }
+        if ($parameter_value === '') {
+            throw new EmptyStringParameter($method);
+        }
 
-    /**
-     * @param string $singular_label
-     * @return NotComparison
-     * @throws EmptyStringParameter
-     */
-    public function notWhereAdminMenuSingularLabel(string $singular_label): NotComparison
-    {
-        return new NotComparison($this->whereAdminMenuSingularLabel($singular_label));
-    }
-
-    /**
-     * @param string $capability
-     * @return NotComparison
-     * @throws EmptyStringParameter
-     */
-    public function notWhereAssignPermission(string $capability): NotComparison
-    {
-        return new NotComparison($this->whereAssignPermission($capability));
-    }
-
-    public function notWhereCanBeUsedBy(ObjectType $objectType): NotComparison
-    {
-        return new NotComparison($this->whereCanBeUsedBy($objectType));
-    }
-
-    public function notWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): NotComparison
-    {
-        return new NotComparison($this->whereCanOnlyBeUsedBy(...Arr::prepend($objectTypes, $objectType)));
-    }
-
-    /**
-     * @param string $capability
-     * @return NotComparison
-     * @throws EmptyStringParameter
-     */
-    public function notWhereDeletePermission(string $capability): NotComparison
-    {
-        return new NotComparison($this->whereDeletePermission($capability));
-    }
-
-    /**
-     * @param string $capability
-     * @return NotComparison
-     * @throws EmptyStringParameter
-     */
-    public function notWhereEditPermission(string $capability): NotComparison
-    {
-        return new NotComparison($this->whereEditPermission($capability));
-    }
-
-    /**
-     * @param string $capability
-     * @return NotComparison
-     * @throws EmptyStringParameter
-     */
-    public function notWhereManagePermission(string $capability): NotComparison
-    {
-        return new NotComparison($this->whereManagePermission($capability));
-    }
-
-    /**
-     * @param string $name
-     * @return NotComparison
-     * @throws EmptyStringParameter
-     */
-    public function notWhereName(string $name): NotComparison
-    {
-        return new NotComparison($this->whereName($name));
-    }
-
-    /**
-     * @param string $query_variable
-     * @return NotComparison
-     * @throws EmptyStringParameter
-     */
-    public function notWhereUrlQueryVariable(string $query_variable): NotComparison
-    {
-        return new NotComparison($this->whereUrlQueryVariable($query_variable));
-    }
-
-    public function orOnlyAvailableInAdminMenu(): OrComparison
-    {
-        return new OrComparison($this->onlyAvailableInAdminMenu());
-    }
-
-    public function orOnlyAvailableInRestApi(): OrComparison
-    {
-        return new OrComparison($this->onlyAvailableInRestApi());
-    }
-
-    public function orOnlyAvailableInTagCloud(): OrComparison
-    {
-        return new OrComparison($this->onlyAvailableInTagCloud());
-    }
-
-    public function orOnlyCustom(): OrComparison
-    {
-        return new OrComparison($this->onlyCustom());
-    }
-
-    public function orOnlyDefault(): OrComparison
-    {
-        return new OrComparison($this->onlyDefault());
-    }
-
-    public function orOnlyHiddenFromAdminMenu(): OrComparison
-    {
-        return new OrComparison($this->onlyHiddenFromAdminMenu());
-    }
-
-    public function orOnlyHiddenFromTagCloud(): OrComparison
-    {
-        return new OrComparison($this->onlyHiddenFromTagCloud());
-    }
-
-    public function orOnlyHiddenFromRestApi(): OrComparison
-    {
-        return new OrComparison($this->onlyHiddenFromRestApi());
-    }
-
-    public function orOnlyPrivate(): OrComparison
-    {
-        return new OrComparison($this->onlyPrivate());
-    }
-
-    public function orOnlyPublic(): OrComparison
-    {
-        return new OrComparison($this->onlyPublic());
-    }
-
-    /**
-     * @param string $label
-     * @return OrComparison
-     * @throws EmptyStringParameter
-     */
-    public function orWhereAdminMenuLabel(string $label): OrComparison
-    {
-        return new OrComparison($this->whereAdminMenuLabel($label));
-    }
-
-    /**
-     * @param string $singular_label
-     * @return OrComparison
-     * @throws EmptyStringParameter
-     */
-    public function orWhereAdminMenuSingularLabel(string $singular_label): OrComparison
-    {
-        return new OrComparison($this->whereAdminMenuSingularLabel($singular_label));
-    }
-
-    /**
-     * @param string $capability
-     * @return OrComparison
-     * @throws EmptyStringParameter
-     */
-    public function orWhereAssignPermission(string $capability): OrComparison
-    {
-        return new OrComparison($this->whereAssignPermission($capability));
-    }
-
-    public function orWhereCanBeUsedBy(ObjectType $objectType): OrComparison
-    {
-        return new OrComparison($this->whereCanBeUsedBy($objectType));
-    }
-
-    public function orWhereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): OrComparison
-    {
-        return new OrComparison($this->whereCanOnlyBeUsedBy(...Arr::prepend($objectTypes, $objectType)));
-    }
-
-    /**
-     * @param string $capability
-     * @return OrComparison
-     * @throws EmptyStringParameter
-     */
-    public function orWhereDeletePermission(string $capability): OrComparison
-    {
-        return new OrComparison($this->whereDeletePermission($capability));
-    }
-
-    /**
-     * @param string $capability
-     * @return OrComparison
-     * @throws EmptyStringParameter
-     */
-    public function orWhereEditPermission(string $capability): OrComparison
-    {
-        return new OrComparison($this->whereEditPermission($capability));
-    }
-
-    /**
-     * @param string $capability
-     * @return OrComparison
-     * @throws EmptyStringParameter
-     */
-    public function orWhereManagePermission(string $capability): OrComparison
-    {
-        return new OrComparison($this->whereManagePermission($capability));
-    }
-
-    /**
-     * @param string $name
-     * @return OrComparison
-     * @throws EmptyStringParameter
-     */
-    public function orWhereName(string $name): OrComparison
-    {
-        return new OrComparison($this->whereName($name));
-    }
-
-    /**
-     * @param string $query_variable
-     * @return OrComparison
-     * @throws EmptyStringParameter
-     */
-    public function orWhereUrlQueryVariable(string $query_variable): OrComparison
-    {
-        return new OrComparison($this->whereUrlQueryVariable($query_variable));
+        return $parameter_value;
     }
 }

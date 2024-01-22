@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder\Traits;
+namespace Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Traits;
 
 use Wordless\Wordpress\Enums\ObjectType;
 
