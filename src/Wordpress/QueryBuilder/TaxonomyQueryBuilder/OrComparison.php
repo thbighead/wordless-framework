@@ -7,13 +7,13 @@ use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\ComparisonTaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\OrWhereComparisons;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\WhereOperator;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 
 final class OrComparison extends ComparisonTaxonomyQueryBuilder implements OrWhereComparisons
 {
     public function __construct(TaxonomyQueryBuilder $taxonomyQueryBuilder)
     {
-        $this->operator = WhereOperator::or;
+        $this->operator = Operator::or;
 
         parent::__construct($taxonomyQueryBuilder);
     }

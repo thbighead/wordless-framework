@@ -2,7 +2,7 @@
 
 namespace Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums;
 
-enum WhereOperator
+enum Operator
 {
     case and;
     case not;

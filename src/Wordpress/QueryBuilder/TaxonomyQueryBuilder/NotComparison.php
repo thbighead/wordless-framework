@@ -7,13 +7,13 @@ use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\ComparisonTaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\NotWhereComparisons;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\WhereOperator;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 
 final class NotComparison extends ComparisonTaxonomyQueryBuilder implements NotWhereComparisons
 {
     public function __construct(TaxonomyQueryBuilder $taxonomyQueryBuilder)
     {
-        $this->operator = WhereOperator::not;
+        $this->operator = Operator::not;
 
         parent::__construct($taxonomyQueryBuilder);
     }

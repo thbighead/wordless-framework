@@ -7,7 +7,7 @@ use Wordless\Application\Helpers\Reflection;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\WhereOperator;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 
 trait AndTests
 {
@@ -22,7 +22,7 @@ trait AndTests
 
         $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
 
-        $this->assertInstanceOf(WhereOperator::and::class, Reflection::getNonPublicPropertyValue(
+        $this->assertInstanceOf(Operator::and::class, Reflection::getNonPublicPropertyValue(
             $taxonomyQueryBuilder,
             'operator'
         ));

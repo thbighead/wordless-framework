@@ -7,13 +7,13 @@ use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\AndWhereComparisons;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\ComparisonTaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\WhereOperator;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 
 final class AndComparison extends ComparisonTaxonomyQueryBuilder implements AndWhereComparisons
 {
     public function __construct(TaxonomyQueryBuilder $taxonomyQueryBuilder)
     {
-        $this->operator = WhereOperator::and;
+        $this->operator = Operator::and;
 
         parent::__construct($taxonomyQueryBuilder);
     }

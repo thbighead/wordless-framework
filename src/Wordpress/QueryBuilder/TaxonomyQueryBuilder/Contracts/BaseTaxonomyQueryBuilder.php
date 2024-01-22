@@ -8,7 +8,7 @@ use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Contracts\BaseTaxonomyQueryBuilder\Traits\ArgumentsBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\ResultFormat;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\WhereOperator;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use WP_Taxonomy;
 
 abstract class BaseTaxonomyQueryBuilder extends QueryBuilder
@@ -23,7 +23,7 @@ abstract class BaseTaxonomyQueryBuilder extends QueryBuilder
     private const ARGUMENT_KEY_SHOW_UI = 'show_ui';
 
     protected ResultFormat $format;
-    protected WhereOperator $operator;
+    protected Operator $operator;
 
     public function first(int $quantity = 1, ?ResultFormat $format = null): WP_Taxonomy|array|string|null
     {
@@ -45,7 +45,7 @@ abstract class BaseTaxonomyQueryBuilder extends QueryBuilder
         return get_taxonomies(
             $this->buildArguments(),
             $format ?? $this->format->name,
-            ($this->operator ?? WhereOperator::and)->name
+            ($this->operator ?? Operator::and)->name
         );
     }
 
