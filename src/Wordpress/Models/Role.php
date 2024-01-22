@@ -3,6 +3,7 @@
 namespace Wordless\Wordpress\Models;
 
 use InvalidArgumentException;
+use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Str;
 use Wordless\Wordpress\Models\Role\Dictionary;
 use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
@@ -40,13 +41,15 @@ class Role extends WP_Role
 
     /**
      * @param string $name
-     * @param bool[] $capabilities
+     * @param string|null $capability
+     * @param string ...$capabilities
      * @return Role
      * @throws FailedToCreateRole
      * @throws InvalidArgumentException
      */
-    public static function create(string $name, array $capabilities = []): Role
+    public static function create(string $name, ?string $capability = null, string ...$capabilities): Role
     {
+        $capabilities = self::mountCapabilities($capability, ...$capabilities);
         $newRole = self::getRepository()->add_role($slug_key = Str::slugCase($name), $name, $capabilities);
 
         if (!($newRole instanceof WP_Role)) {
@@ -97,17 +100,39 @@ class Role extends WP_Role
     }
 
     /**
-     * @param string|WP_Role $role
-     * @param bool[] $capabilities
+     * @param string|null $capability
+     * @param string ...$capabilities
+     * @return array<string, true>
      */
-    public function __construct($role, array $capabilities = [])
+    private static function mountCapabilities(?string $capability = null, string ...$capabilities): array
     {
-        if ($role instanceof WP_Role) {
-            $capabilities = $role->capabilities;
-            $role = $role->name;
+        $mounted_capabilities = [];
+
+        foreach (Arr::prepend($capabilities, $capability) as $capability) {
+            if (!is_string($capability)) {
+                continue;
+            }
+
+            $mounted_capabilities[$capability] = true;
         }
 
-        parent::__construct($role, $capabilities);
+        return $mounted_capabilities;
+    }
+
+    /**
+     * @param WP_Role|string $role
+     * @param string|null $capability
+     * @param string ...$capabilities
+     */
+    public function __construct(WP_Role|string $role, ?string $capability = null, string ...$capabilities)
+    {
+        if ($role instanceof WP_Role) {
+            parent::__construct($role->name, $role->capabilities);
+
+            return;
+        }
+
+        parent::__construct($role, self::mountCapabilities($capability, ...$capabilities));
     }
 
     public function addCapability(string $capability): void
