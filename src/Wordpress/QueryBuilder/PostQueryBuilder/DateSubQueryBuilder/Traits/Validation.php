@@ -2,170 +2,201 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits;
 
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDay;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfMonth;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfWeek;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfYear;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidHour;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidMinute;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidMonth;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidSecond;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidWeek;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidWeekDay;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidWeekDayIso;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYear;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYearMonth;
 
 trait Validation
 {
+    public const MIN_MONTH_OF_YEAR_VALUE = 1;
+    public const MAX_MONTH_OF_YEAR_VALUE = 12;
+    public const MIN_WEEK_OF_YEAR_VALUE = 1;
+    public const MAX_WEEK_OF_YEAR_VALUE = 53;
+    public const MIN_DAY_OF_MONTH_VALUE = 1;
+    public const MAX_DAY_OF_MONTH_VALUE = 31;
+    public const MIN_HOUR_OF_DAY_VALUE = 0;
+    public const MAX_HOUR_OF_DAY_VALUE = 23;
+    public const MIN_MINUTE_OF_HOUR_VALUE = 0;
+    public const MAX_MINUTE_OF_HOUR_VALUE = 59;
+    public const MIN_SECOND_OF_MINUTE_VALUE = 0;
+    public const MAX_SECOND_OF_MINUTE_VALUE = 59;
+    public const MIN_YEAR_VALUE = 1000;
+    public const MAX_YEAR_VALUE = 9999;
+    public const MIN_DAY_OF_YEAR_VALUE = 1;
+    public const MAX_DAY_OF_YEAR_VALUE = 366;
+    public const MIN_DAY_OF_WEEK_VALUE = 1;
+    public const MAX_DAY_OF_WEEK_VALUE = 7;
+
     /**
-     * @param int $month
-     * @return int
+     * @param int|int[] $months
+     * @return int|int[]
      * @throws InvalidMonth
      */
-    private function validateMonth(int $month): int
+    private function validateMonthRange(int|array $months): int|array
     {
-        if ($month < 1 || $month > 12) {
-            throw new InvalidMonth($month);
+        foreach (is_int($months) ? [$months] : $months as $month) {
+            if ($month < self::MIN_MONTH_OF_YEAR_VALUE || $month > self::MAX_MONTH_OF_YEAR_VALUE) {
+                throw new InvalidMonth($month);
+            }
         }
 
-        return $month;
+        return $months;
     }
 
     /**
-     * @param int $week
-     * @return int
+     * @param int|int[] $weeks
+     * @return int|int[]
      * @throws InvalidWeek
      */
-    private function validateWeek(int $week): int
+    private function validateWeekOfYearRange(int|array $weeks): int|array
     {
-        if ($week < 0 || $week > 53) {
-            throw new InvalidWeek($week);
+        foreach (is_int($weeks) ? [$weeks] : $weeks as $week) {
+            if ($week < self::MIN_WEEK_OF_YEAR_VALUE || $week > self::MAX_WEEK_OF_YEAR_VALUE) {
+                throw new InvalidWeek($week);
+            }
         }
 
-        return $week;
+        return $weeks;
     }
 
     /**
-     * @param int $day
-     * @return int
-     * @throws InvalidDay
+     * @param int|int[] $days
+     * @return int|int[]
+     * @throws InvalidDayOfMonth
      */
-    private function validateDay(int $day): int
+    private function validateDayOfMonthRange(int|array $days): int|array
     {
-        if ($day < 1 || $day > 30) {
-            throw new InvalidDay($day);
+        foreach (is_int($days) ? [$days] : $days as $day) {
+            if ($day < self::MIN_DAY_OF_MONTH_VALUE || $day > self::MAX_DAY_OF_MONTH_VALUE) {
+                throw new InvalidDayOfMonth($day);
+            }
         }
 
-        return $day;
+        return $days;
     }
 
     /**
-     * @param int $hour
-     * @return int
+     * @param int|int[] $hours
+     * @return int|int[]
      * @throws InvalidHour
      */
-    private function validateHour(int $hour): int
+    private function validateHourRange(int|array $hours): int|array
     {
-        if ($hour < 0 || $hour > 23) {
-            throw new InvalidHour($hour);
+        foreach (is_int($hours) ? [$hours] : $hours as $hour) {
+            if ($hour < self::MIN_HOUR_OF_DAY_VALUE || $hour > self::MAX_HOUR_OF_DAY_VALUE) {
+                throw new InvalidHour($hour);
+            }
         }
 
-        return $hour;
+        return $hours;
     }
 
     /**
-     * @param int $minute
-     * @return int
+     * @param int|int[] $minutes
+     * @return int|int[]
      * @throws InvalidMinute
      */
-    private function validateMinute(int $minute): int
+    private function validateMinuteRange(int|array $minutes): int|array
     {
-        if ($minute < 0 || $minute > 60) {
-            throw new InvalidMinute($minute);
+        foreach (is_int($minutes) ? [$minutes] : $minutes as $minute) {
+            if ($minute < self::MIN_MINUTE_OF_HOUR_VALUE || $minute > self::MAX_MINUTE_OF_HOUR_VALUE) {
+                throw new InvalidMinute($minute);
+            }
         }
 
-        return $minute;
+        return $minutes;
     }
 
     /**
-     * @param int $second
-     * @return int
+     * @param int|int[] $seconds
+     * @return int|int[]
      * @throws InvalidSecond
      */
-    private function validateSecond(int $second): int
+    private function validateSecondRange(int|array $seconds): int|array
     {
-        if ($second < 0 || $second > 60) {
-            throw new InvalidSecond($second);
+        foreach (is_int($seconds) ? [$seconds] : $seconds as $second) {
+            if ($second < self::MIN_SECOND_OF_MINUTE_VALUE || $second > self::MAX_SECOND_OF_MINUTE_VALUE) {
+                throw new InvalidSecond($second);
+            }
         }
 
-        return $second;
+        return $seconds;
     }
 
     /**
-     * @param int $second
-     * @return int
-     * @throws InvalidSecond
-     */
-    private function validateYearMonth(int $second): int
-    {
-        if ($second < 0 || $second > 60) {
-            throw new InvalidSecond($second);
-        }
-
-        return $second;
-    }
-
-    /**
-     * @param int $year
-     * @return bool
+     * @param int|int[] $years
+     * @return int|int[]
      * @throws InvalidYear
      */
-    private function validateFourDigitsRangeYear(int $year): bool
+    private function validateYearHasFourDigits(int|array $years): int|array
     {
-        if ($year < 1000 || $year > 9999) {
-            throw new InvalidYear($year);
+        foreach (is_int($years) ? [$years] : $years as $year) {
+            if ($year < self::MIN_YEAR_VALUE || $year > self::MAX_YEAR_VALUE) {
+                throw new InvalidYear($year);
+            }
         }
 
-        return true;
+        return $years;
     }
 
     /**
-     * @param int $day_of_year
-     * @return int
+     * @param int|int[] $days_of_year
+     * @return int|int[]
      * @throws InvalidDayOfYear
      */
-    private function validateDayOfYear(int $day_of_year): int
+    private function validateDayOfYearRange(int|array $days_of_year): int|array
     {
-        if ($day_of_year < 1 || $day_of_year > 366) {
-            throw new InvalidDayOfYear($day_of_year);
+        foreach (is_int($days_of_year) ? [$days_of_year] : $days_of_year as $day_of_year) {
+            if ($day_of_year < self::MIN_DAY_OF_YEAR_VALUE || $day_of_year > self::MAX_DAY_OF_YEAR_VALUE) {
+                throw new InvalidDayOfYear($day_of_year);
+            }
         }
 
-        return $day_of_year;
+        return $days_of_year;
     }
 
     /**
-     * @param int $day_of_week
-     * @return int
-     * @throws InvalidWeekDay
+     * @param int|int[] $days_of_week
+     * @return int|int[]
+     * @throws InvalidDayOfWeek
      */
-    private function validateDayOfWeek(int $day_of_week): int
+    private function validateDayOfWeekRange(int|array $days_of_week): int|array
     {
-        if ($day_of_week < 1 || $day_of_week > 7) {
-            throw new InvalidWeekDay($day_of_week);
+        foreach (is_int($days_of_week) ? [$days_of_week] : $days_of_week as $day_of_week) {
+            if ($day_of_week < self::MIN_DAY_OF_WEEK_VALUE || $day_of_week > self::MAX_DAY_OF_WEEK_VALUE) {
+                throw new InvalidDayOfWeek($day_of_week);
+            }
         }
 
-        return $day_of_week;
+        return $days_of_week;
     }
 
     /**
-     * @param int $day_of_week_iso
-     * @return int
-     * @throws InvalidWeekDayIso
+     * @param int|int[] $years_months
+     * @return int|int[]
+     * @throws InvalidYearMonth
      */
-    private function validateDayOfWeekIso(int $day_of_week_iso): int
+    private function validateYearMonth(int|array $years_months): int|array
     {
-        if ($day_of_week_iso < 1 || $day_of_week_iso > 7) {
-            throw new InvalidWeekDayIso($day_of_week_iso);
+        foreach (is_int($years_months) ? [$years_months] : $years_months as $year_month) {
+            $year = substr((string)$years_months, 0, 4);
+            $month = substr((string)$years_months, 3, 2);
+
+            if (
+                ((int)$year < self::MIN_YEAR_VALUE && (int)$year > self::MAX_YEAR_VALUE) ||
+                ((int)$month < self::MIN_MONTH_OF_YEAR_VALUE && (int)$month > self::MAX_MONTH_OF_YEAR_VALUE)
+            ) {
+                throw new InvalidYearMonth((int)$year, (int)$month);
+            }
         }
 
-        return $day_of_week_iso;
+        return $years_months;
     }
 }

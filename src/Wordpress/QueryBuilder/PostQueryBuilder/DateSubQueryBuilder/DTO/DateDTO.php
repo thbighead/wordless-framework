@@ -5,7 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\D
 use Carbon\Carbon;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO\DateDto\Exceptions\TrySetEmptyDateDto;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDay;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfMonth;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidHour;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidMinute;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidMonth;
@@ -14,7 +14,7 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Excepti
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYear;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\Validation;
 
-class DateDto
+class DateDTO
 {
     use Validation;
 
@@ -22,7 +22,7 @@ class DateDto
 
     /**
      * @param Carbon|null $date
-     * @throws InvalidDay
+     * @throws InvalidDayOfMonth
      * @throws InvalidHour
      * @throws InvalidMinute
      * @throws InvalidMonth
@@ -46,7 +46,7 @@ class DateDto
     /**
      * @param int $day
      * @return $this
-     * @throws InvalidDay
+     * @throws InvalidDayOfMonth
      */
     public function setDay(int $day): static
     {

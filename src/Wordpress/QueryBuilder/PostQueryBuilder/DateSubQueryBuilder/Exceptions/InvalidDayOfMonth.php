@@ -5,7 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\E
 use ErrorException;
 use Throwable;
 
-class InvalidDay extends ErrorException
+class InvalidDayOfMonth extends ErrorException
 {
     public function __construct(public readonly int $day, ?Throwable $previous = null)
     {

@@ -2,24 +2,30 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 
+use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO\DateDto;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO\DateDTO;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO\DateDto\Exceptions\TrySetEmptyDateDto;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Relation;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDay;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfMonth;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfWeek;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfYear;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidHour;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidMinute;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidMonth;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidSecond;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidWeek;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidWeekDay;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidWeekDayIso;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYear;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYearMonth;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\Between;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\Comparative;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\Validation;
 
 class DateSubQueryBuilder extends PostSubQueryBuilder
 {
+    use Between;
+    use Comparative;
     use Validation;
 
     final public const ARGUMENT_KEY = 'date_query';
@@ -54,11 +60,11 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
     }
 
     /**
-     * @param DateDto $dateDto
+     * @param DateDTO $dateDto
      * @return static
      * @throws TrySetEmptyDateDto
      */
-    public function whereAfter(DateDto $dateDto): static
+    public function whereAfter(DateDTO $dateDto): static
     {
         $this->arguments[] = ['after' => $dateDto->getArguments()];
 
@@ -66,11 +72,11 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
     }
 
     /**
-     * @param DateDto $dateDto
+     * @param DateDTO $dateDto
      * @return static
      * @throws TrySetEmptyDateDto
      */
-    public function whereBefore(DateDto $dateDto): static
+    public function whereBefore(DateDTO $dateDto): static
     {
         $this->arguments[] = ['before' => $dateDto->getArguments()];
 
@@ -84,7 +90,7 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
      */
     public function whereYear(int $year): static
     {
-        $this->arguments[self::KEY_YEAR] = $this->validateFourDigitsRangeYear($year);
+        $this->arguments[] = [self::KEY_YEAR => $this->validateYearHasFourDigits($year)];
 
         return $this;
     }
@@ -96,7 +102,7 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
      */
     public function whereMonth(int $month): static
     {
-        $this->arguments[self::KEY_MONTH] = $this->validateMonth($month);
+        $this->arguments[] = [self::KEY_MONTH => $this->validateMonthRange($month)];
 
         return $this;
     }
@@ -106,9 +112,9 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
      * @return $this
      * @throws InvalidWeek
      */
-    public function whereWeek(int $week): static
+    public function whereWeekOfYear(int $week): static
     {
-        $this->arguments[self::KEY_WEEK_OF_YEAR] = $this->validateWeek($week);
+        $this->arguments[] = [self::KEY_WEEK_OF_YEAR => $this->validateWeekOfYearRange($week)];
 
         return $this;
     }
@@ -116,11 +122,11 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
     /**
      * @param int $day
      * @return $this
-     * @throws InvalidDay
+     * @throws InvalidDayOfYear
      */
-    public function whereDay(int $day): static
+    public function whereDayOfYear(int $day): static
     {
-        $this->arguments[self::KEY_DAY_OF_MONTH] = $this->validateDay($day);
+        $this->arguments[self::KEY_DAY_OF_MONTH] = [self::KEY_DAY_OF_MONTH => $this->validateDayOfYearRange($day)];
 
         return $this;
     }
@@ -130,9 +136,9 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
      * @return $this
      * @throws InvalidHour
      */
-    public function whereHour(int $hour): static
+    public function whereHourOfDay(int $hour): static
     {
-        $this->arguments[self::KEY_HOUR] = $this->validateHour($hour);
+        $this->arguments[] = [self::KEY_HOUR => $this->validateHourRange($hour)];
 
         return $this;
     }
@@ -144,7 +150,7 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
      */
     public function whereMinute(int $minute): static
     {
-        $this->arguments[self::KEY_MINUTE] = $this->validateMinute($minute);
+        $this->arguments[] = [self::KEY_MINUTE => $this->validateMinuteRange($minute)];
 
         return $this;
     }
@@ -156,31 +162,31 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
      */
     public function whereSecond(int $second): static
     {
-        $this->arguments[self::KEY_SECOND] = $this->validateSecond($second);
+        $this->arguments[] = [self::KEY_SECOND => $this->validateSecondRange($second)];
 
         return $this;
     }
 
     /**
-     * @param int $second
+     * @param int $year_month
      * @return $this
-     * @throws InvalidSecond
+     * @throws InvalidYearMonth
      */
-    public function whereYearMonth(int $second): static
+    public function whereYearMonth(int $year_month): static
     {
-        $this->arguments[self::KEY_YEAR_AND_MONTH] = $this->validateSecond($second);
+        $this->arguments[] = [self::KEY_YEAR_AND_MONTH => $this->validateYearMonth($year_month)];
 
         return $this;
     }
 
     /**
-     * @param int $day_of_year
+     * @param int $day_of_month
      * @return $this
-     * @throws InvalidDayOfYear
+     * @throws InvalidDayOfMonth
      */
-    public function whereDayOfYear(int $day_of_year): static
+    public function whereDayOfMonth(int $day_of_month): static
     {
-        $this->arguments[self::KEY_DAY_OF_YEAR] = $this->validateDayOfYear($day_of_year);
+        $this->arguments[] = [self::KEY_DAY_OF_MONTH => $this->validateDayOfMonthRange($day_of_month)];
 
         return $this;
     }
@@ -188,11 +194,11 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
     /**
      * @param int $day_of_week
      * @return $this
-     * @throws InvalidWeekDay
+     * @throws InvalidDayOfWeek
      */
     public function whereDayOfWeek(int $day_of_week): static
     {
-        $this->arguments[self::KEY_DAY_OF_WEEK] = $this->validateDayOfWeek($day_of_week);
+        $this->arguments[] = [self::KEY_DAY_OF_WEEK => $this->validateDayOfWeekRange($day_of_week)];
 
         return $this;
     }
@@ -200,11 +206,23 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
     /**
      * @param string $day_of_week_iso
      * @return $this
-     * @throws InvalidWeekDayIso
+     * @throws InvalidDayOfWeek
      */
     public function whereDayOfWeekIso(string $day_of_week_iso): static
     {
-        $this->arguments[self::KEY_DAY_OF_WEEK_ISO] = $this->validateDayOfWeekIso($day_of_week_iso);
+        $this->arguments[] = [self::KEY_DAY_OF_WEEK_ISO => $this->validateDayOfWeekRange($day_of_week_iso)];
+
+        return $this;
+    }
+
+    public function whereYearIn(int $day, int ...$days): static
+    {
+        $this->arguments[] = [
+            'compare' => Compare::not_in->value,
+            self::KEY_DAY_OF_WEEK => [
+                $this->validateDayOfWeekRange(Arr::prepend($days, $day)),
+            ],
+        ];
 
         return $this;
     }
