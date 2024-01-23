@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\DateSubQueryBuilder\Enums;
+namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums;
 
 enum Compare: string
 {
