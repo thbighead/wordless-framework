@@ -13,7 +13,7 @@ trait AuthorizationCheck
      * @param WP_REST_Request $request
      * @return bool|WP_Error
      */
-    final public function create_item_permissions_check($request)
+    final public function create_item_permissions_check($request): WP_Error|bool
     {
         return $this->storeAuthorizationCheck();
     }
@@ -22,7 +22,7 @@ trait AuthorizationCheck
      * @param WP_REST_Request $request
      * @return bool|WP_Error
      */
-    final public function delete_item_permissions_check($request)
+    final public function delete_item_permissions_check($request): WP_Error|bool
     {
         return $this->destroyAuthorizationCheck();
     }
@@ -31,7 +31,7 @@ trait AuthorizationCheck
      * @param WP_REST_Request $request
      * @return bool|WP_Error
      */
-    final public function get_item_permissions_check($request)
+    final public function get_item_permissions_check($request): WP_Error|bool
     {
         return $this->showAuthorizationCheck();
     }
@@ -40,7 +40,7 @@ trait AuthorizationCheck
      * @param WP_REST_Request $request
      * @return bool|WP_Error
      */
-    final public function get_items_permissions_check($request)
+    final public function get_items_permissions_check($request): WP_Error|bool
     {
         return $this->indexAuthorizationCheck();
     }
@@ -49,7 +49,7 @@ trait AuthorizationCheck
      * @param WP_REST_Request $request
      * @return bool|WP_Error
      */
-    final public function update_item_permissions_check($request)
+    final public function update_item_permissions_check($request): WP_Error|bool
     {
         return $this->updateAuthorizationCheck();
     }
@@ -83,7 +83,7 @@ trait AuthorizationCheck
     /**
      * @return bool|WP_Error
      */
-    protected function destroyAuthorizationCheck()
+    protected function destroyAuthorizationCheck(): WP_Error|bool
     {
         return $this->resolvePermission(
             $this->deletePermissionName(),
@@ -94,7 +94,7 @@ trait AuthorizationCheck
     /**
      * @return bool|WP_Error
      */
-    protected function indexAuthorizationCheck()
+    protected function indexAuthorizationCheck(): WP_Error|bool
     {
         return $this->resolvePermission(
             $this->getItemsPermissionName(),
@@ -105,7 +105,7 @@ trait AuthorizationCheck
     /**
      * @return bool|WP_Error
      */
-    protected function showAuthorizationCheck()
+    protected function showAuthorizationCheck(): WP_Error|bool
     {
         return $this->resolvePermission(
             $this->getItemPermissionName(),
@@ -116,7 +116,7 @@ trait AuthorizationCheck
     /**
      * @return bool|WP_Error
      */
-    protected function storeAuthorizationCheck()
+    protected function storeAuthorizationCheck(): WP_Error|bool
     {
         return $this->resolvePermission(
             $this->createPermissionName(),
@@ -145,7 +145,7 @@ trait AuthorizationCheck
     /**
      * @return bool|WP_Error
      */
-    protected function updateAuthorizationCheck()
+    protected function updateAuthorizationCheck(): WP_Error|bool
     {
         return $this->resolvePermission(
             $this->updatePermissionName(),
@@ -183,7 +183,7 @@ trait AuthorizationCheck
      * @param string $route_method
      * @return bool|WP_Error
      */
-    private function resolvePermission(string $capability, string $route_method)
+    private function resolvePermission(string $capability, string $route_method): WP_Error|bool
     {
         if ($this->isRouteMethodProtectedByAuthentication($route_method) && $this->getAuthenticatedUser() === null) {
             return $this->buildForbiddenContextError();

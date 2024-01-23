@@ -4,6 +4,8 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\E
 
 enum Compare: string
 {
+    public const KEY = 'compare';
+
     case between = 'BETWEEN';
     case equals = '=';
     case exists = 'EXISTS';

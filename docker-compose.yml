@@ -172,7 +172,6 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     networks:
       - backend
-
   ### Adminer ###########################################
   adminer:
     build:

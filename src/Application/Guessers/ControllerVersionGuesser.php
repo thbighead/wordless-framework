@@ -6,11 +6,7 @@ use Wordless\Infrastructure\Guesser\ControllerGuesser;
 
 class ControllerVersionGuesser extends ControllerGuesser
 {
-    /**
-     * @return string|null
-     * @noinspection PhpMissingReturnTypeInspection
-     */
-    protected function guessValue()
+    protected function guessValue(): ?string
     {
         preg_match(
             "/Controllers\\\([^\\\]*\\\)*V(.+)\\\[\w]+Controller/",

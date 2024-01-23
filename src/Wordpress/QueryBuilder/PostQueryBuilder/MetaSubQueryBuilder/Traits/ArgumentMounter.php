@@ -7,10 +7,8 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\Enums\T
 
 trait ArgumentMounter
 {
-    final protected const KEY_META_KEY = 'key';
-    final protected const KEY_META_VALUE = 'value';
-    final protected const KEY_META_VALUE_COMPARE = 'compare';
-    final protected const KEY_META_VALUE_TYPE = 'type';
+    private const KEY_META_KEY = 'key';
+    private const KEY_META_VALUE = 'value';
 
     /**
      * @param string|int|float|bool|array<int, string|int|float|bool>|null $value
@@ -27,8 +25,8 @@ trait ArgumentMounter
     ): array
     {
         $argument = [
-            self::KEY_META_VALUE_COMPARE => $compare->value,
-            self::KEY_META_VALUE_TYPE => $valueType->value,
+            Compare::KEY => $compare->value,
+            Type::KEY => $valueType->value,
         ];
 
         if ($value !== null) {

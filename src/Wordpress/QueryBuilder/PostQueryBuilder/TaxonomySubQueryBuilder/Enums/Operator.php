@@ -4,6 +4,8 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuild
 
 enum Operator: string
 {
+    public const KEY = 'operator';
+
     case and = 'AND';
     case exists = 'EXISTS';
     case in = 'IN';

@@ -74,7 +74,7 @@ This container is responsible for creating and managing your database.
 ### Adminer
 
 Adminer is a container that allows database interactions through the browser, providing an interface to perform 
-various tasks necessary for database-related development.
+various tasks necessary for database-related development. Access it via `localhost:8081` with your browser.
 
 ### Commands
 

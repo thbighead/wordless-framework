@@ -4,6 +4,8 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder\E
 
 enum Type: string
 {
+    public const KEY = 'type';
+
     case binary = 'BINARY';
     case char = 'CHAR';
     case date = 'DATE';

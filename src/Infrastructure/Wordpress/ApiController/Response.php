@@ -2,6 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\ApiController;
 
+use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Http\MutableHeaderBag;
 use Wordless\Infrastructure\Http\Response\Enums\StatusCode;
@@ -14,17 +15,28 @@ class Response extends WP_REST_Response implements MutableHeaderBag
 
     private ?WP_Error $wpError = null;
 
+    /**
+     * @param string $key
+     * @return string
+     * @throws InvalidArgumentException
+     */
     public static function canonicalizeHeaderName(string $key): string
     {
         return Str::slugCase($key);
     }
 
-    public static function error(StatusCode $http_code, string $message, array $data = []): Response
+    public static function error(StatusCode $http_code, string $message, array $data = []): static
     {
         return (new static)->setWpError($http_code, $message, $data);
     }
 
-    public function getHeader(string $key, ?string $default = null): ?string
+    /**
+     * @param string $key
+     * @param string|array|null $default
+     * @return string|null
+     * @throws InvalidArgumentException
+     */
+    public function getHeader(string $key, string|array|null $default = null): ?string
     {
         return $this->headers[self::canonicalizeHeaderName($key)] ?? $default;
     }
@@ -37,12 +49,22 @@ class Response extends WP_REST_Response implements MutableHeaderBag
         return $this->headers;
     }
 
+    /**
+     * @param string $key
+     * @return bool
+     * @throws InvalidArgumentException
+     */
     public function hasHeader(string $key): bool
     {
         return $this->getHeader($key) !== null;
     }
 
-    public function removeHeader(string $key): Response
+    /**
+     * @param string $key
+     * @return $this
+     * @throws InvalidArgumentException
+     */
+    public function removeHeader(string $key): static
     {
         if ($this->hasHeader($key)) {
             unset($this->headers[self::canonicalizeHeaderName($key)]);
@@ -52,9 +74,11 @@ class Response extends WP_REST_Response implements MutableHeaderBag
     }
 
     /**
-     * @inheritdoc
+     * @param string[] $headers
+     * @return $this
+     * @throws InvalidArgumentException
      */
-    public function removeHeaders(array $headers): Response
+    public function removeHeaders(array $headers): static
     {
         foreach ($headers as $header) {
             $this->removeHeader($header);
@@ -68,7 +92,14 @@ class Response extends WP_REST_Response implements MutableHeaderBag
         return $this->wpError ?? $this;
     }
 
-    public function setHeader(string $key, string $value, bool $override = false): Response
+    /**
+     * @param string $key
+     * @param string $value
+     * @param bool $override
+     * @return $this
+     * @throws InvalidArgumentException
+     */
+    public function setHeader(string $key, string $value, bool $override = false): static
     {
         $this->header(self::canonicalizeHeaderName($key), $value, $override);
 
@@ -76,9 +107,12 @@ class Response extends WP_REST_Response implements MutableHeaderBag
     }
 
     /**
-     * @inheritdoc
+     * @param string[] $headers
+     * @param bool $override
+     * @return $this
+     * @throws InvalidArgumentException
      */
-    public function setHeaders(array $headers, bool $override = false): Response
+    public function setHeaders(array $headers, bool $override = false): static
     {
         foreach ($headers as $header_key => $header_value) {
             $this->setHeader($header_key, $header_value, $override);
@@ -87,7 +121,7 @@ class Response extends WP_REST_Response implements MutableHeaderBag
         return $this;
     }
 
-    public function setWpError(StatusCode $http_code, string $message, array $data = []): Response
+    public function setWpError(StatusCode $http_code, string $message, array $data = []): static
     {
         if (isset($data[self::DATA_KEY_STATUS])) {
             $data['resource_' . self::DATA_KEY_STATUS] = $data[self::DATA_KEY_STATUS];

@@ -2,43 +2,42 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder\Traits;
 
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder\Enums\Compare;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder\Enums\Type;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder\Enums\Field;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder\Enums\Operator;
 
 trait ArgumentMounter
 {
-    final protected const KEY_META_KEY = 'key';
-    final protected const KEY_META_VALUE = 'value';
-    final protected const KEY_META_VALUE_COMPARE = 'compare';
-    final protected const KEY_META_VALUE_TYPE = 'type';
+    private const KEY_INCLUDE_CHILDREN = 'include_children';
+    private const KEY_TAXONOMY = 'taxonomy';
+    private const KEY_TERMS = 'terms';
 
     /**
-     * @param string|int|float|bool|array<int, string|int|float|bool>|null $value
-     * @param Type $valueType
-     * @param string|null $key
-     * @param Compare $compare
-     * @return array
+     * @param Field $termField
+     * @param string|int|string[]|int[] $term
+     * @param string|null $taxonomy
+     * @param Operator $operator
+     * @param bool $include_children
+     * @return array<string, string>
      */
     private function mountArgument(
-        string|int|float|bool|array|null $value,
-        Type $valueType,
-        ?string $key = null,
-        Compare $compare = Compare::equals
+        Field            $termField,
+        string|int|array $term,
+        ?string          $taxonomy = null,
+        Operator         $operator = Operator::in,
+        bool             $include_children = true
     ): array
     {
-        $argument = [
-            self::KEY_META_VALUE_COMPARE => $compare->value,
-            self::KEY_META_VALUE_TYPE => $valueType->value,
+        $arguments = [
+            Field::KEY => $termField->name,
+            self::KEY_TERMS => $term,
+            self::KEY_INCLUDE_CHILDREN => $include_children,
+            Operator::KEY => $operator->value,
         ];
 
-        if ($value !== null) {
-            $argument[self::KEY_META_VALUE] = $value;
+        if ($taxonomy !== null) {
+            $arguments[self::KEY_TAXONOMY] = $taxonomy;
         }
 
-        if ($key !== null) {
-            $argument[self::KEY_META_KEY] = $key;
-        }
-
-        return $argument;
+        return $arguments;
     }
 }

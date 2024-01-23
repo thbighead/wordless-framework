@@ -38,7 +38,7 @@ class Request extends WP_REST_Request implements MutableHeaderBag
         $this->validated_fields = $validated_fields;
     }
 
-    public function getHeader(string $key, ?string $default = null): ?string
+    public function getHeader(string $key, string|array|null $default = null): ?string
     {
         return $this->get_header($key) ?? $default;
     }
@@ -70,7 +70,7 @@ class Request extends WP_REST_Request implements MutableHeaderBag
         return $this->getHeader($key) !== null;
     }
 
-    public function removeHeader(string $key): Request
+    public function removeHeader(string $key): static
     {
         if ($this->hasHeader($key)) {
             $this->remove_header($key);
@@ -82,7 +82,7 @@ class Request extends WP_REST_Request implements MutableHeaderBag
     /**
      * @inheritdoc
      */
-    public function removeHeaders(array $headers): Request
+    public function removeHeaders(array $headers): static
     {
         foreach ($headers as $header) {
             $this->removeHeader($header);
@@ -91,7 +91,7 @@ class Request extends WP_REST_Request implements MutableHeaderBag
         return $this;
     }
 
-    public function setHeader(string $key, string $value, bool $override = false): Request
+    public function setHeader(string $key, string $value, bool $override = false): static
     {
         if ($this->hasHeader($key) && !$override) {
             return $this;
@@ -105,7 +105,7 @@ class Request extends WP_REST_Request implements MutableHeaderBag
     /**
      * @inheritdoc
      */
-    public function setHeaders(array $headers, bool $override = false): Request
+    public function setHeaders(array $headers, bool $override = false): static
     {
         $this->set_headers($headers, $override);
 
