@@ -8,17 +8,12 @@ use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToDeletePath extends ErrorException
 {
-    public function __construct(private readonly string $path, ?Throwable $previous = null)
+    public function __construct(public readonly string $path, ?Throwable $previous = null)
     {
         parent::__construct(
             "Couldn't delete $this->path.",
             ExceptionCode::intentional_interrupt->value,
             previous: $previous
         );
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
     }
 }

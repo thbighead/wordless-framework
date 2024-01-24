@@ -16,7 +16,7 @@ trait Repository
         foreach (get_post_types(['_builtin' => false]) as $custom_post_type_key) {
             try {
                 $customPostTypes[] = new static($custom_post_type_key);
-            } catch (PostTypeNotRegistered) {
+            } /** @noinspection PhpRedundantCatchClauseInspection */ catch (PostTypeNotRegistered) {
                 continue;
             }
         }

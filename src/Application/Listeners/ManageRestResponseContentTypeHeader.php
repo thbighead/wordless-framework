@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Listeners;
 
+use InvalidArgumentException;
 use Wordless\Application\Helpers\Http;
 use Wordless\Infrastructure\Enums\MimeType;
 use Wordless\Infrastructure\Wordpress\ApiController\Request;
@@ -18,6 +19,12 @@ class ManageRestResponseContentTypeHeader extends FilterListener
      */
     protected const FUNCTION = 'avoidJsonEncodeWhenContentTypeIsNotApplicationJson';
 
+    /**
+     * @param bool $served
+     * @param WP_HTTP_Response $result
+     * @return bool
+     * @throws InvalidArgumentException
+     */
     public static function avoidJsonEncodeWhenContentTypeIsNotApplicationJson(
         bool             $served,
         WP_HTTP_Response $result
@@ -41,6 +48,11 @@ class ManageRestResponseContentTypeHeader extends FilterListener
         return Filter::rest_pre_serve_request;
     }
 
+    /**
+     * @param WP_HTTP_Response $response
+     * @return bool
+     * @throws InvalidArgumentException
+     */
     private static function isResponseContentTypeApplicationJson(WP_HTTP_Response $response): bool
     {
         $response_content_type = $response->get_headers()[Response::canonicalizeHeaderName(Http::CONTENT_TYPE)] ??

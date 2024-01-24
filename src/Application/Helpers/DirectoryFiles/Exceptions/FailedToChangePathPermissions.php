@@ -9,8 +9,8 @@ use Wordless\Infrastructure\Enums\ExceptionCode;
 class FailedToChangePathPermissions extends ErrorException
 {
     public function __construct(
-        private readonly string $path,
-        private readonly int    $permissions,
+        public readonly string $path,
+        public readonly int    $permissions,
         ?Throwable              $previous = null
     )
     {
@@ -19,15 +19,5 @@ class FailedToChangePathPermissions extends ErrorException
             ExceptionCode::intentional_interrupt->value,
             previous: $previous
         );
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
-    }
-
-    public function getPermissions(): int
-    {
-        return $this->permissions;
     }
 }

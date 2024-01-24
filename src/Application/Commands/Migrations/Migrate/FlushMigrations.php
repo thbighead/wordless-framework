@@ -104,10 +104,6 @@ class FlushMigrations extends MigrateRollback
         return $this;
     }
 
-    /**
-     * @return void
-     * @throws FailedToUpdateOption
-     */
     private function trashMigrationsOption(): void
     {
         $this->wrapScriptWithMessages(

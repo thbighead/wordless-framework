@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 enum Verb: string
 {
+    public const EDITABLE = 'PUT, PATCH';
+
     case connect = Request::METHOD_CONNECT;
     case delete = Request::METHOD_DELETE;
     case get = Request::METHOD_GET;

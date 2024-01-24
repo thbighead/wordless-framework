@@ -3,8 +3,14 @@
 namespace Wordless\Application\Libraries\JWT\Traits;
 
 use Lcobucci\JWT\Encoding\JoseEncoder;
+use Lcobucci\JWT\Signer\CannotSignPayload;
+use Lcobucci\JWT\Signer\Ecdsa\ConversionFailed;
+use Lcobucci\JWT\Signer\InvalidKeyProvided;
+use Lcobucci\JWT\Token\InvalidTokenStructure;
 use Lcobucci\JWT\Token\Parser;
 use Lcobucci\JWT\Token\Plain;
+use Lcobucci\JWT\Token\RegisteredClaimGiven;
+use Lcobucci\JWT\Token\UnsupportedHeaderFound;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\GetType;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -26,6 +32,12 @@ trait Constructors
         ];
     }
 
+    /**
+     * @param string $full_token
+     * @return void
+     * @throws InvalidTokenStructure
+     * @throws UnsupportedHeaderFound
+     */
     public function __constructParsingToken(string $full_token): void
     {
         /** @var Plain $parsedToken */
@@ -37,9 +49,13 @@ trait Constructors
     /**
      * @param array $payload
      * @return void
-     * @throws InvalidJwtCryptoAlgorithmId
      * @throws InvalidConfigKey
+     * @throws InvalidJwtCryptoAlgorithmId
      * @throws PathNotFoundException
+     * @throws CannotSignPayload
+     * @throws ConversionFailed
+     * @throws InvalidKeyProvided
+     * @throws RegisteredClaimGiven
      */
     public function __constructWithPayloadUsingDefaultCrypto(array $payload): void
     {
@@ -50,12 +66,16 @@ trait Constructors
      * @param array $payload
      * @param CryptoAlgorithm $crypto_strategy
      * @return void
+     * @throws CannotSignPayload
+     * @throws ConversionFailed
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
+     * @throws InvalidKeyProvided
      * @throws PathNotFoundException
+     * @throws RegisteredClaimGiven
      */
     public function __constructWithPayloadUsingCrypto(array $payload, CryptoAlgorithm $crypto_strategy): void
     {
-        $this->buildJwt($payload, $crypto_strategy->value);
+        $this->buildJwt($payload, $crypto_strategy);
     }
 }

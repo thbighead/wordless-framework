@@ -3,6 +3,8 @@
 namespace Wordless\Infrastructure;
 
 use Wordless\Application\Helpers\Arr;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Mounters\Stub\SimpleCacheStubMounter;
@@ -19,6 +21,8 @@ abstract class Cacher
     /**
      * @return void
      * @throws FailedToCopyStub
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
      * @throws PathNotFoundException
      */
     final public static function generate(): void
@@ -29,6 +33,8 @@ abstract class Cacher
     /**
      * @return void
      * @throws FailedToCopyStub
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
      * @throws PathNotFoundException
      */
     private function cache(): void

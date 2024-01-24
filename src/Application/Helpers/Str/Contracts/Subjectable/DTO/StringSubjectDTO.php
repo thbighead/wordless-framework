@@ -75,6 +75,10 @@ final class StringSubjectDTO extends SubjectDTO
         return $this;
     }
 
+    /**
+     * @return $this
+     * @throws InvalidArgumentException
+     */
     public function camelCase(): StringSubjectDTO
     {
         $this->subject = Str::camelCase($this->subject);

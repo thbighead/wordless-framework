@@ -2,6 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits;
 
+use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
 
 trait Labels
@@ -30,6 +31,7 @@ trait Labels
      * https://developer.wordpress.org/reference/functions/get_post_type_labels/#description
      *
      * @return string[]
+     * @throws InvalidArgumentException
      */
     private static function mountDefaultLabels(): array
     {

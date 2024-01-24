@@ -29,7 +29,7 @@ trait Internal
         ));
 
         if ($consoleResponse->failed()) {
-            throw new CliReturnedNonZero($command, $consoleResponse);
+            throw new CliReturnedNonZero((string)$command, $consoleResponse);
         }
 
         return $consoleResponse;
@@ -52,7 +52,7 @@ trait Internal
         ), $bufferedOutput->fetch());
 
         if ($consoleResponse->failed()) {
-            throw new CliReturnedNonZero($command, $consoleResponse);
+            throw new CliReturnedNonZero((string)$command, $consoleResponse);
         }
 
         return $consoleResponse;

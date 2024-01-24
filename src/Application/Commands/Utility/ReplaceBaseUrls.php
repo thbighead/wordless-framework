@@ -3,11 +3,13 @@
 namespace Wordless\Application\Commands\Utility;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
-use Wordless\Application\Commands\Traits\WunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
@@ -23,6 +25,7 @@ class ReplaceBaseUrls extends ConsoleCommand
     private const BASE_URLS_TO_SEARCH_FOR_REPLACING = 'base_urls';
 
     private string $app_url;
+    /** @var string[] $base_urls_to_search */
     private array $base_urls_to_search;
 
     /**
@@ -31,7 +34,7 @@ class ReplaceBaseUrls extends ConsoleCommand
     protected function arguments(): array
     {
         return [
-            new ArgumentDTO(
+            ArgumentDTO::make(
                 self::BASE_URLS_TO_SEARCH_FOR_REPLACING,
                 'Base URLs to search and replace by the defined by the application (.env APP_URL)',
                 ArgumentMode::array_optional,
@@ -60,7 +63,9 @@ class ReplaceBaseUrls extends ConsoleCommand
 
     /**
      * @return int
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     protected function runIt(): int
@@ -78,6 +83,7 @@ class ReplaceBaseUrls extends ConsoleCommand
      * @param OutputInterface $output
      * @return void
      * @throws DotEnvNotSetException
+     * @throws InvalidArgumentException
      */
     protected function setup(InputInterface $input, OutputInterface $output): void
     {
@@ -93,6 +99,10 @@ class ReplaceBaseUrls extends ConsoleCommand
         }
     }
 
+    /**
+     * @return string[]
+     * @throws InvalidArgumentException
+     */
     private function defineBaseUrlsToSearch(): array
     {
         $base_urls_to_search = $this->input->getArgument(self::BASE_URLS_TO_SEARCH_FOR_REPLACING);
@@ -106,7 +116,9 @@ class ReplaceBaseUrls extends ConsoleCommand
 
     /**
      * @return void
+     * @throws CommandNotFoundException
      * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     private function runDatabaseSearchReplace(): void

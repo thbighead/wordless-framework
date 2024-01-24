@@ -9,6 +9,6 @@ abstract class Subjectable extends Helper
 {
     public static function of(mixed $subject): SubjectDTO
     {
-        return new SubjectDTO($subject, static::class);
+        return new SubjectDTO($subject);
     }
 }

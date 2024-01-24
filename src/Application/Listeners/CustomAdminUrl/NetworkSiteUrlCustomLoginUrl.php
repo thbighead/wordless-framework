@@ -13,9 +13,13 @@ class NetworkSiteUrlCustomLoginUrl extends BaseListener
     use FilterListener;
 
     /**
+     * @param $url
+     * @param $path
+     * @param $scheme
+     * @return string|null
      * @throws PathNotFoundException
      */
-    public static function load($url, $path, $scheme)
+    public static function load($url, $path, $scheme): ?string
     {
         if (static::canHook()) {
             return static::filterWpLoginPhp($url, $scheme);

@@ -5,6 +5,7 @@ namespace Wordless\Infrastructure\Wordpress\ApiController\Traits\ResourceValidat
 use InvalidArgumentException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
+use Wordless\Infrastructure\Http\Response\Enums\StatusCode;
 use Wordless\Infrastructure\Wordpress\ApiController\Response;
 
 class ValidationError extends InvalidArgumentException
@@ -34,7 +35,7 @@ class ValidationError extends InvalidArgumentException
     public function mountResponse(): void
     {
         $this->response = Response::error(
-            Response::HTTP_422_UNPROCESSABLE_ENTITY,
+            StatusCode::unprocessable_entity_422,
             $this->getMessage(),
             ['errors' => $this->violations]
         );

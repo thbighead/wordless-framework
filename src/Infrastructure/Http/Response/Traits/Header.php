@@ -2,7 +2,7 @@
 
 namespace Wordless\Infrastructure\Http\Response\Traits;
 
-use Requests_Utility_CaseInsensitiveDictionary;
+use WpOrg\Requests\Utility\CaseInsensitiveDictionary;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
 
@@ -27,7 +27,7 @@ trait Header
         return isset($this->getHeaders()[$key]);
     }
 
-    private function retrieveWordpressResponseHeaderObject(): ?Requests_Utility_CaseInsensitiveDictionary
+    private function retrieveWordpressResponseHeaderObject(): ?CaseInsensitiveDictionary
     {
         return $this->raw_response['headers'] ?? null;
     }

@@ -4,6 +4,7 @@ namespace Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits;
 
 use Wordless\Application\Guessers\CustomPostStatusNameGuesser;
 use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Validation;
+use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
 
 trait Register
 {
@@ -18,6 +19,10 @@ trait Register
                 (new CustomPostStatusNameGuesser(static::class))->getValue();
     }
 
+    /**
+     * @return void
+     * @throws ReservedCustomPostStatusKey
+     */
     final public static function register(): void
     {
         self::validateName();

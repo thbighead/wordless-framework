@@ -17,6 +17,7 @@ use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
+use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 
@@ -40,6 +41,7 @@ trait MainPlugin
      * @throws InvalidMenuClass
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
+     * @throws ReservedCustomPostStatusKey
      * @throws ReservedCustomPostTypeKey
      */
     public static function bootMainPlugin(): void
@@ -57,6 +59,7 @@ trait MainPlugin
      * @throws InvalidCustomTaxonomyName
      * @throws InvalidMenuClass
      * @throws PathNotFoundException
+     * @throws ReservedCustomPostStatusKey
      * @throws ReservedCustomPostTypeKey
      */
     private function bootIntoWordpress(): void
@@ -75,6 +78,7 @@ trait MainPlugin
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidCustomTaxonomyName
      * @throws ReservedCustomPostTypeKey
+     * @throws ReservedCustomPostStatusKey
      */
     private function preBootWordpressServicesFromProvider(Provider $provider): void
     {

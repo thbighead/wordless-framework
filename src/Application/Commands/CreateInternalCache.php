@@ -4,7 +4,9 @@ namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
+use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\InternalCache;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
@@ -43,6 +45,11 @@ class CreateInternalCache extends ConsoleCommand
         return [];
     }
 
+    /**
+     * @return int
+     * @throws InvalidConfigKey
+     * @throws InvalidProviderClass
+     */
     protected function runIt(): int
     {
         try {

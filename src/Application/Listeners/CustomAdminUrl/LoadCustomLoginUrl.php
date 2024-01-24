@@ -13,9 +13,10 @@ class LoadCustomLoginUrl extends BaseListener
     use ActionListener;
 
     /**
+     * @return void
      * @throws PathNotFoundException
      */
-    public static function load()
+    public static function load(): void
     {
         if (static::canHook()) {
             global $pagenow;

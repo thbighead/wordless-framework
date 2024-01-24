@@ -2,11 +2,12 @@
 
 namespace Wordless\Infrastructure\Wordpress\ApiController\Traits;
 
+use Wordless\Infrastructure\Http\Request\Enums\Verb;
 use Wordless\Infrastructure\Wordpress\ApiController\Request;
 
 trait Routing
 {
-    public function register_routes()
+    public function register_routes(): void
     {
         $this->registerDestroyRoute();
         $this->registerIndexRoute();
@@ -15,10 +16,10 @@ trait Routing
         $this->registerUpdateRoute();
     }
 
-    public function registerDestroyRoute()
+    public function registerDestroyRoute(): void
     {
         $this->routeBaseRegistration([
-            'methods' => Request::HTTP_DELETE,
+            'methods' => Verb::delete->value,
             'callback' => [$this, self::METHOD_NAME_TO_REST_DESTROY_ITEM],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_DESTROY_ITEM],
             'args' => [
@@ -31,20 +32,20 @@ trait Routing
         ], $this->defineCustomRestBaseWithIdRouteParameter());
     }
 
-    public function registerIndexRoute()
+    public function registerIndexRoute(): void
     {
         $this->routeBaseRegistration([
-            'methods' => Request::HTTP_GET,
+            'methods' => Verb::get->value,
             'callback' => [$this, self::METHOD_NAME_TO_REST_INDEX_ITEMS],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_INDEX_ITEMS],
             'args' => $this->get_collection_params(),
         ]);
     }
 
-    public function registerShowRoute()
+    public function registerShowRoute(): void
     {
         $this->routeBaseRegistration([
-            'methods' => Request::HTTP_GET,
+            'methods' => Verb::get->value,
             'callback' => [$this, self::METHOD_NAME_TO_REST_SHOW_ITEM],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_SHOW_ITEM],
             'args' => [
@@ -53,23 +54,23 @@ trait Routing
         ], $this->defineCustomRestBaseWithIdRouteParameter());
     }
 
-    public function registerStoreRoute()
+    public function registerStoreRoute(): void
     {
         $this->routeBaseRegistration([
-            'methods' => Request::HTTP_POST,
+            'methods' => Verb::post->value,
             'callback' => [$this, self::METHOD_NAME_TO_REST_STORE_ITEM],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_STORE_ITEM],
             'args' => $this->get_collection_params(),
         ]);
     }
 
-    public function registerUpdateRoute()
+    public function registerUpdateRoute(): void
     {
         $this->routeBaseRegistration([
-            'methods' => Request::EDITABLE,
+            'methods' => Verb::EDITABLE,
             'callback' => [$this, self::METHOD_NAME_TO_REST_UPDATE_ITEM],
             'permission_callback' => [$this, self::PERMISSION_METHOD_NAME_TO_REST_UPDATE_ITEM],
-            'args' => $this->get_endpoint_args_for_item_schema(Request::EDITABLE),
+            'args' => $this->get_endpoint_args_for_item_schema(Verb::EDITABLE),
         ], $this->defineCustomRestBaseWithIdRouteParameter());
     }
 
@@ -77,7 +78,7 @@ trait Routing
         array   $route_details,
         ?string $custom_rest_base = null,
         ?string $custom_namespace = null
-    )
+    ): void
     {
         register_rest_route(
             $custom_namespace ?? $this->namespace,

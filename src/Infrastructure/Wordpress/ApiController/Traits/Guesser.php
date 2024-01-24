@@ -4,7 +4,7 @@ namespace Wordless\Infrastructure\Wordpress\ApiController\Traits;
 
 use Wordless\Application\Guessers\ControllerResourceNameGuesser;
 use Wordless\Application\Guessers\ControllerVersionGuesser;
-use Wordless\Application\Helpers\DirestoryFiles\Exceptions\FailedToFindCachedKey;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Core\InternalCache;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 
@@ -21,7 +21,7 @@ trait Guesser
             return InternalCache::getValueOrFail(
                 "controllers.$controller_resource_name_class.resource_name"
             );
-        } catch (FailedToFindCachedKey|InternalCacheNotLoaded $exception) {
+        } catch (FailedToFindCachedKey|InternalCacheNotLoaded) {
             if (!isset($this->resourceNameGuesser)) {
                 $this->resourceNameGuesser = new ControllerResourceNameGuesser($controller_resource_name_class);
             }
@@ -36,7 +36,7 @@ trait Guesser
 
         try {
             return InternalCache::getValueOrFail("controllers.$controller_resource_name_class.version");
-        } catch (FailedToFindCachedKey|InternalCacheNotLoaded $exception) {
+        } catch (FailedToFindCachedKey|InternalCacheNotLoaded) {
             if (!isset($this->resourceNameGuesser)) {
                 $this->versionGuesser = new ControllerVersionGuesser($controller_resource_name_class);
             }

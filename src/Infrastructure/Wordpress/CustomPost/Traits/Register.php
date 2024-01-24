@@ -2,6 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits;
 
+use InvalidArgumentException;
 use Wordless\Application\Guessers\CustomPostTypeKeyGuesser;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO;
@@ -106,6 +107,7 @@ trait Register
     /**
      * https://developer.wordpress.org/reference/functions/register_post_type/#capability_type
      * @return string[]|null
+     * @throws InvalidArgumentException
      */
     protected static function getCapabilityType(): ?array
     {

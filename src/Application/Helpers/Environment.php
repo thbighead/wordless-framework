@@ -40,7 +40,7 @@ STRING;
         try {
             return ProjectPath::root('.env');
         } catch (PathNotFoundException $pathNotFoundException) {
-            $new_dot_env_filepath = $pathNotFoundException->getPath();
+            $new_dot_env_filepath = $pathNotFoundException->path;
 
             try {
                 DirectoryFiles::copyFile(
@@ -131,7 +131,7 @@ STRING;
         try {
             (new Dotenv)->load(ProjectPath::root('.env'));
         } catch (PathNotFoundException $exception) {
-            throw new DotEnvNotSetException(".env file not found at {$exception->getPath()}");
+            throw new DotEnvNotSetException(".env file not found at {$exception->path}");
         }
     }
 

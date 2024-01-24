@@ -14,13 +14,9 @@ class EnqueueThemeEnqueueables extends ActionListener
      */
     protected const FUNCTION = 'enqueue';
 
-    /**
-     * @return void
-     * @throws PathNotFoundException
-     */
     public static function enqueue(): void
     {
-
+        // TODO: What is that???? Seems incomplete
     }
 
     protected static function hook(): ActionHook

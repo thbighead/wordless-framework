@@ -2,6 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register;
 
+use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
 
 trait Labels
@@ -30,6 +31,7 @@ trait Labels
      * https://developer.wordpress.org/reference/functions/register_taxonomy/#arguments
      *
      * @return string[]
+     * @throws InvalidArgumentException
      */
     private static function mountDefaultLabels(): array
     {

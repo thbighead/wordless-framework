@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Guessers;
 
+use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Guesser;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
@@ -15,8 +16,13 @@ class CustomTaxonomyNameGuesser extends Guesser
         $this->class_name = Str::afterLast($class_name, '\\');
     }
 
+    /**
+     * @return string
+     * @throws InvalidArgumentException
+     */
     protected function guessValue(): string
     {
-        return Str::of($this->class_name)->slugCase()->truncate(CustomTaxonomy::TAXONOMY_NAME_MAX_LENGTH);
+        return (string)Str::of($this->class_name)->slugCase()
+            ->truncate(CustomTaxonomy::TAXONOMY_NAME_MAX_LENGTH);
     }
 }

@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php /** @noinspection PhpUnhandledExceptionInspection */
+
+declare(strict_types=1);
+
 /**
  * Plugin Name: Wordless Plugins
  * Plugin URI:  https://packagist.org/packages/thbighead/wordless

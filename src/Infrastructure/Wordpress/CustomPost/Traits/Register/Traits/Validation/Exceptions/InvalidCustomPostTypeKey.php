@@ -9,18 +9,13 @@ use Wordless\Wordpress\Models\PostType;
 
 class InvalidCustomPostTypeKey extends InvalidArgumentException
 {
-    public function __construct(private readonly string $invalid_type_key, ?Throwable $previous = null)
+    public function __construct(public readonly string $invalid_type_key, ?Throwable $previous = null)
     {
         parent::__construct(
             "The key '$this->invalid_type_key' is invalid for CPT key. {$this->justification()}",
             ExceptionCode::development_error->value,
             $previous
         );
-    }
-
-    public function getInvalidTypeKey(): string
-    {
-        return $this->invalid_type_key;
     }
 
     protected function justification(): string

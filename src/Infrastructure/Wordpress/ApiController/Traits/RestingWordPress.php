@@ -3,6 +3,7 @@
 namespace Wordless\Infrastructure\Wordpress\ApiController\Traits;
 
 use Wordless\Application\Helpers\Debugger;
+use Wordless\Infrastructure\Http\Response\Enums\StatusCode;
 use Wordless\Infrastructure\Wordpress\ApiController\Request;
 use Wordless\Infrastructure\Wordpress\ApiController\Response;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\ResourceValidation\Exceptions\ValidationError;
@@ -15,7 +16,7 @@ trait RestingWordPress
      * @param WP_REST_Request $request
      * @return Response|WP_Error
      */
-    final public function create_item($request)
+    final public function create_item($request): Response|WP_Error
     {
         try {
             return $this->store(Request::fromWpRestRequest(
@@ -31,7 +32,7 @@ trait RestingWordPress
      * @param WP_REST_Request $request
      * @return Response|WP_Error
      */
-    final public function delete_item($request)
+    final public function delete_item($request): Response|WP_Error
     {
         try {
             return $this->destroy(Request::fromWpRestRequest(
@@ -56,7 +57,7 @@ trait RestingWordPress
      * @param WP_REST_Request $request
      * @return Response|WP_Error
      */
-    final public function get_item($request)
+    final public function get_item($request): Response|WP_Error
     {
         try {
             return $this->show(Request::fromWpRestRequest(
@@ -72,7 +73,7 @@ trait RestingWordPress
      * @param WP_REST_Request $request
      * @return Response|WP_Error
      */
-    final public function get_items($request)
+    final public function get_items($request): Response|WP_Error
     {
         try {
             return $this->index(Request::fromWpRestRequest(
@@ -124,7 +125,7 @@ trait RestingWordPress
      * @param WP_REST_Request $request
      * @return Response|WP_Error
      */
-    final public function update_item($request)
+    final public function update_item($request): Response|WP_Error
     {
         try {
             return $this->update(Request::fromWpRestRequest(
@@ -139,7 +140,7 @@ trait RestingWordPress
     private function mountNotImplementedError(Request $request): Response
     {
         return Response::error(
-            Response::HTTP_404_NOT_FOUND,
+            StatusCode::not_found_404,
             sprintf(
                 __('Method \'%s\' not implemented. Must be overridden in subclass.'),
                 Debugger::calledFrom()

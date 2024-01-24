@@ -7,8 +7,6 @@ use WP_REST_Request;
 
 class Request extends WP_REST_Request implements MutableHeaderBag
 {
-    final public const EDITABLE = 'PUT, PATCH';
-
     /** @var array<string, mixed> $validated_fields */
     protected array $validated_fields;
 

@@ -56,9 +56,9 @@ trait Rewrite
     }
 
     /**
-     * @return array|true
+     * @return true|array<string,int|bool|string>
      */
-    private static function mountRewriteArguments()
+    private static function mountRewriteArguments(): true|array
     {
         $rewrite_arguments = [];
 

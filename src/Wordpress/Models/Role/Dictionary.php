@@ -78,7 +78,7 @@ class Dictionary extends WP_Roles
      */
     public static function syncCustomTaxonomiesPermissionsToRole(Role $role): void
     {
-        foreach (TaxonomyQueryBuilder::getInstance()->andOnlyCustom()->get() as $customTaxonomy) {
+        foreach (TaxonomyQueryBuilder::getInstance()->onlyCustom()->get() as $customTaxonomy) {
             $role->syncCapabilities(array_combine(
                 $permissions = array_values((array)$customTaxonomy->cap),
                 array_fill(0, count($permissions), true)

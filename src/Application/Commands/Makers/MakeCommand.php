@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Commands\Makers;
 
+use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
@@ -14,6 +15,7 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
+use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
 
 class MakeCommand extends ConsoleCommand
 {
@@ -26,7 +28,7 @@ class MakeCommand extends ConsoleCommand
     protected function arguments(): array
     {
         return [
-            new ArgumentDTO(
+            ArgumentDTO::make(
                 self::COMMAND_CLASS_ARGUMENT_NAME,
                 'The class name of your new command file in pascal case.',
                 ArgumentMode::required
@@ -55,9 +57,11 @@ class MakeCommand extends ConsoleCommand
     /**
      * @return int
      * @throws FailedToCopyStub
-     * @throws PathNotFoundException
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
+     * @throws PathNotFoundException
+     * @throws InvalidArgumentException
+     * @throws SymfonyInvalidArgumentException
      */
     protected function runIt(): int
     {

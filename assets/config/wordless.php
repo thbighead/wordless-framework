@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php /** @noinspection PhpUnhandledExceptionInspection */
+
+declare(strict_types=1);
 
 use Wordless\Application\Commands\GeneratePublicWordpressSymbolicLinks;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO;
