@@ -2,6 +2,7 @@
 
 namespace Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits;
 
+use InvalidArgumentException;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
@@ -34,6 +35,7 @@ trait InstallCustomPostTypes
      * @throws CustomPostTypeRegistrationFailed
      * @throws InvalidCustomPostTypeKey
      * @throws ReservedCustomPostTypeKey
+     * @throws InvalidArgumentException
      */
     private function resolveCustomPostTypes(): static
     {

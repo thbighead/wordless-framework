@@ -2,6 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\ApiController\Traits;
 
+use InvalidArgumentException;
 use Wordless\Application\Helpers\Debugger;
 use Wordless\Infrastructure\Http\Response\Enums\StatusCode;
 use Wordless\Infrastructure\Wordpress\ApiController\Request;
@@ -137,6 +138,11 @@ trait RestingWordPress
         }
     }
 
+    /**
+     * @param Request $request
+     * @return Response
+     * @throws InvalidArgumentException
+     */
     private function mountNotImplementedError(Request $request): Response
     {
         return Response::error(

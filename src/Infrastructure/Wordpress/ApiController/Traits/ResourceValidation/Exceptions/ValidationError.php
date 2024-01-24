@@ -32,6 +32,10 @@ class ValidationError extends InvalidArgumentException
         return $this->response;
     }
 
+    /**
+     * @return void
+     * @throws InvalidArgumentException
+     */
     public function mountResponse(): void
     {
         $this->response = Response::error(

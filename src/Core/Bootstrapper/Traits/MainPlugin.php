@@ -20,6 +20,7 @@ use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validati
 use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\ReservedCustomTaxonomyName;
 
 trait MainPlugin
 {
@@ -75,10 +76,12 @@ trait MainPlugin
      * @param Provider $provider
      * @return void
      * @throws CustomPostTypeRegistrationFailed
+     * @throws InvalidArgumentException
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidCustomTaxonomyName
-     * @throws ReservedCustomPostTypeKey
      * @throws ReservedCustomPostStatusKey
+     * @throws ReservedCustomPostTypeKey
+     * @throws ReservedCustomTaxonomyName
      */
     private function preBootWordpressServicesFromProvider(Provider $provider): void
     {

@@ -2,9 +2,11 @@
 
 namespace Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits;
 
+use InvalidArgumentException;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\ReservedCustomTaxonomyName;
 
 trait InstallCustomTaxonomies
 {
@@ -29,7 +31,9 @@ trait InstallCustomTaxonomies
 
     /**
      * @return $this
+     * @throws ReservedCustomTaxonomyName
      * @throws InvalidCustomTaxonomyName
+     * @throws InvalidArgumentException
      */
     private function resolveCustomTaxonomies(): static
     {
