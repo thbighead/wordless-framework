@@ -220,6 +220,10 @@ trait Register
         return static::isShownInAdminPanel();
     }
 
+    /**
+     * @return array
+     * @throws InvalidArgumentException
+     */
     protected static function mountArguments(): array
     {
         $arguments = [

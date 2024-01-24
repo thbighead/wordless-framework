@@ -4,7 +4,9 @@ namespace Wordless\Core;
 
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath;
@@ -22,10 +24,12 @@ final class InternalCache
 
     /**
      * @return void
-     * @throws InvalidProviderClass
+     * @throws FailedToCreateDirectory
+     * @throws FailedToGetDirectoryPermissions
      * @throws FailedToCopyStub
-     * @throws PathNotFoundException
      * @throws InvalidConfigKey
+     * @throws InvalidProviderClass
+     * @throws PathNotFoundException
      */
     public static function generate(): void
     {

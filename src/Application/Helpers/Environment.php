@@ -131,7 +131,7 @@ STRING;
         try {
             (new Dotenv)->load(ProjectPath::root('.env'));
         } catch (PathNotFoundException $exception) {
-            throw new DotEnvNotSetException(".env file not found at {$exception->path}");
+            throw new DotEnvNotSetException(".env file not found at $exception->path");
         }
     }
 

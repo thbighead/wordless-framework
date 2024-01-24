@@ -4,7 +4,6 @@ namespace Wordless\Wordpress\Models\Category\Traits;
 
 use Wordless\Application\Helpers\Arr;
 use Wordless\Wordpress\Models\Category\Dictionary;
-use WP_Term;
 
 trait Repository
 {

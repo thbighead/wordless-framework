@@ -121,6 +121,13 @@ class Response extends WP_REST_Response implements MutableHeaderBag
         return $this;
     }
 
+    /**
+     * @param StatusCode $http_code
+     * @param string $message
+     * @param array $data
+     * @return $this
+     * @throws InvalidArgumentException
+     */
     public function setWpError(StatusCode $http_code, string $message, array $data = []): static
     {
         if (isset($data[self::DATA_KEY_STATUS])) {

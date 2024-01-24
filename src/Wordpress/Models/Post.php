@@ -5,7 +5,6 @@ namespace Wordless\Wordpress\Models;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
-use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\Post\Traits\Categories;
 use Wordless\Wordpress\Models\Post\Traits\MixinWpPost;

@@ -3,7 +3,6 @@
 namespace Wordless\Infrastructure\Wordpress\ApiController\Traits;
 
 use Wordless\Infrastructure\Http\Request\Enums\Verb;
-use Wordless\Infrastructure\Wordpress\ApiController\Request;
 
 trait Routing
 {

@@ -47,7 +47,6 @@ class FlushMigrations extends MigrateRollback
 
     /**
      * @return int
-     * @throws FailedToUpdateOption
      * @throws InvalidConfigKey
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass

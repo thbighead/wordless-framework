@@ -100,15 +100,6 @@ class MakeListener extends ConsoleCommand
     }
 
     /**
-     * @return bool
-     * @throws SymfonyInvalidArgumentException
-     */
-    private function isFilterListener(): bool
-    {
-        return (bool)$this->input->getOption(self::LISTENER_FILTER_MODE);
-    }
-
-    /**
      * @param string $listener_class_name
      * @return StubMounter
      * @throws PathNotFoundException

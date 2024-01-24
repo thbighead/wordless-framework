@@ -2,6 +2,7 @@
 
 namespace Wordless\Infrastructure\Http\Response\Traits;
 
+use InvalidArgumentException;
 use Wordless\Infrastructure\Http\Response\Enums\StatusCode as StatusCodeEnum;
 
 trait StatusCode
@@ -13,6 +14,11 @@ trait StatusCode
         return $as_int ? $status_code : StatusCodeEnum::tryFrom($status_code) ?? $status_code;
     }
 
+    /**
+     * @param bool $prefer_original
+     * @return string
+     * @throws InvalidArgumentException
+     */
     public function statusCodeText(bool $prefer_original = false): string
     {
         if ($prefer_original && !empty($original_status_code_text = $this->retrieveOriginalStatusCodeText())) {

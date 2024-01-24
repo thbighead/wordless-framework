@@ -2,6 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits;
 
+use InvalidArgumentException;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Labels;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Rewrite;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation;
@@ -179,6 +180,10 @@ trait Register
         return true;
     }
 
+    /**
+     * @return array
+     * @throws InvalidArgumentException
+     */
     private static function mountArguments(): array
     {
         $arguments = [
