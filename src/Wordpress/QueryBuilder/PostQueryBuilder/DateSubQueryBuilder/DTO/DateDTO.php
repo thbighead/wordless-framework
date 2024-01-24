@@ -122,14 +122,7 @@ class DateDTO
      */
     public function setYear(int $year): static
     {
-        $this->arguments['year'] = $this->validateFourDigitsRangeYear($year);
-
-        return $this;
-    }
-
-    public function inclusive(bool $inclusive = true): static
-    {
-        $this->arguments['inclusive'] = $inclusive;
+        $this->arguments['year'] = $this->validateYearHasFourDigits($year);
 
         return $this;
     }
@@ -137,13 +130,6 @@ class DateDTO
     public function column(string $column): static
     {
         $this->arguments['column'] = $column;
-
-        return $this;
-    }
-
-    public function compare(Compare $compare): static
-    {
-        $this->arguments['compare'] = $compare->value;
 
         return $this;
     }
