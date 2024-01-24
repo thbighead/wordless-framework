@@ -25,6 +25,13 @@ class Response extends WP_REST_Response implements MutableHeaderBag
         return Str::slugCase($key);
     }
 
+    /**
+     * @param StatusCode $http_code
+     * @param string $message
+     * @param array $data
+     * @return static
+     * @throws InvalidArgumentException
+     */
     public static function error(StatusCode $http_code, string $message, array $data = []): static
     {
         return (new static)->setWpError($http_code, $message, $data);

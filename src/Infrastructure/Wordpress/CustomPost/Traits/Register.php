@@ -34,6 +34,7 @@ trait Register
     /**
      * @return void
      * @throws CustomPostTypeRegistrationFailed
+     * @throws InvalidArgumentException
      * @throws InvalidCustomPostTypeKey
      * @throws ReservedCustomPostTypeKey
      */

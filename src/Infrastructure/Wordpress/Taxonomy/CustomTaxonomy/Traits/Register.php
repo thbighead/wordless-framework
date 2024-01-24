@@ -7,6 +7,7 @@ use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\La
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Rewrite;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\ReservedCustomTaxonomyName;
 use Wordless\Wordpress\Enums\ObjectType;
 
 trait Register
@@ -110,7 +111,9 @@ trait Register
 
     /**
      * @return void
+     * @throws InvalidArgumentException
      * @throws InvalidCustomTaxonomyName
+     * @throws ReservedCustomTaxonomyName
      */
     public static function register(): void
     {

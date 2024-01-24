@@ -25,7 +25,7 @@ final class TaxonomyQueryBuilder extends QueryBuilder
 
     public static function getInstance(ResultFormat $format = ResultFormat::objects, Operator $operator = Operator::and): TaxonomyQueryBuilder
     {
-        return new self($format);
+        return new self($format, $operator);
     }
 
     public function __construct(
