@@ -100,19 +100,15 @@ class Role extends WP_Role
     }
 
     /**
-     * @param string|null $capability
+     * @param string $capability
      * @param string ...$capabilities
      * @return array<string, true>
      */
-    private static function mountCapabilities(?string $capability = null, string ...$capabilities): array
+    private static function mountCapabilities(string $capability, string ...$capabilities): array
     {
         $mounted_capabilities = [];
 
         foreach (Arr::prepend($capabilities, $capability) as $capability) {
-            if (!is_string($capability)) {
-                continue;
-            }
-
             $mounted_capabilities[$capability] = true;
         }
 
