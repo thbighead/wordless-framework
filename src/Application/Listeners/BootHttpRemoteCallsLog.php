@@ -18,7 +18,13 @@ class BootHttpRemoteCallsLog extends ActionListener
     protected const FUNCTION = 'debugWordPressRemoteRequest';
 
     /** @noinspection PhpUnusedParameterInspection */
-    public static function debugWordPressRemoteRequest($response, $context, $class, $request, $url): void
+    public static function debugWordPressRemoteRequest(
+        WP_Error|array $response,
+        mixed $context,
+        mixed $class,
+        array $request,
+        string $url
+    ): void
     {
         if (WP_DEBUG && Str::beginsWith($url, Environment::get('APP_URL'))) {
             $request_as_json = json_encode([
@@ -27,14 +33,11 @@ class BootHttpRemoteCallsLog extends ActionListener
                 'body' => is_string($body = ($request['body'] ?? null)) ?
                     json_decode($request['body'], true) : $body,
             ], JSON_PRETTY_PRINT);
-            $http_response = ($response instanceof WP_Error) ?
+            $http_response = $response instanceof WP_Error ?
                 $response->get_error_code() : ($response['http_response'] ?? null);
-
-            if (!($http_response instanceof WP_HTTP_Requests_Response)) {
-                $raw_response = 'INVALID RESPONSE OBJECT STRUCTURE: ' . var_export($http_response, true);
-            } else {
-                $raw_response = $http_response->get_response_object()->raw;
-            }
+            $raw_response = $http_response instanceof WP_HTTP_Requests_Response ?
+                $http_response->get_response_object()->raw :
+                'INVALID RESPONSE OBJECT STRUCTURE: ' . var_export($http_response, true);
 
             error_log(self::headerLog('REMOTE API CALL')
                 . "> URL: $url\n> REQUEST:\n$request_as_json\n> RESPONSE:\n$raw_response"

@@ -8,15 +8,12 @@ use Wordless\Application\Commands\PublishConfigurationFiles;
 use Wordless\Application\Commands\SyncRoles;
 use Wordless\Application\Commands\WordlessInstall;
 use Wordless\Application\Commands\WpCliCaller;
-use Wordless\Application\Listeners\AllowSvgUpload;
 use Wordless\Application\Listeners\BootApiControllers;
 use Wordless\Application\Listeners\BootHttpRemoteCallsLog;
 use Wordless\Application\Listeners\ChooseImageEditor;
 use Wordless\Application\Listeners\DeferEnqueuedScripts;
 use Wordless\Application\Listeners\DisableXmlrpc;
 use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
-use Wordless\Application\Listeners\EnqueueThemeEnqueueables;
-use Wordless\Application\Listeners\ForceXmlTagToUploadedSvgFiles;
 use Wordless\Application\Listeners\HideContentEditorForCustomFrontPageAtAdmin;
 use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
 use Wordless\Application\Listeners\ManageRestResponseContentTypeHeader;
@@ -43,15 +40,12 @@ class CoreProvider extends Provider
     public function registerListeners(): array
     {
         return [
-            AllowSvgUpload::class,
             BootApiControllers::class,
             BootHttpRemoteCallsLog::class,
             ChooseImageEditor::class,
             DeferEnqueuedScripts::class,
             DisableXmlrpc::class,
             DoNotLoadWpAdminBarOutsidePanel::class,
-            EnqueueThemeEnqueueables::class,
-            ForceXmlTagToUploadedSvgFiles::class,
             HideContentEditorForCustomFrontPageAtAdmin::class,
             HideDiagnosticsFromUserRoles::class,
             ManageRestResponseContentTypeHeader::class,

@@ -21,4 +21,11 @@ class UtilityProvider extends Provider
             WpHooksList::class,
         ];
     }
+
+    public function registerProviders(): array
+    {
+        return [
+            SvgAdminUploadProvider::class,
+        ];
+    }
 }

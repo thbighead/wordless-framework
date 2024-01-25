@@ -10,7 +10,7 @@ use Wordless\Wordpress\Hook\Enums\Action;
 
 class DoNotLoadWpAdminBarOutsidePanel extends ActionListener
 {
-    public const SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY = 'show_wp_admin_bar_outside_panel';
+    final public const SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY = 'show_wp_admin_bar_outside_panel';
 
     /**
      * The function which shall be executed during hook
@@ -23,8 +23,10 @@ class DoNotLoadWpAdminBarOutsidePanel extends ActionListener
      */
     public static function removeAdminBarWhenNotInAdmin(): void
     {
-        if (!Config::tryToGetOrDefault('wordpress.admin.' . static::SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY, false)
-            && !is_admin()) {
+        if (!Config::tryToGetOrDefault(
+                'wordpress.admin.' . static::SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY,
+                false
+            ) && !is_admin()) {
             show_admin_bar(false);
         }
     }
