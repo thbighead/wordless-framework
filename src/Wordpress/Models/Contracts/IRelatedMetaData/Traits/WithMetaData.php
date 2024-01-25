@@ -8,7 +8,6 @@ trait WithMetaData
 {
     /** @var array<string, mixed> $metaFields */
     private array $metaFields = [];
-    /** @var bool $all_meta_loaded */
     private bool $all_meta_loaded = false;
 
     /**
@@ -23,17 +22,7 @@ trait WithMetaData
             throw new InvalidMetaKey($meta_key);
         }
 
-        if (key_exists($meta_key, $this->metaFields)) {
-            return $this->metaFields[$meta_key];
-        }
-
-        $this->metaFields[$meta_key] = $this->callGetMetaData($meta_key);
-
-        if ($this->metaFields[$meta_key] === false) {
-            return $default;
-        }
-
-        return $this->metaFields[$meta_key];
+        return $this->metaFields[$meta_key] ?? $this->metaFields[$meta_key] = $this->callGetFirstMetaData($meta_key);
     }
 
     /**
@@ -48,17 +37,29 @@ trait WithMetaData
         return $this->metaFields;
     }
 
-    public function loadMetaFields(): void
+    private function callGetAllMetaData(): array
     {
-        foreach ($this->callGetMetaData() as $meta_key => $meta_value) {
+        return $this->callGetMetaData();
+    }
+
+    private function callGetFirstMetaData(string $meta_key): mixed
+    {
+        return $this->callGetMetaData($meta_key);
+    }
+
+    private function callGetMetaData(string $meta_key = ''): mixed
+    {
+        $meta_data = get_metadata(static::objectType()->name, $this->ID, $meta_key, true);
+
+        return $meta_data === false ? null : $meta_data;
+    }
+
+    private function loadMetaFields(): void
+    {
+        foreach ($this->callGetAllMetaData() as $meta_key => $meta_value) {
             $this->metaFields[$meta_key] = $meta_value;
         }
 
         $this->all_meta_loaded = true;
-    }
-
-    final protected function callGetMetaData(string $meta_key = '', bool $single_result = true): mixed
-    {
-        return get_metadata(static::objectType()->name, $this->ID, $meta_key, $single_result);
     }
 }

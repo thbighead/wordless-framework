@@ -14,6 +14,4 @@ interface IRelatedMetaData
      * @return array<string, mixed>
      */
     public function getMetaFields(): array;
-
-    public function loadMetaFields(): void;
 }

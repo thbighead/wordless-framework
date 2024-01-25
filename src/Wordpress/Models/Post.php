@@ -25,7 +25,7 @@ class Post implements IRelatedMetaData
     use WithAcfs;
     use WithMetaData;
 
-    private const TYPE_KEY = StandardType::post->name;
+    protected const TYPE_KEY = StandardType::post->name;
 
     protected PostType $type;
     protected PostStatus $status;

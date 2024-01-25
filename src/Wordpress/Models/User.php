@@ -11,7 +11,8 @@ use WP_User;
 
 class User extends WP_User implements IRelatedMetaData
 {
-    use WithAcfs, WithMetaData;
+    use WithAcfs;
+    use WithMetaData;
 
     public static function objectType(): ObjectType
     {
