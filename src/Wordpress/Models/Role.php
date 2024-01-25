@@ -23,12 +23,12 @@ class Role extends WP_Role
      */
     public static function all(): array
     {
-        return self::getRepository()->getRoleObjects();
+        return self::getDictionary()->getRoleObjects();
     }
 
     public static function allAsArray(): array
     {
-        return self::getRepository()->roles;
+        return self::getDictionary()->getRepository()->roles;
     }
 
     /**
@@ -36,7 +36,7 @@ class Role extends WP_Role
      */
     public static function allNames(): array
     {
-        return self::getRepository()->get_names();
+        return self::getDictionary()->getRepository()->get_names();
     }
 
     /**
@@ -50,7 +50,7 @@ class Role extends WP_Role
     public static function create(string $name, string $capability, string ...$capabilities): Role
     {
         $capabilities = self::mountCapabilities($capability, ...$capabilities);
-        $newRole = self::getRepository()->add_role($slug_key = Str::slugCase($name), $name, $capabilities);
+        $newRole = self::getDictionary()->getRepository()->add_role($slug_key = Str::slugCase($name), $name, $capabilities);
 
         if (!($newRole instanceof WP_Role)) {
             throw new FailedToCreateRole($slug_key, $name, $capabilities);
@@ -66,7 +66,7 @@ class Role extends WP_Role
      */
     public static function delete(string $role): void
     {
-        self::getRepository()->remove_role(Str::slugCase($role));
+        self::getDictionary()->getRepository()->remove_role(Str::slugCase($role));
     }
 
     /**
@@ -77,7 +77,7 @@ class Role extends WP_Role
      */
     public static function find(string $role): ?Role
     {
-        if ($roleObject = self::getRepository()->get_role($role = Str::slugCase($role))) {
+        if ($roleObject = self::getDictionary()->getRepository()->get_role($role = Str::slugCase($role))) {
             return new static($roleObject);
         }
 
@@ -94,7 +94,7 @@ class Role extends WP_Role
         return DefaultRole::tryFrom(Str::slugCase($role)) !== null;
     }
 
-    private static function getRepository(): Dictionary
+    private static function getDictionary(): Dictionary
     {
         return self::$wpRolesRepository ?? self::$wpRolesRepository = new Dictionary;
     }

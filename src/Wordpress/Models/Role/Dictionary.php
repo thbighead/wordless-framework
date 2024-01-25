@@ -128,6 +128,11 @@ class Dictionary
         $controller_full_namespace::getInstance()->registerCapabilitiesToRole($role);
     }
 
+    public function getRepository(): WP_Roles
+    {
+        return wp_roles();
+    }
+
     /**
      * @return Role[]
      */
@@ -140,11 +145,6 @@ class Dictionary
         }
 
         return $this->roleObjects;
-    }
-
-    private function getRepository(): WP_Roles
-    {
-        return wp_roles();
     }
 
     private function shouldUpdateList(): bool
