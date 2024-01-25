@@ -41,13 +41,13 @@ class Role extends WP_Role
 
     /**
      * @param string $name
-     * @param string|null $capability
+     * @param string $capability
      * @param string ...$capabilities
      * @return Role
      * @throws FailedToCreateRole
      * @throws InvalidArgumentException
      */
-    public static function create(string $name, ?string $capability = null, string ...$capabilities): Role
+    public static function create(string $name, string $capability, string ...$capabilities): Role
     {
         $capabilities = self::mountCapabilities($capability, ...$capabilities);
         $newRole = self::getRepository()->add_role($slug_key = Str::slugCase($name), $name, $capabilities);
@@ -121,18 +121,16 @@ class Role extends WP_Role
 
     /**
      * @param WP_Role|string $role
-     * @param string|null $capability
-     * @param string ...$capabilities
+     * @throws FailedToFindRole
+     * @throws InvalidArgumentException
      */
-    public function __construct(WP_Role|string $role, ?string $capability = null, string ...$capabilities)
+    public function __construct(WP_Role|string $role)
     {
-        if ($role instanceof WP_Role) {
-            parent::__construct($role->name, $role->capabilities);
-
-            return;
+        if (!($role instanceof WP_Role)) {
+            $role = static::find($role);
         }
 
-        parent::__construct($role, self::mountCapabilities($capability, ...$capabilities));
+        parent::__construct($role->name, $role->capabilities);
     }
 
     public function addCapability(string $capability): void
