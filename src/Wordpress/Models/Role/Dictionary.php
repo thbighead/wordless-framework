@@ -17,7 +17,7 @@ use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use WP_Roles;
 
-class Dictionary extends WP_Roles
+class Dictionary
 {
     /** @var Role[] $roleObjects */
     private array $roleObjects = [];
@@ -128,18 +128,13 @@ class Dictionary extends WP_Roles
         $controller_full_namespace::getInstance()->registerCapabilitiesToRole($role);
     }
 
-    public function __construct(?int $site_id = null)
-    {
-        parent::__construct($site_id);
-    }
-
     /**
      * @return Role[]
      */
     public function getRoleObjects(): array
     {
         if ($this->shouldUpdateList()) {
-            foreach ($this->role_objects as $role_key => $roleObject) {
+            foreach ($this->getRepository()->role_objects as $role_key => $roleObject) {
                 $this->roleObjects[$role_key] = $roleObject;
             }
         }
@@ -147,10 +142,15 @@ class Dictionary extends WP_Roles
         return $this->roleObjects;
     }
 
+    private function getRepository(): WP_Roles
+    {
+        return wp_roles();
+    }
+
     private function shouldUpdateList(): bool
     {
-        foreach ($this->role_objects as $role_key => $roleObject) {
-            if (!($this->roleObjects[$role_key] ?? false)) {
+        foreach ($this->getRepository()->role_objects as $role_key => $roleObject) {
+            if (!isset($this->roleObjects[$role_key])) {
                 return true;
             }
         }
