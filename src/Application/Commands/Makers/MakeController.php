@@ -124,7 +124,7 @@ class MakeController extends ConsoleCommand
                 $controller_class_guessed_namespace = "App\\Controllers\\$controller_class_name";
 
                 $controller_class_guessed_namespace::getInstance()->registerCapabilitiesToRole(
-                    Role::find(DefaultRole::admin->value)
+                    Role::findOrFail(DefaultRole::admin->value)
                 );
             }
         );

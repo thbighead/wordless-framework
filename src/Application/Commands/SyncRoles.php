@@ -11,7 +11,7 @@ use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
-use Wordless\Wordpress\Models\Role\Dictionary;
+use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 
@@ -59,7 +59,7 @@ class SyncRoles extends ConsoleCommand
     protected function runIt(): int
     {
         $this->wrapScriptWithMessages('Creating or updating roles...', function () {
-            Dictionary::sync();
+            Role::sync();
         });
 
         return Command::SUCCESS;

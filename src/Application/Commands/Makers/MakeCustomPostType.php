@@ -24,7 +24,7 @@ use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
-use Wordless\Wordpress\Models\Role\Dictionary;
+use Wordless\Wordpress\Models\Role\OldDictionary;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 
@@ -189,7 +189,7 @@ class MakeCustomPostType extends ConsoleCommand
                 /** @var CustomPost $custom_post_type_class_guessed_namespace */
                 $custom_post_type_class_guessed_namespace = "App\\CustomPostTypes\\$custom_post_type_class_name";
                 $custom_post_type_class_guessed_namespace::register();
-                Dictionary::sync();
+                OldDictionary::sync();
             }
         );
     }

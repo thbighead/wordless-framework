@@ -7,6 +7,7 @@ use WP_Term;
 
 abstract class Dictionary extends Singleton
 {
+    private static bool $loaded = false;
     /**
      * @var array<int, WP_Term>
      */
@@ -19,14 +20,13 @@ abstract class Dictionary extends Singleton
      * @var array<string, WP_Term>
      */
     private static array $taxonomy_terms_keyed_by_slug;
-    private static bool $loaded = false;
 
     public static function getInstance(): static
     {
         return parent::getInstance();
     }
 
-    public function __construct(string $taxonomy)
+    protected function __construct(string $taxonomy)
     {
         parent::__construct();
 
