@@ -5,6 +5,9 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO\DateDTO;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO\DateDto\Exceptions\TrySetEmptyDateDto;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\LogicCompare;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Relation;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfMonth;
@@ -17,33 +20,41 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Excepti
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidWeek;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYear;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYearMonth;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\TryBuildEmptyDateSubQuery;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\Between;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\DayOfMonth;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\DayOfWeek;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\DayOfYear;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\In;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\Month;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\NotBetween;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\NotIn;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\Validation;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\WeekOfYear;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\WhereHourOfDay;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\WhereMinute;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\WhereSecond;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\Year;
 
 class DateSubQueryBuilder extends PostSubQueryBuilder
 {
     use Between;
+    use DayOfYear;
+    use DayOfMonth;
+    use DayOfWeek;
+    use WhereHourOfDay;
+    use WhereMinute;
+    use WhereSecond;
     use In;
     use NotBetween;
     use NotIn;
     use Validation;
+    use Year;
+    use Month;
+    use WeekOfYear;
 
     final public const ARGUMENT_KEY = 'date_query';
     protected const KEY_COMPARE = 'compare';
-    protected const KEY_YEAR = 'year';
-    protected const KEY_MONTH = 'monthnum';
-    protected const KEY_WEEK_OF_YEAR = 'w';
-    protected const KEY_DAY_OF_MONTH = 'day';
-    protected const KEY_HOUR = 'hour';
-    protected const KEY_MINUTE = 'minute';
-    protected const KEY_SECOND = 'second';
-    protected const KEY_YEAR_AND_MONTH = 'm';
-    protected const KEY_DAY_OF_YEAR = 'dayofyear';
-    protected const KEY_DAY_OF_WEEK = 'dayofweek';
-    protected const KEY_DAY_OF_WEEK_ISO = 'dayofweek_iso';
 
     public function __construct(private readonly Relation $relation = Relation::and)
     {
@@ -51,6 +62,7 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
 
     /**
      * @return array<string|int, string|array<string, string|int|bool>>
+     * @throws TryBuildEmptyDateSubQuery
      */
     protected function buildArguments(): array
     {
@@ -60,7 +72,7 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
             $arguments[] = $argument;
         }
 
-        return $arguments;
+        return $this->isArgumentsEmpty($arguments);
     }
 
     /**
@@ -88,144 +100,107 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
     }
 
     /**
-     * @param int $year
-     * @param LogicCompare|null $logicCompare
+     * @param Column $column
+     * @param Compare $compare
+     * @param Field $field
+     * @param array|int $value
      * @return $this
-     * @throws InvalidYear
      */
-    public function whereYear(int $year, ?LogicCompare $logicCompare = null): static
+    public function where(
+        array|int $value,
+        Field     $field,
+        Compare   $compare,
+        Column    $column
+    ): static
     {
-        $this->setCompareArgument([self::KEY_YEAR => $this->validateYearHasFourDigits($year)], $logicCompare);
-
-        return $this;
-    }
-
-    /**
-     * @param int $month
-     * @param LogicCompare|null $logicCompare
-     * @return $this
-     * @throws InvalidMonth
-     */
-    public function whereMonth(int $month, ?LogicCompare $logicCompare = null): static
-    {
-        $this->setCompareArgument([self::KEY_MONTH => $this->validateMonthRange($month)], $logicCompare);
-
-        return $this;
-    }
-
-    /**
-     * @param int $week
-     * @param LogicCompare|null $logicCompare
-     * @return $this
-     * @throws InvalidWeek
-     */
-    public function whereWeekOfYear(int $week, ?LogicCompare $logicCompare = null): static
-    {
-        $this->setCompareArgument([self::KEY_WEEK_OF_YEAR => $this->validateWeekOfYearRange($week)], $logicCompare);
-
-        return $this;
-    }
-
-    /**
-     * @param int $day
-     * @param LogicCompare|null $logicCompare
-     * @return $this
-     * @throws InvalidDayOfYear
-     */
-    public function whereDayOfYear(int $day, ?LogicCompare $logicCompare = null): static
-    {
-        $this->setCompareArgument([self::KEY_DAY_OF_MONTH => $this->validateDayOfYearRange($day)], $logicCompare);
-
-        return $this;
-    }
-
-    /**
-     * @param int $hour
-     * @param LogicCompare|null $logicCompare
-     * @return $this
-     * @throws InvalidHour
-     */
-    public function whereHourOfDay(int $hour, ?LogicCompare $logicCompare = null): static
-    {
-        $this->setCompareArgument([self::KEY_HOUR => $this->validateHourRange($hour)], $logicCompare);
-
-        return $this;
-    }
-
-    /**
-     * @param int $minute
-     * @param LogicCompare|null $logicCompare
-     * @return $this
-     * @throws InvalidMinute
-     */
-    public function whereMinute(int $minute, ?LogicCompare $logicCompare = null): static
-    {
-        $this->setCompareArgument([self::KEY_MINUTE => $this->validateMinuteRange($minute)], $logicCompare);
+        $this->arguments[] = [
+            'column' => $column->name,
+            'compare' => $compare->value,
+            $field->name => $value
+        ];
 
         return $this;
     }
 
     /**
      * @param int $second
-     * @param LogicCompare|null $logicCompare
+     * @param LogicCompare $logicCompare
      * @return $this
      * @throws InvalidSecond
      */
-    public function whereSecond(int $second, ?LogicCompare $logicCompare = null): static
+    public function whereSecond(int $second, LogicCompare $logicCompare = LogicCompare::equals): static
     {
-        $this->setCompareArgument([self::KEY_SECOND => $this->validateSecondRange($second)], $logicCompare);
+        $this->arguments[] = [
+            self::KEY_SECOND => $this->validateSecondRange($second),
+            self::KEY_COMPARE => $logicCompare->value
+        ];
 
         return $this;
     }
 
     /**
      * @param int $year_month
-     * @param LogicCompare|null $logicCompare
+     * @param LogicCompare $logicCompare
      * @return $this
      * @throws InvalidYearMonth
      */
-    public function whereYearMonth(int $year_month, ?LogicCompare $logicCompare = null): static
+    public function whereYearMonth(int $year_month, LogicCompare $logicCompare = LogicCompare::equals): static
     {
-        $this->setCompareArgument([self::KEY_YEAR_AND_MONTH => $this->validateYearMonth($year_month)], $logicCompare);
+        $this->arguments[] = [
+            self::KEY_YEAR_AND_MONTH => $this->validateYearMonth($year_month),
+            self::KEY_COMPARE => $logicCompare->value
+        ];
 
         return $this;
     }
 
     /**
      * @param int $day_of_month
-     * @param LogicCompare|null $logicCompare
+     * @param LogicCompare $logicCompare
      * @return $this
      * @throws InvalidDayOfMonth
      */
-    public function whereDayOfMonth(int $day_of_month, ?LogicCompare $logicCompare = null): static
+    public function whereDayOfMonth(int $day_of_month, LogicCompare $logicCompare = LogicCompare::equals): static
     {
-        $this->setCompareArgument([self::KEY_DAY_OF_MONTH => $this->validateDayOfMonthRange($day_of_month)], $logicCompare);
+        $this->arguments[] = [
+            self::KEY_DAY_OF_MONTH => $this->validateDayOfMonthRange($day_of_month),
+            self::KEY_COMPARE => $logicCompare->value
+        ];
 
         return $this;
     }
 
     /**
      * @param int $day_of_week
-     * @param LogicCompare|null $logicCompare
+     * @param LogicCompare $logicCompare
      * @return $this
      * @throws InvalidDayOfWeek
      */
-    public function whereDayOfWeek(int $day_of_week, ?LogicCompare $logicCompare = null): static
+    public function whereDayOfWeek(int $day_of_week, LogicCompare $logicCompare = LogicCompare::equals): static
     {
-        $this->setCompareArgument([self::KEY_DAY_OF_WEEK => $this->validateDayOfWeekRange($day_of_week)], $logicCompare);
+        $this->arguments[] = [
+            self::KEY_DAY_OF_WEEK => $this->validateDayOfWeekRange($day_of_week),
+            self::KEY_COMPARE => $logicCompare->value
+        ];
 
         return $this;
     }
 
     /**
      * @param string $day_of_week_iso
-     * @param LogicCompare|null $logicCompare
+     * @param LogicCompare $logicCompare
      * @return $this
      * @throws InvalidDayOfWeek
      */
-    public function whereDayOfWeekIso(string $day_of_week_iso, ?LogicCompare $logicCompare = null): static
+    public function whereDayOfWeekIso(
+        string       $day_of_week_iso,
+        LogicCompare $logicCompare = LogicCompare::equals
+    ): static
     {
-        $this->setCompareArgument([self::KEY_DAY_OF_WEEK_ISO => $this->validateDayOfWeekRange($day_of_week_iso)], $logicCompare);
+        $this->arguments[] = [
+            self::KEY_DAY_OF_WEEK_ISO => $this->validateDayOfWeekRange($day_of_week_iso),
+            self::KEY_COMPARE => $logicCompare->value
+        ];
 
         return $this;
     }
@@ -237,12 +212,18 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
         return $this;
     }
 
-    private function setCompareArgument(array $argument_value, ?LogicCompare $logicCompare = null): void
+    /**
+     * @param array $arguments
+     * @return array
+     * @throws TryBuildEmptyDateSubQuery
+     */
+    private function isArgumentsEmpty(array $arguments): array
     {
-        if ($logicCompare !== null) {
-            $argument_value[self::KEY_COMPARE] = $logicCompare->value;
+        // Validate if arguments has nothing or only default relation key.
+        if (count($arguments) < 2) {
+            throw new TryBuildEmptyDateSubQuery;
         }
 
-        $this->arguments[] = $argument_value;
+        return $arguments;
     }
 }
