@@ -7,7 +7,7 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\C
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidWeek;
 
-trait WeekOfYear
+trait WhereWeekOfYear
 {
     /**
      * @param int $week_of_year
@@ -100,7 +100,71 @@ trait WeekOfYear
         return $this->where(
             $this->validateWeekOfYearRange($week_of_year),
             Field::week_of_year,
-            Compare::not_equalt,
+            Compare::not_equals,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $week_of_year
+     * @param Column $column
+     * @return $this
+     * @throws InvalidWeek
+     */
+    public function whereWeekOfYearBetween(array $week_of_year, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateWeekOfYearRange($week_of_year),
+            Field::week_of_year,
+            Compare::between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $week_of_year
+     * @param Column $column
+     * @return $this
+     * @throws InvalidWeek
+     */
+    public function whereWeekOfYearNotBetween(array $week_of_year, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateWeekOfYearRange($week_of_year),
+            Field::week_of_year,
+            Compare::not_between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $week_of_year
+     * @param Column $column
+     * @return $this
+     * @throws InvalidWeek
+     */
+    public function whereWeekOfYearIn(array $week_of_year, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateWeekOfYearRange($week_of_year),
+            Field::week_of_year,
+            Compare::in,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $week_of_year
+     * @param Column $column
+     * @return $this
+     * @throws InvalidWeek
+     */
+    public function whereWeekOfYearNotIn(array $week_of_year, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateWeekOfYearRange($week_of_year),
+            Field::week_of_year,
+            Compare::not_in,
             $column
         );
     }

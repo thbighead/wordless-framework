@@ -7,7 +7,7 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\C
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYear;
 
-trait Year
+trait WhereYear
 {
     /**
      * @param int $year
@@ -100,7 +100,71 @@ trait Year
         return $this->where(
             $this->validateYearHasFourDigits($year),
             Field::year,
-            Compare::not_equalt,
+            Compare::not_equals,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $year
+     * @param Column $column
+     * @return $this
+     * @throws InvalidYear
+     */
+    public function whereYearBetween(array $year, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateYearHasFourDigits($year),
+            Field::year,
+            Compare::between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $year
+     * @param Column $column
+     * @return $this
+     * @throws InvalidYear
+     */
+    public function whereYearNotBetween(array $year, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateYearHasFourDigits($year),
+            Field::year,
+            Compare::not_between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $year
+     * @param Column $column
+     * @return $this
+     * @throws InvalidYear
+     */
+    public function whereYearIn(array $year, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateYearHasFourDigits($year),
+            Field::year,
+            Compare::in,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $year
+     * @param Column $column
+     * @return $this
+     * @throws InvalidYear
+     */
+    public function whereYearNotIn(array $year, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateYearHasFourDigits($year),
+            Field::year,
+            Compare::not_in,
             $column
         );
     }

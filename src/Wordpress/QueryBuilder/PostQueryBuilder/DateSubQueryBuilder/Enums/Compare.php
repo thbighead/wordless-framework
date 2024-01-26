@@ -9,7 +9,7 @@ enum Compare: string
     case greater_than_or_equals = '>=';
     case less_than = '<';
     case less_than_or_equals = '<=';
-    case not_equalt = '!=';
+    case not_equals = '!=';
     case between = 'BETWEEN';
     case in = 'IN';
     case not_between = 'NOT BETWEEN';

@@ -6,102 +6,165 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\C
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidSecond;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidSecond;
 
 trait WhereSecond
 {
     /**
-     * @param int $minute
+     * @param int $second
      * @param Column $column
      * @return $this
      * @throws InvalidSecond
      */
-    public function whereSecondEqual(int $minute, Column $column = Column::post_date): static
+    public function whereSecondEqual(int $second, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateSecondRange($minute),
-            Field::minute,
+            $this->validateSecondRange($second),
+            Field::second,
             Compare::equals,
             $column
         );
     }
 
     /**
-     * @param int $minute
+     * @param int $second
      * @param Column $column
      * @return $this
      * @throws InvalidSecond
      */
-    public function whereSecondGreaterThan(int $minute, Column $column = Column::post_date): static
+    public function whereSecondGreaterThan(int $second, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateSecondRange($minute),
-            Field::minute,
+            $this->validateSecondRange($second),
+            Field::second,
             Compare::greater_than,
             $column
         );
     }
 
     /**
-     * @param int $minute
+     * @param int $second
      * @param Column $column
      * @return $this
      * @throws InvalidSecond
      */
-    public function whereSecondGreaterThanOrEqual(int $minute, Column $column = Column::post_date): static
+    public function whereSecondGreaterThanOrEqual(int $second, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateSecondRange($minute),
-            Field::minute,
+            $this->validateSecondRange($second),
+            Field::second,
             Compare::greater_than_or_equals,
             $column
         );
     }
 
     /**
-     * @param int $minute
+     * @param int $second
      * @param Column $column
      * @return $this
      * @throws InvalidSecond
      */
-    public function whereSecondLessThan(int $minute, Column $column = Column::post_date): static
+    public function whereSecondLessThan(int $second, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateSecondRange($minute),
-            Field::minute,
+            $this->validateSecondRange($second),
+            Field::second,
             Compare::less_than,
             $column
         );
     }
 
     /**
-     * @param int $minute
+     * @param int $second
      * @param Column $column
      * @return $this
      * @throws InvalidSecond
      */
-    public function whereSecondLessThanOrEqual(int $minute, Column $column = Column::post_date): static
+    public function whereSecondLessThanOrEqual(int $second, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateSecondRange($minute),
-            Field::minute,
+            $this->validateSecondRange($second),
+            Field::second,
             Compare::less_than_or_equals,
             $column
         );
     }
 
     /**
-     * @param int $minute
+     * @param int $second
      * @param Column $column
      * @return $this
      * @throws InvalidSecond
      */
-    public function whereSecondNotEqual(int $minute, Column $column = Column::post_date): static
+    public function whereSecondNotEqual(int $second, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateSecondRange($minute),
-            Field::minute,
-            Compare::not_equalt,
+            $this->validateSecondRange($second),
+            Field::second,
+            Compare::not_equals,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $second
+     * @param Column $column
+     * @return $this
+     * @throws InvalidSecond
+     */
+    public function whereSecondBetween(array $second, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateSecondRange($second),
+            Field::second,
+            Compare::between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $second
+     * @param Column $column
+     * @return $this
+     * @throws InvalidSecond
+     */
+    public function whereSecondNotBetween(array $second, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateSecondRange($second),
+            Field::second,
+            Compare::not_between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $second
+     * @param Column $column
+     * @return $this
+     * @throws InvalidSecond
+     */
+    public function whereSecondIn(array $second, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateSecondRange($second),
+            Field::second,
+            Compare::in,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $second
+     * @param Column $column
+     * @return $this
+     * @throws InvalidSecond
+     */
+    public function whereSecondNotIn(array $second, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateSecondRange($second),
+            Field::second,
+            Compare::not_in,
             $column
         );
     }

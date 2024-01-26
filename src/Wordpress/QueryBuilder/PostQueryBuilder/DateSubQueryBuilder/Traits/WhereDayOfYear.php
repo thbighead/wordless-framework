@@ -7,7 +7,7 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\C
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfYear;
 
-trait DayOfYear
+trait WhereDayOfYear
 {
     /**
      * @param int $day_of_year
@@ -100,7 +100,71 @@ trait DayOfYear
         return $this->where(
             $this->validateDayOfYearRange($day_of_year),
             Field::day_of_year,
-            Compare::not_equalt,
+            Compare::not_equals,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $day_of_year
+     * @param Column $column
+     * @return $this
+     * @throws InvalidDayOfYear
+     */
+    public function whereDayOfYearBetween(array $day_of_year, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateDayOfYearRange($day_of_year),
+            Field::day_of_year,
+            Compare::between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $day_of_year
+     * @param Column $column
+     * @return $this
+     * @throws InvalidDayOfYear
+     */
+    public function whereDayOfYearNotBetween(array $day_of_year, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateDayOfYearRange($day_of_year),
+            Field::day_of_year,
+            Compare::not_between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $day_of_year
+     * @param Column $column
+     * @return $this
+     * @throws InvalidDayOfYear
+     */
+    public function whereDayOfYearIn(array $day_of_year, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateDayOfYearRange($day_of_year),
+            Field::day_of_year,
+            Compare::in,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $day_of_year
+     * @param Column $column
+     * @return $this
+     * @throws InvalidDayOfYear
+     */
+    public function whereDayOfYearNotIn(array $day_of_year, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateDayOfYearRange($day_of_year),
+            Field::day_of_year,
+            Compare::not_in,
             $column
         );
     }

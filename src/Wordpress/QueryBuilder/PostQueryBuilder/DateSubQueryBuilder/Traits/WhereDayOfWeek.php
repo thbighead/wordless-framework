@@ -7,7 +7,7 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\C
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfWeek;
 
-trait DayOfWeek
+trait WhereDayOfWeek
 {
     /**
      * @param int $day_of_week
@@ -100,7 +100,71 @@ trait DayOfWeek
         return $this->where(
             $this->validateDayOfWeekRange($day_of_week),
             Field::day_of_week,
-            Compare::not_equalt,
+            Compare::not_equals,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $day_of_week
+     * @param Column $column
+     * @return $this
+     * @throws InvalidDayOfWeek
+     */
+    public function whereDayOfWeekBetween(array $day_of_week, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateDayOfWeekRange($day_of_week),
+            Field::day_of_week,
+            Compare::between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $day_of_week
+     * @param Column $column
+     * @return $this
+     * @throws InvalidDayOfWeek
+     */
+    public function whereDayOfWeekNotBetween(array $day_of_week, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateDayOfWeekRange($day_of_week),
+            Field::day_of_week,
+            Compare::not_between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $day_of_week
+     * @param Column $column
+     * @return $this
+     * @throws InvalidDayOfWeek
+     */
+    public function whereDayOfWeekIn(array $day_of_week, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateDayOfWeekRange($day_of_week),
+            Field::day_of_week,
+            Compare::in,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $day_of_week
+     * @param Column $column
+     * @return $this
+     * @throws InvalidDayOfWeek
+     */
+    public function whereDayOfWeekNotIn(array $day_of_week, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateDayOfWeekRange($day_of_week),
+            Field::day_of_week,
+            Compare::not_in,
             $column
         );
     }

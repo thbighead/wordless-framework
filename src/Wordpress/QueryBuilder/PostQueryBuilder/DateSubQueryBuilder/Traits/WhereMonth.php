@@ -7,7 +7,7 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\C
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidMonth;
 
-trait Month
+trait WhereMonth
 {
     /**
      * @param int $month
@@ -100,7 +100,71 @@ trait Month
         return $this->where(
             $this->validateMonthRange($month),
             Field::month,
-            Compare::not_equalt,
+            Compare::not_equals,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $month
+     * @param Column $column
+     * @return $this
+     * @throws InvalidMonth
+     */
+    public function whereMonthBetween(array $month, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateMonthRange($month),
+            Field::month,
+            Compare::between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $month
+     * @param Column $column
+     * @return $this
+     * @throws InvalidMonth
+     */
+    public function whereMonthNotBetween(array $month, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateMonthRange($month),
+            Field::month,
+            Compare::not_between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $month
+     * @param Column $column
+     * @return $this
+     * @throws InvalidMonth
+     */
+    public function whereMonthIn(array $month, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateMonthRange($month),
+            Field::month,
+            Compare::in,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $month
+     * @param Column $column
+     * @return $this
+     * @throws InvalidMonth
+     */
+    public function whereMonthNotIn(array $month, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateMonthRange($month),
+            Field::month,
+            Compare::not_in,
             $column
         );
     }

@@ -100,7 +100,71 @@ trait WhereMinute
         return $this->where(
             $this->validateMinuteRange($minute),
             Field::minute,
-            Compare::not_equalt,
+            Compare::not_equals,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $minute
+     * @param Column $column
+     * @return $this
+     * @throws InvalidMinute
+     */
+    public function whereMinuteBetween(array $minute, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateMinuteRange($minute),
+            Field::minute,
+            Compare::between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $minute
+     * @param Column $column
+     * @return $this
+     * @throws InvalidMinute
+     */
+    public function whereMinuteNotBetween(array $minute, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateMinuteRange($minute),
+            Field::minute,
+            Compare::not_between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $minute
+     * @param Column $column
+     * @return $this
+     * @throws InvalidMinute
+     */
+    public function whereMinuteIn(array $minute, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateMinuteRange($minute),
+            Field::minute,
+            Compare::in,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $minute
+     * @param Column $column
+     * @return $this
+     * @throws InvalidMinute
+     */
+    public function whereMinuteNotIn(array $minute, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateMinuteRange($minute),
+            Field::minute,
+            Compare::not_in,
             $column
         );
     }

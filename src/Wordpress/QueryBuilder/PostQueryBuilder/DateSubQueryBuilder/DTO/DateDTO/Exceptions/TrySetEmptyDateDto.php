@@ -10,7 +10,7 @@ class TrySetEmptyDateDto extends ErrorException
     public function __construct(?Throwable $previous = null)
     {
         parent::__construct(
-            'Failed on try construct empty DateDto.',
+            'Failed on try construct empty DateDTO.',
             previous: $previous
         );
     }

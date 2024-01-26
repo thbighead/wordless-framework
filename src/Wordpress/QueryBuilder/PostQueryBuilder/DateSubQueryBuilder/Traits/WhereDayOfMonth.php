@@ -7,7 +7,7 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\C
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfMonth;
 
-trait DayOfMonth
+trait WhereDayOfMonth
 {
     /**
      * @param int $day_of_month
@@ -100,7 +100,71 @@ trait DayOfMonth
         return $this->where(
             $this->validateDayOfMonthRange($day_of_month),
             Field::day_of_month,
-            Compare::not_equalt,
+            Compare::not_equals,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $day_of_month
+     * @param Column $column
+     * @return $this
+     * @throws InvalidDayOfMonth
+     */
+    public function whereDayOfMonthBetween(array $day_of_month, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateDayOfMonthRange($day_of_month),
+            Field::day_of_month,
+            Compare::between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $day_of_month
+     * @param Column $column
+     * @return $this
+     * @throws InvalidDayOfMonth
+     */
+    public function whereDayOfMonthNotBetween(array $day_of_month, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateDayOfMonthRange($day_of_month),
+            Field::day_of_month,
+            Compare::not_between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $day_of_month
+     * @param Column $column
+     * @return $this
+     * @throws InvalidDayOfMonth
+     */
+    public function whereDayOfMonthIn(array $day_of_month, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateDayOfMonthRange($day_of_month),
+            Field::day_of_month,
+            Compare::in,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $day_of_month
+     * @param Column $column
+     * @return $this
+     * @throws InvalidDayOfMonth
+     */
+    public function whereDayOfMonthNotIn(array $day_of_month, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateDayOfMonthRange($day_of_month),
+            Field::day_of_month,
+            Compare::not_in,
             $column
         );
     }

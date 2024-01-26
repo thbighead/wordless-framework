@@ -100,7 +100,72 @@ trait WhereHourOfDay
         return $this->where(
             $this->validateHourRange($hour),
             Field::hour,
-            Compare::not_equalt,
+            Compare::not_equals,
+            $column
+        );
+    }
+
+
+    /**
+     * @param int[] $hour
+     * @param Column $column
+     * @return $this
+     * @throws InvalidHour
+     */
+    public function whereHourOfDayBetween(array $hour, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateHourRange($hour),
+            Field::hour,
+            Compare::between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $hour
+     * @param Column $column
+     * @return $this
+     * @throws InvalidHour
+     */
+    public function whereHourOfDayNotBetween(array $hour, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateHourRange($hour),
+            Field::hour,
+            Compare::not_between,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $hour
+     * @param Column $column
+     * @return $this
+     * @throws InvalidHour
+     */
+    public function whereHourOfDayIn(array $hour, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateHourRange($hour),
+            Field::hour,
+            Compare::in,
+            $column
+        );
+    }
+
+    /**
+     * @param int[] $hour
+     * @param Column $column
+     * @return $this
+     * @throws InvalidHour
+     */
+    public function whereHourOfDayNotIn(array $hour, Column $column = Column::post_date): static
+    {
+        return $this->where(
+            $this->validateHourRange($hour),
+            Field::hour,
+            Compare::not_in,
             $column
         );
     }

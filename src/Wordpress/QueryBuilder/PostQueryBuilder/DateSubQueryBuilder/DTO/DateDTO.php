@@ -4,14 +4,18 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\D
 
 use Carbon\Carbon;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO\DateDto\Exceptions\TrySetEmptyDateDto;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfMonth;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfWeek;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfYear;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidHour;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidMinute;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidMonth;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidSecond;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidWeek;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYear;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYearMonth;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\Validation;
 
 class DateDTO
@@ -21,26 +25,120 @@ class DateDTO
     private array $arguments = [];
 
     /**
-     * @param Carbon|null $date
+     * @param Carbon|int|null $year
+     * @param int|null $month
+     * @param int|null $week_of_year
+     * @param int|null $day_of_year
+     * @param int|null $day_of_month
+     * @param int|null $day_of_week
+     * @param int|null $day_of_week_iso
+     * @param int|null $hour
+     * @param int|null $minute
+     * @param int|null $second
+     * @param int|null $year_and_month
+     * @param Column $column
      * @throws InvalidDayOfMonth
+     * @throws InvalidDayOfWeek
+     * @throws InvalidDayOfYear
      * @throws InvalidHour
      * @throws InvalidMinute
      * @throws InvalidMonth
      * @throws InvalidSecond
      * @throws InvalidWeek
      * @throws InvalidYear
+     * @throws InvalidYearMonth
+     * @throws TrySetEmptyDateDto
      */
-    public function __construct(?Carbon $date = null)
+    public function __construct(
+        null|Carbon|int $year = null,
+        ?int            $month = null,
+        ?int            $week_of_year = null,
+        ?int            $day_of_year = null,
+        ?int            $day_of_month = null,
+        ?int            $day_of_week = null,
+        ?int            $day_of_week_iso = null,
+        ?int            $hour = null,
+        ?int            $minute = null,
+        ?int            $second = null,
+        ?int            $year_and_month = null,
+        Column $column = Column::post_date
+    )
     {
-        if ($date instanceof Carbon) {
-            $this->setYear($date->year);
-            $this->setMonth($date->month);
-            $this->setDay($date->day);
-            $this->setHour($date->hour);
-            $this->setMinute($date->minute);
-            $this->setSecond($date->second);
-            $this->setWeekOfYear($date->weekOfYear);
+        if ($year instanceof Carbon) {
+            $this->setYear($year->year)
+                ->setMonth($year->month)
+                ->setDayOfYear($year->dayOfYear)
+                ->setDayOfMonth($year->day)
+                ->setDayOfWeek($year->dayOfWeek)
+                ->setHour($year->hour)
+                ->setMinute($year->minute)
+                ->setSecond($year->second)
+                ->setWeekOfYear($year->weekOfYear);
+
+            return;
         }
+
+        if ($year !== null) {
+            $this->setYear($year);
+        }
+
+        if ($month !== null) {
+            $this->setMonth($month);
+        }
+
+        if ($week_of_year !== null) {
+            $this->setWeekOfYear($week_of_year);
+        }
+
+        if ($day_of_year !== null) {
+            $this->setDayOfYear($day_of_year);
+        }
+
+        if ($day_of_month !== null) {
+            $this->setDayOfMonth($day_of_month);
+        }
+
+        if ($day_of_week !== null) {
+            $this->setDayOfWeek($day_of_week);
+        }
+
+        if ($day_of_week_iso !== null) {
+            $this->setDayOfWeekIso($day_of_week_iso);
+        }
+
+        if ($hour !== null) {
+            $this->setHour($hour);
+        }
+
+        if ($minute !== null) {
+            $this->setMinute($minute);
+        }
+
+        if ($second !== null) {
+            $this->setSecond($second);
+        }
+
+        if ($year_and_month !== null) {
+            $this->setYearMonth($year_and_month);
+        }
+
+        if (empty($this->arguments)) {
+            throw new TrySetEmptyDateDto;
+        }
+
+        $this->column($column);
+    }
+
+    /**
+     * @param int $day
+     * @return $this
+     * @throws InvalidDayOfYear
+     */
+    private function setDayOfYear(int $day): static
+    {
+        $this->arguments[Field::day_of_year->value] = $this->validateDayOfYearRange($day);
+
+        return $this;
     }
 
     /**
@@ -48,9 +146,33 @@ class DateDTO
      * @return $this
      * @throws InvalidDayOfMonth
      */
-    public function setDay(int $day): static
+    private function setDayOfMonth(int $day): static
     {
-        $this->arguments['day'] = $this->validateDay($day);
+        $this->arguments[Field::day_of_month->value] = $this->validateDayOfMonthRange($day);
+
+        return $this;
+    }
+
+    /**
+     * @param int $day
+     * @return $this
+     * @throws InvalidDayOfWeek
+     */
+    private function setDayOfWeek(int $day): static
+    {
+        $this->arguments[Field::day_of_week->value] = $this->validateDayOfWeekRange($day);
+
+        return $this;
+    }
+
+    /**
+     * @param int $day
+     * @return $this
+     * @throws InvalidDayOfWeek
+     */
+    private function setDayOfWeekIso(int $day): static
+    {
+        $this->arguments[Field::day_of_week_iso->value] = $this->validateDayOfWeekRange($day);
 
         return $this;
     }
@@ -60,9 +182,9 @@ class DateDTO
      * @return $this
      * @throws InvalidHour
      */
-    public function setHour(int $hour): static
+    private function setHour(int $hour): static
     {
-        $this->arguments['hour'] = $this->validateHour($hour);
+        $this->arguments[Field::hour->value] = $this->validateHourRange($hour);
 
         return $this;
     }
@@ -72,9 +194,9 @@ class DateDTO
      * @return static
      * @throws InvalidMinute
      */
-    public function setMinute(int $minute): static
+    private function setMinute(int $minute): static
     {
-        $this->arguments['minute'] = $this->validateMinute($minute);
+        $this->arguments[Field::minute->value] = $this->validateMinuteRange($minute);
 
         return $this;
     }
@@ -84,9 +206,9 @@ class DateDTO
      * @return static
      * @throws InvalidMonth
      */
-    public function setMonth(int $month): static
+    private function setMonth(int $month): static
     {
-        $this->arguments['month'] = $this->validateMonth($month);
+        $this->arguments[Field::month->value] = $this->validateMonthRange($month);
 
         return $this;
     }
@@ -96,9 +218,9 @@ class DateDTO
      * @return static
      * @throws InvalidSecond
      */
-    public function setSecond(int $second): static
+    private function setSecond(int $second): static
     {
-        $this->arguments['second'] = $this->validateSecond($second);
+        $this->arguments[Field::second->value] = $this->validateSecondRange($second);
 
         return $this;
     }
@@ -108,9 +230,9 @@ class DateDTO
      * @return static
      * @throws InvalidWeek
      */
-    public function setWeekOfYear(int $week_of_year): static
+    private function setWeekOfYear(int $week_of_year): static
     {
-        $this->arguments['week_of_year'] = $this->validateWeek($week_of_year);
+        $this->arguments[Field::week_of_year->value] = $this->validateWeekOfYearRange($week_of_year);
 
         return $this;
     }
@@ -120,30 +242,34 @@ class DateDTO
      * @return static
      * @throws InvalidYear
      */
-    public function setYear(int $year): static
+    private function setYear(int $year): static
     {
-        $this->arguments['year'] = $this->validateYearHasFourDigits($year);
-
-        return $this;
-    }
-
-    public function column(string $column): static
-    {
-        $this->arguments['column'] = $column;
+        $this->arguments[Field::year->value] = $this->validateYearHasFourDigits($year);
 
         return $this;
     }
 
     /**
-     * @return array
-     * @throws TrySetEmptyDateDto
+     * @param int $year_month
+     * @return $this
+     * @throws InvalidYearMonth
      */
+    private function setYearMonth(int $year_month): static
+    {
+        $this->arguments[Field::year_and_month->value] = $this->validateYearMonth($year_month);
+
+        return $this;
+    }
+
+    private function column(Column $column): static
+    {
+        $this->arguments['column'] = $column->name;
+
+        return $this;
+    }
+
     public function getArguments(): array
     {
-        if (empty($this->arguments)) {
-            throw new TrySetEmptyDateDto;
-        }
-
         return $this->arguments;
     }
 }
