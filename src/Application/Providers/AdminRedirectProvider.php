@@ -63,7 +63,7 @@ class AdminRedirectProvider extends Provider
     private function hasCustomAdminUrlConfigured(): bool
     {
         return empty((string)Config::tryToGetOrDefault(
-            self::CONFIG_PREFIX . CustomAdminUrlListener::CUSTOM_ADMIN_URL_KEY
+            self::CONFIG_PREFIX . CustomAdminUrlListener::CUSTOM_ADMIN_URI_KEY
         ));
     }
 }

@@ -9,14 +9,14 @@ use Wordless\Infrastructure\Wordpress\Listener;
 
 abstract class BaseListener extends Listener
 {
-    final public const CUSTOM_ADMIN_URL_KEY = 'custom_admin_url';
+    final public const CUSTOM_ADMIN_URI_KEY = 'custom_admin_url';
     final public const REDIRECT_FROM_DEFAULTS_TO_URL_KEY = 'redirect_from_defaults_to_url';
     /**
      * The function which shall be executed during hook
      */
     final protected const FUNCTION = 'load';
     private const CONFIG_PREFIX = 'wordpress.admin.';
-    private const DEFAULT_CUSTOM_ADMIN_URL = 'wordless';
+    private const DEFAULT_CUSTOM_ADMIN_URI = 'wordless';
 
     /**
      * @return bool
@@ -24,7 +24,7 @@ abstract class BaseListener extends Listener
      */
     protected static function canHook(): bool
     {
-        return !empty((string)Config::tryToGetOrDefault(self::CONFIG_PREFIX . self::CUSTOM_ADMIN_URL_KEY));
+        return !empty((string)Config::tryToGetOrDefault(self::CONFIG_PREFIX . self::CUSTOM_ADMIN_URI_KEY));
     }
 
     /**
@@ -60,7 +60,7 @@ abstract class BaseListener extends Listener
      */
     protected static function newLoginSlug(): string|false
     {
-        return Config::tryToGetOrDefault(self::CONFIG_PREFIX . static::CUSTOM_ADMIN_URL_KEY, false);
+        return Config::tryToGetOrDefault(self::CONFIG_PREFIX . static::CUSTOM_ADMIN_URI_KEY, false);
     }
 
     /**
@@ -87,6 +87,6 @@ abstract class BaseListener extends Listener
             self::CONFIG_PREFIX . self::REDIRECT_FROM_DEFAULTS_TO_URL_KEY
         );
 
-        return empty($configured_custom_url) ? self::DEFAULT_CUSTOM_ADMIN_URL : $configured_custom_url;
+        return empty($configured_custom_url) ? self::DEFAULT_CUSTOM_ADMIN_URI : $configured_custom_url;
     }
 }

@@ -27,7 +27,7 @@ return [
             DefaultRole::author->value => false,
         ],
         CustomAdminUrlListener::REDIRECT_FROM_DEFAULTS_TO_URL_KEY => null,
-        CustomAdminUrlListener::CUSTOM_ADMIN_URL_KEY => null,
+        CustomAdminUrlListener::CUSTOM_ADMIN_URI_KEY => null,
         'enable_comments' => false,
         Bootstrapper::ERROR_REPORTING_KEY => Environment::isProduction()
             ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED

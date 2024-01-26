@@ -311,7 +311,7 @@ class WordlessInstall extends ConsoleCommand
         );
 
         $custom_login_url = Config::tryToGetOrDefault(
-            'wordpress.admin.' . CustomLoginUrl::CUSTOM_ADMIN_URL_KEY,
+            'wordpress.admin.' . CustomLoginUrl::CUSTOM_ADMIN_URI_KEY,
             false
         );
 
