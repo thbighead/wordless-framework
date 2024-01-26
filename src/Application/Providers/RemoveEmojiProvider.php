@@ -48,15 +48,15 @@ class RemoveEmojiProvider extends Provider
         }
 
         return [
-            RemoveHookDTO::make('wp_head')->setFunction(
+            RemoveHookDTO::make(Action::wp_head)->setFunction(
                 self::FUNCTION_PRINT_EMOJI_DETECTION_SCRIPT,
                 7
             ),
-            RemoveHookDTO::make(Action::admin_print_scripts->value)
+            RemoveHookDTO::make(Action::admin_print_scripts)
                 ->setFunction(self::FUNCTION_PRINT_EMOJI_DETECTION_SCRIPT),
-            RemoveHookDTO::make(Action::admin_print_styles->value)
+            RemoveHookDTO::make(Action::admin_print_styles)
                 ->setFunction(self::FUNCTION_PRINT_EMOJI_STYLES),
-            RemoveHookDTO::make(Action::admin_print_styles->value)
+            RemoveHookDTO::make(Action::admin_print_styles)
                 ->setFunction(self::FUNCTION_PRINT_EMOJI_STYLES),
         ];
     }
@@ -72,11 +72,11 @@ class RemoveEmojiProvider extends Provider
             return [];
         }
         return [
-            RemoveHookDTO::make('the_content_feed')
+            RemoveHookDTO::make(Filter::the_content_feed)
                 ->setFunction(self::FUNCTION_WP_STATICIZE_EMOJI),
-            RemoveHookDTO::make(Filter::comment_text_rss->value)
+            RemoveHookDTO::make(Filter::comment_text_rss)
                 ->setFunction(self::FUNCTION_WP_STATICIZE_EMOJI),
-            RemoveHookDTO::make('wp_mail')
+            RemoveHookDTO::make(Filter::wp_mail)
                 ->setFunction('wp_staticize_emoji_for_email'),
         ];
     }

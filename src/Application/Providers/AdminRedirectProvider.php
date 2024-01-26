@@ -51,7 +51,7 @@ class AdminRedirectProvider extends Provider
         }
 
         return [
-            RemoveHookDTO::make(Action::template_redirect->value)
+            RemoveHookDTO::make(Action::template_redirect)
                 ->setFunction('wp_redirect_admin_locations', 1000),
         ];
     }

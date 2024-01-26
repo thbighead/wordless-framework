@@ -3,6 +3,7 @@
 namespace Wordless\Infrastructure\Provider\DTO;
 
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO\Exceptions\TriedToSetFunctionWhenRemovingListener;
+use Wordless\Infrastructure\Wordpress\Hook;
 use Wordless\Infrastructure\Wordpress\Listener;
 
 class RemoveHookDTO
@@ -13,9 +14,9 @@ class RemoveHookDTO
     private array $functions_used_on_hook = [];
     private bool $is_on_listener;
 
-    public static function make(string $hook): static
+    public static function make(Hook|string $hook): static
     {
-        return new static($hook);
+        return new static($hook instanceof Hook ? $hook->value : $hook);
     }
 
     public function getFunctionsUsedOnHook(): array

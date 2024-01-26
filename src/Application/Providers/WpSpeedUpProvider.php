@@ -55,7 +55,7 @@ class WpSpeedUpProvider extends Provider
         }
 
         return [
-            RemoveHookDTO::make(Action::wp_head->value)
+            RemoveHookDTO::make(Action::wp_head)
                 ->setFunction('wp_generator')
                 ->setFunction('wp_shortlink_wp_head')
                 ->setFunction('feed_links', 2)
