@@ -8,59 +8,55 @@ use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener\Traits\Adapter as FilterListener;
 use Wordless\Wordpress\Hook\Enums\Filter;
 
-class NetworkSiteUrlCustomLoginUrl extends BaseListener
+class SiteUrlCustomAdminUrl extends BaseListener
 {
     use FilterListener;
 
     /**
-     * @param $url
-     * @param $path
-     * @param $scheme
-     * @return string|null
      * @throws PathNotFoundException
      */
-    public static function load($url, $path, $scheme): ?string
+    public static function load($url, $path, $scheme, $blog_id): string
     {
         if (static::canHook()) {
             return static::filterWpLoginPhp($url, $scheme);
         }
 
-        return static::defaultNetworkSiteUrl($path, $scheme, $url);
+        return static::defaultSiteUrl($blog_id, $url, $scheme, $path);
     }
 
     protected static function functionNumberOfArgumentsAccepted(): int
     {
-        return 3;
+        return 4;
     }
 
     protected static function hook(): FilterHook
     {
-        return Filter::network_site_url;
+        return Filter::site_url;
     }
 
     /**
-     * @param $path
+     * @param $blog_id
+     * @param $url
      * @param $scheme
-     * @param string $url
-     * @return string|null
+     * @param $path
+     * @return string
      */
-    private static function defaultNetworkSiteUrl($path, $scheme, string $url): ?string
+    private static function defaultSiteUrl($blog_id, $url, $scheme, $path): string
     {
-        if (!is_multisite()) {
-            return site_url($path, $scheme);
-        }
-
-        $current_network = get_network();
-
-        if ('relative' === $scheme) {
-            $url = $current_network->path;
+        if (empty($blog_id) || !is_multisite()) {
+            $url = get_option('siteurl');
         } else {
-            $url = set_url_scheme('http://' . $current_network->domain . $current_network->path, $scheme);
+            switch_to_blog($blog_id);
+            $url = get_option('siteurl');
+            restore_current_blog();
         }
+
+        $url = set_url_scheme($url, $scheme);
 
         if ($path && is_string($path)) {
-            $url .= ltrim($path, '/');
+            $url .= '/' . ltrim($path, '/');
         }
+
         return $url;
     }
 }

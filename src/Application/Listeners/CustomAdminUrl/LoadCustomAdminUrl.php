@@ -8,7 +8,7 @@ use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener\Traits\Adapter as ActionListener;
 use Wordless\Wordpress\Hook\Enums\Action;
 
-class LoadCustomLoginUrl extends BaseListener
+class LoadCustomAdminUrl extends BaseListener
 {
     use ActionListener;
 

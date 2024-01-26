@@ -8,7 +8,7 @@ use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener\Traits\Adapter as FilterListener;
 use Wordless\Wordpress\Hook\Enums\Filter;
 
-class RedirectCustomLoginUrl extends BaseListener
+class RedirectCustomAdminUrl extends BaseListener
 {
     use FilterListener;
 

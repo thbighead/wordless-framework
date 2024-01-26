@@ -5,10 +5,10 @@ namespace Wordless\Application\Providers;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener as CustomAdminUrlListener;
-use Wordless\Application\Listeners\CustomAdminUrl\LoadCustomLoginUrl;
-use Wordless\Application\Listeners\CustomAdminUrl\NetworkSiteUrlCustomLoginUrl;
-use Wordless\Application\Listeners\CustomAdminUrl\RedirectCustomLoginUrl;
-use Wordless\Application\Listeners\CustomAdminUrl\SiteUrlCustomLoginUrl;
+use Wordless\Application\Listeners\CustomAdminUrl\LoadCustomAdminUrl;
+use Wordless\Application\Listeners\CustomAdminUrl\NetworkSiteUrlCustomAdminUrl;
+use Wordless\Application\Listeners\CustomAdminUrl\RedirectCustomAdminUrl;
+use Wordless\Application\Listeners\CustomAdminUrl\SiteUrlCustomAdminUrl;
 use Wordless\Application\Listeners\CustomAdminUrl\WpLoadedCustomAdminUrl;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
@@ -31,11 +31,11 @@ class AdminRedirectProvider extends Provider
         }
 
         return [
-            LoadCustomLoginUrl::class,
+            LoadCustomAdminUrl::class,
             WpLoadedCustomAdminUrl::class,
-            SiteUrlCustomLoginUrl::class,
-            NetworkSiteUrlCustomLoginUrl::class,
-            RedirectCustomLoginUrl::class,
+            SiteUrlCustomAdminUrl::class,
+            NetworkSiteUrlCustomAdminUrl::class,
+            RedirectCustomAdminUrl::class,
         ];
     }
 
