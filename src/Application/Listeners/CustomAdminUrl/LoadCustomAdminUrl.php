@@ -20,9 +20,10 @@ class LoadCustomAdminUrl extends BaseListener
     {
         if (static::canHook()) {
             global $pagenow;
+
             $request = parse_url(rawurldecode($_SERVER['REQUEST_URI']));
 
-            if (static::isRequestTheSameAsCustomLogin($request)) {
+            if (static::isRequestTheSameAsCustomAdmin($request)) {
                 $pagenow = 'wp-login.php';
             }
         }
@@ -41,7 +42,7 @@ class LoadCustomAdminUrl extends BaseListener
     /**
      * @throws PathNotFoundException
      */
-    private static function isRequestTheSameAsCustomLogin($request): bool
+    private static function isRequestTheSameAsCustomAdmin($request): bool
     {
         return isset($request['path'])
             && (untrailingslashit($request['path']) === home_url(static::newLoginSlug(), 'relative'));
