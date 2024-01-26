@@ -4,6 +4,8 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\E
 
 enum Compare: string
 {
+    public const KEY = 'compare';
+
     case equals = '=';
     case greater_than = '>';
     case greater_than_or_equals = '>=';

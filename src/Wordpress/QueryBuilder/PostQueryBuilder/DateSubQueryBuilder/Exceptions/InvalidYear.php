@@ -2,16 +2,18 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions;
 
-use ErrorException;
+use DomainException;
 use Throwable;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class InvalidYear extends ErrorException
+class InvalidYear extends DomainException
 {
     public function __construct(public readonly int $year, ?Throwable $previous = null)
     {
         parent::__construct(
             "Wordpress year parameter must be four digits integer, provided $this->year.",
-            previous: $previous
+            ExceptionCode::development_error->value,
+            $previous
         );
     }
 }

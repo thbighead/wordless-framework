@@ -2,16 +2,18 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions;
 
-use ErrorException;
+use DomainException;
 use Throwable;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class InvalidHour extends ErrorException
+class InvalidHour extends DomainException
 {
     public function __construct(public readonly int $hour, ?Throwable $previous = null)
     {
         parent::__construct(
             "Hour must be a integer and between 0 and 23, provided $this->hour.",
-            previous: $previous
+            ExceptionCode::development_error->value,
+            $previous
         );
     }
 }

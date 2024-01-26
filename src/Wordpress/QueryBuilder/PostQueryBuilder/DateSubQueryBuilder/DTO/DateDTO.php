@@ -3,7 +3,7 @@
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO;
 
 use Carbon\Carbon;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO\DateDto\Exceptions\TrySetEmptyDateDto;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO\DateDto\Exceptions\EmptyArguments;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfMonth;
@@ -47,10 +47,10 @@ class DateDTO
      * @throws InvalidWeek
      * @throws InvalidYear
      * @throws InvalidYearMonth
-     * @throws TrySetEmptyDateDto
+     * @throws EmptyArguments
      */
     public function __construct(
-        null|Carbon|int $year = null,
+        Carbon|int|null $year = null,
         ?int            $month = null,
         ?int            $week_of_year = null,
         ?int            $day_of_year = null,
@@ -123,7 +123,7 @@ class DateDTO
         }
 
         if (empty($this->arguments)) {
-            throw new TrySetEmptyDateDto;
+            throw new EmptyArguments;
         }
 
         $this->column($column);

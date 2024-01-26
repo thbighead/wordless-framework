@@ -2,14 +2,13 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO\DateDTO;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO\DateDto\Exceptions\TrySetEmptyDateDto;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Relation;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\TryBuildEmptyDateSubQuery;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\Validation;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\WhereDayOfMonth;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits\WhereDayOfWeek;
@@ -39,6 +38,7 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
     use WhereYearMonth;
 
     final public const ARGUMENT_KEY = 'date_query';
+    final public const INCLUSIVE_ARGUMENT = 'inclusive';
 
     public function __construct(private readonly Relation $relation = Relation::and)
     {
@@ -46,7 +46,7 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
 
     /**
      * @return array<string|int, string|array<string, string|int|bool>>
-     * @throws TryBuildEmptyDateSubQuery
+     * @throws EmptyQueryBuilderArguments
      */
     protected function buildArguments(): array
     {
@@ -56,29 +56,31 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
             $arguments[] = $argument;
         }
 
-        return $this->isArgumentsEmpty($arguments);
+        return $arguments;
     }
 
     /**
-     * @param DateDTO $dateDto
-     * @return static
-     * @throws TrySetEmptyDateDto
+     * @param DateDTO $date
+     * @param bool $inclusive
+     * @return $this
      */
-    public function whereAfter(DateDTO $dateDto): static
+    public function whereAfter(DateDTO $date, bool $inclusive = false): static
     {
-        $this->arguments[] = ['after' => $dateDto->getArguments()];
+        $this->arguments[] = ['after' => $date->getArguments()];
+        $this->arguments[self::INCLUSIVE_ARGUMENT] = $inclusive;
 
         return $this;
     }
 
     /**
-     * @param DateDTO $dateDto
-     * @return static
-     * @throws TrySetEmptyDateDto
+     * @param DateDTO $date
+     * @param bool $inclusive
+     * @return $this
      */
-    public function whereBefore(DateDTO $dateDto): static
+    public function whereBefore(DateDTO $date, bool $inclusive = false): static
     {
-        $this->arguments[] = ['before' => $dateDto->getArguments()];
+        $this->arguments[] = ['before' => $date->getArguments()];
+        $this->arguments[self::INCLUSIVE_ARGUMENT] = $inclusive;
 
         return $this;
     }
@@ -98,33 +100,11 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
     ): static
     {
         $this->arguments[] = [
-            'column' => $column->name,
-            'compare' => $compare->value,
-            $field->name => $value
+            Column::KEY => $column->name,
+            Compare::KEY => $compare->value,
+            $field->name => $value,
         ];
 
         return $this;
-    }
-
-    public function inclusive(bool $inclusive = true): static
-    {
-        $this->arguments['inclusive'] = $inclusive;
-
-        return $this;
-    }
-
-    /**
-     * @param array $arguments
-     * @return array
-     * @throws TryBuildEmptyDateSubQuery
-     */
-    private function isArgumentsEmpty(array $arguments): array
-    {
-        // Validate if arguments has nothing or only default relation key.
-        if (count($arguments) < 2) {
-            throw new TryBuildEmptyDateSubQuery;
-        }
-
-        return $arguments;
     }
 }

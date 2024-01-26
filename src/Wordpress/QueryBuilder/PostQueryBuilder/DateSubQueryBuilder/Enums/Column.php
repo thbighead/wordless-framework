@@ -4,6 +4,8 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\E
 
 enum Column
 {
+    public const KEY = 'column';
+
     case post_modified;
     case post_modified_gmt;
     case post_date;

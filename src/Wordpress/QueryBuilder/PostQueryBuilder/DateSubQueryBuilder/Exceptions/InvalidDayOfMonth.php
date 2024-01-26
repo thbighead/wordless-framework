@@ -2,16 +2,18 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions;
 
-use ErrorException;
+use DomainException;
 use Throwable;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class InvalidDayOfMonth extends ErrorException
+class InvalidDayOfMonth extends DomainException
 {
     public function __construct(public readonly int $day, ?Throwable $previous = null)
     {
         parent::__construct(
             "Day must be between 1 and 31, $this->day provided.",
-            previous: $previous
+            ExceptionCode::development_error->value,
+            $previous
         );
     }
 }
