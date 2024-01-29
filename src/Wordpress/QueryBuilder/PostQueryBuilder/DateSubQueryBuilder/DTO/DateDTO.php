@@ -161,49 +161,17 @@ class DateDTO
         ?int $year_and_month = null
     ): void
     {
-        if ($year !== null) {
-            $this->setYear($year);
-        }
-
-        if ($month !== null) {
-            $this->setMonth($month);
-        }
-
-        if ($week_of_year !== null) {
-            $this->setWeekOfYear($week_of_year);
-        }
-
-        if ($day_of_year !== null) {
-            $this->setDayOfYear($day_of_year);
-        }
-
-        if ($day_of_month !== null) {
-            $this->setDayOfMonth($day_of_month);
-        }
-
-        if ($day_of_week !== null) {
-            $this->setDayOfWeek($day_of_week);
-        }
-
-        if ($day_of_week_iso !== null) {
-            $this->setDayOfWeekIso($day_of_week_iso);
-        }
-
-        if ($hour !== null) {
-            $this->setHour($hour);
-        }
-
-        if ($minute !== null) {
-            $this->setMinute($minute);
-        }
-
-        if ($second !== null) {
-            $this->setSecond($second);
-        }
-
-        if ($year_and_month !== null) {
-            $this->setYearMonth($year_and_month);
-        }
+        $this->setYear($year)
+            ->setMonth($month)
+            ->setWeekOfYear($week_of_year)
+            ->setDayOfYear($day_of_year)
+            ->setDayOfMonth($day_of_month)
+            ->setDayOfWeek($day_of_week)
+            ->setDayOfWeekIso($day_of_week_iso)
+            ->setHour($hour)
+            ->setMinute($minute)
+            ->setSecond($second)
+            ->setYearMonth($year_and_month);
 
         if (empty($this->arguments)) {
             throw new EmptyArguments;
@@ -211,133 +179,155 @@ class DateDTO
     }
 
     /**
-     * @param int $day
+     * @param int|null $day
      * @return $this
      * @throws InvalidDayOfYear
      */
-    private function setDayOfYear(int $day): static
+    private function setDayOfYear(?int $day): static
     {
-        $this->arguments[Field::day_of_year->value] = $this->validateDayOfYearRange($day);
+        if ($day !== null) {
+            $this->arguments[Field::day_of_year->value] = $this->validateDayOfYearRange($day);
+        }
 
         return $this;
     }
 
     /**
-     * @param int $day
+     * @param int|null $day
      * @return $this
      * @throws InvalidDayOfMonth
      */
-    private function setDayOfMonth(int $day): static
+    private function setDayOfMonth(?int $day): static
     {
-        $this->arguments[Field::day_of_month->value] = $this->validateDayOfMonthRange($day);
+        if ($day !== null) {
+            $this->arguments[Field::day_of_month->value] = $this->validateDayOfMonthRange($day);
+        }
 
         return $this;
     }
 
     /**
-     * @param int $day
+     * @param int|null $day
      * @return $this
      * @throws InvalidDayOfWeek
      */
-    private function setDayOfWeek(int $day): static
+    private function setDayOfWeek(?int $day): static
     {
-        $this->arguments[Field::day_of_week->value] = $this->validateDayOfWeekRange($day);
+        if ($day !== null) {
+            $this->arguments[Field::day_of_week->value] = $this->validateDayOfWeekRange($day);
+        }
 
         return $this;
     }
 
     /**
-     * @param int $day
+     * @param int|null $day
      * @return $this
      * @throws InvalidDayOfWeek
      */
-    private function setDayOfWeekIso(int $day): static
+    private function setDayOfWeekIso(?int $day): static
     {
-        $this->arguments[Field::day_of_week_iso->value] = $this->validateDayOfWeekRange($day);
+        if ($day !== null) {
+            $this->arguments[Field::day_of_week_iso->value] = $this->validateDayOfWeekRange($day);
+        }
 
         return $this;
     }
 
     /**
-     * @param int $hour
+     * @param int|null $hour
      * @return $this
      * @throws InvalidHour
      */
-    private function setHour(int $hour): static
+    private function setHour(?int $hour): static
     {
-        $this->arguments[Field::hour->value] = $this->validateHourRange($hour);
+        if ($hour !== null) {
+            $this->arguments[Field::hour->value] = $this->validateHourRange($hour);
+        }
 
         return $this;
     }
 
     /**
-     * @param int $minute
-     * @return static
+     * @param int|null $minute
+     * @return $this
      * @throws InvalidMinute
      */
-    private function setMinute(int $minute): static
+    private function setMinute(?int $minute): static
     {
-        $this->arguments[Field::minute->value] = $this->validateMinuteRange($minute);
+        if ($minute !== null) {
+            $this->arguments[Field::minute->value] = $this->validateMinuteRange($minute);
+        }
 
         return $this;
     }
 
     /**
-     * @param int $month
-     * @return static
+     * @param int|null $month
+     * @return $this
      * @throws InvalidMonth
      */
-    private function setMonth(int $month): static
+    private function setMonth(?int $month): static
     {
-        $this->arguments[Field::month->value] = $this->validateMonthRange($month);
+        if ($month !== null) {
+            $this->arguments[Field::month->value] = $this->validateMonthRange($month);
+        }
 
         return $this;
     }
 
     /**
-     * @param int $second
-     * @return static
+     * @param int|null $second
+     * @return $this
      * @throws InvalidSecond
      */
-    private function setSecond(int $second): static
+    private function setSecond(?int $second): static
     {
-        $this->arguments[Field::second->value] = $this->validateSecondRange($second);
+        if ($second !== null) {
+            $this->arguments[Field::second->value] = $this->validateSecondRange($second);
+        }
 
         return $this;
     }
 
     /**
-     * @param int $week_of_year
-     * @return static
+     * @param int|null $week_of_year
+     * @return $this
      * @throws InvalidWeek
      */
-    private function setWeekOfYear(int $week_of_year): static
+    private function setWeekOfYear(?int $week_of_year): static
     {
-        $this->arguments[Field::week_of_year->value] = $this->validateWeekOfYearRange($week_of_year);
+        if ($week_of_year !== null) {
+            $this->arguments[Field::week_of_year->value] = $this->validateWeekOfYearRange($week_of_year);
+        }
 
         return $this;
     }
 
     /**
-     * @param int $year
-     * @return static
+     * @param int|null $year
+     * @return $this
      * @throws InvalidYear
      */
-    private function setYear(int $year): static
+    private function setYear(?int $year): static
     {
-        $this->arguments[Field::year->value] = $this->validateYearHasFourDigits($year);
+        if ($year !== null) {
+            $this->arguments[Field::year->value] = $this->validateYearHasFourDigits($year);
+        }
 
         return $this;
     }
 
     /**
-     * @param int $year_month
+     * @param int|null $year_month
      * @return $this
      * @throws InvalidYearMonth
      */
-    private function setYearMonth(int $year_month): static
+    private function setYearMonth(?int $year_month): static
     {
-        $this->arguments[Field::year_and_month->value] = $this->validateYearMonth($year_month);
+        if ($year_month !== null) {
+            $this->arguments[Field::year_and_month->value] = $this->validateYearMonth($year_month);
+        }
 
         return $this;
     }
