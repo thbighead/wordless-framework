@@ -107,4 +107,16 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
 
         return $this;
     }
+
+    /**
+     * @param DateDTO $dateDTO
+     * @param Compare $compare
+     * @return $this
+     */
+    public function whereDate(DateDTO $dateDTO, Compare $compare = Compare::equals): static
+    {
+        $this->arguments[] = array_merge($dateDTO->getArguments(), [Compare::KEY => $compare->value]);
+
+        return $this;
+    }
 }
