@@ -4,6 +4,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\D
 
 use Carbon\Carbon;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO\DateDto\Exceptions\EmptyArguments;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\DTO\DateDTO\Exceptions\NotInitializingFromCarbon;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfMonth;
@@ -61,23 +62,105 @@ class DateDTO
         ?int            $minute = null,
         ?int            $second = null,
         ?int            $year_and_month = null,
-        Column $column = Column::post_date
+        Column          $column = Column::post_date
     )
     {
-        if ($year instanceof Carbon) {
-            $this->setYear($year->year)
-                ->setMonth($year->month)
-                ->setDayOfYear($year->dayOfYear)
-                ->setDayOfMonth($year->day)
-                ->setDayOfWeek($year->dayOfWeek)
-                ->setHour($year->hour)
-                ->setMinute($year->minute)
-                ->setSecond($year->second)
-                ->setWeekOfYear($year->weekOfYear);
+        try {
+            $this->initFromCarbon($year);
+        } catch (NotInitializingFromCarbon) {
+            $this->initFromRawParameters(
+                $year,
+                $month,
+                $week_of_year,
+                $day_of_year,
+                $day_of_month,
+                $day_of_week,
+                $day_of_week_iso,
+                $hour,
+                $minute,
+                $second,
+                $year_and_month,
+            );
+        } finally {
+            $this->column($column);
+        }
+    }
 
-            return;
+    public function getArguments(): array
+    {
+        return $this->arguments;
+    }
+
+    /**
+     * @param Carbon|int|null $date
+     * @return void
+     * @throws InvalidDayOfMonth
+     * @throws InvalidDayOfWeek
+     * @throws InvalidDayOfYear
+     * @throws InvalidHour
+     * @throws InvalidMinute
+     * @throws InvalidMonth
+     * @throws InvalidSecond
+     * @throws InvalidWeek
+     * @throws InvalidYear
+     * @throws NotInitializingFromCarbon
+     */
+    private function initFromCarbon(Carbon|int|null $date): void
+    {
+        if (!($date instanceof Carbon)) {
+            throw new NotInitializingFromCarbon;
         }
 
+        $this->setYear($date->year)
+            ->setMonth($date->month)
+            ->setDayOfYear($date->dayOfYear)
+            ->setDayOfMonth($date->day)
+            ->setDayOfWeek($date->dayOfWeek)
+            ->setHour($date->hour)
+            ->setMinute($date->minute)
+            ->setSecond($date->second)
+            ->setWeekOfYear($date->weekOfYear);
+    }
+
+    /**
+     * @param int|null $year
+     * @param int|null $month
+     * @param int|null $week_of_year
+     * @param int|null $day_of_year
+     * @param int|null $day_of_month
+     * @param int|null $day_of_week
+     * @param int|null $day_of_week_iso
+     * @param int|null $hour
+     * @param int|null $minute
+     * @param int|null $second
+     * @param int|null $year_and_month
+     * @return void
+     * @throws EmptyArguments
+     * @throws InvalidDayOfMonth
+     * @throws InvalidDayOfWeek
+     * @throws InvalidDayOfYear
+     * @throws InvalidHour
+     * @throws InvalidMinute
+     * @throws InvalidMonth
+     * @throws InvalidSecond
+     * @throws InvalidWeek
+     * @throws InvalidYear
+     * @throws InvalidYearMonth
+     */
+    private function initFromRawParameters(
+        ?int $year = null,
+        ?int $month = null,
+        ?int $week_of_year = null,
+        ?int $day_of_year = null,
+        ?int $day_of_month = null,
+        ?int $day_of_week = null,
+        ?int $day_of_week_iso = null,
+        ?int $hour = null,
+        ?int $minute = null,
+        ?int $second = null,
+        ?int $year_and_month = null
+    ): void
+    {
         if ($year !== null) {
             $this->setYear($year);
         }
@@ -125,8 +208,6 @@ class DateDTO
         if (empty($this->arguments)) {
             throw new EmptyArguments;
         }
-
-        $this->column($column);
     }
 
     /**
@@ -266,10 +347,5 @@ class DateDTO
         $this->arguments['column'] = $column->name;
 
         return $this;
-    }
-
-    public function getArguments(): array
-    {
-        return $this->arguments;
     }
 }
