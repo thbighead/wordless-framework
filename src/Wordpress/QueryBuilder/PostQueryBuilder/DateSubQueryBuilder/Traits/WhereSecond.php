@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\T
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidSecond;
 
 trait WhereSecond
@@ -106,15 +107,16 @@ trait WhereSecond
     }
 
     /**
-     * @param int[] $second
+     * @param int[] $seconds
      * @param Column $column
      * @return $this
      * @throws InvalidSecond
+     * @throws EmptyDateArgument
      */
-    public function whereSecondBetween(array $second, Column $column = Column::post_date): static
+    public function whereSecondBetween(array $seconds, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateSecondRange($second),
+            $this->validateEmptyArgument($seconds)->validateSecondRange($seconds),
             Field::second,
             Compare::between,
             $column
@@ -122,15 +124,16 @@ trait WhereSecond
     }
 
     /**
-     * @param int[] $second
+     * @param int[] $seconds
      * @param Column $column
      * @return $this
      * @throws InvalidSecond
+     * @throws EmptyDateArgument
      */
-    public function whereSecondNotBetween(array $second, Column $column = Column::post_date): static
+    public function whereSecondNotBetween(array $seconds, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateSecondRange($second),
+            $this->validateEmptyArgument($seconds)->validateSecondRange($seconds),
             Field::second,
             Compare::not_between,
             $column
@@ -138,15 +141,16 @@ trait WhereSecond
     }
 
     /**
-     * @param int[] $second
+     * @param int[] $seconds
      * @param Column $column
      * @return $this
      * @throws InvalidSecond
+     * @throws EmptyDateArgument
      */
-    public function whereSecondIn(array $second, Column $column = Column::post_date): static
+    public function whereSecondIn(array $seconds, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateSecondRange($second),
+            $this->validateEmptyArgument($seconds)->validateSecondRange($seconds),
             Field::second,
             Compare::in,
             $column
@@ -154,15 +158,16 @@ trait WhereSecond
     }
 
     /**
-     * @param int[] $second
+     * @param int[] $seconds
      * @param Column $column
      * @return $this
      * @throws InvalidSecond
+     * @throws EmptyDateArgument
      */
-    public function whereSecondNotIn(array $second, Column $column = Column::post_date): static
+    public function whereSecondNotIn(array $seconds, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateSecondRange($second),
+            $this->validateEmptyArgument($seconds)->validateSecondRange($seconds),
             Field::second,
             Compare::not_in,
             $column

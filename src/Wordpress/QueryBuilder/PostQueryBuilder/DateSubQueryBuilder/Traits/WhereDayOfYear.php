@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\T
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfYear;
 
 trait WhereDayOfYear
@@ -106,15 +107,16 @@ trait WhereDayOfYear
     }
 
     /**
-     * @param int[] $day_of_year
+     * @param int[] $days_of_year
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfYear
+     * @throws EmptyDateArgument
      */
-    public function whereDayOfYearBetween(array $day_of_year, Column $column = Column::post_date): static
+    public function whereDayOfYearBetween(array $days_of_year, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateDayOfYearRange($day_of_year),
+            $this->validateEmptyArgument($days_of_year)->validateDayOfYearRange($days_of_year),
             Field::day_of_year,
             Compare::between,
             $column
@@ -122,15 +124,16 @@ trait WhereDayOfYear
     }
 
     /**
-     * @param int[] $day_of_year
+     * @param int[] $days_of_year
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfYear
+     * @throws EmptyDateArgument
      */
-    public function whereDayOfYearNotBetween(array $day_of_year, Column $column = Column::post_date): static
+    public function whereDayOfYearNotBetween(array $days_of_year, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateDayOfYearRange($day_of_year),
+            $this->validateEmptyArgument($days_of_year)->validateDayOfYearRange($days_of_year),
             Field::day_of_year,
             Compare::not_between,
             $column
@@ -138,15 +141,16 @@ trait WhereDayOfYear
     }
 
     /**
-     * @param int[] $day_of_year
+     * @param int[] $days_of_year
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfYear
+     * @throws EmptyDateArgument
      */
-    public function whereDayOfYearIn(array $day_of_year, Column $column = Column::post_date): static
+    public function whereDayOfYearIn(array $days_of_year, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateDayOfYearRange($day_of_year),
+            $this->validateEmptyArgument($days_of_year)->validateDayOfYearRange($days_of_year),
             Field::day_of_year,
             Compare::in,
             $column
@@ -154,15 +158,16 @@ trait WhereDayOfYear
     }
 
     /**
-     * @param int[] $day_of_year
+     * @param int[] $days_of_year
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfYear
+     * @throws EmptyDateArgument
      */
-    public function whereDayOfYearNotIn(array $day_of_year, Column $column = Column::post_date): static
+    public function whereDayOfYearNotIn(array $days_of_year, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateDayOfYearRange($day_of_year),
+            $this->validateEmptyArgument($days_of_year)->validateDayOfYearRange($days_of_year),
             Field::day_of_year,
             Compare::not_in,
             $column

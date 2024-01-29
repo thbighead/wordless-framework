@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\T
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYearMonth;
 
 trait WhereYearMonth
@@ -110,11 +111,12 @@ trait WhereYearMonth
      * @param Column $column
      * @return $this
      * @throws InvalidYearMonth
+     * @throws EmptyDateArgument
      */
     public function whereYearMonthBetween(array $year_month, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateYearMonth($year_month),
+            $this->validateEmptyArgument($year_month)->validateYearMonth($year_month),
             Field::year_and_month,
             Compare::between,
             $column
@@ -126,11 +128,12 @@ trait WhereYearMonth
      * @param Column $column
      * @return $this
      * @throws InvalidYearMonth
+     * @throws EmptyDateArgument
      */
     public function whereYearMonthNotBetween(array $year_month, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateYearMonth($year_month),
+            $this->validateEmptyArgument($year_month)->validateYearMonth($year_month),
             Field::year_and_month,
             Compare::not_between,
             $column
@@ -142,11 +145,12 @@ trait WhereYearMonth
      * @param Column $column
      * @return $this
      * @throws InvalidYearMonth
+     * @throws EmptyDateArgument
      */
     public function whereYearMonthIn(array $year_month, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateYearMonth($year_month),
+            $this->validateEmptyArgument($year_month)->validateYearMonth($year_month),
             Field::year_and_month,
             Compare::in,
             $column
@@ -158,11 +162,12 @@ trait WhereYearMonth
      * @param Column $column
      * @return $this
      * @throws InvalidYearMonth
+     * @throws EmptyDateArgument
      */
     public function whereYearMonthNotIn(array $year_month, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateYearMonth($year_month),
+            $this->validateEmptyArgument($year_month)->validateYearMonth($year_month),
             Field::year_and_month,
             Compare::not_in,
             $column

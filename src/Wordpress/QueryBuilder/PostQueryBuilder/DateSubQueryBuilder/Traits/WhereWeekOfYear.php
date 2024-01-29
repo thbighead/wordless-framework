@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\T
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidWeek;
 
 trait WhereWeekOfYear
@@ -106,15 +107,16 @@ trait WhereWeekOfYear
     }
 
     /**
-     * @param int[] $week_of_year
+     * @param int[] $weeks_of_year
      * @param Column $column
      * @return $this
      * @throws InvalidWeek
+     * @throws EmptyDateArgument
      */
-    public function whereWeekOfYearBetween(array $week_of_year, Column $column = Column::post_date): static
+    public function whereWeekOfYearBetween(array $weeks_of_year, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateWeekOfYearRange($week_of_year),
+            $this->validateEmptyArgument($weeks_of_year)->validateWeekOfYearRange($weeks_of_year),
             Field::week_of_year,
             Compare::between,
             $column
@@ -122,15 +124,16 @@ trait WhereWeekOfYear
     }
 
     /**
-     * @param int[] $week_of_year
+     * @param int[] $weeks_of_year
      * @param Column $column
      * @return $this
      * @throws InvalidWeek
+     * @throws EmptyDateArgument
      */
-    public function whereWeekOfYearNotBetween(array $week_of_year, Column $column = Column::post_date): static
+    public function whereWeekOfYearNotBetween(array $weeks_of_year, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateWeekOfYearRange($week_of_year),
+            $this->validateEmptyArgument($weeks_of_year)->validateWeekOfYearRange($weeks_of_year),
             Field::week_of_year,
             Compare::not_between,
             $column
@@ -138,15 +141,16 @@ trait WhereWeekOfYear
     }
 
     /**
-     * @param int[] $week_of_year
+     * @param int[] $weeks_of_year
      * @param Column $column
      * @return $this
      * @throws InvalidWeek
+     * @throws EmptyDateArgument
      */
-    public function whereWeekOfYearIn(array $week_of_year, Column $column = Column::post_date): static
+    public function whereWeekOfYearIn(array $weeks_of_year, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateWeekOfYearRange($week_of_year),
+            $this->validateEmptyArgument($weeks_of_year)->validateWeekOfYearRange($weeks_of_year),
             Field::week_of_year,
             Compare::in,
             $column
@@ -154,15 +158,16 @@ trait WhereWeekOfYear
     }
 
     /**
-     * @param int[] $week_of_year
+     * @param int[] $weeks_of_year
      * @param Column $column
      * @return $this
      * @throws InvalidWeek
+     * @throws EmptyDateArgument
      */
-    public function whereWeekOfYearNotIn(array $week_of_year, Column $column = Column::post_date): static
+    public function whereWeekOfYearNotIn(array $weeks_of_year, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateWeekOfYearRange($week_of_year),
+            $this->validateEmptyArgument($weeks_of_year)->validateWeekOfYearRange($weeks_of_year),
             Field::week_of_year,
             Compare::not_in,
             $column

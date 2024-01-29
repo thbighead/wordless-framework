@@ -3,6 +3,7 @@
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Traits;
 
 use Wordless\Application\Helpers\Arr;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfMonth;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfWeek;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfYear;
@@ -199,5 +200,19 @@ trait Validation
         }
 
         return $year_months;
+    }
+
+    /**
+     * @param array $arguments
+     * @return $this
+     * @throws EmptyDateArgument
+     */
+    private function validateEmptyArgument(array $arguments): static
+    {
+        if (empty($arguments)) {
+            throw new EmptyDateArgument;
+        }
+
+        return $this;
     }
 }

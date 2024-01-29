@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\T
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidMonth;
 
 trait WhereMonth
@@ -106,15 +107,16 @@ trait WhereMonth
     }
 
     /**
-     * @param int[] $month
+     * @param int[] $months
      * @param Column $column
      * @return $this
      * @throws InvalidMonth
+     * @throws EmptyDateArgument
      */
-    public function whereMonthBetween(array $month, Column $column = Column::post_date): static
+    public function whereMonthBetween(array $months, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateMonthRange($month),
+            $this->validateEmptyArgument($months)->validateMonthRange($months),
             Field::month,
             Compare::between,
             $column
@@ -122,15 +124,16 @@ trait WhereMonth
     }
 
     /**
-     * @param int[] $month
+     * @param int[] $months
      * @param Column $column
      * @return $this
      * @throws InvalidMonth
+     * @throws EmptyDateArgument
      */
-    public function whereMonthNotBetween(array $month, Column $column = Column::post_date): static
+    public function whereMonthNotBetween(array $months, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateMonthRange($month),
+            $this->validateEmptyArgument($months)->validateMonthRange($months),
             Field::month,
             Compare::not_between,
             $column
@@ -138,15 +141,16 @@ trait WhereMonth
     }
 
     /**
-     * @param int[] $month
+     * @param array $months
      * @param Column $column
      * @return $this
      * @throws InvalidMonth
+     * @throws EmptyDateArgument
      */
-    public function whereMonthIn(array $month, Column $column = Column::post_date): static
+    public function whereMonthIn(array $months, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateMonthRange($month),
+            $this->validateEmptyArgument($months)->validateMonthRange($months),
             Field::month,
             Compare::in,
             $column
@@ -154,15 +158,16 @@ trait WhereMonth
     }
 
     /**
-     * @param int[] $month
+     * @param int[] $months
      * @param Column $column
      * @return $this
      * @throws InvalidMonth
+     * @throws EmptyDateArgument
      */
-    public function whereMonthNotIn(array $month, Column $column = Column::post_date): static
+    public function whereMonthNotIn(array $months, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateMonthRange($month),
+            $this->validateEmptyArgument($months)->validateMonthRange($months),
             Field::month,
             Compare::not_in,
             $column

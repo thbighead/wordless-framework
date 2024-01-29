@@ -86,10 +86,10 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
     }
 
     /**
-     * @param Column $column
-     * @param Compare $compare
-     * @param Field $field
      * @param array|int $value
+     * @param Field $field
+     * @param Compare $compare
+     * @param Column $column
      * @return $this
      */
     public function where(

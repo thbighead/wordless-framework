@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\T
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidMinute;
 
 trait WhereMinute
@@ -106,15 +107,16 @@ trait WhereMinute
     }
 
     /**
-     * @param int[] $minute
+     * @param int[] $minutes
      * @param Column $column
      * @return $this
      * @throws InvalidMinute
+     * @throws EmptyDateArgument
      */
-    public function whereMinuteBetween(array $minute, Column $column = Column::post_date): static
+    public function whereMinuteBetween(array $minutes, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateMinuteRange($minute),
+            $this->validateEmptyArgument($minutes)->validateMinuteRange($minutes),
             Field::minute,
             Compare::between,
             $column
@@ -122,15 +124,16 @@ trait WhereMinute
     }
 
     /**
-     * @param int[] $minute
+     * @param int[] $minutes
      * @param Column $column
      * @return $this
      * @throws InvalidMinute
+     * @throws EmptyDateArgument
      */
-    public function whereMinuteNotBetween(array $minute, Column $column = Column::post_date): static
+    public function whereMinuteNotBetween(array $minutes, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateMinuteRange($minute),
+            $this->validateEmptyArgument($minutes)->validateMinuteRange($minutes),
             Field::minute,
             Compare::not_between,
             $column
@@ -138,15 +141,16 @@ trait WhereMinute
     }
 
     /**
-     * @param int[] $minute
+     * @param int[] $minutes
      * @param Column $column
      * @return $this
      * @throws InvalidMinute
+     * @throws EmptyDateArgument
      */
-    public function whereMinuteIn(array $minute, Column $column = Column::post_date): static
+    public function whereMinuteIn(array $minutes, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateMinuteRange($minute),
+            $this->validateEmptyArgument($minutes)->validateMinuteRange($minutes),
             Field::minute,
             Compare::in,
             $column
@@ -154,15 +158,16 @@ trait WhereMinute
     }
 
     /**
-     * @param int[] $minute
+     * @param int[] $minutes
      * @param Column $column
      * @return $this
      * @throws InvalidMinute
+     * @throws EmptyDateArgument
      */
-    public function whereMinuteNotIn(array $minute, Column $column = Column::post_date): static
+    public function whereMinuteNotIn(array $minutes, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateMinuteRange($minute),
+            $this->validateEmptyArgument($minutes)->validateMinuteRange($minutes),
             Field::minute,
             Compare::not_in,
             $column

@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\T
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYear;
 
 trait WhereYear
@@ -106,15 +107,16 @@ trait WhereYear
     }
 
     /**
-     * @param int[] $year
+     * @param int[] $years
      * @param Column $column
      * @return $this
      * @throws InvalidYear
+     * @throws EmptyDateArgument
      */
-    public function whereYearBetween(array $year, Column $column = Column::post_date): static
+    public function whereYearBetween(array $years, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateYearHasFourDigits($year),
+            $this->validateEmptyArgument($years)->validateYearHasFourDigits($years),
             Field::year,
             Compare::between,
             $column
@@ -122,15 +124,16 @@ trait WhereYear
     }
 
     /**
-     * @param int[] $year
+     * @param int[] $years
      * @param Column $column
      * @return $this
      * @throws InvalidYear
+     * @throws EmptyDateArgument
      */
-    public function whereYearNotBetween(array $year, Column $column = Column::post_date): static
+    public function whereYearNotBetween(array $years, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateYearHasFourDigits($year),
+            $this->validateEmptyArgument($years)->validateYearHasFourDigits($years),
             Field::year,
             Compare::not_between,
             $column
@@ -138,15 +141,16 @@ trait WhereYear
     }
 
     /**
-     * @param int[] $year
+     * @param int[] $years
      * @param Column $column
      * @return $this
      * @throws InvalidYear
+     * @throws EmptyDateArgument
      */
-    public function whereYearIn(array $year, Column $column = Column::post_date): static
+    public function whereYearIn(array $years, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateYearHasFourDigits($year),
+            $this->validateEmptyArgument($years)->validateYearHasFourDigits($years),
             Field::year,
             Compare::in,
             $column
@@ -154,15 +158,16 @@ trait WhereYear
     }
 
     /**
-     * @param int[] $year
+     * @param int[] $years
      * @param Column $column
      * @return $this
      * @throws InvalidYear
+     * @throws EmptyDateArgument
      */
-    public function whereYearNotIn(array $year, Column $column = Column::post_date): static
+    public function whereYearNotIn(array $years, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateYearHasFourDigits($year),
+            $this->validateEmptyArgument($years)->validateYearHasFourDigits($years),
             Field::year,
             Compare::not_in,
             $column

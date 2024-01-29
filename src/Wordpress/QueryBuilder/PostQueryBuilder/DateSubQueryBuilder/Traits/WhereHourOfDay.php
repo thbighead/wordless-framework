@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\T
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidHour;
 
 trait WhereHourOfDay
@@ -107,15 +108,16 @@ trait WhereHourOfDay
 
 
     /**
-     * @param int[] $hour
+     * @param int[] $hours
      * @param Column $column
      * @return $this
      * @throws InvalidHour
+     * @throws EmptyDateArgument
      */
-    public function whereHourOfDayBetween(array $hour, Column $column = Column::post_date): static
+    public function whereHourOfDayBetween(array $hours, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateHourRange($hour),
+            $this->validateEmptyArgument($hours)->validateHourRange($hours),
             Field::hour,
             Compare::between,
             $column
@@ -123,15 +125,16 @@ trait WhereHourOfDay
     }
 
     /**
-     * @param int[] $hour
+     * @param int[] $hours
      * @param Column $column
      * @return $this
      * @throws InvalidHour
+     * @throws EmptyDateArgument
      */
-    public function whereHourOfDayNotBetween(array $hour, Column $column = Column::post_date): static
+    public function whereHourOfDayNotBetween(array $hours, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateHourRange($hour),
+            $this->validateEmptyArgument($hours)->validateHourRange($hours),
             Field::hour,
             Compare::not_between,
             $column
@@ -139,15 +142,16 @@ trait WhereHourOfDay
     }
 
     /**
-     * @param int[] $hour
+     * @param int[] $hours
      * @param Column $column
      * @return $this
      * @throws InvalidHour
+     * @throws EmptyDateArgument
      */
-    public function whereHourOfDayIn(array $hour, Column $column = Column::post_date): static
+    public function whereHourOfDayIn(array $hours, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateHourRange($hour),
+            $this->validateEmptyArgument($hours)->validateHourRange($hours),
             Field::hour,
             Compare::in,
             $column
@@ -155,15 +159,16 @@ trait WhereHourOfDay
     }
 
     /**
-     * @param int[] $hour
+     * @param int[] $hours
      * @param Column $column
      * @return $this
      * @throws InvalidHour
+     * @throws EmptyDateArgument
      */
-    public function whereHourOfDayNotIn(array $hour, Column $column = Column::post_date): static
+    public function whereHourOfDayNotIn(array $hours, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateHourRange($hour),
+            $this->validateEmptyArgument($hours)->validateHourRange($hours),
             Field::hour,
             Compare::not_in,
             $column

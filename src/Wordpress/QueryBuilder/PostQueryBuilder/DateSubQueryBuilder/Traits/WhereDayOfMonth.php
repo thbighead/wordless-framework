@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\T
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Field;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfMonth;
 
 trait WhereDayOfMonth
@@ -106,15 +107,16 @@ trait WhereDayOfMonth
     }
 
     /**
-     * @param int[] $day_of_month
+     * @param int[] $days_of_month
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfMonth
+     * @throws EmptyDateArgument
      */
-    public function whereDayOfMonthBetween(array $day_of_month, Column $column = Column::post_date): static
+    public function whereDayOfMonthBetween(array $days_of_month, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateDayOfMonthRange($day_of_month),
+            $this->validateEmptyArgument($days_of_month)->validateDayOfMonthRange($days_of_month),
             Field::day_of_month,
             Compare::between,
             $column
@@ -122,15 +124,16 @@ trait WhereDayOfMonth
     }
 
     /**
-     * @param int[] $day_of_month
+     * @param int[] $days_of_month
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfMonth
+     * @throws EmptyDateArgument
      */
-    public function whereDayOfMonthNotBetween(array $day_of_month, Column $column = Column::post_date): static
+    public function whereDayOfMonthNotBetween(array $days_of_month, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateDayOfMonthRange($day_of_month),
+            $this->validateEmptyArgument($days_of_month)->validateDayOfMonthRange($days_of_month),
             Field::day_of_month,
             Compare::not_between,
             $column
@@ -138,15 +141,16 @@ trait WhereDayOfMonth
     }
 
     /**
-     * @param int[] $day_of_month
+     * @param int[] $days_of_month
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfMonth
+     * @throws EmptyDateArgument
      */
-    public function whereDayOfMonthIn(array $day_of_month, Column $column = Column::post_date): static
+    public function whereDayOfMonthIn(array $days_of_month, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateDayOfMonthRange($day_of_month),
+            $this->validateEmptyArgument($days_of_month)->validateDayOfMonthRange($days_of_month),
             Field::day_of_month,
             Compare::in,
             $column
@@ -154,15 +158,16 @@ trait WhereDayOfMonth
     }
 
     /**
-     * @param int[] $day_of_month
+     * @param int[] $days_of_month
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfMonth
+     * @throws EmptyDateArgument
      */
-    public function whereDayOfMonthNotIn(array $day_of_month, Column $column = Column::post_date): static
+    public function whereDayOfMonthNotIn(array $days_of_month, Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateDayOfMonthRange($day_of_month),
+            $this->validateEmptyArgument($days_of_month)->validateDayOfMonthRange($days_of_month),
             Field::day_of_month,
             Compare::not_in,
             $column

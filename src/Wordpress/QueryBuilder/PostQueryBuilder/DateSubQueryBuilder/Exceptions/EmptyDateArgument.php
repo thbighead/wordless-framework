@@ -2,16 +2,17 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions;
 
-use DomainException;
+use InvalidArgumentException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
 
-class InvalidMonth extends DomainException
+class EmptyDateArgument extends InvalidArgumentException
 {
-    public function __construct(public readonly int|array $month, ?Throwable $previous = null)
+    public function __construct(?Throwable $previous = null)
     {
         parent::__construct(
-            "Month must be between 1 and 12, provided $this->month.",
+            'No arguments provided to ' . DateSubQueryBuilder::class . ' method.',
             ExceptionCode::development_error->value,
             $previous
         );
