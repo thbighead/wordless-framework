@@ -1,7 +1,10 @@
-<?php declare(strict_types=1);
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+
+declare(strict_types=1);
 
 namespace Wordless\Application\Helpers\Str\Traits;
 
+use JsonException;
 use Ramsey\Uuid\Uuid;
 
 trait Boolean
@@ -14,6 +17,17 @@ trait Boolean
     public static function endsWith(string $string, string $substring): bool
     {
         return str_ends_with($string, $substring);
+    }
+
+    public static function isJson(string $string): bool
+    {
+        try {
+            self::jsonDecode($string);
+
+            return true;
+        } catch (JsonException) {
+            return false;
+        }
     }
 
     /**

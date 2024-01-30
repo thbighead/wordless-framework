@@ -113,6 +113,11 @@ final class StringSubjectDTO extends SubjectDTO
         return $this;
     }
 
+    public function isJson(): bool
+    {
+        return Str::isJson($this->subject);
+    }
+
     public function isSurroundedBy(string $prefix, string $suffix): bool
     {
         return Str::isSurroundedBy($this->subject, $prefix, $suffix);

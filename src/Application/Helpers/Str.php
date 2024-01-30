@@ -1,9 +1,12 @@
-<?php declare(strict_types=1);
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+
+declare(strict_types=1);
 
 namespace Wordless\Application\Helpers;
 
 use Doctrine\Inflector\Language;
 use InvalidArgumentException;
+use JsonException;
 use Ramsey\Uuid\Uuid;
 use Wordless\Application\Helpers\Str\Contracts\Subjectable;
 use Wordless\Application\Helpers\Str\Enums\UuidVersion;
@@ -22,25 +25,15 @@ class Str extends Subjectable
     use WordCase;
 
     final public const DEFAULT_RANDOM_SIZE = 16;
-    final public const DEFAULT_LIMIT_WORDS = 15;
-    final public const DEFAULT_TRUNCATE_SIZE = 15;
 
-    public static function countSubstring(string $string, string $substring): int
+    /**
+     * @param string $json
+     * @return array
+     * @throws JsonException
+     */
+    public static function jsonDecode(string $json): array
     {
-        return substr_count($string, $substring);
-    }
-
-    public static function limitWords(
-        string $string,
-        int    $max_words = self::DEFAULT_LIMIT_WORDS,
-        string $limit_marker = '...'
-    ): string
-    {
-        return wp_trim_words(
-            $string,
-            $max_words <= 0 ? self::DEFAULT_LIMIT_WORDS : $max_words,
-            $limit_marker
-        );
+        return json_decode($json, true, flags:  JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -68,11 +61,6 @@ class Str extends Subjectable
     public static function singular(string $string, string $language = Language::ENGLISH): string
     {
         return self::getInflector($language)->singularize($string);
-    }
-
-    public static function truncate(string $string, int $max_chars = self::DEFAULT_TRUNCATE_SIZE): string
-    {
-        return substr($string, 0, $max_chars <= 0 ? self::DEFAULT_TRUNCATE_SIZE : $max_chars);
     }
 
     /**

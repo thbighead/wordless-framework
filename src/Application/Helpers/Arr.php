@@ -1,7 +1,10 @@
-<?php declare(strict_types=1);
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+
+declare(strict_types=1);
 
 namespace Wordless\Application\Helpers;
 
+use JsonException;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
 
 class Arr
@@ -136,6 +139,16 @@ class Arr
         }
 
         return null;
+    }
+
+    /**
+     * @param array $array
+     * @return string
+     * @throws JsonException
+     */
+    public static function toJson(array $array): string
+    {
+        return json_encode($array, JSON_THROW_ON_ERROR);
     }
 
     public static function wrap($something): array
