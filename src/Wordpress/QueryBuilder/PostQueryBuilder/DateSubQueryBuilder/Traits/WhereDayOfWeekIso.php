@@ -107,16 +107,20 @@ trait WhereDayOfWeekIso
     }
 
     /**
-     * @param int[] $days_of_week_iso
+     * @param int $start_day_of_week
+     * @param int $end_day_of_week
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfWeek
-     * @throws EmptyDateArgument
      */
-    public function whereDayOfWeekIsoBetween(array $days_of_week_iso, Column $column = Column::post_date): static
+    public function whereDayOfWeekIsoBetween(
+        int    $start_day_of_week,
+        int    $end_day_of_week,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($days_of_week_iso)->validateDayOfWeekRange($days_of_week_iso),
+            $this->validateDayOfWeekRange([$start_day_of_week, $end_day_of_week]),
             Field::day_of_week_iso,
             Compare::between,
             $column
@@ -124,16 +128,20 @@ trait WhereDayOfWeekIso
     }
 
     /**
-     * @param int[] $days_of_week_iso
+     * @param int $start_day_of_week
+     * @param int $end_day_of_week
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfWeek
-     * @throws EmptyDateArgument
      */
-    public function whereDayOfWeekIsoNotBetween(array $days_of_week_iso, Column $column = Column::post_date): static
+    public function whereDayOfWeekIsoNotBetween(
+        int    $start_day_of_week,
+        int    $end_day_of_week,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($days_of_week_iso)->validateDayOfWeekRange($days_of_week_iso),
+            $this->validateDayOfWeekRange([$start_day_of_week, $end_day_of_week]),
             Field::day_of_week_iso,
             Compare::not_between,
             $column

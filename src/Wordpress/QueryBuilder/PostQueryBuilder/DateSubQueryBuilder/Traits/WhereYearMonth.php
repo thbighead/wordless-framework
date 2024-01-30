@@ -107,16 +107,20 @@ trait WhereYearMonth
     }
 
     /**
-     * @param int[] $year_month
+     * @param int $start_year_month
+     * @param int $end_year_month
      * @param Column $column
      * @return $this
      * @throws InvalidYearMonth
-     * @throws EmptyDateArgument
      */
-    public function whereYearMonthBetween(array $year_month, Column $column = Column::post_date): static
+    public function whereYearMonthBetween(
+        int    $start_year_month,
+        int    $end_year_month,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($year_month)->validateYearMonth($year_month),
+            $this->validateYearMonth([$start_year_month, $end_year_month]),
             Field::year_and_month,
             Compare::between,
             $column
@@ -124,16 +128,20 @@ trait WhereYearMonth
     }
 
     /**
-     * @param int[] $year_month
+     * @param int $start_year_month
+     * @param int $end_year_month
      * @param Column $column
      * @return $this
      * @throws InvalidYearMonth
-     * @throws EmptyDateArgument
      */
-    public function whereYearMonthNotBetween(array $year_month, Column $column = Column::post_date): static
+    public function whereYearMonthNotBetween(
+        int    $start_year_month,
+        int    $end_year_month,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($year_month)->validateYearMonth($year_month),
+            $this->validateYearMonth([$start_year_month, $end_year_month]),
             Field::year_and_month,
             Compare::not_between,
             $column

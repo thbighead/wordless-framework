@@ -107,16 +107,20 @@ trait WhereSecond
     }
 
     /**
-     * @param int[] $seconds
+     * @param int $start_second
+     * @param int $end_second
      * @param Column $column
      * @return $this
      * @throws InvalidSecond
-     * @throws EmptyDateArgument
      */
-    public function whereSecondBetween(array $seconds, Column $column = Column::post_date): static
+    public function whereSecondBetween(
+        int    $start_second,
+        int    $end_second,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($seconds)->validateSecondRange($seconds),
+            $this->validateSecondRange([$start_second, $end_second]),
             Field::second,
             Compare::between,
             $column
@@ -124,16 +128,20 @@ trait WhereSecond
     }
 
     /**
-     * @param int[] $seconds
+     * @param int $start_second
+     * @param int $end_second
      * @param Column $column
      * @return $this
      * @throws InvalidSecond
-     * @throws EmptyDateArgument
      */
-    public function whereSecondNotBetween(array $seconds, Column $column = Column::post_date): static
+    public function whereSecondNotBetween(
+        int    $start_second,
+        int    $end_second,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($seconds)->validateSecondRange($seconds),
+            $this->validateSecondRange([$start_second, $end_second]),
             Field::second,
             Compare::not_between,
             $column

@@ -107,16 +107,19 @@ trait WhereDayOfYear
     }
 
     /**
-     * @param int[] $days_of_year
+     * @param int $start_day_of_year
+     * @param int $end_day_of_year
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfYear
-     * @throws EmptyDateArgument
      */
-    public function whereDayOfYearBetween(array $days_of_year, Column $column = Column::post_date): static
+    public function whereDayOfYearBetween(
+        int    $start_day_of_year,
+        int    $end_day_of_year,
+        Column $column = Column::post_date): static
     {
         return $this->where(
-            $this->validateEmptyArgument($days_of_year)->validateDayOfYearRange($days_of_year),
+            $this->validateDayOfYearRange([$start_day_of_year, $end_day_of_year]),
             Field::day_of_year,
             Compare::between,
             $column
@@ -124,16 +127,20 @@ trait WhereDayOfYear
     }
 
     /**
-     * @param int[] $days_of_year
+     * @param int $start_day_of_year
+     * @param int $end_day_of_year
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfYear
-     * @throws EmptyDateArgument
      */
-    public function whereDayOfYearNotBetween(array $days_of_year, Column $column = Column::post_date): static
+    public function whereDayOfYearNotBetween(
+        int    $start_day_of_year,
+        int    $end_day_of_year,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($days_of_year)->validateDayOfYearRange($days_of_year),
+            $this->validateDayOfYearRange([$start_day_of_year, $end_day_of_year]),
             Field::day_of_year,
             Compare::not_between,
             $column

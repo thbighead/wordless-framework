@@ -107,16 +107,20 @@ trait WhereDayOfMonth
     }
 
     /**
-     * @param int[] $days_of_month
+     * @param int $start_day_of_month
+     * @param int $end_day_of_month
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfMonth
-     * @throws EmptyDateArgument
      */
-    public function whereDayOfMonthBetween(array $days_of_month, Column $column = Column::post_date): static
+    public function whereDayOfMonthBetween(
+        int    $start_day_of_month,
+        int    $end_day_of_month,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($days_of_month)->validateDayOfMonthRange($days_of_month),
+            $this->validateDayOfMonthRange([$start_day_of_month, $end_day_of_month]),
             Field::day_of_month,
             Compare::between,
             $column
@@ -124,16 +128,20 @@ trait WhereDayOfMonth
     }
 
     /**
-     * @param int[] $days_of_month
+     * @param int $start_day_of_month
+     * @param int $end_day_of_month
      * @param Column $column
      * @return $this
      * @throws InvalidDayOfMonth
-     * @throws EmptyDateArgument
      */
-    public function whereDayOfMonthNotBetween(array $days_of_month, Column $column = Column::post_date): static
+    public function whereDayOfMonthNotBetween(
+        int    $start_day_of_month,
+        int    $end_day_of_month,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($days_of_month)->validateDayOfMonthRange($days_of_month),
+            $this->validateDayOfMonthRange([$start_day_of_month, $end_day_of_month]),
             Field::day_of_month,
             Compare::not_between,
             $column

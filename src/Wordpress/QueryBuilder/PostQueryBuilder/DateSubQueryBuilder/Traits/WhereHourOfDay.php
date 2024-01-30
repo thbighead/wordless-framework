@@ -108,16 +108,20 @@ trait WhereHourOfDay
 
 
     /**
-     * @param int[] $hours
+     * @param int $start_hour_of_day
+     * @param int $end_hour_of_day
      * @param Column $column
      * @return $this
      * @throws InvalidHour
-     * @throws EmptyDateArgument
      */
-    public function whereHourOfDayBetween(array $hours, Column $column = Column::post_date): static
+    public function whereHourOfDayBetween(
+        int    $start_hour_of_day,
+        int    $end_hour_of_day,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($hours)->validateHourRange($hours),
+            $this->validateHourRange([$start_hour_of_day, $end_hour_of_day]),
             Field::hour,
             Compare::between,
             $column
@@ -125,16 +129,20 @@ trait WhereHourOfDay
     }
 
     /**
-     * @param int[] $hours
+     * @param int $start_hour_of_day
+     * @param int $end_hour_of_day
      * @param Column $column
      * @return $this
      * @throws InvalidHour
-     * @throws EmptyDateArgument
      */
-    public function whereHourOfDayNotBetween(array $hours, Column $column = Column::post_date): static
+    public function whereHourOfDayNotBetween(
+        int    $start_hour_of_day,
+        int    $end_hour_of_day,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($hours)->validateHourRange($hours),
+            $this->validateHourRange([$start_hour_of_day, $end_hour_of_day]),
             Field::hour,
             Compare::not_between,
             $column

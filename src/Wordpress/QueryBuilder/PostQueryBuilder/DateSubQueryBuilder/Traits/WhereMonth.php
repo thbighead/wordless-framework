@@ -107,16 +107,20 @@ trait WhereMonth
     }
 
     /**
-     * @param int[] $months
+     * @param int $start_month
+     * @param int $end_month
      * @param Column $column
      * @return $this
      * @throws InvalidMonth
-     * @throws EmptyDateArgument
      */
-    public function whereMonthBetween(array $months, Column $column = Column::post_date): static
+    public function whereMonthBetween(
+        int    $start_month,
+        int    $end_month,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($months)->validateMonthRange($months),
+            $this->validateMonthRange([$start_month, $end_month]),
             Field::month,
             Compare::between,
             $column
@@ -124,16 +128,20 @@ trait WhereMonth
     }
 
     /**
-     * @param int[] $months
+     * @param int $start_month
+     * @param int $end_month
      * @param Column $column
      * @return $this
      * @throws InvalidMonth
-     * @throws EmptyDateArgument
      */
-    public function whereMonthNotBetween(array $months, Column $column = Column::post_date): static
+    public function whereMonthNotBetween(
+        int    $start_month,
+        int    $end_month,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($months)->validateMonthRange($months),
+            $this->validateMonthRange([$start_month, $end_month]),
             Field::month,
             Compare::not_between,
             $column

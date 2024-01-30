@@ -107,16 +107,20 @@ trait WhereMinute
     }
 
     /**
-     * @param int[] $minutes
+     * @param int $start_minute
+     * @param int $end_minute
      * @param Column $column
      * @return $this
      * @throws InvalidMinute
-     * @throws EmptyDateArgument
      */
-    public function whereMinuteBetween(array $minutes, Column $column = Column::post_date): static
+    public function whereMinuteBetween(
+        int    $start_minute,
+        int    $end_minute,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($minutes)->validateMinuteRange($minutes),
+            $this->validateMinuteRange([$start_minute, $end_minute]),
             Field::minute,
             Compare::between,
             $column
@@ -124,16 +128,20 @@ trait WhereMinute
     }
 
     /**
-     * @param int[] $minutes
+     * @param int $start_minute
+     * @param int $end_minute
      * @param Column $column
      * @return $this
      * @throws InvalidMinute
-     * @throws EmptyDateArgument
      */
-    public function whereMinuteNotBetween(array $minutes, Column $column = Column::post_date): static
+    public function whereMinuteNotBetween(
+        int    $start_minute,
+        int    $end_minute,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($minutes)->validateMinuteRange($minutes),
+            $this->validateMinuteRange([$start_minute, $end_minute]),
             Field::minute,
             Compare::not_between,
             $column

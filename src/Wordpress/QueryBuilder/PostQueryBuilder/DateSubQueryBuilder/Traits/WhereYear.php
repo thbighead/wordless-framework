@@ -107,16 +107,20 @@ trait WhereYear
     }
 
     /**
-     * @param int[] $years
+     * @param int $start_year
+     * @param int $end_year
      * @param Column $column
      * @return $this
      * @throws InvalidYear
-     * @throws EmptyDateArgument
      */
-    public function whereYearBetween(array $years, Column $column = Column::post_date): static
+    public function whereYearBetween(
+        int    $start_year,
+        int    $end_year,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($years)->validateYearHasFourDigits($years),
+            $this->validateYearHasFourDigits([$start_year, $end_year]),
             Field::year,
             Compare::between,
             $column
@@ -124,16 +128,20 @@ trait WhereYear
     }
 
     /**
-     * @param int[] $years
+     * @param int $start_year
+     * @param int $end_year
      * @param Column $column
      * @return $this
      * @throws InvalidYear
-     * @throws EmptyDateArgument
      */
-    public function whereYearNotBetween(array $years, Column $column = Column::post_date): static
+    public function whereYearNotBetween(
+        int    $start_year,
+        int    $end_year,
+        Column $column = Column::post_date
+    ): static
     {
         return $this->where(
-            $this->validateEmptyArgument($years)->validateYearHasFourDigits($years),
+            $this->validateYearHasFourDigits([$start_year, $end_year]),
             Field::year,
             Compare::not_between,
             $column
