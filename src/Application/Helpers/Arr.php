@@ -10,7 +10,7 @@ use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
 
 class Arr extends Subjectable
 {
-    public static function append(array $array, $value): array
+    public static function append(array $array, mixed $value): array
     {
         $array[] = $value;
 
@@ -23,6 +23,7 @@ class Arr extends Subjectable
 
         if (!static::isAssociative($except_array)) {
             $except_array = [];
+
             foreach ($except_keys as $key) {
                 $except_array[$key] = $key;
             }
@@ -110,7 +111,7 @@ class Arr extends Subjectable
         return $filtered_array;
     }
 
-    public static function prepend(array $array, $value): array
+    public static function prepend(array $array, mixed $value): array
     {
         array_unshift($array, $value);
 
@@ -131,7 +132,7 @@ class Arr extends Subjectable
         return $joined_array;
     }
 
-    public static function searchValueKey(array $array, $value): int|string|null
+    public static function searchValueKey(array $array, mixed $value): int|string|null
     {
         foreach ($array as $key => $item) {
             if ($item === $value) {
@@ -152,7 +153,7 @@ class Arr extends Subjectable
         return json_encode($array, JSON_THROW_ON_ERROR);
     }
 
-    public static function wrap($something): array
+    public static function wrap(mixed $something): array
     {
         if (is_array($something)) {
             return $something;
