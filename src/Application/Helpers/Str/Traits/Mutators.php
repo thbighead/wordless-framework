@@ -8,16 +8,6 @@ trait Mutators
 {
     /**
      * @param string $string
-     * @return string
-     * @throws InvalidArgumentException
-     */
-    public static function unaccented(string $string): string
-    {
-        return self::getInflector()->unaccent($string);
-    }
-
-    /**
-     * @param string $string
      * @param string $finish_with
      * @return string
      */
@@ -30,22 +20,22 @@ trait Mutators
 
     /**
      * @param string $string
-     * @param string $suffix
-     * @return string
-     */
-    public static function removeSuffix(string $string, string $suffix): string
-    {
-        return !static::endsWith($string, $suffix) ? $string : substr($string, 0, -strlen($suffix));
-    }
-
-    /**
-     * @param string $string
      * @param string|string[] $search_to_remove
      * @return string
      */
     public static function remove(string $string, string|array $search_to_remove): string
     {
         return static::replace($string, $search_to_remove, '');
+    }
+
+    /**
+     * @param string $string
+     * @param string $suffix
+     * @return string
+     */
+    public static function removeSuffix(string $string, string $suffix): string
+    {
+        return !static::endsWith($string, $suffix) ? $string : substr($string, 0, -strlen($suffix));
     }
 
     /**
@@ -69,5 +59,15 @@ trait Mutators
         $quoted = preg_quote($start_with, '/');
 
         return $start_with . preg_replace("/^(?:$quoted)+/u", '', $string);
+    }
+
+    /**
+     * @param string $string
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    public static function unaccented(string $string): string
+    {
+        return self::getInflector()->unaccent($string);
     }
 }

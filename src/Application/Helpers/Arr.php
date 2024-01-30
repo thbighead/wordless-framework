@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Wordless\Application\Helpers;
 
 use JsonException;
+use Wordless\Application\Helpers\Arr\Contracts\Subjectable;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
 
-class Arr
+class Arr extends Subjectable
 {
     public static function append(array $array, $value): array
     {
