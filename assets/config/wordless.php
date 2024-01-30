@@ -15,7 +15,7 @@ use Wordless\Application\Providers\RemoveEmojiProvider;
 use Wordless\Application\Providers\SeedersProvider;
 use Wordless\Infrastructure\Provider;
 
-$current_wp_theme = Config::tryToGetOrDefault('wordpress.theme', 'wordless');
+$current_wp_theme = Config::get('wordpress.theme', 'wordless');
 /** @var Provider[] $providers */
 $providers = [
     CoreProvider::class,

@@ -24,7 +24,7 @@ abstract class BaseListener extends Listener
      */
     protected static function canHook(): bool
     {
-        return !empty((string)Config::tryToGetOrDefault(self::CONFIG_PREFIX . self::CUSTOM_ADMIN_URI_KEY));
+        return !empty((string)Config::get(self::CONFIG_PREFIX . self::CUSTOM_ADMIN_URI_KEY));
     }
 
     /**
@@ -60,7 +60,7 @@ abstract class BaseListener extends Listener
      */
     protected static function newLoginSlug(): string|false
     {
-        return Config::tryToGetOrDefault(self::CONFIG_PREFIX . static::CUSTOM_ADMIN_URI_KEY, false);
+        return Config::get(self::CONFIG_PREFIX . static::CUSTOM_ADMIN_URI_KEY, false);
     }
 
     /**
@@ -83,7 +83,7 @@ abstract class BaseListener extends Listener
      */
     protected static function newRedirectUrl(): string
     {
-        $configured_custom_url = (string)Config::tryToGetOrDefault(
+        $configured_custom_url = (string)Config::get(
             self::CONFIG_PREFIX . self::REDIRECT_FROM_DEFAULTS_TO_URL_KEY
         );
 

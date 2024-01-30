@@ -70,7 +70,7 @@ class Authentication extends FilterListener
      */
     private static function isCurrentApiEndpointPublic(): bool
     {
-        $public_endpoints = Config::tryToGetOrDefault('wordpress.rest-api.routes.public', []);
+        $public_endpoints = Config::get('wordpress.rest-api.routes.public', []);
         $current_endpoint = Url::getCurrentRestApiEndpoint();
 
         foreach ($public_endpoints as $public_endpoint) {

@@ -26,7 +26,7 @@ class DisableDefaultComments extends ActionListener
      */
     public static function removeCommentsSupport(): void
     {
-        if (Config::tryToGetOrDefault('wordpress.admin.enable_comments', false) === true) {
+        if (Config::get('wordpress.admin.enable_comments', false) === true) {
             return;
         }
 

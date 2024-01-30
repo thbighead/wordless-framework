@@ -177,7 +177,7 @@ if (Environment::get('WORDLESS_CSP', false)) {
         header('X-Content-Type-Options: nosniff');
         header('X-XSS-Protection: 1; mode=block');
         /** @noinspection PhpUnhandledExceptionInspection */
-        CSPBuilder::fromArray(Config::get('wordless.' . Config::KEY_CSP))->sendCSPHeader();
+        CSPBuilder::fromArray(Config::getOrFail('wordless.' . Config::KEY_CSP))->sendCSPHeader();
     }
 }
 

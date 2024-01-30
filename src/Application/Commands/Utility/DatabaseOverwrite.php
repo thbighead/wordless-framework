@@ -98,7 +98,7 @@ class DatabaseOverwrite extends ConsoleCommand
      */
     private function initializeConfigurations(): static
     {
-        $this->configurations = Config::get('wordless.database');
+        $this->configurations = Config::getOrFail('wordless.database');
         $this->databaseConnection = new wpdb(
             Environment::get('DB_USER'),
             Environment::get('DB_PASSWORD'),

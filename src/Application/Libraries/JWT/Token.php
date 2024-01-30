@@ -102,7 +102,7 @@ class Token implements IPolymorphicConstructor
             $this->getCryptoAlgorithm(
                 $crypto_strategy = $this->getDecodedHeader(self::JWT_HEADER_ALGORITHM_KEY, '')
             ),
-            $this->mountSignatureKey($crypto_strategy, Config::get('wordless.jwt.' . self::CONFIG_SIGN_KEY))
+            $this->mountSignatureKey($crypto_strategy, Config::getOrFail('wordless.jwt.' . self::CONFIG_SIGN_KEY))
         ));
     }
 
@@ -118,7 +118,7 @@ class Token implements IPolymorphicConstructor
             $this->getCryptoAlgorithm(
                 $crypto_strategy = $this->getDecodedHeader(self::JWT_HEADER_ALGORITHM_KEY, '')
             ),
-            $this->mountSignatureKey($crypto_strategy, Config::get('wordless.jwt.' . self::CONFIG_SIGN_KEY))
+            $this->mountSignatureKey($crypto_strategy, Config::getOrFail('wordless.jwt.' . self::CONFIG_SIGN_KEY))
         ));
     }
 
@@ -137,7 +137,7 @@ class Token implements IPolymorphicConstructor
     protected function buildJwt(array $payload, ?CryptoAlgorithm $crypto_strategy = null): void
     {
         $builder = new Builder(new JoseEncoder, (new ChainedFormatter));
-        $crypto_strategy = $crypto_strategy ?? Config::get('wordless.jwt.' . self::CONFIG_DEFAULT_CRYPTO);
+        $crypto_strategy = $crypto_strategy ?? Config::getOrFail('wordless.jwt.' . self::CONFIG_DEFAULT_CRYPTO);
 
         foreach ($payload as $key => $value) {
             $builder->withClaim("$key", $value);
@@ -145,7 +145,7 @@ class Token implements IPolymorphicConstructor
 
         $this->parsedToken = $builder->getToken(
             $this->getCryptoAlgorithm($crypto_strategy),
-            $this->mountSignatureKey($crypto_strategy, Config::get('wordless.jwt.' . self::CONFIG_SIGN_KEY))
+            $this->mountSignatureKey($crypto_strategy, Config::getOrFail('wordless.jwt.' . self::CONFIG_SIGN_KEY))
         );
     }
 

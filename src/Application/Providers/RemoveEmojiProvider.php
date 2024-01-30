@@ -87,7 +87,7 @@ class RemoveEmojiProvider extends Provider
      */
     private function isApplicationConfiguredToRemoveEmojis(): bool
     {
-        return Config::tryToGetOrDefault(
+        return Config::get(
             WpSpeedUpProvider::CONFIG_PREFIX . self::CONFIG_KEY_REMOVE_WP_EMOJIS,
             false
         );

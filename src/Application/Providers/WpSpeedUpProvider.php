@@ -69,6 +69,6 @@ class WpSpeedUpProvider extends Provider
      */
     private function isConfiguredToSpeedUpWordpress(): bool
     {
-        return Config::tryToGetOrDefault(self::CONFIG_PREFIX . self::CONFIG_KEY_SPEED_UP_WP, false);
+        return Config::get(self::CONFIG_PREFIX . self::CONFIG_KEY_SPEED_UP_WP, false);
     }
 }

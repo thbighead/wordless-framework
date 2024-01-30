@@ -30,7 +30,7 @@ class ConfigCacher extends Cacher
 
         foreach (DirectoryFiles::listFromDirectory(ProjectPath::config()) as $config_file) {
             $config_name = Str::before($config_file, '.php');
-            $cached_configs[$config_name] = Config::get($config_name);
+            $cached_configs[$config_name] = Config::getOrFail($config_name);
         }
 
         return $cached_configs;

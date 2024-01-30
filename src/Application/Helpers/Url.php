@@ -49,7 +49,7 @@ class Url
      */
     public static function isCurrentAdminLogin(): bool
     {
-        $custom_admin_login_uri = Config::tryToGetOrDefault(
+        $custom_admin_login_uri = Config::get(
             'wordpress.admin.' . BaseListener::CUSTOM_ADMIN_URI_KEY
         );
 

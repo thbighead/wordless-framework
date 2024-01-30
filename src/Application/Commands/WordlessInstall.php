@@ -219,15 +219,15 @@ class WordlessInstall extends ConsoleCommand
     private function applyAdminConfiguration(): void
     {
         $this->runWpCliCommand('option update date_format "'
-            . Config::tryToGetOrDefault('wordpress.admin.datetime.date_format', 'Y-m-d')
+            . Config::get('wordpress.admin.datetime.date_format', 'Y-m-d')
             . '"');
         $this->runWpCliCommand('option update time_format "'
-            . Config::tryToGetOrDefault('wordpress.admin.datetime.time_format', 'H:i')
+            . Config::get('wordpress.admin.datetime.time_format', 'H:i')
             . '"');
         $this->runWpCliCommand('option update '
             . StartOfWeek::KEY
             . ' '
-            . Config::tryToGetOrDefault('wordpress.admin.' . StartOfWeek::KEY, StartOfWeek::sunday->value));
+            . Config::get('wordpress.admin.' . StartOfWeek::KEY, StartOfWeek::sunday->value));
     }
 
     /**
@@ -310,7 +310,7 @@ class WordlessInstall extends ConsoleCommand
             . RobotsTxtStubMounter::STUB_FINAL_FILENAME
         );
 
-        $custom_login_url = Config::tryToGetOrDefault(
+        $custom_login_url = Config::get(
             'wordpress.admin.' . CustomLoginUrl::CUSTOM_ADMIN_URI_KEY,
             false
         );
@@ -528,7 +528,7 @@ class WordlessInstall extends ConsoleCommand
      */
     private function loadWpLanguages(): static
     {
-        $this->wp_languages = Config::tryToGetOrDefault('wordpress.languages');
+        $this->wp_languages = Config::get('wordpress.languages');
 
         if (empty($this->wp_languages)) {
             $this->wp_languages = ['en_US'];

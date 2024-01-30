@@ -83,7 +83,7 @@ final class Bootstrapper extends Singleton
             return $this;
         }
 
-        foreach (Config::get('wordless.providers') as $provider_class_namespace) {
+        foreach (Config::getOrFail('wordless.providers') as $provider_class_namespace) {
             $this->loaded_providers[] = $this->loadProvider($provider_class_namespace);
         }
 
@@ -96,7 +96,7 @@ final class Bootstrapper extends Singleton
      */
     private function setErrorReporting(): self
     {
-        error_reporting(Config::tryToGetOrDefault(
+        error_reporting(Config::get(
             'wordpress.admin.' . self::ERROR_REPORTING_KEY,
             Environment::isProduction()
                 ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED

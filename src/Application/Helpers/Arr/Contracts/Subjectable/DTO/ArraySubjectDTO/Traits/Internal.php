@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Helpers\Arr\Contracts\Subjectable\DTO\ArraySubjectDTO\Traits;
 
@@ -9,17 +9,11 @@ trait Internal
         parent::__construct($subject);
     }
 
-    /**
-     * @return array
-     */
     public function getOriginalSubject(): array
     {
         return parent::getOriginalSubject();
     }
 
-    /**
-     * @return array
-     */
     public function getSubject(): array
     {
         return parent::getSubject();

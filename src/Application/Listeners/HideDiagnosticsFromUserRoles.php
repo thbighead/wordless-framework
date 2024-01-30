@@ -29,7 +29,7 @@ class HideDiagnosticsFromUserRoles extends ActionListener
             return;
         }
 
-        $allowed_roles_to_see_diagnostics = Config::tryToGetOrDefault(
+        $allowed_roles_to_see_diagnostics = Config::get(
             'wordpress.admin.' . self::SHOW_DIAGNOSTICS_CONFIG_KEY,
             []
         );

@@ -41,7 +41,7 @@ trait Sync
      */
     public static function syncConfiguredPermissions(): void
     {
-        foreach (Config::tryToGetOrDefault('wordpress.permissions', []) as $role_key => $permissions) {
+        foreach (Config::get('wordpress.permissions', []) as $role_key => $permissions) {
             try {
                 $role = Role::findOrFail($role_key);
             } catch (FailedToFindRole) {

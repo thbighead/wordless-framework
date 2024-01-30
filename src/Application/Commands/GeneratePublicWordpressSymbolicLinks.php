@@ -74,7 +74,7 @@ class GeneratePublicWordpressSymbolicLinks extends ConsoleCommand
         });
 
         $this->wrapScriptWithMessages('Generating public symbolic links...', function () {
-            $symlinks_configured = Config::tryToGetOrDefault('wordless.' . self::PUBLIC_SYMLINK_KEY, []);
+            $symlinks_configured = Config::get('wordless.' . self::PUBLIC_SYMLINK_KEY, []);
             $publicSymlinkResolver = new Resolver;
 
             foreach ($symlinks_configured as $link_relative_path => $target_relative_path) {

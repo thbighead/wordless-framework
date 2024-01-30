@@ -23,7 +23,7 @@ class DoNotLoadWpAdminBarOutsidePanel extends ActionListener
      */
     public static function removeAdminBarWhenNotInAdmin(): void
     {
-        if (!Config::tryToGetOrDefault(
+        if (!Config::get(
                 'wordpress.admin.' . static::SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY,
                 false
             ) && !is_admin()) {

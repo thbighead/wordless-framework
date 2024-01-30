@@ -17,16 +17,16 @@ class Config
 
     /**
      * @param string $key
+     * @param mixed|null $default
      * @return mixed
-     * @throws InvalidConfigKey
      * @throws PathNotFoundException
      */
-    public static function get(string $key): mixed
+    public static function get(string $key, mixed $default = null): mixed
     {
         try {
-            return InternalCache::getValueOrFail("config.$key");
-        } catch (InternalCacheNotLoaded|FailedToFindCachedKey) {
-            return static::getFresh($key);
+            return static::getOrFail($key);
+        } catch (InvalidConfigKey) {
+            return $default;
         }
     }
 
@@ -46,16 +46,16 @@ class Config
 
     /**
      * @param string $key
-     * @param mixed|null $default
      * @return mixed
+     * @throws InvalidConfigKey
      * @throws PathNotFoundException
      */
-    public static function tryToGetOrDefault(string $key, mixed $default = null): mixed
+    public static function getOrFail(string $key): mixed
     {
         try {
-            return static::get($key);
-        } catch (InvalidConfigKey) {
-            return $default;
+            return InternalCache::getValueOrFail("config.$key");
+        } catch (InternalCacheNotLoaded|FailedToFindCachedKey) {
+            return static::getFresh($key);
         }
     }
 }

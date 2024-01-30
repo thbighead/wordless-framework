@@ -27,7 +27,7 @@ class DisableCptComments extends ActionListener
      */
     public static function removeCommentsSupport(string $post_type): void
     {
-        if (Config::tryToGetOrDefault('wordpress.admin.enable_comments', false) === true) {
+        if (Config::get('wordpress.admin.enable_comments', false) === true) {
             return;
         }
 
