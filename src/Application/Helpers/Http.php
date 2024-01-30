@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wordless\Application\Helpers;
 
 use JsonException;
+use Wordless\Application\Helpers\Http\Contracts\Subjectable;
 use Wordless\Application\Helpers\Http\Enums\Version;
 use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
 use Wordless\Application\Helpers\Http\Traits\Internal;
@@ -12,14 +13,14 @@ use Wordless\Infrastructure\Http\Request\Enums\Verb;
 use Wordless\Infrastructure\Http\Response;
 use WP_Error;
 
-class Http
+class Http extends Subjectable
 {
     use Internal;
 
+    public const TIMEOUT = 30; // seconds
     final public const ACCEPT = 'Accept';
     final public const BODY = 'body';
     final public const CONTENT_TYPE = 'Content-Type';
-    final public const TIMEOUT = 30; // seconds
 
     /**
      * @param string $endpoint
