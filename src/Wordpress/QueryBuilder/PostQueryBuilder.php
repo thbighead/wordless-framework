@@ -6,6 +6,7 @@ use Wordless\Infrastructure\Wordpress\QueryBuilder\WpQueryBuilder;
 use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
@@ -49,6 +50,13 @@ class PostQueryBuilder extends WpQueryBuilder
             ->setPostsFormat(PostsListFormat::all_fields);
 
         parent::__construct();
+    }
+
+    public function whereDate(DateSubQueryBuilder $subQuery): static
+    {
+        $this->arguments[DateSubQueryBuilder::ARGUMENT_KEY] = $subQuery;
+
+        return $this;
     }
 
     public function whereMeta(MetaSubQueryBuilder $subQuery): static

@@ -24,9 +24,9 @@ use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
+use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
-use Wordless\Wordpress\Models\Role\OldDictionary;
 
 class MakeCustomPostType extends ConsoleCommand
 {
@@ -67,12 +67,12 @@ class MakeCustomPostType extends ConsoleCommand
     protected function options(): array
     {
         return [
-            new OptionDTO(
+            OptionDTO::make(
                 self::CONTROLLER_OPTION,
                 'The Controller class name to be used by REST API to serve this resource',
                 mode: OptionMode::required_value
             ),
-            new OptionDTO(
+            OptionDTO::make(
                 self::NO_PERMISSIONS_MODE,
                 'Don\'t auto register CPT permissions into admin role.',
                 mode: OptionMode::no_value,
@@ -140,7 +140,7 @@ class MakeCustomPostType extends ConsoleCommand
 
     /**
      * @param string $custom_post_type_class_name
-     * @return array
+     * @return array<string, string>
      * @throws InvalidArgumentException
      */
     private function mountStubContentReplacementDictionary(string $custom_post_type_class_name): array
@@ -168,14 +168,14 @@ class MakeCustomPostType extends ConsoleCommand
      * @param string $custom_post_type_class_name
      * @return void
      * @throws CustomPostTypeRegistrationFailed
-     * @throws InvalidCustomPostTypeKey
-     * @throws ReservedCustomPostTypeKey
      * @throws FailedToCreateRole
      * @throws FailedToFindRole
-     * @throws PathNotFoundException
      * @throws InvalidArgumentException
      * @throws InvalidConfigKey
+     * @throws InvalidCustomPostTypeKey
      * @throws InvalidProviderClass
+     * @throws PathNotFoundException
+     * @throws ReservedCustomPostTypeKey
      */
     private function resolveNoPermissionsMode(string $custom_post_type_class_name): void
     {
@@ -189,7 +189,7 @@ class MakeCustomPostType extends ConsoleCommand
                 /** @var CustomPost $custom_post_type_class_guessed_namespace */
                 $custom_post_type_class_guessed_namespace = "App\\CustomPostTypes\\$custom_post_type_class_name";
                 $custom_post_type_class_guessed_namespace::register();
-                OldDictionary::sync();
+                Role::sync();
             }
         );
     }

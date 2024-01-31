@@ -1,9 +1,12 @@
 <?php /** @noinspection DuplicatedCode */
+
+declare(strict_types=1);
+
 /**
  * The base configuration for WordPress
  *
  * The wp-config.php creation script uses this file during the
- * installation. You don't have to use the web site, you can
+ * installation. You don't have to use the website, you can
  * copy this file to "wp-config.php" and fill in the values.
  *
  * This file contains the following configurations:
@@ -18,13 +21,6 @@
  * @package WordPress
  */
 
-/**
- * Customized wp-config.php.
- * If you change the following comment line with author definition Wordless will overwrite
- * wp/wp-core/wp-config.php by stubs/wp-core.php (or directly from vendor
- * if this path doesn't exist) on every 'php console wordless:install' command.
- * @author Wordless
- */
 if (!defined('ROOT_PROJECT_PATH')) {
     define('ROOT_PROJECT_PATH', __DIR__ . '/../..');
 }

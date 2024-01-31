@@ -48,6 +48,7 @@ trait RestingWordPress
     /**
      * @param Request $request
      * @return Response
+     * @throws InvalidArgumentException
      */
     public function destroy(Request $request): Response
     {
@@ -89,6 +90,7 @@ trait RestingWordPress
     /**
      * @param Request $request
      * @return Response
+     * @throws InvalidArgumentException
      */
     public function index(Request $request): Response
     {
@@ -98,6 +100,7 @@ trait RestingWordPress
     /**
      * @param Request $request
      * @return Response
+     * @throws InvalidArgumentException
      */
     public function show(Request $request): Response
     {
@@ -107,6 +110,7 @@ trait RestingWordPress
     /**
      * @param Request $request
      * @return Response
+     * @throws InvalidArgumentException
      */
     public function store(Request $request): Response
     {
@@ -116,6 +120,7 @@ trait RestingWordPress
     /**
      * @param Request $request
      * @return Response
+     * @throws InvalidArgumentException
      */
     public function update(Request $request): Response
     {

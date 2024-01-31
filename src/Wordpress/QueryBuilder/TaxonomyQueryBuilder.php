@@ -4,6 +4,7 @@ namespace Wordless\Wordpress\QueryBuilder;
 
 use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\ResultFormat;
@@ -49,6 +50,7 @@ final class TaxonomyQueryBuilder extends QueryBuilder
     /**
      * @param ResultFormat|null $format
      * @return string[]|WP_Taxonomy[]
+     * @throws EmptyQueryBuilderArguments
      */
     public function get(?ResultFormat $format = null): array
     {

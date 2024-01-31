@@ -16,29 +16,31 @@ class ValidationError extends InvalidArgumentException
      * @param array<string, string[]> $violations
      * @param Throwable|null $previous
      */
-    public function __construct(private readonly array $violations, ?Throwable $previous = null)
+    public function __construct(public readonly array $violations, ?Throwable $previous = null)
     {
         parent::__construct(
             __('Invalid parameters.'),
             ExceptionCode::intentional_interrupt->value,
             $previous
         );
-
-        $this->mountResponse();
-    }
-
-    public function getResponse(): Response
-    {
-        return $this->response;
     }
 
     /**
-     * @return void
+     * @return Response
      * @throws InvalidArgumentException
      */
-    public function mountResponse(): void
+    public function getResponse(): Response
     {
-        $this->response = Response::error(
+        return $this->response ?? $this->response = $this->mountResponse();
+    }
+
+    /**
+     * @return Response
+     * @throws InvalidArgumentException
+     */
+    private function mountResponse(): Response
+    {
+        return Response::error(
             StatusCode::unprocessable_entity_422,
             $this->getMessage(),
             ['errors' => $this->violations]

@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder;
 
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\PostSubQueryBuilder\Enums\Relation;
 
@@ -28,6 +29,7 @@ abstract class RecursiveSubQueryBuilder extends PostSubQueryBuilder
 
     /**
      * @return array<string|int, string|array<string, string|int|bool|array<int, string|int|bool>>>
+     * @throws EmptyQueryBuilderArguments
      */
     protected function buildArguments(): array
     {

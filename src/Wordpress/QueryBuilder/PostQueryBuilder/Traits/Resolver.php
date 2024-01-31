@@ -1,11 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
 use stdClass;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Post;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
@@ -79,6 +81,7 @@ trait Resolver
     /**
      * @param array $extra_arguments
      * @return array<string, string|int|bool|array>
+     * @throws EmptyQueryBuilderArguments
      */
     protected function buildArguments(array $extra_arguments = []): array
     {
@@ -88,6 +91,7 @@ trait Resolver
 
         $this->resolveMimeTypeArgument($arguments)
             ->resolveStatusArgument($arguments)
+            ->resolveDateSubQuery($arguments)
             ->resolveMetaSubQuery($arguments)
             ->resolveTaxonomySubQuery($arguments)
             ->resolveExtraArguments($arguments, $extra_arguments);
@@ -95,9 +99,30 @@ trait Resolver
         return $arguments;
     }
 
+    /**
+     * @param array $extra_arguments
+     * @return array
+     * @throws EmptyQueryBuilderArguments
+     */
     private function query(array $extra_arguments = []): array
     {
         return $this->getQuery()->query($this->buildArguments($extra_arguments));
+    }
+
+    /**
+     * @param array $arguments
+     * @return $this
+     * @throws EmptyQueryBuilderArguments
+     */
+    private function resolveDateSubQuery(array &$arguments): static
+    {
+        $dateSubQueryBuilder = $arguments[DateSubQueryBuilder::ARGUMENT_KEY] ?? null;
+
+        if ($dateSubQueryBuilder instanceof DateSubQueryBuilder) {
+            $arguments[DateSubQueryBuilder::ARGUMENT_KEY] = $dateSubQueryBuilder->buildArguments();
+        }
+
+        return $this;
     }
 
     private function resolveExtraArguments(array &$arguments, array $extra_arguments): static
@@ -160,6 +185,11 @@ trait Resolver
         return $this;
     }
 
+    /**
+     * @param array $arguments
+     * @return $this
+     * @throws EmptyQueryBuilderArguments
+     */
     private function resolveTaxonomySubQuery(array &$arguments): static
     {
         $taxonomySubQueryBuilder = $arguments[TaxonomySubQueryBuilder::ARGUMENT_KEY] ?? null;

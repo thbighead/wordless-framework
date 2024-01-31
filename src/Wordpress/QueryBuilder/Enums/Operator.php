@@ -10,5 +10,6 @@ enum Operator: string
     case greater_than_or_equal = '>=';
     case less_than = '<';
     case less_than_or_equal = '<=';
+    /** @noinspection PhpUnused */
     case like = 'LIKE';
 }
