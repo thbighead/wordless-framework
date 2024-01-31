@@ -2,17 +2,19 @@
 
 namespace Wordless\Tests\Unit\PostQueryBuilderTest;
 
+use Wordless\Tests\Unit\PostQueryBuilderTest\DateSubQueryBuilderTest\Traits\WhereHour;
+use Wordless\Tests\Unit\PostQueryBuilderTest\DateSubQueryBuilderTest\Traits\WhereYear;
 use ReflectionException;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
-use Wordless\Tests\Unit\PostQueryBuilderTest\DateSubQueryBuilderTest\Traits\Month;
-use Wordless\Tests\Unit\PostQueryBuilderTest\DateSubQueryBuilderTest\Traits\Year;
+use Wordless\Tests\Unit\PostQueryBuilderTest\DateSubQueryBuilderTest\Traits\WhereMonth;
 use Wordless\Tests\WordlessTestCase\QueryBuilderTestCase;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
 
 class DateSubQueryBuilderTest extends QueryBuilderTestCase
 {
-    use Month;
-    use Year;
+    use WhereHour;
+    use WhereMonth;
+    use WhereYear;
 
     /**
      * @return void
