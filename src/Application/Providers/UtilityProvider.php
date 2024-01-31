@@ -2,11 +2,11 @@
 
 namespace Wordless\Application\Providers;
 
+use Wordless\Application\Commands\HelixShell;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite;
 use Wordless\Application\Commands\Utility\ReplaceBaseUrls;
 use Wordless\Application\Commands\Utility\RunTests;
 use Wordless\Application\Commands\Utility\WpHooksList;
-use Wordless\Application\Commands\HelixShell;
 use Wordless\Infrastructure\Provider;
 
 class UtilityProvider extends Provider

@@ -64,7 +64,7 @@ trait Between
     }
 
     private function whereKeyValueBetween(
-        string $key,
+        string           $key,
         string|int|float $min_value,
         string|int|float $max_value,
         Type             $valueType

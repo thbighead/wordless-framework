@@ -26,7 +26,7 @@ final class Posts
      * @throws PostTypeNotRegistered
      */
     public function __construct(
-        private readonly PostQueryBuilder $queryBuilder,
+        private readonly PostQueryBuilder           $queryBuilder,
         private readonly PaginationArgumentsBuilder $paginationBuilder
     )
     {

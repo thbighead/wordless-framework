@@ -19,9 +19,9 @@ trait ArgumentMounter
      */
     private function mountArgument(
         string|int|float|bool|array|null $value,
-        Type $valueType,
-        ?string $key = null,
-        Compare $compare = Compare::equals
+        Type                             $valueType,
+        ?string                          $key = null,
+        Compare                          $compare = Compare::equals
     ): array
     {
         $argument = [

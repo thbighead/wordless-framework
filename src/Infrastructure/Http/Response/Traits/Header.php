@@ -2,9 +2,9 @@
 
 namespace Wordless\Infrastructure\Http\Response\Traits;
 
-use WpOrg\Requests\Utility\CaseInsensitiveDictionary;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
+use WpOrg\Requests\Utility\CaseInsensitiveDictionary;
 
 trait Header
 {

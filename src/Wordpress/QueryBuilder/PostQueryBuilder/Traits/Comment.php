@@ -18,7 +18,7 @@ trait Comment
      * @return PostQueryBuilder
      */
     public function withComments(
-        int    $how_many = 1,
+        int      $how_many = 1,
         Operator $comparison = Operator::greater_than_or_equal
     ): static
     {

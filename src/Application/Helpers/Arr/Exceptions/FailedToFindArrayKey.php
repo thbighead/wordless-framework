@@ -9,10 +9,10 @@ use Wordless\Infrastructure\Enums\ExceptionCode;
 class FailedToFindArrayKey extends ErrorException
 {
     public function __construct(
-        public readonly array     $array,
-        public readonly string    $full_key_string,
-        public readonly string    $partial_key_which_failed,
-        ?Throwable $previous = null
+        public readonly array  $array,
+        public readonly string $full_key_string,
+        public readonly string $partial_key_which_failed,
+        ?Throwable             $previous = null
     )
     {
         parent::__construct(

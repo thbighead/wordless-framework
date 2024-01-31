@@ -11,7 +11,7 @@ class FailedToChangePathPermissions extends ErrorException
     public function __construct(
         public readonly string $path,
         public readonly int    $permissions,
-        ?Throwable              $previous = null
+        ?Throwable             $previous = null
     )
     {
         parent::__construct(

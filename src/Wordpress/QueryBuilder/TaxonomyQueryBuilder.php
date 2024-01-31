@@ -30,7 +30,7 @@ final class TaxonomyQueryBuilder extends QueryBuilder
 
     public function __construct(
         private readonly ResultFormat $format = ResultFormat::objects,
-        private readonly Operator $operator = Operator::and
+        private readonly Operator     $operator = Operator::and
     )
     {
     }

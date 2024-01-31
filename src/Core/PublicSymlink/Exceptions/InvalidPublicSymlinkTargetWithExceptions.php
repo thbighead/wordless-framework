@@ -10,7 +10,7 @@ class InvalidPublicSymlinkTargetWithExceptions extends ErrorException
 {
     public function __construct(
         public readonly string $raw_target_relative_path,
-        ?Throwable $previous = null
+        ?Throwable             $previous = null
     )
     {
         parent::__construct(

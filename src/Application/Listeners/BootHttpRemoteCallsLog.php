@@ -20,10 +20,10 @@ class BootHttpRemoteCallsLog extends ActionListener
     /** @noinspection PhpUnusedParameterInspection */
     public static function debugWordPressRemoteRequest(
         WP_Error|array $response,
-        mixed $context,
-        mixed $class,
-        array $request,
-        string $url
+        mixed          $context,
+        mixed          $class,
+        array          $request,
+        string         $url
     ): void
     {
         if (WP_DEBUG && Str::beginsWith($url, Environment::get('APP_URL'))) {

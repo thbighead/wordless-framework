@@ -22,11 +22,11 @@ trait ProgressBar
             $vvv_format = "$vv_format %memory:6s%";
 
             $format = match (true) {
-                $this->isV() => $v_format,
-                $this->isVV() => $vv_format,
-                $this->isVVV() => $vvv_format,
-                default => $base_format,
-            } . ' > %message%';
+                    $this->isV() => $v_format,
+                    $this->isVV() => $vv_format,
+                    $this->isVVV() => $vvv_format,
+                    default => $base_format,
+                } . ' > %message%';
         }
 
         $progressBar->setFormat($format);

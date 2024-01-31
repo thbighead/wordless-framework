@@ -38,7 +38,7 @@ final class PublicSymlink
     public function __construct(
         string $link_relative_path,
         string $target_relative_path,
-        bool $should_search_for_wlsymlinks = true
+        bool   $should_search_for_wlsymlinks = true
     )
     {
         $this->link_relative_path = $link_relative_path;
