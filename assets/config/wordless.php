@@ -40,7 +40,7 @@ return [
     ],
     'log' => [
         'filename' => 'wordless.log',
-        'file_line_format' => 'd-M-Y H:m:s',
+        'file_line_datetime_format' => 'd-M-Y H:m:s',
         'max_files_limit' => 10,
         'wordless_line_prefix' => Environment::get('APP_NAME', 'wordless')
             . '.' . Environment::get('APP_ENV')

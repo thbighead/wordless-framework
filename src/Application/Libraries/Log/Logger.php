@@ -14,6 +14,7 @@ class Logger
 {
     private const LOG_PATH = 'debug.log';
     private const MAX_LOG_FILES_LIMIT = 30;
+    private const WORDLESS_CONFIG_KEY = 'wordless.log.';
     private string $getFullTimedPathName;
     private static MonologLogger $logger;
 
@@ -26,15 +27,18 @@ class Logger
     }
 
     /**
+     * @return void
      * @throws PathNotFoundException
      */
     public function init(): void
     {
-        $logger = new MonologLogger(Config::get('wordless.log.wordless_line_prefix', 'wordless'));
+        $logger = new MonologLogger(
+            Config::get(self::WORDLESS_CONFIG_KEY . 'wordless_line_prefix', 'wordless')
+        );
 
         $handler = new RotatingFileHandler(
             $this->resolveFilePath(),
-            (int)Config::get('wordless.log.max_files_limit', self::MAX_LOG_FILES_LIMIT)
+            (int)Config::get(self::WORDLESS_CONFIG_KEY . 'max_files_limit', self::MAX_LOG_FILES_LIMIT)
         );
         $handler->setFormatter(LogFormatter::mountOutputFormatter());
 
@@ -46,12 +50,17 @@ class Logger
 
     public static function getFullTimedPathName(): string
     {
-        return (new self)->getFullTimedPathName;
+        return self::make()->getFullTimedPathName;
     }
 
     public static function getInstance(): MonologLogger
     {
         return self::$logger;
+    }
+
+    public static function make(): Logger
+    {
+        return new self;
     }
 
     /**
