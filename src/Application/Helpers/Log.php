@@ -56,9 +56,6 @@ class Log
 
     protected function writeLog($level, $message, $context): void
     {
-        $this->logger->{$level}(
-            $message,
-            $context
-        );
+        $this->logger->{$level}($message, $context);
     }
 }

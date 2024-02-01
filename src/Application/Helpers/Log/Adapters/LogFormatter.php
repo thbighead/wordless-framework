@@ -15,7 +15,7 @@ class LogFormatter extends StreamHandler
     {
         return new LineFormatter(
             self::SIMPLE_FORMAT,
-            Config::get('wordless.log.wordless_line_prefix', self::DEFAULT_DATETIME_LINE_FORMAT),
+            Config::get('wordless.log.file_line_format', self::DEFAULT_DATETIME_LINE_FORMAT),
             false,
             true
         );
