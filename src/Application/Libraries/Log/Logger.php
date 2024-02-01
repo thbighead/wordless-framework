@@ -34,7 +34,7 @@ class Logger
 
         $handler = new RotatingFileHandler(
             $this->resolveFilePath(),
-            Config::get('wordless.log.wordless_line_prefix', self::MAX_LOG_FILES_LIMIT)
+            (int)Config::get('wordless.log.wordless_line_prefix', self::MAX_LOG_FILES_LIMIT)
         );
         $handler->setFormatter(LogFormatter::mountOutputFormatter());
 
