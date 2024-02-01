@@ -54,6 +54,8 @@ const WP_AUTO_UPDATE_CORE = false;
 const AUTOSAVE_INTERVAL = 60; // Seconds
 // https://wordpress.org/support/article/editing-wp-config-php/#specify-the-number-of-post-revisions
 const WP_POST_REVISIONS = 10; // Maximum number of a post revisions
+// https://developer.wordpress.org/plugins/cron/hooking-wp-cron-into-the-system-task-scheduler/
+const DISABLE_WP_CRON = true;
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
