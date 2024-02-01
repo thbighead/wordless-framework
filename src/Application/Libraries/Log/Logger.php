@@ -30,11 +30,11 @@ class Logger
      */
     public function init(): void
     {
-        $logger = new MonologLogger(Config::get('wordless.log.filename', 'wordless'));
+        $logger = new MonologLogger(Config::get('wordless.log.wordless_line_prefix', 'wordless'));
 
         $handler = new RotatingFileHandler(
             $this->resolveFilePath(),
-            (int)Config::get('wordless.log.wordless_line_prefix', self::MAX_LOG_FILES_LIMIT)
+            (int)Config::get('wordless.log.max_files_limit', self::MAX_LOG_FILES_LIMIT)
         );
         $handler->setFormatter(LogFormatter::mountOutputFormatter());
 
@@ -61,6 +61,6 @@ class Logger
     public function resolveFilePath(): string
     {
         return ProjectPath::wpContent('/logs')
-            . Str::startWith(Config::get('wordless.log.wordless_line_prefix', self::LOG_PATH), '/');
+            . Str::startWith(Config::get('wordless.log.filename', self::LOG_PATH), '/');
     }
 }
