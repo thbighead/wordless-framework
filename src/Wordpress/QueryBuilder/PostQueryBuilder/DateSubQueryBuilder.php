@@ -102,7 +102,7 @@ class DateSubQueryBuilder extends PostSubQueryBuilder
         $this->arguments[] = [
             Column::KEY => $column->name,
             Compare::KEY => $compare->value,
-            $field->name => $value,
+            $field->value => $value,
         ];
 
         return $this;
