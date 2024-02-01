@@ -4,15 +4,20 @@ namespace Wordless\Application\Helpers\Log\Adapters;
 
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
-use Monolog\Level;
-use Monolog\Logger;
+use Wordless\Application\Helpers\Config;
 
 class LogFormatter extends StreamHandler
 {
     public const SIMPLE_FORMAT = "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n";
+    private const DEFAULT_DATETIME_LINE_FORMAT = 'd-M-Y H:m:s';
 
     public static function mountOutputFormatter(): LineFormatter
     {
-        return new LineFormatter(self::SIMPLE_FORMAT, 'd-M-Y H:m:s', false, true);
+        return new LineFormatter(
+            self::SIMPLE_FORMAT,
+            Config::get('wordless.log.wordless_line_prefix', self::DEFAULT_DATETIME_LINE_FORMAT),
+            false,
+            true
+        );
     }
 }

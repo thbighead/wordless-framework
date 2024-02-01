@@ -14,61 +14,50 @@ class Log
         $this->logger = WordlessLogger::getInstance();
     }
 
-    public static function alert($message, array $context = [], bool $json_format = false): void
+    public static function alert($message, array $context = []): void
     {
-        (new self)->writeLog(__FUNCTION__, $message, $context, $json_format);
+        (new self)->writeLog(__FUNCTION__, $message, $context);
     }
 
-    public static function critical($message, array $context = [], bool $json_format = false): void
+    public static function critical($message, array $context = []): void
     {
-        (new self)->writeLog(__FUNCTION__, $message, $context, $json_format);
+        (new self)->writeLog(__FUNCTION__, $message, $context);
     }
 
-    public static function debug($message, array $context = [], bool $json_format = false): void
+    public static function debug($message, array $context = []): void
     {
-        (new self)->writeLog(__FUNCTION__, $message, $context, $json_format);
+        (new self)->writeLog(__FUNCTION__, $message, $context);
     }
 
-    public static function emergency($message, array $context = [], bool $json_format = false): void
+    public static function emergency($message, array $context = []): void
     {
-        (new self)->writeLog(__FUNCTION__, $message, $context, $json_format);
+        (new self)->writeLog(__FUNCTION__, $message, $context);
     }
 
-    public static function error($message, array $context = [], bool $json_format = false): void
+    public static function error($message, array $context = []): void
     {
-        (new self)->writeLog(__FUNCTION__, $message, $context, $json_format);
+        (new self)->writeLog(__FUNCTION__, $message, $context);
     }
 
-    public static function info($message, array $context = [], bool $json_format = false): void
+    public static function info($message, array $context = []): void
     {
-        (new self)->writeLog(__FUNCTION__, $message, $context, $json_format);
+        (new self)->writeLog(__FUNCTION__, $message, $context);
     }
 
-    public static function notice($message, array $context = [], bool $json_format = false): void
+    public static function notice($message, array $context = []): void
     {
-        (new self)->writeLog(__FUNCTION__, $message, $context, $json_format);
+        (new self)->writeLog(__FUNCTION__, $message, $context);
     }
 
-    public static function warning($message, array $context = [], bool $json_format = false): void
+    public static function warning($message, array $context = []): void
     {
-        (new self)->writeLog(__FUNCTION__, $message, $context, $json_format);
+        (new self)->writeLog(__FUNCTION__, $message, $context);
     }
 
-    protected function formatMessage($message, bool $json_format = false): false|string|null
-    {
-        if (is_array($message)) {
-            return var_export($message, true);
-        } elseif ($json_format === true || is_object($message)) {
-            return json_encode($message);
-        }
-
-        return (string)$message;
-    }
-
-    protected function writeLog($level, $message, $context, bool $json_format): void
+    protected function writeLog($level, $message, $context): void
     {
         $this->logger->{$level}(
-            $this->formatMessage($message, $json_format),
+            $message,
             $context
         );
     }
