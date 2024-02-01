@@ -3,30 +3,15 @@
 namespace Wordless\Application\Helpers;
 
 use Monolog\Logger;
-use Wordless\Application\Helpers\Log\Adapters\LogFormatter;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Libraries\Log\Logger as WordlessLogger;
 
 class Log
 {
     private Logger $logger;
-    private const LOG_PATH = 'test.log';
 
     public function __construct()
     {
-        $this->logger = new Logger(
-            Environment::get('APP_NAME', 'wordless')
-            . '.'
-            . Environment::get('APP_ENV')
-        );
-
-        try {
-            $path = ProjectPath::wpContent(self::LOG_PATH);
-        } catch (PathNotFoundException $exception) {
-            DirectoryFiles::createFileAt($path = $exception->getPath());
-        }
-
-        $this->logger->pushHandler(new LogFormatter($path));
-        $this->logger->pushHandler(new LogFormatter($path));
+        $this->logger = WordlessLogger::getInstance();
     }
 
     public static function alert($message, array $context = [], bool $json_format = false): void

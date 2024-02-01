@@ -36,6 +36,7 @@ use ParagonIE\CSPBuilder\CSPBuilder;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Libraries\Log\Logger;
 use Wordless\Core\InternalCache;
 
 /** @noinspection PhpUnhandledExceptionInspection */
@@ -124,7 +125,7 @@ const EMPTY_TRASH_DAYS = WP_ENVIRONMENT_TYPE === Environment::LOCAL ? 0 : 30;
 
 define('WP_DEBUG', $debug = Environment::get('WP_DEBUG', false));
 // https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
-define('WP_DEBUG_LOG', $debug);
+define('WP_DEBUG_LOG', Logger::getFullTimedPathName());
 // https://wordpress.org/support/article/debugging-in-wordpress/#wp_debug_display
 // Enabled only when WP_DEBUG is on in non-production environments and WP_DEBUG_LOG is off, otherwise check debug.log file.
 define('WP_DEBUG_DISPLAY', $debug && (WP_ENVIRONMENT_TYPE !== Environment::PRODUCTION) && (WP_DEBUG_LOG === false));
