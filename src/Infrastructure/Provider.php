@@ -9,6 +9,7 @@ use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPostStatus;
 use Wordless\Infrastructure\Wordpress\Menu;
+use Wordless\Infrastructure\Wordpress\Schedule;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
 
 abstract class Provider
@@ -77,6 +78,14 @@ abstract class Provider
      * @return string[]|Provider[]
      */
     public function registerProviders(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return string[]|Schedule[]
+     */
+    public function registerSchedules(): array
     {
         return [];
     }

@@ -270,6 +270,7 @@ class WordlessInstall extends ConsoleCommand
                 ->makeWpBlogPublic()
                 ->databaseUpdate()
                 ->generateSymbolicLinks()
+                ->registerSchedules()
                 ->applyAdminConfiguration();
         } finally {
             $this->switchingMaintenanceMode(false);
@@ -632,6 +633,19 @@ class WordlessInstall extends ConsoleCommand
         $this->runWpCliCommand("option update siteurl $app_url/wp-core/");
         $this->runWpCliCommand('option update home ' . (Environment::isFramework() ? '/' : $app_url));
         $this->runWpCliCommand('db optimize');
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
+     * @throws ExceptionInterface
+     */
+    private function registerSchedules(): static
+    {
+        $this->callConsoleCommand(RegisterSchedules::COMMAND_NAME);
 
         return $this;
     }

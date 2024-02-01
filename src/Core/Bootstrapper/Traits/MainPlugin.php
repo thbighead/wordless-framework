@@ -97,6 +97,10 @@ trait MainPlugin
             $customPostTypeClassNamespace::register();
         }
 
+        foreach ($provider->registerSchedules() as $scheduleClassNamespace) {
+            $scheduleClassNamespace::registerHook();
+        }
+
         $this->loadMenus($provider)
             ->loadListeners($provider)
             ->loadEnqueueableAssets($provider)

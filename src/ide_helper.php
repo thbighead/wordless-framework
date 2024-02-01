@@ -14,6 +14,8 @@ use Wordless\Infrastructure\Wordpress\Hook;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener\AjaxListener;
+use Wordless\Infrastructure\Wordpress\Schedule;
+use Wordless\Infrastructure\Wordpress\Schedule\Enums\Recurrence;
 use Wordless\Wordpress\Hook\Enums\Action;
 use Wordless\Wordpress\Hook\Enums\Type;
 
@@ -47,5 +49,22 @@ final class ExampleListener extends Listener
     protected static function type(): Type
     {
         return Type::action;
+    }
+}
+
+final class ExampleSchedule extends Schedule
+{
+    public static function run(): void
+    {
+    }
+
+    protected static function hook(): Hook
+    {
+        return Action::init;
+    }
+
+    protected static function recurrence(): Recurrence
+    {
+        return Recurrence::daily;
     }
 }

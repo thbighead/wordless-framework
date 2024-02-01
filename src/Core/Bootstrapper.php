@@ -13,6 +13,7 @@ use Wordless\Core\Bootstrapper\Traits\Console;
 use Wordless\Core\Bootstrapper\Traits\InternalCachers;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin;
 use Wordless\Core\Bootstrapper\Traits\Migrations;
+use Wordless\Core\Bootstrapper\Traits\Schedules;
 use Wordless\Infrastructure\Provider;
 
 final class Bootstrapper extends Singleton
@@ -22,6 +23,7 @@ final class Bootstrapper extends Singleton
     use InternalCachers;
     use MainPlugin;
     use Migrations;
+    use Schedules;
 
     public const ERROR_REPORTING_KEY = 'error_reporting';
 
