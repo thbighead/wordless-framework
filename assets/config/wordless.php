@@ -8,6 +8,8 @@ use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Libraries\JWT\Enums\CryptoAlgorithm;
 use Wordless\Application\Libraries\JWT\Token;
+use Wordless\Application\Libraries\Log\Logger;
+use Wordless\Application\Libraries\Log\Logger\LogFormatter;
 use Wordless\Application\Providers\CommentsProvider;
 use Wordless\Application\Providers\CoreProvider;
 use Wordless\Application\Providers\MigrationsProvider;
@@ -38,11 +40,12 @@ return [
         Token::CONFIG_DEFAULT_CRYPTO => CryptoAlgorithm::SYMMETRIC_HMAC_SHA256,
         Token::CONFIG_SIGN_KEY => Environment::get(Token::ENVIRONMENT_SIGN_VARIABLE),
     ],
-    'log' => [
-        'filename' => 'wordless.log',
-        'file_line_datetime_format' => 'd-M-Y H:m:s',
-        'max_files_limit' => 10,
-        'wordless_line_prefix' => Environment::get('APP_NAME', 'wordless')
+    Logger::CONFIG_KEY_LOG => [
+        Logger::CONFIG_FILENAME => 'wordless.log',
+        LogFormatter::CONFIG_KEY_DATETIME_FORMAT => 'd-M-Y H:m:s',
+        LogFormatter::CONFIG_KEY_LINE_FORMAT => '[%datetime%] %channel%.%level_name%: %message% %context% %extra%',
+        Logger::CONFIG_MAX_FILES_LIMIT => 10,
+        Logger::CONFIG_WORDLESS_LINE_PREFIX => Environment::get('APP_NAME', 'wordless')
             . '.' . Environment::get('APP_ENV')
     ],
     'providers' => $providers,

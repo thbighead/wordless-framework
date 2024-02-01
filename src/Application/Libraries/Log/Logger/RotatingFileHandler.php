@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Wordless\Application\Helpers\Log\Adapters;
+namespace Wordless\Application\Libraries\Log\Logger;
 
 use Monolog\Handler\RotatingFileHandler as MonologRotatingFileHandler;
 

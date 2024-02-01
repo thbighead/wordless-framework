@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Helpers;
 
+use Wordless\Application\Helpers\Config\Contracts\Subjectable;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Config\Traits\Internal;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
@@ -9,7 +10,7 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\InternalCache;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 
-class Config
+class Config extends Subjectable
 {
     use Internal;
 
