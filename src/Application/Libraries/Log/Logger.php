@@ -30,7 +30,7 @@ class Logger
      */
     public function init(): void
     {
-        $logger = new MonologLogger(Config::get('wordless.log.wordless_line_prefix', 'wordless'));
+        $logger = new MonologLogger(Config::get('wordless.log.filename', 'wordless'));
 
         $handler = new RotatingFileHandler(
             $this->resolveFilePath(),
