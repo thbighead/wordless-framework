@@ -4,6 +4,9 @@
 /docker                                         export-ignore
 /vendor                                         export-ignore
 /wp                                             export-ignore
-/wp-cli.php                                     export-ignore
-/wp-config.php                                  export-ignore
+/.editorconfig                                  export-ignore
+/console                                        export-ignore
+/docker-compose.yml                             export-ignore
 /env.php                                        export-ignore
+/wp-cli.yml                                     export-ignore
+/wp-config.php                                  export-ignore
