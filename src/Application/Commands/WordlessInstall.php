@@ -132,6 +132,7 @@ class WordlessInstall extends ConsoleCommand
             ->createWordlessPluginFromStub()
             ->createWpDatabase()
             ->coreSteps()
+            ->registerSchedules()
             ->runMigrations()
             ->syncRoles()
             ->createCache()
@@ -270,7 +271,6 @@ class WordlessInstall extends ConsoleCommand
                 ->makeWpBlogPublic()
                 ->databaseUpdate()
                 ->generateSymbolicLinks()
-                ->registerSchedules()
                 ->applyAdminConfiguration();
         } finally {
             $this->switchingMaintenanceMode(false);
