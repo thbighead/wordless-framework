@@ -10,6 +10,7 @@ use Wordless\Application\Libraries\JWT\Enums\CryptoAlgorithm;
 use Wordless\Application\Libraries\JWT\Token;
 use Wordless\Application\Libraries\LogManager\Logger;
 use Wordless\Application\Libraries\LogManager\Logger\LogFormatter;
+use Wordless\Application\Providers\AdminCustomUrlProvider;
 use Wordless\Application\Providers\CommentsProvider;
 use Wordless\Application\Providers\CoreProvider;
 use Wordless\Application\Providers\MigrationsProvider;
@@ -54,7 +55,6 @@ return [
         'wp-content/plugins' => '../wp/wp-content/plugins!.gitignore',
         "wp-content/themes/$current_wp_theme/public" => "../wp/wp-content/themes/$current_wp_theme/public",
         'wp-content/uploads' => '../wp/wp-content/uploads',
-        Config::get('wordpress.admin.custom_admin_uri', 'wp-core') =>
-            '../wp/wp-core!wp-config.php,wp-cron.php,xmlrpc.php',
+        AdminCustomUrlProvider::getCustomUri() => '../wp/wp-core!wp-config.php,wp-cron.php,xmlrpc.php',
     ],
 ];

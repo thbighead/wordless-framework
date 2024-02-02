@@ -32,7 +32,9 @@ class RotatingFileHandler extends MonologRotatingFileHandler
         parent::__construct(
             $this->resolveFilePath(),
             (int)$this->config->get(Logger::CONFIG_KEY_MAX_FILES_LIMIT, self::MAX_LOG_FILES_LIMIT)
-        )->setFormatter(LogFormatter::mountOutputFormatter());
+        );
+
+        $this->setFormatter(LogFormatter::mountOutputFormatter());
     }
 
     public function getTimeFormattedFilename(): string

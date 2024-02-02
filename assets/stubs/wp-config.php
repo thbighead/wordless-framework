@@ -37,6 +37,7 @@ use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\LogManager\Logger;
+use Wordless\Application\Providers\AdminCustomUrlProvider;
 use Wordless\Core\InternalCache;
 
 /** @noinspection PhpUnhandledExceptionInspection */
@@ -140,7 +141,7 @@ define('WP_HOME', $site_url);
 
 // https://wordpress.org/support/article/editing-wp-config-php/#wp_siteurl
 $site_url = Str::finishWith($site_url, '/');
-define('WP_SITEURL', $site_url . Config::get('wordpress.admin.custom_admin_uri', 'wp-core'));
+define('WP_SITEURL', $site_url . AdminCustomUrlProvider::getCustomUri(false));
 
 // https://wordpress.org/support/article/editing-wp-config-php/#moving-wp-content-folder
 define('WP_CONTENT_DIR', realpath(__DIR__ . '/../wp-content'));

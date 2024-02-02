@@ -4,6 +4,7 @@ namespace Wordless\Application\Providers;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Str;
 use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener as CustomAdminUrlListener;
 use Wordless\Application\Listeners\CustomAdminUrl\LoadCustomAdminUrl;
 use Wordless\Application\Listeners\CustomAdminUrl\NetworkSiteUrlCustomAdminUrl;
@@ -18,7 +19,27 @@ use Wordless\Wordpress\Hook\Enums\Action;
 
 class AdminCustomUrlProvider extends Provider
 {
+    private const ADMIN_DEFAULT_URI = 'wp-core';
     private const CONFIG_PREFIX = 'wordpress.admin.';
+
+    /**
+     * @param bool $wrapped
+     * @return string
+     * @throws PathNotFoundException
+     */
+    public static function getCustomUri(bool $wrapped = true): string
+    {
+        $custom_admin_uri = (string)Config::get(
+            'wordpress.admin.custom_admin_uri',
+            self::ADMIN_DEFAULT_URI
+        );
+
+        if (empty($custom_admin_uri)) {
+            $custom_admin_uri = self::ADMIN_DEFAULT_URI;
+        }
+
+        return $wrapped ? Str::wrap($custom_admin_uri) : trim($custom_admin_uri, '/');
+    }
 
     /**
      * @return string[]|Listener[]

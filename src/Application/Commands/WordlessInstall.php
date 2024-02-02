@@ -36,10 +36,10 @@ use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFil
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener as CustomLoginUrl;
 use Wordless\Application\Mounters\Stub\RobotsTxtStubMounter;
 use Wordless\Application\Mounters\Stub\WordlessPluginStubMounter;
 use Wordless\Application\Mounters\Stub\WpConfigStubMounter;
+use Wordless\Application\Providers\AdminCustomUrlProvider;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -311,11 +311,9 @@ class WordlessInstall extends ConsoleCommand
             . RobotsTxtStubMounter::STUB_FINAL_FILENAME
         );
 
-        $custom_admin_uri = Config::get('wordpress.admin.custom_admin_uri');
-
         $robotStubMounter->setReplaceContentDictionary([
             '{APP_URL}' => Str::finishWith($this->getEnvVariableByKey('APP_URL', ''), '/'),
-            '#custom_admin_uri' => $custom_admin_uri !== null ? 'Disallow: ' . Str::wrap($custom_admin_uri) : ''
+            '#custom_admin_uri' => 'Disallow: ' . AdminCustomUrlProvider::getCustomUri()
         ])->mountNewFile();
 
         return $this;
@@ -617,17 +615,19 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
+     * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
     private function performUrlDatabaseFix(): static
     {
         $app_url = $this->getEnvVariableByKey('APP_URL');
 
-        $this->runWpCliCommand("option update siteurl $app_url/wp-core/");
+        $this->runWpCliCommand(
+            "option update siteurl $app_url" . AdminCustomUrlProvider::getCustomUri()
+        );
         $this->runWpCliCommand('option update home ' . (Environment::isFramework() ? '/' : $app_url));
         $this->runWpCliCommand('db optimize');
 
