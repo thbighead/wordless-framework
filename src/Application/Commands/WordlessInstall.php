@@ -625,10 +625,12 @@ class WordlessInstall extends ConsoleCommand
     {
         $app_url = $this->getEnvVariableByKey('APP_URL');
 
-        $this->runWpCliCommand(
+        $this->runWpCliCommandSilentlyWithoutInterruption(
             "option update siteurl $app_url" . AdminCustomUrlProvider::getCustomUri()
         );
-        $this->runWpCliCommand('option update home ' . (Environment::isFramework() ? '/' : $app_url));
+        $this->runWpCliCommandSilentlyWithoutInterruption(
+            'option update home ' . (Environment::isFramework() ? '/' : $app_url)
+        );
         $this->runWpCliCommand('db optimize');
 
         return $this;
