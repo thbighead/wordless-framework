@@ -54,6 +54,7 @@ return [
         'wp-content/plugins' => '../wp/wp-content/plugins!.gitignore',
         "wp-content/themes/$current_wp_theme/public" => "../wp/wp-content/themes/$current_wp_theme/public",
         'wp-content/uploads' => '../wp/wp-content/uploads',
-        'wp-core' => '../wp/wp-core!wp-config.php,wp-cron.php,xmlrpc.php',
+        Config::get('wordpress.admin.custom_admin_uri', 'wp-core') =>
+            '../wp/wp-core!wp-config.php,wp-cron.php,xmlrpc.php',
     ],
 ];

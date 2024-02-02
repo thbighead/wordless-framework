@@ -61,4 +61,11 @@ trait Mutators
 
         return $this;
     }
+
+    public function wrap(string $prefix = '/', ?string $suffix = null): static
+    {
+        $this->subject = Str::wrap($this->subject, $prefix, $suffix);
+
+        return $this;
+    }
 }

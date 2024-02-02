@@ -311,14 +311,11 @@ class WordlessInstall extends ConsoleCommand
             . RobotsTxtStubMounter::STUB_FINAL_FILENAME
         );
 
-        $custom_login_url = Config::get(
-            'wordpress.admin.' . CustomLoginUrl::CUSTOM_ADMIN_URI_KEY,
-            false
-        );
+        $custom_admin_uri = Config::get('wordpress.admin.custom_admin_uri');
 
         $robotStubMounter->setReplaceContentDictionary([
             '{APP_URL}' => Str::finishWith($this->getEnvVariableByKey('APP_URL', ''), '/'),
-            '#custom_login_url' => $custom_login_url ? "Disallow: /$custom_login_url/" : ''
+            '#custom_admin_uri' => $custom_admin_uri !== null ? 'Disallow: ' . Str::wrap($custom_admin_uri) : ''
         ])->mountNewFile();
 
         return $this;

@@ -5,5 +5,5 @@ Disallow: /wp-admin/
 Disallow: /login/
 Disallow: /admin/
 Disallow: /wp-content/plugins/
-#custom_login_url
+#custom_admin_uri
 Sitemap: {APP_URL}sitemap.xml

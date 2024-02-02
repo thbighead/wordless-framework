@@ -70,4 +70,13 @@ trait Mutators
     {
         return self::getInflector()->unaccent($string);
     }
+
+    public static function wrap(string $string, string $prefix = '/', ?string $suffix = null): string
+    {
+        if ($suffix === null) {
+            $suffix = $prefix;
+        }
+
+        return (string)static::of($string)->startWith($prefix)->finishWith($suffix);
+    }
 }

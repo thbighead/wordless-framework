@@ -130,7 +130,7 @@ define('WP_DEBUG', $debug = Environment::get('WP_DEBUG', false));
 define('WP_DEBUG_LOG', Logger::getFullTimedPathName());
 // https://wordpress.org/support/article/debugging-in-wordpress/#wp_debug_display
 // Enabled only when WP_DEBUG is on in non-production environments and WP_DEBUG_LOG is off, otherwise check debug.log file.
-define('WP_DEBUG_DISPLAY', $debug && (WP_ENVIRONMENT_TYPE !== Environment::PRODUCTION) && (WP_DEBUG_LOG === false));
+define('WP_DEBUG_DISPLAY', $debug && (WP_ENVIRONMENT_TYPE !== Environment::PRODUCTION));
 
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-wordpress-auto-updates
 define('COOKIE_DOMAIN', $app_domain = Str::after($site_url = Environment::get('APP_URL'), '://'));
@@ -140,7 +140,7 @@ define('WP_HOME', $site_url);
 
 // https://wordpress.org/support/article/editing-wp-config-php/#wp_siteurl
 $site_url = Str::finishWith($site_url, '/');
-define('WP_SITEURL', "{$site_url}wp-core");
+define('WP_SITEURL', $site_url . Config::get('wordpress.admin.custom_admin_uri', 'wp-core'));
 
 // https://wordpress.org/support/article/editing-wp-config-php/#moving-wp-content-folder
 define('WP_CONTENT_DIR', realpath(__DIR__ . '/../wp-content'));
