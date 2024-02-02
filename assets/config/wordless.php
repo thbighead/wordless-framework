@@ -41,11 +41,11 @@ return [
         Token::CONFIG_SIGN_KEY => Environment::get(Token::ENVIRONMENT_SIGN_VARIABLE),
     ],
     Logger::CONFIG_KEY_LOG => [
-        Logger::CONFIG_FILENAME => 'wordless.log',
+        Logger::CONFIG_KEY_FILENAME => 'wordless.log',
         LogFormatter::CONFIG_KEY_DATETIME_FORMAT => 'd-M-Y H:m:s',
         LogFormatter::CONFIG_KEY_LINE_FORMAT => '[%datetime%] %channel%.%level_name%: %message% %context% %extra%',
-        Logger::CONFIG_MAX_FILES_LIMIT => 10,
-        Logger::CONFIG_WORDLESS_LINE_PREFIX => Environment::get('APP_NAME', 'wordless')
+        Logger::CONFIG_KEY_MAX_FILES_LIMIT => 10,
+        Logger::CONFIG_KEY_WORDLESS_LINE_PREFIX => Environment::get('APP_NAME', 'wordless')
             . '.' . Environment::get('APP_ENV')
     ],
     'providers' => $providers,

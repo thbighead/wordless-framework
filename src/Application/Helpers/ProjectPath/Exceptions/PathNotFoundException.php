@@ -16,12 +16,4 @@ class PathNotFoundException extends ErrorException
             previous: $previous
         );
     }
-
-    /**
-     * @return string
-     */
-    public function getPath(): string
-    {
-        return $this->path;
-    }
 }
