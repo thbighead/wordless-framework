@@ -5,8 +5,8 @@ namespace Wordless\Application\Providers;
 use Wordless\Application\Commands\CreateInternalCache;
 use Wordless\Application\Commands\GeneratePublicWordpressSymbolicLinks;
 use Wordless\Application\Commands\PublishConfigurationFiles;
-use Wordless\Application\Commands\RegisterSchedules;
-use Wordless\Application\Commands\RunSchedules;
+use Wordless\Application\Commands\Schedules\RegisterSchedules;
+use Wordless\Application\Commands\Schedules\RunSchedules;
 use Wordless\Application\Commands\SyncRoles;
 use Wordless\Application\Commands\WordlessInstall;
 use Wordless\Application\Commands\WpCliCaller;
@@ -33,8 +33,6 @@ class CoreProvider extends Provider
             CreateInternalCache::class,
             GeneratePublicWordpressSymbolicLinks::class,
             PublishConfigurationFiles::class,
-            RegisterSchedules::class,
-            RunSchedules::class,
             SyncRoles::class,
             WordlessInstall::class,
             WpCliCaller::class,
@@ -68,6 +66,7 @@ class CoreProvider extends Provider
         return [
             MakersProvider::class,
             MigrationsProvider::class,
+            ScheduleProvider::class,
             UtilityProvider::class,
         ];
     }

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Commands;
+namespace Wordless\Application\Commands\Schedules;
 
 use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
