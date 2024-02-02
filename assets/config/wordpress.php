@@ -15,7 +15,6 @@ use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 return [
     'languages' => [],
     'theme' => 'wordless',
-    'version' => 'latest',
     'permalink' => '/%postname%/',
     'admin' => [
         RemoveEmojiProvider::CONFIG_KEY_REMOVE_WP_EMOJIS => false,

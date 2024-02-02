@@ -31,7 +31,38 @@ $providers = [
 return [
     Config::KEY_CSP => [
         'default-src' => ['self' => true],
+        'font-src' => [
+            'self' => true,
+            'data' => true,
+            'allow' => [
+                'https://fonts.gstatic.com',
+            ]
+        ],
+        'frame-src' => [
+            'blob' => true,
+        ],
         'frame-ancestors' => [],
+        'img-src' => [
+            'data' => true,
+            'self' => true,
+            'allow' => [
+                'https://secure.gravatar.com',
+                'https://s.w.org',
+            ]
+        ],
+        'script-src' => [
+            'blob' => true,
+            'self' => true,
+            'unsafe-inline' => true,
+            'unsafe-eval' => true,
+        ],
+        'style-src' => [
+            'self' => true,
+            'unsafe-inline' => true,
+            'allow' => [
+                'https://fonts.googleapis.com',
+            ],
+        ],
         'upgrade-insecure-requests' => true,
     ],
     'database' => [
