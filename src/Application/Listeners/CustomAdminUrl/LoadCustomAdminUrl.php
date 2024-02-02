@@ -51,6 +51,6 @@ class LoadCustomAdminUrl extends BaseListener
     private static function isRequestTheSameAsCustomAdminUri(array $request): bool
     {
         return isset($request['path'])
-            && (untrailingslashit($request['path']) === home_url(static::newLoginSlug(), 'relative'));
+            && (untrailingslashit($request['path']) === home_url(static::getCustomAdminUri(), 'relative'));
     }
 }

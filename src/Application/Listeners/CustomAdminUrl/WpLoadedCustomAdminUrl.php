@@ -32,7 +32,7 @@ class WpLoadedCustomAdminUrl extends BaseListener
             ) {
                 wp_safe_redirect(
                     user_trailingslashit(
-                        static::newLoginSlug()) . (!empty($_SERVER['QUERY_STRING'])
+                        static::getCustomAdminUri()) . (!empty($_SERVER['QUERY_STRING'])
                         ? '?' . $_SERVER['QUERY_STRING']
                         : ''
                     )
