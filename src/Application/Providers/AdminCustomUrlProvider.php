@@ -16,7 +16,7 @@ use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO\Exceptions\TriedToSetFunc
 use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Wordpress\Hook\Enums\Action;
 
-class AdminRedirectProvider extends Provider
+class AdminCustomUrlProvider extends Provider
 {
     private const CONFIG_PREFIX = 'wordpress.admin.';
 

@@ -3,6 +3,7 @@
 namespace Wordless\Application\Listeners\CustomAdminUrl\Contracts;
 
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Wordpress\Listener;
@@ -24,7 +25,12 @@ abstract class BaseListener extends Listener
      */
     protected static function canHook(): bool
     {
-        return !empty((string)Config::get(self::CONFIG_PREFIX . self::CUSTOM_ADMIN_URI_KEY));
+        return !empty((string)static::getConfig()->get(self::CUSTOM_ADMIN_URI_KEY));
+    }
+
+    protected static function getConfig(): ConfigSubjectDTO
+    {
+        return Config::of(self::CONFIG_PREFIX);
     }
 
     /**
