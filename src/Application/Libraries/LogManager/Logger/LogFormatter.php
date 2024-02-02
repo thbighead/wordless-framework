@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Libraries\Log\Logger;
+namespace Wordless\Application\Libraries\LogManager\Logger;
 
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Libraries\Log\Logger;
+use Wordless\Application\Libraries\LogManager\Logger;
 
 class LogFormatter extends StreamHandler
 {

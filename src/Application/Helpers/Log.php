@@ -2,7 +2,7 @@
 
 namespace Wordless\Application\Helpers;
 
-use Wordless\Application\Libraries\Log\Logger;
+use Wordless\Application\Libraries\LogManager\Logger;
 
 class Log
 {

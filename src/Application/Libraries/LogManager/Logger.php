@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Libraries\Log;
+namespace Wordless\Application\Libraries\LogManager;
 
 use Monolog\Logger as MonologLogger;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
-use Wordless\Application\Libraries\Log\Logger\RotatingFileHandler;
+use Wordless\Application\Libraries\LogManager\Logger\RotatingFileHandler;
 
 class Logger extends Singleton
 {

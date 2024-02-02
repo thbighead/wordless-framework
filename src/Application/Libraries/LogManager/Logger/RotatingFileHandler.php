@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Libraries\Log\Logger;
+namespace Wordless\Application\Libraries\LogManager\Logger;
 
 use Monolog\Handler\RotatingFileHandler as MonologRotatingFileHandler;
 use Wordless\Application\Helpers\Config;
@@ -11,7 +11,7 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryP
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Application\Libraries\Log\Logger;
+use Wordless\Application\Libraries\LogManager\Logger;
 
 class RotatingFileHandler extends MonologRotatingFileHandler
 {

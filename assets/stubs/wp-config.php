@@ -36,7 +36,7 @@ use ParagonIE\CSPBuilder\CSPBuilder;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
-use Wordless\Application\Libraries\Log\Logger;
+use Wordless\Application\Libraries\LogManager\Logger;
 use Wordless\Core\InternalCache;
 
 /** @noinspection PhpUnhandledExceptionInspection */
