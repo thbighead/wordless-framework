@@ -1,33 +1,29 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Listeners;
+namespace Wordless\Application\Listeners\DisableComments;
 
-use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Listeners\DisableComments\Contracts\DisableCommentsActionListener;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
-use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 use Wordless\Wordpress\Hook\Enums\Action;
 
-class DisableCptComments extends ActionListener
+class DisableCptComments extends DisableCommentsActionListener
 {
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'removeCommentsSupport';
 
-    public static function priority(): int
-    {
-        return 1;
-    }
-
     /**
      * @param string $post_type
      * @return void
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     public static function removeCommentsSupport(string $post_type): void
     {
-        if (Config::get('wordpress.admin.enable_comments', false) === true) {
+        if (self::areCommentsEnabled()) {
             return;
         }
 

@@ -2,8 +2,8 @@
 
 namespace Wordless\Application\Providers;
 
-use Wordless\Application\Listeners\DisableCptComments;
-use Wordless\Application\Listeners\DisableDefaultComments;
+use Wordless\Application\Listeners\DisableComments\DisableCptComments;
+use Wordless\Application\Listeners\DisableComments\DisableDefaultComments;
 use Wordless\Infrastructure\Provider;
 
 class CommentsProvider extends Provider

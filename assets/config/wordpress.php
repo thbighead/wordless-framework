@@ -2,7 +2,7 @@
 
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Listeners\ChooseImageEditor;
-use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener as CustomAdminUrlListener;
+use Wordless\Application\Listeners\DisableComments\Contracts\DisableCommentsActionListener;
 use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
 use Wordless\Application\Providers\RemoveEmojiProvider;
@@ -27,7 +27,7 @@ return [
             DefaultRole::author->value => false,
         ],
         'custom_admin_uri' => null,
-        'enable_comments' => false,
+        DisableCommentsActionListener::CONFIG_KEY_ENABLE_COMMENTS => false,
         Bootstrapper::ERROR_REPORTING_KEY => Environment::isProduction()
             ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
             : E_ALL,
