@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Helpers\Config\Traits;
 
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -12,6 +13,24 @@ trait Internal
     private const WILDCARD = '*';
 
     private static array $configs = [];
+
+    /**
+     * @param string $filename
+     * @param string|null $key
+     * @param mixed $default
+     * @return mixed|ConfigSubjectDTO
+     * @throws PathNotFoundException
+     */
+    private static function fromConfigFile(string $filename, ?string $key = null, mixed $default = null): mixed
+    {
+        $config = static::of($filename);
+
+        if ($key === null) {
+            return $config;
+        }
+
+        return $config->get($key, $default);
+    }
 
     /**
      * @param string $config_filename_without_extension

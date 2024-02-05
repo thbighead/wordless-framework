@@ -9,6 +9,7 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\Wordpress\ApiController;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
@@ -18,6 +19,8 @@ use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 
 trait Sync
 {
+    final public const CONFIG_KEY_PERMISSIONS = 'permissions';
+
     /**
      * @return void
      * @throws FailedToCreateRole
@@ -41,7 +44,7 @@ trait Sync
      */
     public static function syncConfiguredPermissions(): void
     {
-        foreach (Config::get('wordpress.permissions', []) as $role_key => $permissions) {
+        foreach (Config::wordpress(self::CONFIG_KEY_PERMISSIONS, []) as $role_key => $permissions) {
             try {
                 $role = Role::findOrFail($role_key);
             } catch (FailedToFindRole) {
@@ -71,6 +74,7 @@ trait Sync
     /**
      * @param Role $role
      * @return void
+     * @throws EmptyQueryBuilderArguments
      */
     public static function syncCustomTaxonomiesPermissionsToRole(Role $role): void
     {

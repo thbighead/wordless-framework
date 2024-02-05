@@ -10,6 +10,7 @@ use Wordless\Application\Providers\RestApiProvider;
 use Wordless\Application\Providers\WpSpeedUpProvider;
 use Wordless\Core\Bootstrapper;
 use Wordless\Wordpress\Enums\StartOfWeek;
+use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 
 return [
@@ -30,14 +31,14 @@ return [
         Bootstrapper::ERROR_REPORTING_KEY => Environment::isProduction()
             ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
             : E_ALL,
-        StartOfWeek::KEY => StartOfWeek::sunday->value,
         'datetime' => [
             'timezone' => 'UTC+0',
             'date_format' => 'F j, Y',
             'time_format' => 'H:i',
+            StartOfWeek::KEY => StartOfWeek::sunday->value,
         ],
     ],
-    'permissions' => [
+    Role::CONFIG_KEY_PERMISSIONS => [
 //        'custom-admin' => [
 //            'custom_cap_1' => true,
 //            'custom_cap_2' => true,
@@ -49,7 +50,7 @@ return [
 //            'another_custom_capability' => false,
 //        ],
     ],
-    'rest-api' => [
+    RestApiProvider::CONFIG_KEY => [
         RestApiProvider::CONFIG_KEY_ROUTES => [
             RestApiProvider::CONFIG_ROUTES_KEY_PUBLIC => [
 //                '/wp/v2',

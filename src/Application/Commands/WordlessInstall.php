@@ -23,6 +23,7 @@ use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Commands\WordlessInstall\Traits\ForFramework;
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangePathPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
@@ -211,8 +212,8 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return void
-     * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
+     * @throws EmptyConfigKey
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
      * @throws PathNotFoundException
@@ -220,16 +221,19 @@ class WordlessInstall extends ConsoleCommand
      */
     private function applyAdminConfiguration(): void
     {
-        $this->runWpCliCommand('option update date_format "'
-            . Config::get('wordpress.admin.datetime.date_format', 'Y-m-d')
-            . '"');
-        $this->runWpCliCommand('option update time_format "'
-            . Config::get('wordpress.admin.datetime.time_format', 'H:i')
-            . '"');
+        $dateConfig = Config::wordpress()->ofKey('datetime');
+
+        $this->runWpCliCommand(
+            "option update date_format \"{$dateConfig->get('date_format', 'Y-m-d')}\""
+        );
+        $this->runWpCliCommand(
+            "option update time_format \"{$dateConfig->get('time_format', 'H:i')}\""
+        );
         $this->runWpCliCommand('option update '
             . StartOfWeek::KEY
-            . ' '
-            . Config::get('wordpress.admin.' . StartOfWeek::KEY, StartOfWeek::sunday->value));
+            . " {$dateConfig->get(StartOfWeek::KEY, StartOfWeek::sunday->value)}");
+
+        $this->setTimezone($dateConfig->get('timezone'));
     }
 
     /**
@@ -251,6 +255,7 @@ class WordlessInstall extends ConsoleCommand
      * @return $this
      * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
+     * @throws EmptyConfigKey
      * @throws ExceptionInterface
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
@@ -730,6 +735,28 @@ class WordlessInstall extends ConsoleCommand
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $timezone
+     * @return void
+     * @throws CommandNotFoundException
+     * @throws ExceptionInterface
+     * @throws InvalidArgumentException
+     * @throws WpCliCommandReturnedNonZero
+     */
+    private function setTimezone(string $timezone): void
+    {
+        $option_timezone_string = $timezone;
+        $timezoneSubject = Str::of($timezone)->upper();
+        $option_utc_offset = (string)$timezoneSubject->after('UTC');
+
+        if (!empty($option_utc_offset)) {
+            $option_timezone_string = '';
+        }
+
+        $this->runWpCliCommand("option update gmt_offset '$option_utc_offset'");
+        $this->runWpCliCommand("option update timezone_string '$option_timezone_string'");
     }
 
     /**
