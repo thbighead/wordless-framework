@@ -20,6 +20,10 @@ trait Resolver
     use ArgumentsFixer;
     use Pagination;
 
+    /**
+     * @return int
+     * @throws EmptyQueryBuilderArguments
+     */
     public function count(): int
     {
         if (!$this->arePostsAlreadyLoaded()) {
@@ -32,6 +36,7 @@ trait Resolver
     /**
      * @param bool $with_acfs
      * @return Post|null
+     * @throws EmptyQueryBuilderArguments
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */
@@ -44,6 +49,7 @@ trait Resolver
      * @param bool $with_acfs
      * @param array $extra_arguments
      * @return Post[]
+     * @throws EmptyQueryBuilderArguments
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */
@@ -62,6 +68,7 @@ trait Resolver
     /**
      * @param array $extra_arguments
      * @return int[]
+     * @throws EmptyQueryBuilderArguments
      */
     public function getIds(array $extra_arguments = []): array
     {
@@ -71,6 +78,7 @@ trait Resolver
 
     /**
      * @return array<int, stdClass>
+     * @throws EmptyQueryBuilderArguments
      */
     public function getParentsKeyedByChildId(): array
     {
