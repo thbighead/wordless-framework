@@ -20,6 +20,7 @@ class SyncRoles extends ConsoleCommand
     use LoadWpConfig;
 
     final public const COMMAND_NAME = 'roles:sync';
+    final public const CONFIG_KEY_PERMISSIONS = 'permissions';
 
     /**
      * @return ArgumentDTO[]

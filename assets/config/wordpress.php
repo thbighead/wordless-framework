@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use Wordless\Application\Commands\SyncRoles;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Listeners\ChooseImageEditor;
 use Wordless\Application\Listeners\DisableComments\Contracts\DisableCommentsActionListener;
@@ -10,7 +11,6 @@ use Wordless\Application\Providers\RestApiProvider;
 use Wordless\Application\Providers\WpSpeedUpProvider;
 use Wordless\Core\Bootstrapper;
 use Wordless\Wordpress\Enums\StartOfWeek;
-use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 
 return [
@@ -38,7 +38,7 @@ return [
             StartOfWeek::KEY => StartOfWeek::sunday->value,
         ],
     ],
-    Role::CONFIG_KEY_PERMISSIONS => [
+    SyncRoles::CONFIG_KEY_PERMISSIONS => [
 //        'custom-admin' => [
 //            'custom_cap_1' => true,
 //            'custom_cap_2' => true,

@@ -3,6 +3,7 @@
 namespace Wordless\Wordpress\Models\Role\Traits\Repository\Traits\FromDatabase\Traits;
 
 use InvalidArgumentException;
+use Wordless\Application\Commands\SyncRoles;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -19,8 +20,6 @@ use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 
 trait Sync
 {
-    final public const CONFIG_KEY_PERMISSIONS = 'permissions';
-
     /**
      * @return void
      * @throws FailedToCreateRole
@@ -44,7 +43,7 @@ trait Sync
      */
     public static function syncConfiguredPermissions(): void
     {
-        foreach (Config::wordpress(self::CONFIG_KEY_PERMISSIONS, []) as $role_key => $permissions) {
+        foreach (Config::wordpress(SyncRoles::CONFIG_KEY_PERMISSIONS, []) as $role_key => $permissions) {
             try {
                 $role = Role::findOrFail($role_key);
             } catch (FailedToFindRole) {
