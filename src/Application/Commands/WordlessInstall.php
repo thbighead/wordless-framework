@@ -38,6 +38,7 @@ use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFil
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Timezone;
 use Wordless\Application\Mounters\Stub\RobotsTxtStubMounter;
 use Wordless\Application\Mounters\Stub\WordlessPluginStubMounter;
 use Wordless\Application\Mounters\Stub\WpConfigStubMounter;
@@ -233,7 +234,7 @@ class WordlessInstall extends ConsoleCommand
             . StartOfWeek::KEY
             . " {$dateConfig->get(StartOfWeek::KEY, StartOfWeek::sunday->value)}");
 
-        $this->setTimezone($dateConfig->get('timezone'));
+        $this->setTimezone();
     }
 
     /**
@@ -738,24 +739,19 @@ class WordlessInstall extends ConsoleCommand
     }
 
     /**
-     * @param string $timezone
      * @return void
      * @throws CommandNotFoundException
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
+     * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
-    private function setTimezone(string $timezone): void
+    private function setTimezone(): void
     {
-        $option_timezone_string = $timezone;
-        $timezoneSubject = Str::of($timezone)->upper();
-        $option_utc_offset = (string)$timezoneSubject->after('UTC');
+        $option_timezone_string = Timezone::forOptionTimezoneString();
+        $option_gmt_offset = Timezone::forOptionGmtOffset();
 
-        if (!empty($option_utc_offset)) {
-            $option_timezone_string = '';
-        }
-
-        $this->runWpCliCommand("option update gmt_offset '$option_utc_offset'");
+        $this->runWpCliCommand("option update gmt_offset '$option_gmt_offset'");
         $this->runWpCliCommand("option update timezone_string '$option_timezone_string'");
     }
 

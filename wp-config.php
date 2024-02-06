@@ -41,9 +41,13 @@ use ParagonIE\CSPBuilder\CSPBuilder;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Timezone;
 
 /** @noinspection PhpUnhandledExceptionInspection */
 Environment::loadDotEnv();
+
+/** @noinspection PhpUnhandledExceptionInspection */
+date_default_timezone_set(Timezone::forPhpIni());
 
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-plugin-and-theme-update-and-installation
 const DISALLOW_FILE_MODS = true;
@@ -136,8 +140,8 @@ define('WP_DEBUG_DISPLAY', $debug && (WP_ENVIRONMENT_TYPE !== Environment::PRODU
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-wordpress-auto-updates
 define('COOKIE_DOMAIN', $app_domain = Str::after(
     $site_url = Environment::get('APP_URL', ''),
-    '://')
-);
+    '://'
+));
 
 // https://wordpress.org/support/article/editing-wp-config-php/#blog-address-url
 define('WP_HOME', $site_url);

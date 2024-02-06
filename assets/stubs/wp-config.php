@@ -36,6 +36,7 @@ use ParagonIE\CSPBuilder\CSPBuilder;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Timezone;
 use Wordless\Application\Libraries\LogManager\Logger;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
 use Wordless\Core\InternalCache;
@@ -44,6 +45,9 @@ use Wordless\Core\InternalCache;
 Environment::loadDotEnv();
 /** @noinspection PhpUnhandledExceptionInspection */
 InternalCache::load();
+
+/** @noinspection PhpUnhandledExceptionInspection */
+date_default_timezone_set(Timezone::forPhpIni());
 
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-plugin-and-theme-update-and-installation
 const DISALLOW_FILE_MODS = true;
