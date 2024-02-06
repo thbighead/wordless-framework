@@ -3,6 +3,7 @@
 namespace Wordless\Infrastructure\Wordpress;
 
 use Generator;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -83,6 +84,7 @@ abstract class ApiController extends WP_REST_Controller
      * @throws InvalidConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
+     * @throws EmptyConfigKey
      */
     public static function loadProvidedApiControllers(): array
     {

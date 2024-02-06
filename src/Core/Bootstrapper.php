@@ -3,6 +3,7 @@
 namespace Wordless\Core;
 
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -31,7 +32,8 @@ final class Bootstrapper extends Singleton
     private array $loaded_providers;
 
     /**
-     * @return Bootstrapper
+     * @return static
+     * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
@@ -44,6 +46,7 @@ final class Bootstrapper extends Singleton
 
     /**
      * @return Bootstrapper
+     * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
@@ -93,16 +96,15 @@ final class Bootstrapper extends Singleton
     }
 
     /**
-     * @return $this
+     * @return self
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     private function setErrorReporting(): self
     {
-        error_reporting(Config::get(
-            'wordpress.admin.' . self::ERROR_REPORTING_KEY,
-            Environment::isProduction()
-                ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
-                : E_ALL
+        error_reporting(Config::wordpress()->ofKey('admin')->get(
+            self::ERROR_REPORTING_KEY,
+            Environment::isProduction() ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED : E_ALL
         ));
 
         return $this;

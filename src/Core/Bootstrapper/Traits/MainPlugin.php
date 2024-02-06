@@ -3,6 +3,7 @@
 namespace Wordless\Core\Bootstrapper\Traits;
 
 use InvalidArgumentException;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
@@ -44,6 +45,7 @@ trait MainPlugin
      * @throws PathNotFoundException
      * @throws ReservedCustomPostStatusKey
      * @throws ReservedCustomPostTypeKey
+     * @throws EmptyConfigKey
      */
     public static function bootMainPlugin(): void
     {

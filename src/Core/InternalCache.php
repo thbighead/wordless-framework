@@ -2,6 +2,7 @@
 
 namespace Wordless\Core;
 
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
@@ -24,12 +25,13 @@ final class InternalCache
 
     /**
      * @return void
+     * @throws FailedToCopyStub
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
-     * @throws FailedToCopyStub
      * @throws InvalidConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
+     * @throws EmptyConfigKey
      */
     public static function generate(): void
     {

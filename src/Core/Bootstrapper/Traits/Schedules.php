@@ -3,6 +3,7 @@
 namespace Wordless\Core\Bootstrapper\Traits;
 
 use Generator;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
@@ -12,8 +13,9 @@ trait Schedules
     /**
      * @return void
      * @throws InvalidConfigKey
-     * @throws PathNotFoundException
      * @throws InvalidProviderClass
+     * @throws PathNotFoundException
+     * @throws EmptyConfigKey
      */
     public static function bootIntoRegisterSchedulesCommand(): void
     {
