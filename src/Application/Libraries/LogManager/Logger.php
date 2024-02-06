@@ -16,13 +16,12 @@ class Logger extends Singleton
     final public const CONFIG_KEY_WORDLESS_LINE_PREFIX = 'wordless_line_prefix';
     final public const CONFIG_KEY_MAX_FILES_LIMIT = 'max_files_limit';
 
-    private string $getFullTimedPathName;
     private readonly ConfigSubjectDTO $config;
     private readonly MonologLogger $logger;
 
     public static function getFullTimedPathName(): string
     {
-        return self::getInstance()->getFullTimedPathName;
+        return (new RotatingFileHandler)->getTimeFormattedFilename();
     }
 
     public function writeLog(string $level, string $message, array $context): void
@@ -41,10 +40,8 @@ class Logger extends Singleton
         $this->logger = new MonologLogger(
             $this->config->get(self::CONFIG_KEY_WORDLESS_LINE_PREFIX, 'wordless')
         );
-        $handler = new RotatingFileHandler;
 
-        $this->getFullTimedPathName = $handler->getTimeFormattedFilename();
-
-        $this->logger->pushHandler($handler);
+        $this->logger->setTimezone(wp_timezone());
+        $this->logger->pushHandler(new RotatingFileHandler);
     }
 }
