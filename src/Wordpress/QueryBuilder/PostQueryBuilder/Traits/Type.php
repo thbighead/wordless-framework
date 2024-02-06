@@ -68,7 +68,10 @@ trait Type
 
     private function isWhereTypePage(): bool
     {
-        if (count($where_type = $this->arguments[PostType::QUERY_TYPE_KEY] ?? []) !== 1) {
+        $where_type = $this->arguments[PostType::QUERY_TYPE_KEY] ?? [];
+        $where_type = is_array($where_type) ? $where_type : [$where_type];
+
+        if (count($where_type) !== 1) {
             return false;
         }
 

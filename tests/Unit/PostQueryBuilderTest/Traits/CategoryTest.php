@@ -20,8 +20,8 @@ trait CategoryTest
     {
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_CATEGORY_NAME => self::DUMMY_CATEGORY_NAMES[0]]),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder())
-                ->whereRelatesToAnyCategoryName(self::DUMMY_CATEGORY_NAMES[0]))
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder())
+                ->whereRelatesToAnyCategorySlugIncludingChildren(self::DUMMY_CATEGORY_NAMES[0]))
         );
 
         $this->assertEquals(
@@ -29,8 +29,8 @@ trait CategoryTest
                 self::DEFAULT_ARGUMENTS,
                 [self::KEY_CATEGORY_NAME => implode(',', self::DUMMY_CATEGORY_NAMES)]
             ),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder())
-                ->whereRelatesToAnyCategoryName(...self::DUMMY_CATEGORY_NAMES))
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder())
+                ->whereRelatesToAnyCategorySlugIncludingChildren(...self::DUMMY_CATEGORY_NAMES))
         );
     }
 
@@ -42,14 +42,14 @@ trait CategoryTest
     public function testWhereRelatesToAnyCategoryIdQuery(): void
     {
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_CATEGORY_ID => self::DUMMY_CATEGORY_IDS[0]]),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+            array_merge(self::DEFAULT_ARGUMENTS, ['category__in' => [self::DUMMY_CATEGORY_IDS[0]]]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
                 ->whereRelatesToAnyCategoryId(self::DUMMY_CATEGORY_IDS[0]))
         );
 
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, ['category__in' => self::DUMMY_CATEGORY_IDS]),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
                 ->whereRelatesToAnyCategoryId(...self::DUMMY_CATEGORY_IDS))
         );
     }
@@ -62,8 +62,8 @@ trait CategoryTest
     {
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_CATEGORY_NAME => self::DUMMY_CATEGORY_NAMES[0]]),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
-                ->whereRelatesToAllCategoryName(self::DUMMY_CATEGORY_NAMES[0]))
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->whereRelatesToAllCategorySlugIncludingChildren(self::DUMMY_CATEGORY_NAMES[0]))
         );
 
         $this->assertEquals(
@@ -71,8 +71,8 @@ trait CategoryTest
                 self::DEFAULT_ARGUMENTS,
                 [self::KEY_CATEGORY_NAME => implode('+', self::DUMMY_CATEGORY_NAMES)]
             ),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
-                ->whereRelatesToAllCategoryName(...self::DUMMY_CATEGORY_NAMES))
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->whereRelatesToAllCategorySlugIncludingChildren(...self::DUMMY_CATEGORY_NAMES))
         );
     }
 
@@ -83,14 +83,14 @@ trait CategoryTest
     public function testWhereRelatesToAllCategoryIdQuery(): void
     {
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_CATEGORY_ID => self::DUMMY_CATEGORY_IDS[0]]),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+            array_merge(self::DEFAULT_ARGUMENTS, ['category__and' => [self::DUMMY_CATEGORY_IDS[0]]]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
                 ->whereRelatesToAllCategoryId(self::DUMMY_CATEGORY_IDS[0]))
         );
 
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, ['category__and' => self::DUMMY_CATEGORY_IDS]),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
                 ->whereRelatesToAllCategoryId(...self::DUMMY_CATEGORY_IDS))
         );
     }
@@ -102,14 +102,14 @@ trait CategoryTest
     public function testWhereNotCategoryIdQuery(): void
     {
         $this->assertEquals(
-            array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_CATEGORY_ID => -self::DUMMY_CATEGORY_IDS[0]]),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+            array_merge(self::DEFAULT_ARGUMENTS, ['category__not_in' => [self::DUMMY_CATEGORY_IDS[0]]]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
                 ->whereNotRelatesToAnyCategoryId(self::DUMMY_CATEGORY_IDS[0]))
         );
 
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, ['category__not_in' => self::DUMMY_CATEGORY_IDS]),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
                 ->whereNotRelatesToAnyCategoryId(...self::DUMMY_CATEGORY_IDS))
         );
     }

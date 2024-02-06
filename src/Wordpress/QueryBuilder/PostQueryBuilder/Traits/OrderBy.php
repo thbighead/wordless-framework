@@ -22,7 +22,7 @@ trait OrderBy
             $this->arguments[self::KEY_ORDER_BY] = [];
         }
 
-        $this->arguments[self::KEY_ORDER_BY][$column->value] = $direction;
+        $this->arguments[self::KEY_ORDER_BY][$column->value] = $direction->value;
 
         return $this;
     }

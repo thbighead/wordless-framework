@@ -5,7 +5,9 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 use stdClass;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Post;
+use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
+use Wordless\Wordpress\Models\PostStatus;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
@@ -181,7 +183,13 @@ trait Resolver
         if (isset($arguments[self::KEY_POST_STATUS])) {
             $resolved_status_argument = [];
 
-            foreach (array_keys($arguments[self::KEY_POST_STATUS]) as $status_string) {
+            foreach ($arguments[self::KEY_POST_STATUS] as $status_string) {
+                if ($status_string instanceof StandardStatus) {
+                    $resolved_status_argument[] = $status_string->value;
+
+                    continue;
+                }
+
                 foreach (explode(',', $status_string) as $status) {
                     $resolved_status_argument[] = $status;
                 }

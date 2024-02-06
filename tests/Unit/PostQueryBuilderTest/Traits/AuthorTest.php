@@ -17,12 +17,12 @@ trait AuthorTest
 
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_AUTHOR => $authors_ids[0]]),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)->whereAuthorId($authors_ids[0]))
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)->whereAuthorId($authors_ids[0]))
         );
 
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_AUTHOR => implode(',', $authors_ids)]),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)->whereAuthorId(...$authors_ids))
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)->whereAuthorId(...$authors_ids))
         );
     }
 
@@ -34,7 +34,7 @@ trait AuthorTest
     {
         $this->assertEquals(
             array_merge(self::DEFAULT_ARGUMENTS, [self::KEY_AUTHOR_NICE_NAME => 'author_name_1']),
-            self::getArgumentsFromReflectionQueryBuilder((new PostQueryBuilder)
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
                 ->whereAuthorNiceName('author_name_1'))
         );
     }
