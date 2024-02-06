@@ -22,7 +22,7 @@ trait WhereGreaterThanOrEqual
             [
                 'relation' => Relation::and->value,
                 [
-                    'month' => 10,
+                    'monthnum' => 10,
                     'column' => Column::post_date->name,
                     'compare' => Compare::greater_than_or_equals->value
                 ]
@@ -42,7 +42,7 @@ trait WhereGreaterThanOrEqual
             [
                 'relation' => Relation::and->value,
                 [
-                    'month' => 10,
+                    'monthnum' => 10,
                     'column' => Column::post_modified->name,
                     'compare' => Compare::greater_than_or_equals->value
                 ]

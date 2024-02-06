@@ -22,7 +22,7 @@ trait WhereBetween
             [
                 'relation' => Relation::and->value,
                 [
-                    'month' => [10, 11],
+                    'monthnum' => [10, 11],
                     'column' => Column::post_date->name,
                     'compare' => Compare::between->value
                 ]

@@ -24,7 +24,7 @@ trait WhereNotIn
             [
                 'relation' => Relation::and->value,
                 [
-                    'month' => [10],
+                    'monthnum' => [10],
                     'column' => Column::post_date->name,
                     'compare' => Compare::not_in->value
                 ]
@@ -45,7 +45,7 @@ trait WhereNotIn
             [
                 'relation' => Relation::and->value,
                 [
-                    'month' => [10, 8],
+                    'monthnum' => [10, 8],
                     'column' => Column::post_date->name,
                     'compare' => Compare::not_in->value
                 ]

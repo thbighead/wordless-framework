@@ -192,8 +192,8 @@ trait Validation
             $month = substr((string)$year_month, 3, 2);
 
             if (
-                ((int)$year < self::MIN_YEAR_VALUE && (int)$year > self::MAX_YEAR_VALUE) ||
-                ((int)$month < self::MIN_MONTH_OF_YEAR_VALUE && (int)$month > self::MAX_MONTH_OF_YEAR_VALUE)
+                (int)$year < self::MIN_YEAR_VALUE || (int)$year > self::MAX_YEAR_VALUE ||
+                (int)$month < self::MIN_MONTH_OF_YEAR_VALUE || (int)$month > self::MAX_MONTH_OF_YEAR_VALUE
             ) {
                 throw new InvalidYearMonth((int)$year, (int)$month);
             }

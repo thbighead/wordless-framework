@@ -22,7 +22,7 @@ trait WhereNotEqual
             [
                 'relation' => Relation::and->value,
                 [
-                    'month' => 10,
+                    'monthnum' => 10,
                     'column' => Column::post_date->name,
                     'compare' => Compare::not_equals->value
                 ]
@@ -42,7 +42,7 @@ trait WhereNotEqual
             [
                 'relation' => Relation::and->value,
                 [
-                    'month' => 10,
+                    'monthnum' => 10,
                     'column' => Column::post_modified->name,
                     'compare' => Compare::not_equals->value
                 ]
