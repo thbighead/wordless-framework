@@ -16,9 +16,9 @@ use Wordless\Wordpress\Enums\StartOfWeek;
 use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 
 return [
-    'languages' => [],
-    'theme' => 'wordless',
-    'permalink' => '/%postname%/',
+    Config::KEY_LANGUAGES => [],
+    Config::KEY_THEME => 'wordless',
+    Config::KEY_PERMALINK => '/%postname%/',
     Config::KEY_ADMIN => [
         RemoveEmojiProvider::CONFIG_KEY_REMOVE_WP_EMOJIS => false,
         WpSpeedUpProvider::CONFIG_KEY_SPEED_UP_WP => true,

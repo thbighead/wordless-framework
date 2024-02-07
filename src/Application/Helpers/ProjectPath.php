@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Helpers;
 
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\ProjectPath\Traits\Internal;
 
@@ -255,11 +256,12 @@ class ProjectPath
     /**
      * @param string $additional_path
      * @return string
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     final public static function theme(string $additional_path = ''): string
     {
-        return self::wpThemes(Config::get('wordpress.theme', 'wordless')
+        return self::wpThemes(Config::wordpressTheme()->get(default: 'wordless')
             . "/$additional_path");
     }
 

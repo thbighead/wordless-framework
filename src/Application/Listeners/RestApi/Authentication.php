@@ -4,9 +4,11 @@ namespace Wordless\Application\Listeners\RestApi;
 
 use Symfony\Component\HttpFoundation\Response;
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Url;
+use Wordless\Application\Providers\RestApiProvider;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
 use Wordless\Wordpress\Hook\Enums\Filter;
@@ -20,8 +22,9 @@ class Authentication extends FilterListener
     protected const FUNCTION = 'checkUserAuthorization';
 
     /**
-     * @param WP_Error|null|true $errors
-     * @return WP_Error|null|true
+     * @param WP_Error|true|null $errors
+     * @return WP_Error|true|null
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     public static function checkUserAuthorization(WP_Error|null|true $errors): WP_Error|null|true
@@ -49,6 +52,7 @@ class Authentication extends FilterListener
 
     /**
      * @return bool
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     private static function isUnauthorized(): bool
@@ -66,11 +70,14 @@ class Authentication extends FilterListener
 
     /**
      * @return bool
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     private static function isCurrentApiEndpointPublic(): bool
     {
-        $public_endpoints = Config::get('wordpress.rest-api.routes.public', []);
+        $public_endpoints = Config::wordpress()->ofKey(RestApiProvider::CONFIG_KEY)
+            ->ofKey(RestApiProvider::CONFIG_KEY_ROUTES)
+            ->get(RestApiProvider::CONFIG_ROUTES_KEY_PUBLIC, []);
         $current_endpoint = Url::getCurrentRestApiEndpoint();
 
         foreach ($public_endpoints as $public_endpoint) {

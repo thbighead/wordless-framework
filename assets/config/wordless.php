@@ -18,7 +18,7 @@ use Wordless\Application\Providers\RemoveEmojiProvider;
 use Wordless\Application\Providers\SeedersProvider;
 use Wordless\Infrastructure\Provider;
 
-$current_wp_theme = Config::get('wordpress.theme', 'wordless');
+$current_wp_theme = Config::wordpressTheme()->get(default: 'wordless');
 /** @var Provider[] $providers */
 $providers = [
     CoreProvider::class,
@@ -65,8 +65,8 @@ return [
         ],
         'upgrade-insecure-requests' => true,
     ],
-    'database' => [
-        UserDTO::USER_DEFAULT_PASSWORD_KEY => 'password',
+    Config::KEY_DATABASE => [
+        UserDTO::USER_DEFAULT_OVERWRITE_PASSWORD_KEY => 'password',
     ],
     Token::CONFIG_KEY => [
         Token::CONFIG_DEFAULT_CRYPTO => CryptoAlgorithm::SYMMETRIC_HMAC_SHA256,

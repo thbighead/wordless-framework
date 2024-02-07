@@ -5,6 +5,7 @@ namespace Wordless\Application\Libraries\LogManager;
 use Monolog\Logger as MonologLogger;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
 use Wordless\Application\Libraries\LogManager\Logger\RotatingFileHandler;
@@ -30,13 +31,14 @@ class Logger extends Singleton
     }
 
     /**
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     protected function __construct()
     {
         parent::__construct();
 
-        $this->config = Config::of('wordless.' . self::CONFIG_KEY_LOG);
+        $this->config = Config::wordless()->ofKey(self::CONFIG_KEY_LOG);
         $this->logger = new MonologLogger(
             $this->config->get(self::CONFIG_KEY_WORDLESS_LINE_PREFIX, 'wordless')
         );

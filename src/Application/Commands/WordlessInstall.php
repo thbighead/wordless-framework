@@ -531,7 +531,7 @@ class WordlessInstall extends ConsoleCommand
      */
     private function loadWpLanguages(): static
     {
-        $this->wp_languages = Config::get('wordpress.languages');
+        $this->wp_languages = Config::wordpressLanguages()->get();
 
         if (empty($this->wp_languages)) {
             $this->wp_languages = ['en_US'];

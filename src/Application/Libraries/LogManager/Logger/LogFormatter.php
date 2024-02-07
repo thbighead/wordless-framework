@@ -5,6 +5,7 @@ namespace Wordless\Application\Libraries\LogManager\Logger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\LogManager\Logger;
 
@@ -17,11 +18,12 @@ class LogFormatter extends StreamHandler
 
     /**
      * @return LineFormatter
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     public static function mountOutputFormatter(): LineFormatter
     {
-        $config = Config::of('wordless.' . Logger::CONFIG_KEY_LOG);
+        $config = Config::wordless()->ofKey(Logger::CONFIG_KEY_LOG);
 
         return new LineFormatter(
             "{$config->get(self::CONFIG_KEY_LINE_FORMAT, self::DEFAULT_LINE_FORMAT)}\n",

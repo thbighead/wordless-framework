@@ -10,6 +10,7 @@ trait Wordless
 {
     final public const FILE_WORDLESS = 'wordless';
     final public const KEY_CSP = 'csp';
+    final public const KEY_DATABASE = 'database';
 
     /**
      * @param string|null $key
@@ -32,6 +33,18 @@ trait Wordless
     public static function wordlessCsp(?string $key = null, mixed $default = null): mixed
     {
         return self::fromWordlessFile(self::KEY_CSP, $key, $default);
+    }
+
+    /**
+     * @param string|null $key
+     * @param mixed|null $default
+     * @return ConfigSubjectDTO|mixed
+     * @throws EmptyConfigKey
+     * @throws PathNotFoundException
+     */
+    public static function wordlessDatabase(?string $key = null, mixed $default = null): mixed
+    {
+        return self::fromWordlessFile(self::KEY_DATABASE, $key, $default);
     }
 
     /**

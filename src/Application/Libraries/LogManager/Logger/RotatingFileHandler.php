@@ -5,6 +5,7 @@ namespace Wordless\Application\Libraries\LogManager\Logger;
 use Monolog\Handler\RotatingFileHandler as MonologRotatingFileHandler;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
@@ -21,13 +22,14 @@ class RotatingFileHandler extends MonologRotatingFileHandler
     private readonly ConfigSubjectDTO $config;
 
     /**
+     * @throws EmptyConfigKey
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
      * @throws PathNotFoundException
      */
     public function __construct()
     {
-        $this->config = Config::of('wordless.' . Logger::CONFIG_KEY_LOG);
+        $this->config = Config::wordless()->ofKey(Logger::CONFIG_KEY_LOG);
 
         parent::__construct(
             $this->resolveFilePath(),

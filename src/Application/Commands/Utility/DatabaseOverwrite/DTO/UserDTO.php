@@ -12,7 +12,7 @@ final class UserDTO
     public const ATTRIBUTE_ID = 'ID';
     public const ATTRIBUTE_ACTIVATION_KEY = 'user_activation_key';
     public const RAW_ATTRIBUTES = [self::ATTRIBUTE_ID, self::ATTRIBUTE_ACTIVATION_KEY];
-    public const USER_DEFAULT_PASSWORD_KEY = 'default_password';
+    public const USER_DEFAULT_OVERWRITE_PASSWORD_KEY = 'default_overwrite_password';
 
     private static Generator $faker;
     private static string $hashed_password;
@@ -36,7 +36,7 @@ final class UserDTO
 
         if (!isset(self::$hashed_password)) {
             self::$hashed_password = wp_hash_password(
-                $this->configurations[self::USER_DEFAULT_PASSWORD_KEY] ?? 'password'
+                $this->configurations[self::USER_DEFAULT_OVERWRITE_PASSWORD_KEY] ?? 'password'
             );
         }
 

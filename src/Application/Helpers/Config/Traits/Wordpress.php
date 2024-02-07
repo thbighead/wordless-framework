@@ -10,6 +10,9 @@ trait Wordpress
 {
     final public const FILE_WORDPRESS = 'wordpress';
     final public const KEY_ADMIN = 'admin';
+    final public const KEY_LANGUAGES = 'languages';
+    final public const KEY_PERMALINK = 'permalink';
+    final public const KEY_THEME = 'theme';
 
     /**
      * @param string|null $key
@@ -32,6 +35,23 @@ trait Wordpress
     public static function wordpressAdmin(?string $key = null, mixed $default = null): mixed
     {
         return self::fromWordpressFile(self::KEY_ADMIN, $key, $default);
+    }
+
+    public static function wordpressLanguages(?string $key = null, mixed $default = null): mixed
+    {
+        return self::fromWordpressFile(self::KEY_LANGUAGES, $key, $default);
+    }
+
+    /**
+     * @param string|null $key
+     * @param mixed|null $default
+     * @return ConfigSubjectDTO|mixed
+     * @throws EmptyConfigKey
+     * @throws PathNotFoundException
+     */
+    public static function wordpressTheme(?string $key = null, mixed $default = null): mixed
+    {
+        return self::fromWordpressFile(self::KEY_THEME, $key, $default);
     }
 
     /**
