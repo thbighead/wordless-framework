@@ -2,9 +2,9 @@
 
 namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest;
 
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTest\Traits\AndTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTest\Traits\NotTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTest\Traits\OrTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTests\Traits\AndTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTests\Traits\NotTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTests\Traits\OrTests;
 
 trait OnlyPrivateTests
 {
