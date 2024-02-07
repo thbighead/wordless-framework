@@ -4,8 +4,8 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereDeletePermissionTest
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\OrComparison;
 
 trait OrTests
 {
@@ -16,9 +16,10 @@ trait OrTests
      */
     public function testOrWhereDeletePermission(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->orWhereDeletePermission('capability');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->whereDeletePermission('capability');
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['delete_cap' => 'capability'],
@@ -33,11 +34,11 @@ trait OrTests
      */
     public function testOrWhereDeletePermissionWhereSameAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orWhereDeletePermission('capability')
-            ->orWhereDeletePermission('capability');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->whereDeletePermission('capability')
+            ->whereDeletePermission('capability');
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['delete_cap' => 'capability'],
@@ -52,11 +53,11 @@ trait OrTests
      */
     public function testOrWhereDeletePermissionWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orWhereDeletePermission('capability_1')
-            ->orWhereDeletePermission('capability_2');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->whereDeletePermission('capability_1')
+            ->whereDeletePermission('capability_2');
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['delete_cap' => 'capability_2'],
@@ -71,12 +72,12 @@ trait OrTests
      */
     public function testOrWhereDeletePermissionWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orWhereName('name')
-            ->orOnlyDefault()
-            ->orWhereDeletePermission('capability');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->whereName('name')
+            ->onlyDefault()
+            ->whereDeletePermission('capability');
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
@@ -96,6 +97,6 @@ trait OrTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->orWhereDeletePermission('');
+        TaxonomyQueryBuilder::getInstance(operator: Operator::or)->whereDeletePermission('');
     }
 }

@@ -5,8 +5,8 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTest\Trai
 use ReflectionException;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\OrComparison;
 
 trait OrTests
 {
@@ -16,9 +16,10 @@ trait OrTests
      */
     public function testOrWhereCanBeUsedBy(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->orWhereCanBeUsedBy(ObjectType::post);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->whereCanBeUsedBy(ObjectType::post);
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['object_type' => [ObjectType::post->name]],
@@ -32,11 +33,11 @@ trait OrTests
      */
     public function testOrWhereCanBeUsedByWhereSameAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orWhereCanBeUsedBy(ObjectType::post)
-            ->orWhereCanBeUsedBy(ObjectType::post);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->whereCanBeUsedBy(ObjectType::post)
+            ->whereCanBeUsedBy(ObjectType::post);
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['object_type' => [ObjectType::post->name]],
@@ -50,11 +51,11 @@ trait OrTests
      */
     public function testOrWhereCanBeUsedByWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orWhereCanBeUsedBy(ObjectType::post)
-            ->orWhereCanBeUsedBy(ObjectType::comment);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->whereCanBeUsedBy(ObjectType::post)
+            ->whereCanBeUsedBy(ObjectType::comment);
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['object_type' => [ObjectType::post->name, ObjectType::comment->name]],
@@ -69,12 +70,12 @@ trait OrTests
      */
     public function testOrWhereCanBeUsedByWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orWhereName('name')
-            ->orOnlyDefault()
-            ->orWhereCanBeUsedBy(ObjectType::post);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->whereName('name')
+            ->onlyDefault()
+            ->whereCanBeUsedBy(ObjectType::post);
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
