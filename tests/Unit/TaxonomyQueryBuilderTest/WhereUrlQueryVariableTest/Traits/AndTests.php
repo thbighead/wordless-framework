@@ -3,10 +3,7 @@
 namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereUrlQueryVariableTest\Traits;
 
 use ReflectionException;
-use Wordless\Application\Helpers\Reflection;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 trait AndTests
@@ -18,14 +15,9 @@ trait AndTests
      */
     public function testAndWhereUrlQueryVariable(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andWhereUrlQueryVariable('string_query_var');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->whereUrlQueryVariable('string_query_var');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
-
-        $this->assertInstanceOf(Operator::and::class, Reflection::getNonPublicPropertyValue(
-            $taxonomyQueryBuilder,
-            'operator'
-        ));
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['query_var' => 'string_query_var'],
@@ -41,10 +33,10 @@ trait AndTests
     public function testAndWhereUrlQueryVariableWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereUrlQueryVariable('string_query_var_1')
-            ->andWhereUrlQueryVariable('string_query_var_2');
+            ->whereUrlQueryVariable('string_query_var_1')
+            ->whereUrlQueryVariable('string_query_var_2');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['query_var' => 'string_query_var_2'],
@@ -55,14 +47,15 @@ trait AndTests
     /**
      * @return void
      * @throws ReflectionException
+     * @throws EmptyStringParameter
      */
     public function testAndWhereUrlQueryVariableWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andOnlyDefault()
-            ->andWhereUrlQueryVariable('string_query_var');
+            ->onlyDefault()
+            ->whereUrlQueryVariable('string_query_var');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
@@ -82,9 +75,9 @@ trait AndTests
     {
         $string = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andWhereUrlQueryVariable($string);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->whereUrlQueryVariable($string);
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(['query_var' => $string], $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder));
     }
@@ -97,6 +90,6 @@ trait AndTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->andWhereUrlQueryVariable('');
+        TaxonomyQueryBuilder::getInstance()->whereUrlQueryVariable('');
     }
 }

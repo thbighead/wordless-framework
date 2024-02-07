@@ -4,7 +4,6 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAdminMenuLabelTest\T
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 trait AndTests
@@ -16,9 +15,9 @@ trait AndTests
      */
     public function testAndWhereAdminMenuLabelTest(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andWhereAdminMenuLabel('test_label');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->whereAdminMenuLabel('test_label');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['label' => 'test_label'],
@@ -34,10 +33,10 @@ trait AndTests
     public function testAndWhereAdminMenuLabelWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereAdminMenuLabel('test_label')
-            ->andWhereAdminMenuLabel('test_label');
+            ->whereAdminMenuLabel('test_label')
+            ->whereAdminMenuLabel('test_label');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['label' => 'test_label'],
@@ -53,11 +52,11 @@ trait AndTests
     public function testAndWhereAdminMenuLabelWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereName('name')
-            ->andOnlyDefault()
-            ->andWhereAdminMenuLabel('test_label');
+            ->whereName('name')
+            ->onlyDefault()
+            ->whereAdminMenuLabel('test_label');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
@@ -78,9 +77,9 @@ trait AndTests
     {
         $string = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andWhereAdminMenuLabel($string);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->whereAdminMenuLabel($string);
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(['label' => $string], $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder));
     }
@@ -93,6 +92,6 @@ trait AndTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->andWhereAdminMenuLabel('');
+        TaxonomyQueryBuilder::getInstance()->whereAdminMenuLabel('');
     }
 }

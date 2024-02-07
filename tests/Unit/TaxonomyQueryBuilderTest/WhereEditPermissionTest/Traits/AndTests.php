@@ -17,9 +17,9 @@ trait AndTests
     public function testAndWhereEditPermission(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereEditPermission('capability');
+            ->whereEditPermission('capability');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['edit_cap' => 'capability'],
@@ -35,10 +35,10 @@ trait AndTests
     public function testAndWhereEditPermissionWhereSameAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereEditPermission('capability')
-            ->andWhereEditPermission('capability');
+            ->whereEditPermission('capability')
+            ->whereEditPermission('capability');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['edit_cap' => 'capability'],
@@ -54,10 +54,10 @@ trait AndTests
     public function testAndWhereEditPermissionWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereEditPermission('capability_1')
-            ->andWhereEditPermission('capability_2');
+            ->whereEditPermission('capability_1')
+            ->whereEditPermission('capability_2');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['edit_cap' => 'capability_2'],
@@ -73,11 +73,11 @@ trait AndTests
     public function testAndWhereEditPermissionWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereName('name')
-            ->andOnlyDefault()
-            ->andWhereEditPermission('capability');
+            ->whereName('name')
+            ->onlyDefault()
+            ->whereEditPermission('capability');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
@@ -97,6 +97,6 @@ trait AndTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->andWhereEditPermission('');
+        TaxonomyQueryBuilder::getInstance()->whereEditPermission('');
     }
 }

@@ -5,7 +5,6 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanOnlyBeUsedByTest\
 use ReflectionException;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 trait AndTests
@@ -17,9 +16,9 @@ trait AndTests
     public function testAndWhereCanOnlyBeUsedBy(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereCanOnlyBeUsedBy(ObjectType::post);
+            ->whereCanOnlyBeUsedBy(ObjectType::post);
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['object_type' => [ObjectType::post->name]],
@@ -34,10 +33,10 @@ trait AndTests
     public function testAndWhereCanOnlyBeUsedByWhereSameAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereCanOnlyBeUsedBy(ObjectType::post)
-            ->andWhereCanOnlyBeUsedBy(ObjectType::post);
+            ->whereCanOnlyBeUsedBy(ObjectType::post)
+            ->whereCanOnlyBeUsedBy(ObjectType::post);
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['object_type' => [ObjectType::post->name]],
@@ -52,10 +51,10 @@ trait AndTests
     public function testAndWhereCanOnlyBeUsedByWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereCanOnlyBeUsedBy(ObjectType::post)
-            ->andWhereCanOnlyBeUsedBy(ObjectType::comment);
+            ->whereCanOnlyBeUsedBy(ObjectType::post)
+            ->whereCanOnlyBeUsedBy(ObjectType::comment);
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['object_type' => [ObjectType::comment->name]],
@@ -71,11 +70,11 @@ trait AndTests
     public function testAndWhereCanOnlyBeUsedByWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereName('name')
-            ->andOnlyDefault()
-            ->andWhereCanOnlyBeUsedBy(ObjectType::post);
+            ->whereName('name')
+            ->onlyDefault()
+            ->whereCanOnlyBeUsedBy(ObjectType::post);
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

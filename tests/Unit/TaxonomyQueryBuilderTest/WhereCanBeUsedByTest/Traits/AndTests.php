@@ -16,9 +16,9 @@ trait AndTests
      */
     public function testAndWhereCanBeUsedBy(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andWhereCanBeUsedBy(ObjectType::post);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->whereCanBeUsedBy(ObjectType::post);
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['object_type' => [ObjectType::post->name]],
@@ -33,10 +33,10 @@ trait AndTests
     public function testAndWhereCanBeUsedByWhereSameAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereCanBeUsedBy(ObjectType::post)
-            ->andWhereCanBeUsedBy(ObjectType::post);
+            ->whereCanBeUsedBy(ObjectType::post)
+            ->whereCanBeUsedBy(ObjectType::post);
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['object_type' => [ObjectType::post->name]],
@@ -51,10 +51,10 @@ trait AndTests
     public function testAndWhereCanBeUsedByWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereCanBeUsedBy(ObjectType::post)
-            ->andWhereCanBeUsedBy(ObjectType::comment);
+            ->whereCanBeUsedBy(ObjectType::post)
+            ->whereCanBeUsedBy(ObjectType::comment);
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['object_type' => [ObjectType::post->name, ObjectType::comment->name]],
@@ -70,11 +70,11 @@ trait AndTests
     public function testAndWhereCanBeUsedByWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereName('name')
-            ->andOnlyDefault()
-            ->andWhereCanBeUsedBy(ObjectType::post);
+            ->whereName('name')
+            ->onlyDefault()
+            ->whereCanBeUsedBy(ObjectType::post);
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

@@ -4,7 +4,6 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereDeletePermissionTest
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 trait AndTests
@@ -17,9 +16,9 @@ trait AndTests
     public function testAndWhereDeletePermission(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereDeletePermission('capability');
+            ->whereDeletePermission('capability');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['delete_cap' => 'capability'],
@@ -35,10 +34,10 @@ trait AndTests
     public function testAndWhereDeletePermissionWhereSameAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereDeletePermission('capability')
-            ->andWhereDeletePermission('capability');
+            ->whereDeletePermission('capability')
+            ->whereDeletePermission('capability');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['delete_cap' => 'capability'],
@@ -54,10 +53,10 @@ trait AndTests
     public function testAndWhereDeletePermissionWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereDeletePermission('capability_1')
-            ->andWhereDeletePermission('capability_2');
+            ->whereDeletePermission('capability_1')
+            ->whereDeletePermission('capability_2');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['delete_cap' => 'capability_2'],
@@ -73,11 +72,11 @@ trait AndTests
     public function testAndWhereDeletePermissionWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereName('name')
-            ->andOnlyDefault()
-            ->andWhereDeletePermission('capability');
+            ->whereName('name')
+            ->onlyDefault()
+            ->whereDeletePermission('capability');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
@@ -97,6 +96,6 @@ trait AndTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->andWhereDeletePermission('');
+        TaxonomyQueryBuilder::getInstance()->whereDeletePermission('');
     }
 }

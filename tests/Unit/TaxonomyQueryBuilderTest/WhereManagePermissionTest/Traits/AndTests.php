@@ -17,9 +17,9 @@ trait AndTests
     public function testAndWhereManagePermission(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereManagePermission('capability');
+            ->whereManagePermission('capability');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['manage_cap' => 'capability'],
@@ -35,10 +35,10 @@ trait AndTests
     public function testAndWhereManagePermissionWhereSameAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereManagePermission('capability')
-            ->andWhereManagePermission('capability');
+            ->whereManagePermission('capability')
+            ->whereManagePermission('capability');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['manage_cap' => 'capability'],
@@ -54,10 +54,10 @@ trait AndTests
     public function testAndWhereManagePermissionWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereManagePermission('capability_1')
-            ->andWhereManagePermission('capability_2');
+            ->whereManagePermission('capability_1')
+            ->whereManagePermission('capability_2');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['manage_cap' => 'capability_2'],
@@ -73,11 +73,11 @@ trait AndTests
     public function testAndWhereManagePermissionWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereName('name')
-            ->andOnlyDefault()
-            ->andWhereManagePermission('capability');
+            ->whereName('name')
+            ->onlyDefault()
+            ->whereManagePermission('capability');
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
@@ -97,6 +97,6 @@ trait AndTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->andWhereManagePermission('');
+        TaxonomyQueryBuilder::getInstance()->whereManagePermission('');
     }
 }
