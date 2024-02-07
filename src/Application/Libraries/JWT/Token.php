@@ -163,7 +163,7 @@ class Token implements IPolymorphicConstructor
      */
     private function getConfig(): ConfigSubjectDTO
     {
-        return $this->config ?? $this->config = Config::wordless()->ofKey(self::CONFIG_SIGN_KEY)
+        return $this->config ?? $this->config = Config::wordless()
             ->ofKey(self::CONFIG_KEY);
     }
 
