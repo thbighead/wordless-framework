@@ -2,9 +2,9 @@
 
 namespace Wordless\Tests\WordlessTestCase;
 
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInAdminMenuTest;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInAdminMenuTests;
 
 class TaxonomyBuilderTestCase extends QueryBuilderTestCase
 {
-    use OnlyAvailableInAdminMenuTest;
+    use OnlyAvailableInAdminMenuTests;
 }

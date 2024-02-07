@@ -6,7 +6,7 @@ use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTest\Traits\And
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTest\Traits\NotTests;
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTest\Traits\OrTests;
 
-trait WhereCanBeUsedByTest
+trait WhereCanBeUsedByTests
 {
     use AndTests;
     use NotTests;

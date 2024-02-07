@@ -10,7 +10,7 @@ use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInAdminMenuTest\Tr
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 
-trait OnlyAvailableInAdminMenuTest
+trait OnlyAvailableInAdminMenuTests
 {
     use AndTests;
     use NotTests;

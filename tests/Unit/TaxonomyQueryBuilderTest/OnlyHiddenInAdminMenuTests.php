@@ -6,7 +6,7 @@ use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInAdminMenuTest\Trait
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInAdminMenuTest\Traits\NotTests;
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInAdminMenuTest\Traits\OrTests;
 
-trait OnlyHiddenInAdminMenuTest
+trait OnlyHiddenInAdminMenuTests
 {
     use AndTests;
     use NotTests;

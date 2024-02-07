@@ -6,7 +6,7 @@ use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereDeletePermissionTest\Trait
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereDeletePermissionTest\Traits\NotTests;
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereDeletePermissionTest\Traits\OrTests;
 
-trait WhereDeletePermissionTest
+trait WhereDeletePermissionTests
 {
     use AndTests;
     use NotTests;

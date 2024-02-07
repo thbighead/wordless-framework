@@ -6,7 +6,7 @@ use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTest\Traits\AndTests
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTest\Traits\NotTests;
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTest\Traits\OrTests;
 
-trait OnlyPrivateTest
+trait OnlyPrivateTests
 {
     use AndTests;
     use NotTests;

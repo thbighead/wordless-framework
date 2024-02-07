@@ -1,52 +1,52 @@
 <?php
 
 use Wordless\Application\Helpers\Reflection;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInAdminMenuTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInRestApiTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInTagCloudTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyCustomTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyDefaultTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInAdminMenuTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInRestApiTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInTagCloudTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPublicTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAdminMenuLabelTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAdminMenuSingularLabelTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAssignPermissionTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanOnlyBeUsedByTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereDeletePermissionTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereEditPermissionTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereManagePermissionTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereNameTest;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereUrlQueryVariableTest;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInAdminMenuTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInRestApiTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInTagCloudTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyCustomTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyDefaultTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInAdminMenuTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInRestApiTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInTagCloudTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPublicTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAdminMenuLabelTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAdminMenuSingularLabelTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAssignPermissionTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanOnlyBeUsedByTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereDeletePermissionTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereEditPermissionTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereManagePermissionTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereNameTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereUrlQueryVariableTests;
 use Wordless\Tests\WordlessTestCase\QueryBuilderTestCase;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\ResultFormat;
 
 class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
 {
-    use OnlyAvailableInAdminMenuTest;
-    use OnlyAvailableInRestApiTest;
-    use OnlyAvailableInTagCloudTest;
-    use OnlyCustomTest;
-    use OnlyDefaultTest;
-    use OnlyHiddenInAdminMenuTest;
-    use OnlyHiddenInRestApiTest;
-    use OnlyHiddenInTagCloudTest;
-    use OnlyPrivateTest;
-    use OnlyPublicTest;
-    use WhereAdminMenuLabelTest;
-    use WhereAdminMenuSingularLabelTest;
-    use WhereAssignPermissionTest;
-    use WhereCanBeUsedByTest;
-    use WhereCanOnlyBeUsedByTest;
-    use WhereDeletePermissionTest;
-    use WhereEditPermissionTest;
-    use WhereManagePermissionTest;
-    use WhereNameTest;
-    use WhereUrlQueryVariableTest;
+    use OnlyAvailableInAdminMenuTests;
+    use OnlyAvailableInRestApiTests;
+    use OnlyAvailableInTagCloudTests;
+    use OnlyCustomTests;
+    use OnlyDefaultTests;
+    use OnlyHiddenInAdminMenuTests;
+    use OnlyHiddenInRestApiTests;
+    use OnlyHiddenInTagCloudTests;
+    use OnlyPrivateTests;
+    use OnlyPublicTests;
+    use WhereAdminMenuLabelTests;
+    use WhereAdminMenuSingularLabelTests;
+    use WhereAssignPermissionTests;
+    use WhereCanBeUsedByTests;
+    use WhereCanOnlyBeUsedByTests;
+    use WhereDeletePermissionTests;
+    use WhereEditPermissionTests;
+    use WhereManagePermissionTests;
+    use WhereNameTests;
+    use WhereUrlQueryVariableTests;
 
     /**
      * @return void
