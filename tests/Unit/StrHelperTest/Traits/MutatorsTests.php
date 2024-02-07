@@ -28,20 +28,20 @@ trait MutatorsTests
     {
         $this->assertEquals(
             self::BASE_STRING,
-            Str::before(self::BASE_STRING, 'Substrings')
+            Str::finishWith(self::BASE_STRING, 'Substrings')
         );
 
         $this->assertEquals(
             self::BASE_STRING . 'Test',
-            Str::before(self::BASE_STRING, 'Test')
+            Str::finishWith(self::BASE_STRING, 'Test')
         );
     }
 
     public function testRemoveSuffix(): void
     {
         $this->assertEquals(
-            'StringSubstrings',
-            Str::removeSuffix(self::BASE_STRING, 'Test')
+            'TestString',
+            Str::removeSuffix(self::BASE_STRING, 'Substrings')
         );
 
         $this->assertEquals(

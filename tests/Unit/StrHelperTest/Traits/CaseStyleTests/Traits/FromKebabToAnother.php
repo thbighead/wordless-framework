@@ -2,67 +2,88 @@
 
 namespace Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests\Traits;
 
+use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
 
 trait FromKebabToAnother
 {
+    /**
+     * @return void
+     * @throws InvalidArgumentException
+     */
     public function testKebabToTitleCase(): void
     {
         $this->assertEquals(
+            self::CLEAN_TITLE_CASE_EXAMPLE,
             Str::titleCase(self::CLEAN_KEBAB_CASE_EXAMPLE),
-            self::CLEAN_TITLE_CASE_EXAMPLE
         );
         $this->assertEquals(
+            self::NUMERICAL_TITLE_CASE_EXAMPLE,
             Str::titleCase(self::NUMERICAL_KEBAB_CASE_EXAMPLE),
-            self::NUMERICAL_TITLE_CASE_EXAMPLE
         );
     }
 
+    /**
+     * @return void
+     * @throws InvalidArgumentException
+     */
     public function testKebabToCamelCase(): void
     {
         $this->assertEquals(
+            self::CLEAN_CAMEL_CASE_EXAMPLE,
             Str::camelCase(self::CLEAN_KEBAB_CASE_EXAMPLE),
-            self::CLEAN_CAMEL_CASE_EXAMPLE
         );
         $this->assertEquals(
+            self::NUMERICAL_CAMEL_CASE_EXAMPLE,
             Str::camelCase(self::NUMERICAL_KEBAB_CASE_EXAMPLE),
-            self::NUMERICAL_CAMEL_CASE_EXAMPLE
         );
     }
 
+    /**
+     * @return void
+     * @throws InvalidArgumentException
+     */
     public function testKebabToPascalCase(): void
     {
         $this->assertEquals(
+            self::CLEAN_PASCAL_CASE_EXAMPLE,
             Str::pascalCase(self::CLEAN_KEBAB_CASE_EXAMPLE),
-            self::CLEAN_PASCAL_CASE_EXAMPLE
         );
         $this->assertEquals(
+            self::NUMERICAL_PASCAL_CASE_EXAMPLE,
             Str::pascalCase(self::NUMERICAL_KEBAB_CASE_EXAMPLE),
-            self::NUMERICAL_PASCAL_CASE_EXAMPLE
         );
     }
 
+    /**
+     * @return void
+     * @throws InvalidArgumentException
+     */
     public function testKebabToSnakeCase(): void
     {
         $this->assertEquals(
+            self::CLEAN_SNAKE_CASE_EXAMPLE,
             Str::snakeCase(self::CLEAN_KEBAB_CASE_EXAMPLE),
-            self::CLEAN_SNAKE_CASE_EXAMPLE
         );
         $this->assertEquals(
+            self::NUMERICAL_SNAKE_CASE_EXAMPLE,
             Str::snakeCase(self::NUMERICAL_KEBAB_CASE_EXAMPLE),
-            self::NUMERICAL_SNAKE_CASE_EXAMPLE
         );
     }
 
+    /**
+     * @return void
+     * @throws InvalidArgumentException
+     */
     public function testKebabToKebabCase(): void
     {
         $this->assertEquals(
+            self::CLEAN_KEBAB_CASE_EXAMPLE,
             Str::kebabCase(self::CLEAN_KEBAB_CASE_EXAMPLE),
-            self::CLEAN_KEBAB_CASE_EXAMPLE
         );
         $this->assertEquals(
+            self::NUMERICAL_KEBAB_CASE_EXAMPLE,
             Str::kebabCase(self::NUMERICAL_KEBAB_CASE_EXAMPLE),
-            self::NUMERICAL_KEBAB_CASE_EXAMPLE
         );
     }
 }

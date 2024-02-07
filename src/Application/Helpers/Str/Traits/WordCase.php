@@ -15,7 +15,7 @@ trait WordCase
      */
     public static function camelCase(string $string): string
     {
-        return self::getInflector()->camelize($string);
+        return self::getInflector()->camelize(self::snakeCase($string));
     }
 
     /**
@@ -79,7 +79,7 @@ trait WordCase
      */
     public static function pascalCase(string $string): string
     {
-        return self::getInflector()->classify($string);
+        return self::getInflector()->classify(self::lowerSnakeCase($string));
     }
 
     /**
@@ -126,7 +126,7 @@ trait WordCase
      */
     public static function titleCase(string $string): string
     {
-        preg_match_all('/(\p{Lu}\p{Ll}*|\d)/u', static::pascalCase($string), $words);
+        preg_match_all('/(\p{Lu}\p{Ll}*|\d)/u', static::pascalCase(self::lowerSnakeCase($string)), $words);
 
         return mb_convert_case(implode(' ', $words[0]), MB_CASE_TITLE, 'UTF-8');
     }
