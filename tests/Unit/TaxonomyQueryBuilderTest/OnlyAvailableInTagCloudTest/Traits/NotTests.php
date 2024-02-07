@@ -4,8 +4,8 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInTagCloudTe
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\NotComparison;
 
 trait NotTests
 {
@@ -15,9 +15,9 @@ trait NotTests
      */
     public function testNotOnlyAvailableInTagCloud(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->notOnlyAvailableInTagCloud();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->onlyAvailableInTagCloud();
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_tagcloud' => true],
@@ -31,11 +31,11 @@ trait NotTests
      */
     public function testNotOnlyAvailableInTagCloudWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notOnlyHiddenFromTagCloud()
-            ->notOnlyAvailableInTagCloud();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator:Operator::not)
+            ->onlyHiddenFromTagCloud()
+            ->onlyAvailableInTagCloud();
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_tagcloud' => true],
@@ -50,12 +50,12 @@ trait NotTests
      */
     public function testNotOnlyAvailableInTagCloudWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereName('name')
-            ->notOnlyDefault()
-            ->notOnlyAvailableInTagCloud();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator:Operator::not)
+            ->whereName('name')
+            ->onlyDefault()
+            ->onlyAvailableInTagCloud();
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

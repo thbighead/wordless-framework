@@ -15,9 +15,9 @@ trait AndTests
      */
     public function testAndOnlyPublic(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andOnlyPublic();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->onlyPublic();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['public' => true],
@@ -32,10 +32,10 @@ trait AndTests
     public function testAndOnlyPublicWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andOnlyPrivate()
-            ->andOnlyPublic();
+            ->onlyPrivate()
+            ->onlyPublic();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['public' => true],
@@ -51,11 +51,11 @@ trait AndTests
     public function testAndOnlyPublicWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereName('name')
-            ->andOnlyDefault()
-            ->andOnlyPublic();
+            ->whereName('name')
+            ->onlyDefault()
+            ->onlyPublic();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

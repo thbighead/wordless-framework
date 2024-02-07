@@ -4,8 +4,8 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPublicTest\Traits;
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\OrComparison;
 
 trait OrTests
 {
@@ -15,9 +15,9 @@ trait OrTests
      */
     public function testOrOnlyPublic(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->orOnlyPublic();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)->onlyPublic();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['public' => true],
@@ -31,11 +31,11 @@ trait OrTests
      */
     public function testOrOnlyPublicWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orOnlyPrivate()
-            ->orOnlyPublic();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->onlyPrivate()
+            ->onlyPublic();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['public' => true],
@@ -50,12 +50,12 @@ trait OrTests
      */
     public function testOrOnlyPublicWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orWhereName('name')
-            ->orOnlyDefault()
-            ->orOnlyPublic();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->whereName('name')
+            ->onlyDefault()
+            ->onlyPublic();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

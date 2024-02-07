@@ -4,8 +4,8 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyCustomTest\Traits;
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\OrComparison;
 
 trait OrTests
 {
@@ -15,9 +15,9 @@ trait OrTests
      */
     public function testOrOnlyCustom(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->orOnlyCustom();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)->onlyCustom();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['_builtin' => false],
@@ -31,11 +31,11 @@ trait OrTests
      */
     public function testOrOnlyCustomWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orOnlyDefault()
-            ->orOnlyCustom();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->onlyDefault()
+            ->onlyCustom();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['_builtin' => false],
@@ -50,11 +50,11 @@ trait OrTests
      */
     public function testOrOnlyCustomWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orWhereName('name')
-            ->orOnlyCustom();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->whereName('name')
+            ->onlyCustom();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

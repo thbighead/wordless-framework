@@ -4,7 +4,6 @@ namespace  Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInAdminMenuTes
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 trait AndTests
@@ -15,9 +14,9 @@ trait AndTests
      */
     public function testAndOnlyHiddenInAdminMenu(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andOnlyHiddenFromAdminMenu();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->onlyHiddenFromAdminMenu();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_ui' => false],
@@ -32,10 +31,10 @@ trait AndTests
     public function testAndOnlyHiddenInAdminMenuWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andOnlyAvailableInAdminMenu()
-            ->andOnlyHiddenFromAdminMenu();
+            ->onlyAvailableInAdminMenu()
+            ->onlyHiddenFromAdminMenu();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_ui' => false],
@@ -51,11 +50,11 @@ trait AndTests
     public function testAndOnlyHiddenInAdminMenuWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereName('name')
-            ->andOnlyDefault()
-            ->andOnlyHiddenFromAdminMenu();
+            ->whereName('name')
+            ->onlyDefault()
+            ->onlyHiddenFromAdminMenu();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

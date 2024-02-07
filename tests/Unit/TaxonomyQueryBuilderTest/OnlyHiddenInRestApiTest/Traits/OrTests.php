@@ -4,8 +4,8 @@ namespace  Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInRestApiTest\
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\OrComparison;
 
 trait OrTests
 {
@@ -15,9 +15,9 @@ trait OrTests
      */
     public function testOrOnlyHiddenInRestApi(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->orOnlyHiddenFromRestApi();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)->onlyHiddenFromRestApi();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_in_rest' => false],
@@ -31,11 +31,11 @@ trait OrTests
      */
     public function testOrOnlyHiddenInRestApiWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orOnlyAvailableInRestApi()
-            ->orOnlyHiddenFromRestApi();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->onlyAvailableInRestApi()
+            ->onlyHiddenFromRestApi();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_in_rest' => false],
@@ -50,12 +50,12 @@ trait OrTests
      */
     public function testOrOnlyHiddenInRestApiWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orWhereName('name')
-            ->orOnlyDefault()
-            ->orOnlyHiddenFromRestApi();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->whereName('name')
+            ->onlyDefault()
+            ->onlyHiddenFromRestApi();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

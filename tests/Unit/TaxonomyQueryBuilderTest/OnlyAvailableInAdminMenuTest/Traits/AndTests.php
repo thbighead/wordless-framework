@@ -3,8 +3,9 @@
 namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInAdminMenuTest\Traits;
 
 use ReflectionException;
+use Wordless\Application\Helpers\Reflection;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 trait AndTests
@@ -15,9 +16,9 @@ trait AndTests
      */
     public function testAndOnlyAvailableInAdminMenu(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andOnlyAvailableInAdminMenu();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->onlyAvailableInAdminMenu();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_ui' => true],
@@ -32,10 +33,10 @@ trait AndTests
     public function testAndOnlyAvailableInAdminMenuWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andOnlyHiddenFromAdminMenu()
-            ->andOnlyAvailableInAdminMenu();
+            ->onlyHiddenFromAdminMenu()
+            ->onlyAvailableInAdminMenu();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_ui' => true],
@@ -51,11 +52,11 @@ trait AndTests
     public function testAndOnlyAvailableInAdminMenuWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereName('name')
-            ->andOnlyDefault()
-            ->andOnlyAvailableInAdminMenu();
+            ->whereName('name')
+            ->onlyDefault()
+            ->onlyAvailableInAdminMenu();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

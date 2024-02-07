@@ -4,8 +4,8 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInRestApiTes
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\NotComparison;
 
 trait NotTests
 {
@@ -15,9 +15,9 @@ trait NotTests
      */
     public function testNotOnlyAvailableInRestApi(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->notOnlyAvailableInRestApi();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->onlyAvailableInRestApi();
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_in_rest' => true],
@@ -32,10 +32,10 @@ trait NotTests
     public function testNotOnlyAvailableInRestApiWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notOnlyHiddenFromRestApi()
-            ->notOnlyAvailableInRestApi();
+            ->onlyHiddenFromRestApi()
+            ->onlyAvailableInRestApi();
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_in_rest' => true],
@@ -51,11 +51,11 @@ trait NotTests
     public function testNotOnlyAvailableInRestApiWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereName('name')
-            ->notOnlyDefault()
-            ->notOnlyAvailableInRestApi();
+            ->whereName('name')
+            ->onlyDefault()
+            ->onlyAvailableInRestApi();
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

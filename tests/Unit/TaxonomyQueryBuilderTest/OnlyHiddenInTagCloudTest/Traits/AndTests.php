@@ -4,7 +4,6 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInTagCloudTest\
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 trait AndTests
@@ -15,9 +14,9 @@ trait AndTests
      */
     public function testAndOnlyHiddenInTagCloud(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andOnlyHiddenFromTagCloud();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->onlyHiddenFromTagCloud();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_tagcloud' => false],
@@ -32,10 +31,10 @@ trait AndTests
     public function testAndOnlyHiddenInTagCloudWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andOnlyAvailableInTagCloud()
-            ->andOnlyHiddenFromTagCloud();
+            ->onlyAvailableInTagCloud()
+            ->onlyHiddenFromTagCloud();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_tagcloud' => false],
@@ -51,11 +50,11 @@ trait AndTests
     public function testAndOnlyHiddenInTagCloudWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereName('name')
-            ->andOnlyDefault()
-            ->andOnlyHiddenFromTagCloud();
+            ->whereName('name')
+            ->onlyDefault()
+            ->onlyHiddenFromTagCloud();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

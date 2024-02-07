@@ -4,7 +4,6 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInRestApiTest\T
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 trait AndTests
@@ -15,9 +14,9 @@ trait AndTests
      */
     public function testAndOnlyHiddenInRestApi(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andOnlyHiddenFromRestApi();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->onlyHiddenFromRestApi();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_in_rest' => false],
@@ -32,10 +31,10 @@ trait AndTests
     public function testAndOnlyHiddenInRestApiWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andOnlyAvailableInRestApi()
-            ->andOnlyHiddenFromRestApi();
+            ->onlyAvailableInRestApi()
+            ->onlyHiddenFromRestApi();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_in_rest' => false],
@@ -51,11 +50,11 @@ trait AndTests
     public function testAndOnlyHiddenInRestApiWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereName('name')
-            ->andOnlyDefault()
-            ->andOnlyHiddenFromRestApi();
+            ->whereName('name')
+            ->onlyDefault()
+            ->onlyHiddenFromRestApi();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

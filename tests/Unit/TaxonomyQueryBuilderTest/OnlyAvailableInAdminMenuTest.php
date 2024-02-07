@@ -2,14 +2,53 @@
 
 namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest;
 
+use ReflectionException;
+use Wordless\Application\Helpers\Reflection;
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInAdminMenuTest\Traits\AndTests;
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInAdminMenuTest\Traits\NotTests;
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInAdminMenuTest\Traits\OrTests;
-use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 
-class OnlyAvailableInAdminMenuTest extends TaxonomyBuilderTestCase
+trait OnlyAvailableInAdminMenuTest
 {
     use AndTests;
     use NotTests;
     use OrTests;
+
+
+    /**
+     * @throws ReflectionException
+     */
+    public function assertAndOperator(TaxonomyQueryBuilder $taxonomyQueryBuilder): void
+    {
+        $this->assertOperator($taxonomyQueryBuilder, Operator::and);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function assertNotOperator(TaxonomyQueryBuilder $taxonomyQueryBuilder): void
+    {
+        $this->assertOperator($taxonomyQueryBuilder, Operator::not);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public function assertOrOperator(TaxonomyQueryBuilder $taxonomyQueryBuilder): void
+    {
+        $this->assertOperator($taxonomyQueryBuilder, Operator::or);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function assertOperator(TaxonomyQueryBuilder $taxonomyQueryBuilder, Operator $operator): void
+    {
+        $this->assertEquals(
+            $operator,
+            Reflection::getNonPublicPropertyValue($taxonomyQueryBuilder, 'operator')
+        );
+    }
 }

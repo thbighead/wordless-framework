@@ -4,7 +4,6 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTest\Traits;
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 trait AndTests
@@ -15,9 +14,9 @@ trait AndTests
      */
     public function testAndOnlyPrivate(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->andOnlyPrivate();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->onlyPrivate();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['public' => false],
@@ -32,10 +31,10 @@ trait AndTests
     public function testAndOnlyPrivateWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andOnlyPublic()
-            ->andOnlyPrivate();
+            ->onlyPublic()
+            ->onlyPrivate();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['public' => false],
@@ -51,11 +50,11 @@ trait AndTests
     public function testAndOnlyPrivateWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->andWhereName('name')
-            ->andOnlyDefault()
-            ->andOnlyPrivate();
+            ->whereName('name')
+            ->onlyDefault()
+            ->onlyPrivate();
 
-        $this->assertInstanceOf(AndComparison::class, $taxonomyQueryBuilder);
+        $this->assertAndOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

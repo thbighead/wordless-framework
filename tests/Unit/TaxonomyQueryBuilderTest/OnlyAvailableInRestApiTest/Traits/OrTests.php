@@ -4,8 +4,8 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInRestApiTes
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\OrComparison;
 
 trait OrTests
 {
@@ -15,9 +15,9 @@ trait OrTests
      */
     public function testOrOnlyAvailableInRestApi(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->orOnlyAvailableInRestApi();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)->onlyAvailableInRestApi();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_in_rest' => true],
@@ -32,10 +32,10 @@ trait OrTests
     public function testOrOnlyAvailableInRestApiWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orOnlyHiddenFromRestApi()
-            ->orOnlyAvailableInRestApi();
+            ->onlyHiddenFromRestApi()
+            ->onlyAvailableInRestApi();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_in_rest' => true],
@@ -51,11 +51,11 @@ trait OrTests
     public function testOrOnlyAvailableInRestApiWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orWhereName('name')
-            ->orOnlyDefault()
-            ->orOnlyAvailableInRestApi();
+            ->whereName('name')
+            ->onlyDefault()
+            ->onlyAvailableInRestApi();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

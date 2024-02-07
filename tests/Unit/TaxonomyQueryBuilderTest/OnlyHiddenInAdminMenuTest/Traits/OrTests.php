@@ -4,8 +4,8 @@ namespace  Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInAdminMenuTes
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\OrComparison;
 
 trait OrTests
 {
@@ -15,9 +15,9 @@ trait OrTests
      */
     public function testOrOnlyHiddenInAdminMenu(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->orOnlyHiddenFromAdminMenu();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)->onlyHiddenFromAdminMenu();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_ui' => false],
@@ -31,11 +31,11 @@ trait OrTests
      */
     public function testOrOnlyHiddenInAdminMenuWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orOnlyAvailableInAdminMenu()
-            ->orOnlyHiddenFromAdminMenu();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->onlyAvailableInAdminMenu()
+            ->onlyHiddenFromAdminMenu();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['show_ui' => false],
@@ -50,12 +50,12 @@ trait OrTests
      */
     public function testOrOnlyHiddenInAdminMenuWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->orWhereName('name')
-            ->orOnlyDefault()
-            ->orOnlyHiddenFromAdminMenu();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+            ->whereName('name')
+            ->onlyDefault()
+            ->onlyHiddenFromAdminMenu();
 
-        $this->assertInstanceOf(OrComparison::class, $taxonomyQueryBuilder);
+        $this->assertOrOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
