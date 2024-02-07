@@ -16,7 +16,6 @@ trait OnlyAvailableInAdminMenuTest
     use NotTests;
     use OrTests;
 
-
     /**
      * @throws ReflectionException
      */

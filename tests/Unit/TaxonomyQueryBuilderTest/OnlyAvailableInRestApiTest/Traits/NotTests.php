@@ -31,7 +31,7 @@ trait NotTests
      */
     public function testNotOnlyAvailableInRestApiWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
             ->onlyHiddenFromRestApi()
             ->onlyAvailableInRestApi();
 
@@ -50,7 +50,7 @@ trait NotTests
      */
     public function testNotOnlyAvailableInRestApiWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
             ->whereName('name')
             ->onlyDefault()
             ->onlyAvailableInRestApi();

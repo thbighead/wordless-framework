@@ -31,7 +31,7 @@ trait OrTests
      */
     public function testOrOnlyAvailableInRestApiWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
             ->onlyHiddenFromRestApi()
             ->onlyAvailableInRestApi();
 
@@ -48,9 +48,9 @@ trait OrTests
      * @throws ReflectionException
      * @throws EmptyStringParameter
      */
-    public function testOrOnlyAvailableInRestApiWhitSomeArguments(): void
+    public function testOrOnlyAvailableInRestApiWithSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
             ->whereName('name')
             ->onlyDefault()
             ->onlyAvailableInRestApi();

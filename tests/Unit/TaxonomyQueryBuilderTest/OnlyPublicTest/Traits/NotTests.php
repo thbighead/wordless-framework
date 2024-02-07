@@ -6,7 +6,6 @@ use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\NotComparison;
 
 trait NotTests
 {
@@ -16,9 +15,9 @@ trait NotTests
      */
     public function testNotOnlyPublic(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->notOnlyPublic();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->onlyPublic();
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['public' => true],
@@ -33,10 +32,10 @@ trait NotTests
     public function testNotOnlyPublicWhereAlreadySet(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
-            ->notOnlyPrivate()
-            ->notOnlyPublic();
+            ->onlyPrivate()
+            ->onlyPublic();
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['public' => true],
@@ -52,11 +51,11 @@ trait NotTests
     public function testNotOnlyPublicWhitSomeArguments(): void
     {
         $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
-            ->notWhereName('name')
-            ->notOnlyDefault()
-            ->notOnlyPublic();
+            ->whereName('name')
+            ->onlyDefault()
+            ->onlyPublic();
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
