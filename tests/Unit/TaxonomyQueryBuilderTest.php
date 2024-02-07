@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 use Wordless\Tests\WordlessTestCase\QueryBuilderTestCase;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
