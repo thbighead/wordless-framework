@@ -10,7 +10,7 @@ use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 
-class WhereManagePermissionTest extends TaxonomyBuilderTestCase
+trait WhereManagePermissionTest extends TaxonomyBuilderTestCase
 {
     use AndTests;
     use NotTests;

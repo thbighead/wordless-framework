@@ -7,7 +7,7 @@ use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereEditPermissionTest\Traits\
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereEditPermissionTest\Traits\OrTests;
 use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
 
-class WhereEditPermissionTest extends TaxonomyBuilderTestCase
+trait WhereEditPermissionTest extends TaxonomyBuilderTestCase
 {
     use AndTests;
     use NotTests;

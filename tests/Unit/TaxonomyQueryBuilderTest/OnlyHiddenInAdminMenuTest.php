@@ -7,7 +7,7 @@ use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInAdminMenuTest\Trait
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInAdminMenuTest\Traits\OrTests;
 use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
 
-class OnlyHiddenInAdminMenuTest extends TaxonomyBuilderTestCase
+trait OnlyHiddenInAdminMenuTest extends TaxonomyBuilderTestCase
 {
     use AndTests;
     use NotTests;
