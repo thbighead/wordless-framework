@@ -44,7 +44,7 @@ class JwtTest extends WordlessTestCase
         $jwt = new Token(self::JWT_EXAMPLE);
 
         $this->assertEquals([
-            'alg' => CryptoAlgorithm::SYMMETRIC_HMAC_SHA256,
+            'alg' => CryptoAlgorithm::symmetric_hmac_sha256->value,
             'typ' => 'JWT',
         ], $jwt->getDecodedHeader());
 
@@ -85,7 +85,7 @@ class JwtTest extends WordlessTestCase
     {
         $this->assertEquals(
             self::JWT_TEST_PAYLOAD,
-            ($jwt = new Token(self::JWT_TEST_PAYLOAD, CryptoAlgorithm::SYMMETRIC_HMAC_SHA256))->getDecodedPayload()
+            ($jwt = new Token(self::JWT_TEST_PAYLOAD, CryptoAlgorithm::symmetric_hmac_sha256))->getDecodedPayload()
         );
 
         $jwt->validateSignature();
@@ -101,7 +101,7 @@ class JwtTest extends WordlessTestCase
     public function testPayloadUsingCryptoHmacSha384Constructor()
     {
         $this->assertTrue(
-            (new Token(self::JWT_TEST_PAYLOAD, CryptoAlgorithm::SYMMETRIC_HMAC_SHA384))->isValid()
+            (new Token(self::JWT_TEST_PAYLOAD, CryptoAlgorithm::symmetric_hmac_sha384))->isValid()
         );
     }
 
@@ -115,7 +115,7 @@ class JwtTest extends WordlessTestCase
     public function testPayloadUsingCryptoHmacSha512Constructor()
     {
         $this->assertTrue(
-            (new Token(self::JWT_TEST_PAYLOAD, CryptoAlgorithm::SYMMETRIC_HMAC_SHA512))->isValid()
+            (new Token(self::JWT_TEST_PAYLOAD, CryptoAlgorithm::symmetric_hmac_sha512))->isValid()
         );
     }
 
@@ -129,7 +129,7 @@ class JwtTest extends WordlessTestCase
     public function testPayloadUsingCryptoBlake2BConstructor()
     {
         $this->assertTrue(
-            (new Token(self::JWT_TEST_PAYLOAD, CryptoAlgorithm::SYMMETRIC_HMAC_BLAKE2B_HASH))->isValid()
+            (new Token(self::JWT_TEST_PAYLOAD, CryptoAlgorithm::symmetric_hmac_blake2b_hash))->isValid()
         );
     }
 }

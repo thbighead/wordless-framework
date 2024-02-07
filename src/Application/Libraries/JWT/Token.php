@@ -163,7 +163,7 @@ class Token implements IPolymorphicConstructor
      */
     private function getConfig(): ConfigSubjectDTO
     {
-        return $this->config ?? $this->config = Config::wordless(self::CONFIG_SIGN_KEY)
+        return $this->config ?? $this->config = Config::wordless()->ofKey(self::CONFIG_SIGN_KEY)
             ->ofKey(self::CONFIG_KEY);
     }
 
@@ -179,10 +179,10 @@ class Token implements IPolymorphicConstructor
         }
 
         return match ($crypto_key) {
-            CryptoAlgorithm::SYMMETRIC_HMAC_SHA256 => new HmacSha256,
-            CryptoAlgorithm::SYMMETRIC_HMAC_SHA384 => new HmacSha384,
-            CryptoAlgorithm::SYMMETRIC_HMAC_SHA512 => new HmacSha512,
-            CryptoAlgorithm::SYMMETRIC_HMAC_BLAKE2B_HASH => new Blake2b,
+            CryptoAlgorithm::symmetric_hmac_sha256 => new HmacSha256,
+            CryptoAlgorithm::symmetric_hmac_sha384 => new HmacSha384,
+            CryptoAlgorithm::symmetric_hmac_sha512 => new HmacSha512,
+            CryptoAlgorithm::symmetric_hmac_blake2b_hash => new Blake2b,
             default => throw new InvalidJwtCryptoAlgorithmId($crypto_key ?? $crypto_key->value),
         };
     }
@@ -202,12 +202,12 @@ class Token implements IPolymorphicConstructor
         }
 
         $key = match ($crypto_key) {
-            CryptoAlgorithm::SYMMETRIC_HMAC_SHA256, CryptoAlgorithm::SYMMETRIC_HMAC_BLAKE2B_HASH => Str::truncate(
+            CryptoAlgorithm::symmetric_hmac_sha256, CryptoAlgorithm::symmetric_hmac_blake2b_hash => Str::truncate(
                 $key,
                 256 / $char_size_in_bits
             ),
-            CryptoAlgorithm::SYMMETRIC_HMAC_SHA384 => Str::truncate($key, 384 / $char_size_in_bits),
-            CryptoAlgorithm::SYMMETRIC_HMAC_SHA512 => Str::truncate($key, 512 / $char_size_in_bits),
+            CryptoAlgorithm::symmetric_hmac_sha384 => Str::truncate($key, 384 / $char_size_in_bits),
+            CryptoAlgorithm::symmetric_hmac_sha512 => Str::truncate($key, 512 / $char_size_in_bits),
             default => throw new InvalidJwtCryptoAlgorithmId($crypto_key ?? $crypto_key->value),
         };
 

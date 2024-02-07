@@ -69,7 +69,7 @@ return [
         UserDTO::USER_DEFAULT_OVERWRITE_PASSWORD_KEY => 'password',
     ],
     Token::CONFIG_KEY => [
-        Token::CONFIG_DEFAULT_CRYPTO => CryptoAlgorithm::SYMMETRIC_HMAC_SHA256,
+        Token::CONFIG_DEFAULT_CRYPTO => CryptoAlgorithm::symmetric_hmac_sha256,
         Token::CONFIG_SIGN_KEY => Environment::get(Token::ENVIRONMENT_SIGN_VARIABLE),
     ],
     Logger::CONFIG_KEY_LOG => [

@@ -15,7 +15,10 @@ class ProjectPathHelperTest extends WordlessTestCase
      */
     public function testAppPath()
     {
-        $this->assertEquals(realpath(__DIR__ . '/../../test-environment/app'), ProjectPath::app());
+        $this->assertEquals(
+            realpath(__DIR__ . '/../..') . DIRECTORY_SEPARATOR . 'app',
+            ProjectPath::app()
+        );
     }
 
     /**

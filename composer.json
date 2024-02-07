@@ -56,7 +56,7 @@
   "scripts": {
     "post-autoload-dump": [
       "touch .env",
-      "rm config stubs && ln -s assets/config config && ln -s assets/stubs stubs"
+      "rm -f app config stubs && ln -s src/Application app  && ln -s assets/config config && ln -s assets/stubs stubs"
     ]
   },
   "extra": {
