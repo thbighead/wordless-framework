@@ -147,7 +147,7 @@ class Token implements IPolymorphicConstructor
         $crypto_strategy = $crypto_strategy ?? $this->getConfig()->getOrFail(self::CONFIG_DEFAULT_CRYPTO);
 
         foreach ($payload as $key => $value) {
-            $builder->withClaim("$key", $value);
+            $builder = $builder->withClaim("$key", $value);
         }
 
         $this->parsedToken = $builder->getToken(

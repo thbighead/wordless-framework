@@ -11,6 +11,7 @@ use Lcobucci\JWT\Token\Parser;
 use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Token\RegisteredClaimGiven;
 use Lcobucci\JWT\Token\UnsupportedHeaderFound;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\GetType;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -49,13 +50,14 @@ trait Constructors
     /**
      * @param array $payload
      * @return void
-     * @throws InvalidConfigKey
-     * @throws InvalidJwtCryptoAlgorithmId
-     * @throws PathNotFoundException
      * @throws CannotSignPayload
      * @throws ConversionFailed
+     * @throws InvalidConfigKey
+     * @throws InvalidJwtCryptoAlgorithmId
      * @throws InvalidKeyProvided
+     * @throws PathNotFoundException
      * @throws RegisteredClaimGiven
+     * @throws EmptyConfigKey
      */
     public function __constructWithPayloadUsingDefaultCrypto(array $payload): void
     {
@@ -68,6 +70,7 @@ trait Constructors
      * @return void
      * @throws CannotSignPayload
      * @throws ConversionFailed
+     * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws InvalidKeyProvided
