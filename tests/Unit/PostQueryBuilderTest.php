@@ -4,8 +4,8 @@ namespace Wordless\Tests\Unit;
 
 use ReflectionException;
 use Wordless\Application\Helpers\Reflection;
-use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\AuthorTest;
-use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\CategoryTest;
+use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\AuthorTests;
+use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\CategoryTests;
 use Wordless\Tests\WordlessTestCase\QueryBuilderTestCase;
 use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType;
@@ -18,8 +18,8 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\Direct
 
 class PostQueryBuilderTest extends QueryBuilderTestCase
 {
-    use AuthorTest;
-    use CategoryTest;
+    use AuthorTests;
+    use CategoryTests;
 
     private const DEFAULT_ARGUMENTS = [
         PostType::QUERY_TYPE_KEY => StandardType::ANY,
