@@ -7,7 +7,7 @@ use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInRestApiTest\Traits\
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInRestApiTest\Traits\OrTests;
 use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
 
-trait OnlyHiddenInRestApiTest extends TaxonomyBuilderTestCase
+trait OnlyHiddenInRestApiTest
 {
     use AndTests;
     use NotTests;

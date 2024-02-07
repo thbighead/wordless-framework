@@ -11,7 +11,7 @@ use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 
-trait WhereDeletePermissionTest extends TaxonomyBuilderTestCase
+trait WhereDeletePermissionTest
 {
     use AndTests;
     use NotTests;

@@ -7,7 +7,7 @@ use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereUrlQueryVariableTest\Trait
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereUrlQueryVariableTest\Traits\OrTests;
 use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
 
-trait WhereUrlQueryVariableTest extends TaxonomyBuilderTestCase
+trait WhereUrlQueryVariableTest
 {
     use AndTests;
     use NotTests;

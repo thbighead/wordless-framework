@@ -7,7 +7,7 @@ use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInTagCloudTest\Traits
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInTagCloudTest\Traits\OrTests;
 use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
 
-trait OnlyHiddenInTagCloudTest extends TaxonomyBuilderTestCase
+trait OnlyHiddenInTagCloudTest
 {
     use AndTests;
     use NotTests;

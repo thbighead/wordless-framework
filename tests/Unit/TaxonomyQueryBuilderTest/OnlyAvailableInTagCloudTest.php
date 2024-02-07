@@ -7,7 +7,7 @@ use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInTagCloudTest\Tra
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInTagCloudTest\Traits\OrTests;
 use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
 
-trait OnlyAvailableInTagCloudTest extends TaxonomyBuilderTestCase
+trait OnlyAvailableInTagCloudTest
 {
     use AndTests;
     use NotTests;

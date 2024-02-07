@@ -7,7 +7,7 @@ use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAdminMenuSingularLabelTest
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAdminMenuSingularLabelTest\Traits\OrTests;
 use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
 
-trait WhereAdminMenuSingularLabelTest extends TaxonomyBuilderTestCase
+trait WhereAdminMenuSingularLabelTest
 {
     use AndTests;
     use NotTests;

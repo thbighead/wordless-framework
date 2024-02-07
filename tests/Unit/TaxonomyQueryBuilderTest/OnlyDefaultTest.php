@@ -7,7 +7,7 @@ use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyDefaultTest\Traits\NotTests
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyDefaultTest\Traits\OrTests;
 use Wordless\Tests\WordlessTestCase\TaxonomyBuilderTestCase;
 
-trait OnlyDefaultTest extends TaxonomyBuilderTestCase
+trait OnlyDefaultTest
 {
     use AndTests;
     use NotTests;

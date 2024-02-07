@@ -11,7 +11,7 @@ use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 
-trait WhereCanBeUsedByTest extends TaxonomyBuilderTestCase
+trait WhereCanBeUsedByTest
 {
     use AndTests;
     use NotTests;
