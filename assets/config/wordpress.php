@@ -1,10 +1,12 @@
 <?php declare(strict_types=1);
 
+use Wordless\Application\Commands\ConfigureDateOptions;
 use Wordless\Application\Commands\SyncRoles;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Timezone;
 use Wordless\Application\Listeners\ChooseImageEditor;
+use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener;
 use Wordless\Application\Listeners\DisableComments\Contracts\DisableCommentsActionListener;
 use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
@@ -28,15 +30,15 @@ return [
             DefaultRole::admin->value => true,
             DefaultRole::author->value => false,
         ],
-        'custom_admin_uri' => null,
+        BaseListener::CONFIG_KEY_CUSTOM_ADMIN_URI => null,
         DisableCommentsActionListener::CONFIG_KEY_ENABLE_COMMENTS => false,
         Bootstrapper::CONFIG_KEY_ERROR_REPORTING => Environment::isProduction()
             ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
             : E_ALL,
-        'datetime' => [
-            Timezone::CONFIG_KEY => 'UTC+0',
-            'date_format' => 'F j, Y',
-            'time_format' => 'H:i',
+        ConfigureDateOptions::CONFIG_KEY_ADMIN_DATETIME => [
+            Timezone::CONFIG_KEY => 'UTC-3',
+            ConfigureDateOptions::CONFIG_KEY_ADMIN_DATETIME_DATE_FORMAT => 'F j, Y',
+            ConfigureDateOptions::CONFIG_KEY_ADMIN_DATETIME_TIME_FORMAT => 'H:i',
             StartOfWeek::KEY => StartOfWeek::sunday->value,
         ],
     ],

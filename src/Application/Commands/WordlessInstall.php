@@ -213,28 +213,13 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return void
+     * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
-     * @throws EmptyConfigKey
      * @throws ExceptionInterface
-     * @throws InvalidArgumentException
-     * @throws PathNotFoundException
-     * @throws WpCliCommandReturnedNonZero
      */
     private function applyAdminConfiguration(): void
     {
-        $dateConfig = Config::wordpress()->ofKey('datetime');
-
-        $this->runWpCliCommand(
-            "option update date_format \"{$dateConfig->get('date_format', 'Y-m-d')}\""
-        );
-        $this->runWpCliCommand(
-            "option update time_format \"{$dateConfig->get('time_format', 'H:i')}\""
-        );
-        $this->runWpCliCommand('option update '
-            . StartOfWeek::KEY
-            . " {$dateConfig->get(StartOfWeek::KEY, StartOfWeek::sunday->value)}");
-
-        $this->setTimezone();
+        $this->callConsoleCommand(ConfigureDateOptions::COMMAND_NAME);
     }
 
     /**
@@ -736,23 +721,6 @@ class WordlessInstall extends ConsoleCommand
         }
 
         return $this;
-    }
-
-    /**
-     * @return void
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
-     * @throws PathNotFoundException
-     * @throws WpCliCommandReturnedNonZero
-     */
-    private function setTimezone(): void
-    {
-        $option_timezone_string = Timezone::forOptionTimezoneString();
-        $option_gmt_offset = Timezone::forOptionGmtOffset();
-
-        $this->runWpCliCommand("option update gmt_offset '$option_gmt_offset'");
-        $this->runWpCliCommand("option update timezone_string '$option_timezone_string'");
     }
 
     /**

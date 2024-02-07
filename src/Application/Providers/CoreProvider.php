@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Providers;
 
+use Wordless\Application\Commands\ConfigureDateOptions;
 use Wordless\Application\Commands\CreateInternalCache;
 use Wordless\Application\Commands\GeneratePublicWordpressSymbolicLinks;
 use Wordless\Application\Commands\PublishConfigurationFiles;
@@ -30,6 +31,7 @@ class CoreProvider extends Provider
     public function registerCommands(): array
     {
         return [
+            ConfigureDateOptions::class,
             CreateInternalCache::class,
             GeneratePublicWordpressSymbolicLinks::class,
             PublishConfigurationFiles::class,

@@ -18,7 +18,7 @@ abstract class Provider
     use ListenersRegistration;
     use Constructors;
 
-    final public const CONFIG_KEY = 'providers';
+    public const CONFIG_KEY = 'providers';
 
     /**
      * @return string[]|ApiController[]
