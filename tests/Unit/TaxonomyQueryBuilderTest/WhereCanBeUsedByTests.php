@@ -2,9 +2,9 @@
 
 namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest;
 
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTest\Traits\AndTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTest\Traits\NotTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTest\Traits\OrTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTests\Traits\AndTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTests\Traits\NotTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTests\Traits\OrTests;
 
 trait WhereCanBeUsedByTests
 {

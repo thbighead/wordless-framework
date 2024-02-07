@@ -2,9 +2,9 @@
 
 namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest;
 
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereManagePermissionTest\Traits\AndTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereManagePermissionTest\Traits\NotTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereManagePermissionTest\Traits\OrTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereManagePermissionTests\Traits\AndTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereManagePermissionTests\Traits\NotTests;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereManagePermissionTests\Traits\OrTests;
 
 trait WhereManagePermissionTests
 {
