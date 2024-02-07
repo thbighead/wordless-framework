@@ -3,6 +3,7 @@
 namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
@@ -19,6 +20,7 @@ class HideDiagnosticsFromUserRoles extends ActionListener
 
     /**
      * @return void
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     public static function hideDiagnosticsFromUserRoles(): void
@@ -29,8 +31,8 @@ class HideDiagnosticsFromUserRoles extends ActionListener
             return;
         }
 
-        $allowed_roles_to_see_diagnostics = Config::get(
-            'wordpress.admin.' . self::SHOW_DIAGNOSTICS_CONFIG_KEY,
+        $allowed_roles_to_see_diagnostics = Config::wordpressAdmin(
+            self::SHOW_DIAGNOSTICS_CONFIG_KEY,
             []
         );
 

@@ -4,6 +4,7 @@ namespace Wordless\Application\Listeners\CustomAdminUrl\Contracts;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Option;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -11,17 +12,17 @@ use Wordless\Infrastructure\Wordpress\Listener;
 
 abstract class BaseListener extends Listener
 {
-    final public const CUSTOM_ADMIN_URI_KEY = 'custom_admin_url';
-    final public const REDIRECT_FROM_DEFAULTS_TO_URI_KEY = 'redirect_from_defaults_to_url';
+    final public const CONFIG_KEY_CUSTOM_ADMIN_URI = 'custom_admin_uri';
+    final public const CONFIG_KEY_REDIRECT_FROM_DEFAULTS_TO_URI = 'redirect_from_defaults_to_uri';
     /**
      * The function which shall be executed during hook
      */
     final protected const FUNCTION = 'load';
-    private const CONFIG_PREFIX = 'wordpress.admin.';
     private const DEFAULT_CUSTOM_ADMIN_URI = 'wordless';
 
     /**
      * @return bool
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     protected static function canHook(): bool
@@ -29,15 +30,21 @@ abstract class BaseListener extends Listener
         return self::getCustomAdminUri() !== null;
     }
 
+    /**
+     * @return ConfigSubjectDTO
+     * @throws EmptyConfigKey
+     * @throws PathNotFoundException
+     */
     protected static function getConfig(): ConfigSubjectDTO
     {
-        return Config::of(self::CONFIG_PREFIX);
+        return Config::wordpressAdmin();
     }
 
     /**
      * @param string $url
      * @param $scheme
      * @return string
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     protected static function filterWpLoginPhp(string $url, $scheme = null): string
@@ -59,16 +66,16 @@ abstract class BaseListener extends Listener
         }
 
         return self::newLoginUrl($scheme);
-
     }
 
     /**
      * @return string|null
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     protected static function getCustomAdminUri(): ?string
     {
-        $custom_login_uri = static::getConfig()->get(static::CUSTOM_ADMIN_URI_KEY);
+        $custom_login_uri = static::getConfig()->get(static::CONFIG_KEY_CUSTOM_ADMIN_URI);
 
         return empty($custom_login_uri) ? null : $custom_login_uri;
     }
@@ -76,6 +83,7 @@ abstract class BaseListener extends Listener
     /**
      * @param string|null $scheme
      * @return string
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     protected static function newLoginUrl(?string $scheme = null): string
@@ -89,13 +97,13 @@ abstract class BaseListener extends Listener
 
     /**
      * @return string
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     protected static function newRedirectUrl(): string
     {
-        $configured_custom_url = (string)Config::get(
-            self::CONFIG_PREFIX . self::REDIRECT_FROM_DEFAULTS_TO_URI_KEY
-        );
+        $configured_custom_url = (string)static::getConfig()
+            ->get(self::CONFIG_KEY_REDIRECT_FROM_DEFAULTS_TO_URI);
 
         return empty($configured_custom_url) ? self::DEFAULT_CUSTOM_ADMIN_URI : $configured_custom_url;
     }

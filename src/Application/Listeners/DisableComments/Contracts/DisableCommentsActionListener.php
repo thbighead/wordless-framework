@@ -23,6 +23,6 @@ abstract class DisableCommentsActionListener extends ActionListener
      */
     final protected static function areCommentsEnabled(): bool
     {
-        return Config::wordpress()->ofKey('admin')->get(self::CONFIG_KEY_ENABLE_COMMENTS, false);
+        return Config::wordpressAdmin(self::CONFIG_KEY_ENABLE_COMMENTS, false);
     }
 }

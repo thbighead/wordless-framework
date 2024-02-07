@@ -3,9 +3,10 @@
 namespace Wordless\Application\Helpers;
 
 use Wordless\Application\Helpers\Config\Contracts\Subjectable;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Config\Traits\Internal;
+use Wordless\Application\Helpers\Config\Traits\Wordless;
+use Wordless\Application\Helpers\Config\Traits\Wordpress;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\InternalCache;
@@ -14,10 +15,8 @@ use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 class Config extends Subjectable
 {
     use Internal;
-
-    final public const FILE_WORDLESS = 'wordless';
-    final public const FILE_WORDPRESS = 'wordpress';
-    final public const KEY_CSP = 'csp';
+    use Wordless;
+    use Wordpress;
 
     /**
      * @param string $key
@@ -61,27 +60,5 @@ class Config extends Subjectable
         } catch (InternalCacheNotLoaded|FailedToFindCachedKey) {
             return static::getFresh($key);
         }
-    }
-
-    /**
-     * @param string|null $key
-     * @param mixed|null $default
-     * @return mixed|ConfigSubjectDTO
-     * @throws PathNotFoundException
-     */
-    public static function wordless(?string $key = null, mixed $default = null): mixed
-    {
-        return self::fromConfigFile(self::FILE_WORDLESS, $key, $default);
-    }
-
-    /**
-     * @param string|null $key
-     * @param mixed|null $default
-     * @return mixed|ConfigSubjectDTO
-     * @throws PathNotFoundException
-     */
-    public static function wordpress(?string $key = null, mixed $default = null): mixed
-    {
-        return self::fromConfigFile(self::FILE_WORDPRESS, $key, $default);
     }
 }

@@ -3,6 +3,7 @@
 namespace Wordless\Application\Providers;
 
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Listeners\RemoveEmojiFromTinyMce;
 use Wordless\Application\Listeners\RemoveEmojiFromWpResourceHints;
@@ -83,13 +84,11 @@ class RemoveEmojiProvider extends Provider
 
     /**
      * @return bool
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     private function isApplicationConfiguredToRemoveEmojis(): bool
     {
-        return Config::get(
-            WpSpeedUpProvider::CONFIG_PREFIX . self::CONFIG_KEY_REMOVE_WP_EMOJIS,
-            false
-        );
+        return Config::wordpressAdmin(self::CONFIG_KEY_REMOVE_WP_EMOJIS, false);
     }
 }

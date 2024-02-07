@@ -2,6 +2,8 @@
 
 namespace Wordless\Application\Helpers;
 
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
+use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 
 class Timezone
@@ -10,15 +12,20 @@ class Timezone
 
     /**
      * @return string
+     * @throws EmptyConfigKey
+     * @throws InvalidConfigKey
      * @throws PathNotFoundException
      */
     public static function raw(): string
     {
-        return Config::wordpress('admin.datetime')->get(self::CONFIG_KEY);
+        return Config::wordpressAdmin()->ofKey('datetime')
+            ->getOrFail(self::CONFIG_KEY);
     }
 
     /**
      * @return string
+     * @throws EmptyConfigKey
+     * @throws InvalidConfigKey
      * @throws PathNotFoundException
      */
     public static function forOptionGmtOffset(): string
@@ -28,6 +35,8 @@ class Timezone
 
     /**
      * @return string
+     * @throws EmptyConfigKey
+     * @throws InvalidConfigKey
      * @throws PathNotFoundException
      */
     public static function forOptionTimezoneString(): string
@@ -41,6 +50,8 @@ class Timezone
 
     /**
      * @return string
+     * @throws EmptyConfigKey
+     * @throws InvalidConfigKey
      * @throws PathNotFoundException
      */
     public static function forPhpIni(): string

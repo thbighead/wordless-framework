@@ -26,7 +26,7 @@ final class Bootstrapper extends Singleton
     use Migrations;
     use Schedules;
 
-    public const ERROR_REPORTING_KEY = 'error_reporting';
+    final public const CONFIG_KEY_ERROR_REPORTING = 'error_reporting';
 
     /** @var Provider[] $loaded_providers */
     private array $loaded_providers;
@@ -34,7 +34,6 @@ final class Bootstrapper extends Singleton
     /**
      * @return static
      * @throws EmptyConfigKey
-     * @throws InvalidConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
      * @noinspection PhpUnnecessaryStaticReferenceInspection
@@ -47,7 +46,6 @@ final class Bootstrapper extends Singleton
     /**
      * @return Bootstrapper
      * @throws EmptyConfigKey
-     * @throws InvalidConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
      */
@@ -78,7 +76,6 @@ final class Bootstrapper extends Singleton
 
     /**
      * @return Bootstrapper
-     * @throws InvalidConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
      */
@@ -88,7 +85,7 @@ final class Bootstrapper extends Singleton
             return $this;
         }
 
-        foreach (Config::getOrFail('wordless.providers') as $provider_class_namespace) {
+        foreach (Config::wordless(Provider::CONFIG_KEY) as $provider_class_namespace) {
             $this->loaded_providers[] = $this->loadProvider($provider_class_namespace);
         }
 
@@ -102,8 +99,8 @@ final class Bootstrapper extends Singleton
      */
     private function setErrorReporting(): self
     {
-        error_reporting(Config::wordpress()->ofKey('admin')->get(
-            self::ERROR_REPORTING_KEY,
+        error_reporting(Config::wordpressAdmin(
+            self::CONFIG_KEY_ERROR_REPORTING,
             Environment::isProduction() ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED : E_ALL
         ));
 

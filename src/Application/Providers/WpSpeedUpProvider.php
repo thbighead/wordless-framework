@@ -3,6 +3,7 @@
 namespace Wordless\Application\Providers;
 
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Listeners\RemoveAdditionalCssFromAdmin;
 use Wordless\Application\Listeners\RemoveGlobalCustomInlineStyles;
@@ -15,10 +16,10 @@ use Wordless\Wordpress\Hook\Enums\Action;
 class WpSpeedUpProvider extends Provider
 {
     final public const CONFIG_KEY_SPEED_UP_WP = 'speed_up_wp';
-    final public const CONFIG_PREFIX = 'wordpress.admin.';
 
     /**
      * @return string[]|Listener[]
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     public function registerListeners(): array
@@ -45,6 +46,7 @@ class WpSpeedUpProvider extends Provider
 
     /**
      * @return RemoveHookDTO[]
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      * @throws TriedToSetFunctionWhenRemovingListener
      */
@@ -65,10 +67,11 @@ class WpSpeedUpProvider extends Provider
 
     /**
      * @return bool
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     private function isConfiguredToSpeedUpWordpress(): bool
     {
-        return Config::get(self::CONFIG_PREFIX . self::CONFIG_KEY_SPEED_UP_WP, false);
+        return Config::wordpressAdmin(self::CONFIG_KEY_SPEED_UP_WP, false);
     }
 }

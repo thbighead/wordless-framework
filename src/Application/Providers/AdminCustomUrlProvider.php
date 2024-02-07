@@ -3,8 +3,10 @@
 namespace Wordless\Application\Providers;
 
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener;
 use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener as CustomAdminUrlListener;
 use Wordless\Application\Listeners\CustomAdminUrl\LoadCustomAdminUrl;
 use Wordless\Application\Listeners\CustomAdminUrl\NetworkSiteUrlCustomAdminUrl;
@@ -20,17 +22,17 @@ use Wordless\Wordpress\Hook\Enums\Action;
 class AdminCustomUrlProvider extends Provider
 {
     private const ADMIN_DEFAULT_URI = 'wp-core';
-    private const CONFIG_PREFIX = 'wordpress.admin.';
 
     /**
      * @param bool $wrapped
      * @return string
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     public static function getCustomUri(bool $wrapped = true): string
     {
-        $custom_admin_uri = (string)Config::get(
-            'wordpress.admin.custom_admin_uri',
+        $custom_admin_uri = (string)Config::wordpressAdmin(
+            BaseListener::CONFIG_KEY_CUSTOM_ADMIN_URI,
             self::ADMIN_DEFAULT_URI
         );
 
@@ -43,6 +45,7 @@ class AdminCustomUrlProvider extends Provider
 
     /**
      * @return string[]|Listener[]
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     public function registerListeners(): array
@@ -62,6 +65,7 @@ class AdminCustomUrlProvider extends Provider
 
     /**
      * @return RemoveHookDTO[]
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      * @throws TriedToSetFunctionWhenRemovingListener
      */
@@ -79,12 +83,11 @@ class AdminCustomUrlProvider extends Provider
 
     /**
      * @return bool
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     private function hasCustomAdminUrlConfigured(): bool
     {
-        return empty((string)Config::get(
-            self::CONFIG_PREFIX . CustomAdminUrlListener::CUSTOM_ADMIN_URI_KEY
-        ));
+        return empty((string)Config::wordpressAdmin(CustomAdminUrlListener::CONFIG_KEY_CUSTOM_ADMIN_URI));
     }
 }

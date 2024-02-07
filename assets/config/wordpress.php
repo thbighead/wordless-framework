@@ -1,7 +1,9 @@
 <?php declare(strict_types=1);
 
 use Wordless\Application\Commands\SyncRoles;
+use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Timezone;
 use Wordless\Application\Listeners\ChooseImageEditor;
 use Wordless\Application\Listeners\DisableComments\Contracts\DisableCommentsActionListener;
 use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
@@ -17,22 +19,22 @@ return [
     'languages' => [],
     'theme' => 'wordless',
     'permalink' => '/%postname%/',
-    'admin' => [
+    Config::KEY_ADMIN => [
         RemoveEmojiProvider::CONFIG_KEY_REMOVE_WP_EMOJIS => false,
         WpSpeedUpProvider::CONFIG_KEY_SPEED_UP_WP => true,
         DoNotLoadWpAdminBarOutsidePanel::SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY => true,
-        ChooseImageEditor::IMAGE_LIBRARY_CONFIG_KEY => ChooseImageEditor::IMAGE_LIBRARY_CONFIG_VALUE_IMAGICK,
+        ChooseImageEditor::CONFIG_KEY_IMAGE_LIBRARY => ChooseImageEditor::IMAGE_LIBRARY_CONFIG_VALUE_IMAGICK,
         HideDiagnosticsFromUserRoles::SHOW_DIAGNOSTICS_CONFIG_KEY => [
             DefaultRole::admin->value => true,
             DefaultRole::author->value => false,
         ],
         'custom_admin_uri' => null,
         DisableCommentsActionListener::CONFIG_KEY_ENABLE_COMMENTS => false,
-        Bootstrapper::ERROR_REPORTING_KEY => Environment::isProduction()
+        Bootstrapper::CONFIG_KEY_ERROR_REPORTING => Environment::isProduction()
             ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED
             : E_ALL,
         'datetime' => [
-            'timezone' => 'UTC+0',
+            Timezone::CONFIG_KEY => 'UTC+0',
             'date_format' => 'F j, Y',
             'time_format' => 'H:i',
             StartOfWeek::KEY => StartOfWeek::sunday->value,

@@ -3,6 +3,7 @@
 namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
@@ -19,12 +20,13 @@ class DoNotLoadWpAdminBarOutsidePanel extends ActionListener
 
     /**
      * @return void
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     public static function removeAdminBarWhenNotInAdmin(): void
     {
-        if (!Config::get(
-                'wordpress.admin.' . static::SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY,
+        if (!Config::wordpressAdmin(
+                static::SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY,
                 false
             ) && !is_admin()) {
             show_admin_bar(false);

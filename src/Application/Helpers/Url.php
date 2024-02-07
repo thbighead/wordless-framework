@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Helpers;
 
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Url\Traits\Internal;
 use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener;
@@ -45,13 +46,12 @@ class Url
 
     /**
      * @return bool
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     public static function isCurrentAdminLogin(): bool
     {
-        $custom_admin_login_uri = Config::get(
-            'wordpress.admin.' . BaseListener::CUSTOM_ADMIN_URI_KEY
-        );
+        $custom_admin_login_uri = Config::wordpressAdmin(BaseListener::CONFIG_KEY_CUSTOM_ADMIN_URI);
 
         if (empty($custom_admin_login_uri)) {
             return isset($_SERVER['SCRIPT_NAME']) && stripos(wp_login_url(), $_SERVER['SCRIPT_NAME']) !== false;

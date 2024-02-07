@@ -19,6 +19,8 @@ use Lcobucci\JWT\Token\RegisteredClaimGiven;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\Validator;
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -37,10 +39,12 @@ class Token implements IPolymorphicConstructor
     use PolymorphicConstructorGuesser;
 
     final public const CONFIG_DEFAULT_CRYPTO = 'default_crypto';
+    final public const CONFIG_KEY = 'jwt';
     final public const CONFIG_SIGN_KEY = 'sign_key';
     final public const ENVIRONMENT_SIGN_VARIABLE = 'JWT_BASE_64_SIGN_KEY';
     final public const JWT_HEADER_ALGORITHM_KEY = 'alg';
 
+    private ConfigSubjectDTO $config;
     private Plain $parsedToken;
 
     public function __toString()
@@ -92,6 +96,7 @@ class Token implements IPolymorphicConstructor
 
     /**
      * @return bool
+     * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws PathNotFoundException
@@ -102,12 +107,13 @@ class Token implements IPolymorphicConstructor
             $this->getCryptoAlgorithm(
                 $crypto_strategy = $this->getDecodedHeader(self::JWT_HEADER_ALGORITHM_KEY, '')
             ),
-            $this->mountSignatureKey($crypto_strategy, Config::getOrFail('wordless.jwt.' . self::CONFIG_SIGN_KEY))
+            $this->mountSignatureKey($crypto_strategy, $this->getConfig()->getOrFail(self::CONFIG_SIGN_KEY))
         ));
     }
 
     /**
      * @return void
+     * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws PathNotFoundException
@@ -118,7 +124,7 @@ class Token implements IPolymorphicConstructor
             $this->getCryptoAlgorithm(
                 $crypto_strategy = $this->getDecodedHeader(self::JWT_HEADER_ALGORITHM_KEY, '')
             ),
-            $this->mountSignatureKey($crypto_strategy, Config::getOrFail('wordless.jwt.' . self::CONFIG_SIGN_KEY))
+            $this->mountSignatureKey($crypto_strategy, $this->getConfig()->getOrFail(self::CONFIG_SIGN_KEY))
         ));
     }
 
@@ -128,6 +134,7 @@ class Token implements IPolymorphicConstructor
      * @return void
      * @throws CannotSignPayload
      * @throws ConversionFailed
+     * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws InvalidKeyProvided
@@ -137,7 +144,7 @@ class Token implements IPolymorphicConstructor
     protected function buildJwt(array $payload, ?CryptoAlgorithm $crypto_strategy = null): void
     {
         $builder = new Builder(new JoseEncoder, (new ChainedFormatter));
-        $crypto_strategy = $crypto_strategy ?? Config::getOrFail('wordless.jwt.' . self::CONFIG_DEFAULT_CRYPTO);
+        $crypto_strategy = $crypto_strategy ?? $this->getConfig()->getOrFail(self::CONFIG_DEFAULT_CRYPTO);
 
         foreach ($payload as $key => $value) {
             $builder->withClaim("$key", $value);
@@ -145,8 +152,19 @@ class Token implements IPolymorphicConstructor
 
         $this->parsedToken = $builder->getToken(
             $this->getCryptoAlgorithm($crypto_strategy),
-            $this->mountSignatureKey($crypto_strategy, Config::getOrFail('wordless.jwt.' . self::CONFIG_SIGN_KEY))
+            $this->mountSignatureKey($crypto_strategy, $this->getConfig()->getOrFail(self::CONFIG_SIGN_KEY))
         );
+    }
+
+    /**
+     * @return ConfigSubjectDTO
+     * @throws EmptyConfigKey
+     * @throws PathNotFoundException
+     */
+    private function getConfig(): ConfigSubjectDTO
+    {
+        return $this->config ?? $this->config = Config::wordless(self::CONFIG_SIGN_KEY)
+            ->ofKey(self::CONFIG_KEY);
     }
 
     /**

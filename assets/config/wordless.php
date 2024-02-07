@@ -68,7 +68,7 @@ return [
     'database' => [
         UserDTO::USER_DEFAULT_PASSWORD_KEY => 'password',
     ],
-    'jwt' => [
+    Token::CONFIG_KEY => [
         Token::CONFIG_DEFAULT_CRYPTO => CryptoAlgorithm::SYMMETRIC_HMAC_SHA256,
         Token::CONFIG_SIGN_KEY => Environment::get(Token::ENVIRONMENT_SIGN_VARIABLE),
     ],
@@ -80,7 +80,7 @@ return [
         Logger::CONFIG_KEY_WORDLESS_LINE_PREFIX => Environment::get('APP_NAME', 'wordless')
             . '.' . Environment::get('APP_ENV')
     ],
-    'providers' => $providers,
+    Provider::CONFIG_KEY => $providers,
     GeneratePublicWordpressSymbolicLinks::PUBLIC_SYMLINK_KEY => [
         'index.php' => '../wp/index.php',
         'wp-content/plugins' => '../wp/wp-content/plugins!.gitignore',
