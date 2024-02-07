@@ -31,7 +31,7 @@ trait NotTests
      */
     public function testNotOnlyAvailableInTagCloudWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator:Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
             ->onlyHiddenFromTagCloud()
             ->onlyAvailableInTagCloud();
 
@@ -50,7 +50,7 @@ trait NotTests
      */
     public function testNotOnlyAvailableInTagCloudWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator:Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
             ->whereName('name')
             ->onlyDefault()
             ->onlyAvailableInTagCloud();

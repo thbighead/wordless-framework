@@ -1,6 +1,6 @@
 <?php
 
-namespace  Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTest\Traits;
+namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTest\Traits;
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;

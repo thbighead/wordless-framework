@@ -3,9 +3,7 @@
 namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInAdminMenuTest\Traits;
 
 use ReflectionException;
-use Wordless\Application\Helpers\Reflection;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 trait AndTests

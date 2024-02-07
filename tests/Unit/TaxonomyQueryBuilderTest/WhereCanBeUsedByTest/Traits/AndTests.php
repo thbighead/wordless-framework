@@ -5,7 +5,6 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTest\Trai
 use ReflectionException;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 trait AndTests

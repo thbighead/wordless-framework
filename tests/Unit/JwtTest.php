@@ -4,6 +4,7 @@ namespace Wordless\Tests\Unit;
 
 use DateTimeImmutable;
 use Exception;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\JWT\Enums\CryptoAlgorithm;
@@ -58,6 +59,7 @@ class JwtTest extends WordlessTestCase
 
     /**
      * @return void
+     * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws PathNotFoundException
@@ -74,6 +76,7 @@ class JwtTest extends WordlessTestCase
 
     /**
      * @return void
+     * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws PathNotFoundException
@@ -90,6 +93,7 @@ class JwtTest extends WordlessTestCase
 
     /**
      * @return void
+     * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws PathNotFoundException
@@ -103,6 +107,7 @@ class JwtTest extends WordlessTestCase
 
     /**
      * @return void
+     * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws PathNotFoundException
@@ -116,6 +121,7 @@ class JwtTest extends WordlessTestCase
 
     /**
      * @return void
+     * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws PathNotFoundException

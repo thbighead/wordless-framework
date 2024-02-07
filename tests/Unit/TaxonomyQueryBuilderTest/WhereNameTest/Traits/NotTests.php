@@ -48,6 +48,7 @@ trait NotTests
 
     /**
      * @return void
+     * @throws EmptyStringParameter
      * @throws ReflectionException
      */
     public function testNotWhereNameWhitSomeArguments(): void

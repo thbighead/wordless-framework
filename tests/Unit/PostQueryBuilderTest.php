@@ -4,10 +4,8 @@ namespace Wordless\Tests\Unit;
 
 use ReflectionException;
 use Wordless\Application\Helpers\Reflection;
-use Wordless\Infrastructure\Wordpress\QueryBuilder;
 use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\AuthorTest;
 use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\CategoryTest;
-use Wordless\Tests\WordlessTestCase;
 use Wordless\Tests\WordlessTestCase\QueryBuilderTestCase;
 use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType;

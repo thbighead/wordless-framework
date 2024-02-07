@@ -4,7 +4,6 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAssignPermissionTest
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\AndComparison;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 trait AndTests
