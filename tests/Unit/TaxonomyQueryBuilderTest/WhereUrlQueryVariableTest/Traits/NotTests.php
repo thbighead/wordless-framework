@@ -4,8 +4,8 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereUrlQueryVariableTest
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\NotComparison;
 
 trait NotTests
 {
@@ -16,9 +16,10 @@ trait NotTests
      */
     public function testNotWhereUrlQueryVariable(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->notWhereUrlQueryVariable('string_query_var');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereUrlQueryVariable('string_query_var');
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['query_var' => 'string_query_var'],
@@ -33,11 +34,11 @@ trait NotTests
      */
     public function testNotWhereUrlQueryVariableWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereUrlQueryVariable('string_query_var_1')
-            ->notWhereUrlQueryVariable('string_query_var_2');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereUrlQueryVariable('string_query_var_1')
+            ->whereUrlQueryVariable('string_query_var_2');
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['query_var' => 'string_query_var_2'],
@@ -48,14 +49,15 @@ trait NotTests
     /**
      * @return void
      * @throws ReflectionException
+     * @throws EmptyStringParameter
      */
     public function testNotWhereUrlQueryVariableWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notOnlyDefault()
-            ->notWhereUrlQueryVariable('string_query_var');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->onlyDefault()
+            ->whereUrlQueryVariable('string_query_var');
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
@@ -75,9 +77,9 @@ trait NotTests
     {
         $string = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->notWhereUrlQueryVariable($string);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereUrlQueryVariable($string);
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(['query_var' => $string], $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder));
     }
@@ -90,6 +92,6 @@ trait NotTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->notWhereUrlQueryVariable('');
+        TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereUrlQueryVariable('');
     }
 }

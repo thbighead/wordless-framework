@@ -5,8 +5,8 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanOnlyBeUsedByTest\
 use ReflectionException;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\NotComparison;
 
 trait NotTests
 {
@@ -16,10 +16,10 @@ trait NotTests
      */
     public function testNotWhereCanOnlyBeUsedBy(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereCanOnlyBeUsedBy(ObjectType::post);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereCanOnlyBeUsedBy(ObjectType::post);
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['object_type' => [ObjectType::post->name]],
@@ -33,11 +33,11 @@ trait NotTests
      */
     public function testNotWhereCanOnlyBeUsedByWhereSameAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereCanOnlyBeUsedBy(ObjectType::post)
-            ->notWhereCanOnlyBeUsedBy(ObjectType::post);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereCanOnlyBeUsedBy(ObjectType::post)
+            ->whereCanOnlyBeUsedBy(ObjectType::post);
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['object_type' => [ObjectType::post->name]],
@@ -51,11 +51,11 @@ trait NotTests
      */
     public function testNotWhereCanOnlyBeUsedByWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereCanOnlyBeUsedBy(ObjectType::post)
-            ->notWhereCanOnlyBeUsedBy(ObjectType::comment);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereCanOnlyBeUsedBy(ObjectType::post)
+            ->whereCanOnlyBeUsedBy(ObjectType::comment);
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['object_type' => [ObjectType::comment->name]],
@@ -70,12 +70,12 @@ trait NotTests
      */
     public function testNotWhereCanOnlyBeUsedByWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereName('name')
-            ->notOnlyDefault()
-            ->notWhereCanOnlyBeUsedBy(ObjectType::post);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereName('name')
+            ->onlyDefault()
+            ->whereCanOnlyBeUsedBy(ObjectType::post);
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [

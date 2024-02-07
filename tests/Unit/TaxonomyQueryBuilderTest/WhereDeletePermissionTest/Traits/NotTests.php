@@ -4,8 +4,8 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereDeletePermissionTest
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\NotComparison;
 
 trait NotTests
 {
@@ -16,10 +16,10 @@ trait NotTests
      */
     public function testNotWhereDeletePermission(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereDeletePermission('capability');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereDeletePermission('capability');
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['delete_cap' => 'capability'],
@@ -34,11 +34,11 @@ trait NotTests
      */
     public function testNotWhereDeletePermissionWhereSameAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereDeletePermission('capability')
-            ->notWhereDeletePermission('capability');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereDeletePermission('capability')
+            ->whereDeletePermission('capability');
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['delete_cap' => 'capability'],
@@ -53,11 +53,11 @@ trait NotTests
      */
     public function testNotWhereDeletePermissionWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereDeletePermission('capability_1')
-            ->notWhereDeletePermission('capability_2');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereDeletePermission('capability_1')
+            ->whereDeletePermission('capability_2');
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['delete_cap' => 'capability_2'],
@@ -72,12 +72,12 @@ trait NotTests
      */
     public function testNotWhereDeletePermissionWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereName('name')
-            ->notOnlyDefault()
-            ->notWhereDeletePermission('capability');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereName('name')
+            ->onlyDefault()
+            ->whereDeletePermission('capability');
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
@@ -97,6 +97,6 @@ trait NotTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->notWhereDeletePermission('');
+        TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereDeletePermission('');
     }
 }

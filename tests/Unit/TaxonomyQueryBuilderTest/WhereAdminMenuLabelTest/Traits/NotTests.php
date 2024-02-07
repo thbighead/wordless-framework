@@ -4,8 +4,8 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAdminMenuLabelTest\T
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\NotComparison;
 
 trait NotTests
 {
@@ -16,9 +16,9 @@ trait NotTests
      */
     public function testNotWhereAdminMenuLabelTest(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->notWhereAdminMenuLabel('test_label');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereAdminMenuLabel('test_label');
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['label' => 'test_label'],
@@ -33,11 +33,11 @@ trait NotTests
      */
     public function testNotWhereAdminMenuLabelWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereAdminMenuLabel('test_label')
-            ->notWhereAdminMenuLabel('test_label');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereAdminMenuLabel('test_label')
+            ->whereAdminMenuLabel('test_label');
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['label' => 'test_label'],
@@ -52,12 +52,12 @@ trait NotTests
      */
     public function testNotWhereAdminMenuLabelWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereName('name')
-            ->notOnlyDefault()
-            ->notWhereAdminMenuLabel('test_label');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereName('name')
+            ->onlyDefault()
+            ->whereAdminMenuLabel('test_label');
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
@@ -78,9 +78,9 @@ trait NotTests
     {
         $string = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->notWhereAdminMenuLabel($string);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereAdminMenuLabel($string);
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(['label' => $string], $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder));
     }
@@ -93,6 +93,6 @@ trait NotTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->notWhereAdminMenuLabel('');
+        TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereAdminMenuLabel('');
     }
 }

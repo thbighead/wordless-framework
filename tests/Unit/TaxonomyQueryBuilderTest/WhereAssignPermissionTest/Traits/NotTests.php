@@ -4,8 +4,8 @@ namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAssignPermissionTest
 
 use ReflectionException;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\NotComparison;
 
 trait NotTests
 {
@@ -16,9 +16,10 @@ trait NotTests
      */
     public function testNotWhereAssignPermissionTest(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->notWhereAssignPermission('capability');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereAssignPermission('capability');
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['assign_cap' => 'capability'],
@@ -33,11 +34,11 @@ trait NotTests
      */
     public function testNotWhereAssignPermissionWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereAssignPermission('capability')
-            ->notWhereAssignPermission('capability');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereAssignPermission('capability')
+            ->whereAssignPermission('capability');
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             ['assign_cap' => 'capability'],
@@ -52,12 +53,12 @@ trait NotTests
      */
     public function testNotWhereAssignPermissionWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
-            ->notWhereName('name')
-            ->notOnlyDefault()
-            ->notWhereAssignPermission('capability');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereName('name')
+            ->onlyDefault()
+            ->whereAssignPermission('capability');
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(
             [
@@ -78,9 +79,10 @@ trait NotTests
     {
         $capability = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->notWhereAssignPermission($capability);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+            ->whereAssignPermission($capability);
 
-        $this->assertInstanceOf(NotComparison::class, $taxonomyQueryBuilder);
+        $this->assertNotOperator($taxonomyQueryBuilder);
 
         $this->assertEquals(['assign_cap' => $capability], $this->buildArgumentsFromQueryBuilder($taxonomyQueryBuilder));
     }
@@ -93,6 +95,6 @@ trait NotTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->notWhereAssignPermission('');
+        TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereAssignPermission('');
     }
 }
