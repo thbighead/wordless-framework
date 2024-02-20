@@ -34,7 +34,7 @@ class ListSchedules extends ConsoleCommand
 
     protected function options(): array
     {
-        return [];
+        return [$this->mountAllowRootModeOption()];
     }
 
     /**
@@ -46,7 +46,7 @@ class ListSchedules extends ConsoleCommand
      */
     protected function runIt(): int
     {
-        $this->runWpCliCommand('cron schedule list');
+        $this->runWpCliCommand('cron event list');
 
         return Command::SUCCESS;
     }
