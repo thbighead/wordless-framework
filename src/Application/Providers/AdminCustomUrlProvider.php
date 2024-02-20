@@ -88,6 +88,6 @@ class AdminCustomUrlProvider extends Provider
      */
     private function hasCustomAdminUrlConfigured(): bool
     {
-        return empty((string)Config::wordpressAdmin(CustomAdminUrlListener::CONFIG_KEY_CUSTOM_ADMIN_URI));
+        return !empty((string)Config::wordpressAdmin(CustomAdminUrlListener::CONFIG_KEY_CUSTOM_ADMIN_URI));
     }
 }
