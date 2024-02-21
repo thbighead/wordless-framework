@@ -7,6 +7,7 @@ use Wordless\Application\Commands\Makers\MakeController;
 use Wordless\Application\Commands\Makers\MakeCustomPostType;
 use Wordless\Application\Commands\Makers\MakeListener;
 use Wordless\Application\Commands\Makers\MakeMigration;
+use Wordless\Application\Commands\Makers\MakeScheduler;
 use Wordless\Infrastructure\Provider;
 
 class MakersProvider extends Provider
@@ -19,6 +20,7 @@ class MakersProvider extends Provider
             MakeCustomPostType::class,
             MakeListener::class,
             MakeMigration::class,
+            MakeScheduler::class,
         ];
     }
 }
