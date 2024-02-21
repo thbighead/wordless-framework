@@ -202,6 +202,16 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
+    final public static function schedules(string $additional_path = ''): string
+    {
+        return self::app("Schedulers/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     final public static function scripts(string $additional_path = ''): string
     {
         return self::app("Scripts/$additional_path");
