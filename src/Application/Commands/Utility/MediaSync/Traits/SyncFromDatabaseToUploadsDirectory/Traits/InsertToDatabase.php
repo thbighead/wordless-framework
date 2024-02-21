@@ -1,11 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace App\Commands\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits;
+namespace Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits;
 
-use App\Commands\MediaSync\Exceptions\FailedToCreateWordpressAttachment;
-use App\Commands\MediaSync\Exceptions\FailedToCreateWordpressAttachmentMetadata;
-use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\Str;
+use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachment;
+use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachmentMetadata;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Str;
 use WP_Error;
 
 trait InsertToDatabase
@@ -17,7 +17,7 @@ trait InsertToDatabase
      * @throws FailedToCreateWordpressAttachmentMetadata
      * @throws PathNotFoundException
      */
-    private function createAttachmentForUploadedFilepath(string $uploaded_file_absolute_path)
+    private function createAttachmentForUploadedFilepath(string $uploaded_file_absolute_path): void
     {
         $relative_path = Str::after(
             $uploaded_file_absolute_path,
@@ -48,18 +48,14 @@ trait InsertToDatabase
     private function createAttachmentMetadataForUploadedFilepath(
         int    $attachment_id,
         string $uploaded_file_absolute_path
-    )
+    ): void
     {
         if (!is_array(wp_generate_attachment_metadata($attachment_id, $uploaded_file_absolute_path))) {
             throw new FailedToCreateWordpressAttachmentMetadata($attachment_id, $uploaded_file_absolute_path);
         }
     }
 
-    /**
-     * @param int|WP_Error $attachment_creation_result
-     * @return bool
-     */
-    private function hasAttachmentCreationSucceeded($attachment_creation_result): bool
+    private function hasAttachmentCreationSucceeded(int|WP_Error $attachment_creation_result): bool
     {
         return $attachment_creation_result !== 0 && !($attachment_creation_result instanceof WP_Error);
     }

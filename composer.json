@@ -30,6 +30,7 @@
   "prefer-stable": true,
   "require": {
     "php": "^8.2",
+    "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-openssl": "*",
     "ext-pcntl": "*",

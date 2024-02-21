@@ -1,13 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace App\Commands\MediaSync\Traits;
+namespace Wordless\Application\Commands\Utility\MediaSync\Traits;
 
-use App\Commands\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database;
-use App\Commands\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToDeleteAttachment;
-use App\Commands\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToRetrieveAttachmentUrl;
-use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\ProjectPath;
-use Wordless\Helpers\Str;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToDeleteAttachment;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToRetrieveAttachmentUrl;
+use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Str;
+use WP_Post;
 
 trait SyncFromUploadsDirectoryToDatabase
 {
@@ -22,12 +23,12 @@ trait SyncFromUploadsDirectoryToDatabase
     }
 
     /**
-     * @param array $attachments
+     * @param WP_Post[] $attachments
      * @return void
      * @throws FailedToDeleteAttachment
      * @throws FailedToRetrieveAttachmentUrl
      */
-    private function processDatabaseAttachments(array $attachments)
+    private function processDatabaseAttachments(array $attachments): void
     {
         $progressBar = $this->initializeProgressBar(count($attachments));
 
@@ -45,7 +46,7 @@ trait SyncFromUploadsDirectoryToDatabase
                 }
 
                 $this->already_synchronized_attachments[$full_path] = $relative_path;
-            } catch (PathNotFoundException $exception) {
+            } catch (PathNotFoundException) {
                 $this->removeNotFoundAttachment($attachment->ID);
             } finally {
                 $progressBar->advance();
@@ -60,7 +61,7 @@ trait SyncFromUploadsDirectoryToDatabase
      * @throws FailedToDeleteAttachment
      * @throws FailedToRetrieveAttachmentUrl
      */
-    private function syncFromDatabaseToUploadsDirectory()
+    private function syncFromDatabaseToUploadsDirectory(): void
     {
         $this->writelnInfo('Checking database attachments...');
         $this->processDatabaseAttachments($this->getAttachments());

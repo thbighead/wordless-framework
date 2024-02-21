@@ -1,27 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace App\Commands\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions;
+namespace Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions;
 
-use Exception;
+use DomainException;
 use Throwable;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class InvalidChunkValue extends Exception
+class InvalidChunkValue extends DomainException
 {
-    private string $invalid_value;
-
-    public function __construct(string $invalid_value, Throwable $previous = null)
+    public function __construct(public readonly string $invalid_value, ?Throwable $previous = null)
     {
-        $this->invalid_value = $invalid_value;
-
         parent::__construct(
             "The value '$this->invalid_value' results in a non-integer or less than or equals to zero, which is invalid",
-            0,
+            ExceptionCode::development_error->value,
             $previous
         );
-    }
-
-    public function getInvalidValue(): string
-    {
-        return $this->invalid_value;
     }
 }

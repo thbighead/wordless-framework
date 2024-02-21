@@ -1,15 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace App\Commands\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits;
+namespace Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits;
 
-use App\Commands\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToDeleteAttachment;
-use App\Commands\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToRetrieveAttachmentUrl;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToDeleteAttachment;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToRetrieveAttachmentUrl;
 use WP_Post;
 use WP_Query;
 
 trait Database
 {
-    private function fixAttachmentFileRelativePath(int $attachment_id, string $relative_path)
+    private function fixAttachmentFileRelativePath(int $attachment_id, string $relative_path): void
     {
         wp_update_attachment_metadata($attachment_id, ['file' => $relative_path]);
         $this->fixed_attachments_count++;
@@ -48,7 +48,7 @@ trait Database
      * @return void
      * @throws FailedToDeleteAttachment
      */
-    private function removeNotFoundAttachment(int $attachment_id)
+    private function removeNotFoundAttachment(int $attachment_id): void
     {
         if (is_null($deletion_result = wp_delete_attachment($attachment_id)) || $deletion_result === false) {
             throw new FailedToDeleteAttachment($attachment_id);

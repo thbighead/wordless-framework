@@ -1,7 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace App\Commands\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Traits;
+namespace Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Traits;
 
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
@@ -10,6 +12,11 @@ trait SymfonyQuestionHelper
     private ConfirmationQuestion $continueToNextChunkConfimationQuestion;
     private QuestionHelper $questionHelper;
 
+    /**
+     * @return bool
+     * @throws InvalidArgumentException
+     * @throws LogicException
+     */
     private function askToContinueToNextChunk(): bool
     {
         return $this->getQuestionHelper()->ask(
@@ -26,10 +33,5 @@ trait SymfonyQuestionHelper
                 "\nContinue processing? (y/n)",
                 true
             );
-    }
-
-    private function getQuestionHelper(): QuestionHelper
-    {
-        return $this->questionHelper ?? $this->questionHelper = $this->getHelper('question');
     }
 }

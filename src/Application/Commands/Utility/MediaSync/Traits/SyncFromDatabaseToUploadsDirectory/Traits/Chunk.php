@@ -1,23 +1,26 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace App\Commands\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits;
+namespace Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits;
 
-use App\Commands\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\InvalidChunkValue;
-use App\Commands\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\InvalidOptionsUse;
-use App\Commands\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\StopUploadsProcess;
-use App\Commands\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Traits\SymfonyOptionsMounter;
-use App\Commands\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Traits\SymfonyQuestionHelper;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Exception\LogicException;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\InvalidChunkValue;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\InvalidOptionsUsage;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\StopUploadsProcess;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Traits\OptionsMounter;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Traits\OptionsMounter\DTO\ChunkOptionDTO;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Traits\OptionsMounter\DTO\OnceOptionDTO;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Traits\SymfonyQuestionHelper;
 
 trait Chunk
 {
-    use SymfonyOptionsMounter;
+    use OptionsMounter;
     use SymfonyQuestionHelper;
 
     private int $chunk_number = 0;
+    private int|false $items_per_chunk;
     private bool $only_once;
     private int $processed_items_count = 0;
-    /** @var int|false $items_per_chunk */
-    private $items_per_chunk;
 
     /**
      * @param string $value
@@ -39,6 +42,7 @@ trait Chunk
 
     /**
      * @return bool
+     * @throws InvalidArgumentException
      * @throws InvalidChunkValue
      */
     private function finishedChunk(): bool
@@ -46,11 +50,7 @@ trait Chunk
         return $this->processed_items_count === $this->getItemsPerChunk();
     }
 
-    /**
-     * @param int|false $items_per_chunk
-     * @return int|null
-     */
-    private function formatChunkValue($items_per_chunk): ?int
+    private function formatChunkValue(int|false $items_per_chunk): ?int
     {
         return $items_per_chunk === false ? null : $items_per_chunk;
     }
@@ -58,6 +58,7 @@ trait Chunk
     /**
      * @return int|null
      * @throws InvalidChunkValue
+     * @throws InvalidArgumentException
      */
     private function getItemsPerChunk(): ?int
     {
@@ -65,7 +66,7 @@ trait Chunk
             return $this->formatChunkValue($this->items_per_chunk);
         }
 
-        $chunk_option_value = $this->input->getOption(self::OPTION_NAME_CHUNK);
+        $chunk_option_value = $this->input->getOption(ChunkOptionDTO::OPTION_NAME);
         $chunk_option_value = $chunk_option_value === '' ? null : $chunk_option_value;
         $chunk_option_value = $chunk_option_value ?? self::OPTION_CHUNK_DEFAULT;
 
@@ -78,6 +79,7 @@ trait Chunk
 
     /**
      * @return bool
+     * @throws InvalidArgumentException
      * @throws InvalidChunkValue
      */
     private function isChunked(): bool
@@ -89,17 +91,23 @@ trait Chunk
         return $is_chunked;
     }
 
+    /**
+     * @return bool
+     * @throws InvalidArgumentException
+     */
     private function isOnlyOnce(): bool
     {
-        return $this->only_once ?? $this->only_once = $this->input->getOption(self::OPTION_NAME_ONCE);
+        return $this->only_once ?? $this->only_once = $this->input->getOption(OnceOptionDTO::OPTION_NAME);
     }
 
     /**
      * @return void
+     * @throws InvalidArgumentException
      * @throws InvalidChunkValue
      * @throws StopUploadsProcess
+     * @throws LogicException
      */
-    private function resolveFinishedChunk()
+    private function resolveFinishedChunk(): void
     {
         if (!$this->isChunked()) {
             return;
@@ -118,12 +126,14 @@ trait Chunk
 
     /**
      * @return void
-     * @throws InvalidOptionsUse
+     * @throws InvalidArgumentException
+     * @throws InvalidChunkValue
+     * @throws InvalidOptionsUsage
      */
-    private function validateOptions()
+    private function validateOptions(): void
     {
         if ($this->isOnlyOnce() && !$this->isChunked()) {
-            throw new InvalidOptionsUse;
+            throw new InvalidOptionsUsage;
         }
     }
 }

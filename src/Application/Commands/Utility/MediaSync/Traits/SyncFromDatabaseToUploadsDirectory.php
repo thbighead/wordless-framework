@@ -1,17 +1,21 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace App\Commands\MediaSync\Traits;
+namespace Wordless\Application\Commands\Utility\MediaSync\Traits;
 
-use App\Commands\MediaSync\Exceptions\FailedToCreateWordpressAttachment;
-use App\Commands\MediaSync\Exceptions\FailedToCreateWordpressAttachmentMetadata;
-use App\Commands\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk;
-use App\Commands\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\StopUploadsProcess;
-use App\Commands\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\InsertToDatabase;
 use Generator;
-use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\DirectoryFiles;
-use Wordless\Helpers\ProjectPath;
-use Wordless\Helpers\Str;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Exception\LogicException;
+use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachment;
+use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachmentMetadata;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\InvalidChunkValue;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\StopUploadsProcess;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\InsertToDatabase;
+use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
+use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Str;
 
 trait SyncFromDatabaseToUploadsDirectory
 {
@@ -52,12 +56,14 @@ trait SyncFromDatabaseToUploadsDirectory
 
     /**
      * @return int
+     * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
     private function getUploadsFilePathsCount(): int
     {
         $count = 0;
 
+        /** @noinspection PhpUnusedLocalVariableInspection */
         foreach ($this->mountUploadsFilePathReaderGenerator() as $uploaded_file_absolute_path) {
             $count++;
         }
@@ -108,6 +114,7 @@ trait SyncFromDatabaseToUploadsDirectory
 
     /**
      * @return Generator|null
+     * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
     private function mountUploadsFilePathReaderGenerator(): ?Generator
@@ -117,9 +124,12 @@ trait SyncFromDatabaseToUploadsDirectory
 
     /**
      * @return int
-     * @throws Chunk\Exceptions\InvalidChunkValue
      * @throws FailedToCreateWordpressAttachment
      * @throws FailedToCreateWordpressAttachmentMetadata
+     * @throws InvalidArgumentException
+     * @throws InvalidChunkValue
+     * @throws InvalidDirectory
+     * @throws LogicException
      * @throws PathNotFoundException
      */
     private function processUploadsFiles(): int
@@ -130,7 +140,7 @@ trait SyncFromDatabaseToUploadsDirectory
         foreach ($this->mountUploadsFilePathReaderGenerator() as $uploaded_file_absolute_path) {
             try {
                 $this->resolveFinishedChunk();
-            } catch (StopUploadsProcess $exception) {
+            } catch (StopUploadsProcess) {
                 break;
             }
 
@@ -144,7 +154,7 @@ trait SyncFromDatabaseToUploadsDirectory
             $inserted_attachments_count++;
             $progressBar->advance();
 
-            $this->resolveInterruption();
+            $this->resolveCommandIfInterrupted();
         }
 
         $progressBar->finish();
@@ -165,12 +175,15 @@ trait SyncFromDatabaseToUploadsDirectory
 
     /**
      * @return void
-     * @throws Chunk\Exceptions\InvalidChunkValue
      * @throws FailedToCreateWordpressAttachment
      * @throws FailedToCreateWordpressAttachmentMetadata
+     * @throws InvalidArgumentException
+     * @throws InvalidChunkValue
+     * @throws InvalidDirectory
+     * @throws LogicException
      * @throws PathNotFoundException
      */
-    private function syncFromUploadsDirectoryToDatabase()
+    private function syncFromUploadsDirectoryToDatabase(): void
     {
         require_once ProjectPath::wpCore('wp-admin/includes/image.php');
         require_once ProjectPath::wpCore('wp-admin/includes/media.php');

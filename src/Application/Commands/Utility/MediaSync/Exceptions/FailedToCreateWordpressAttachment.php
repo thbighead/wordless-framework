@@ -1,27 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace App\Commands\MediaSync\Exceptions;
+namespace Wordless\Application\Commands\Utility\MediaSync\Exceptions;
 
 use Exception;
 use Throwable;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToCreateWordpressAttachment extends Exception
 {
-    private string $absolute_file_path;
-
-    public function __construct(string $absolute_file_path, Throwable $previous = null)
+    public function __construct(public readonly string $absolute_file_path, ?Throwable $previous = null)
     {
-        $this->absolute_file_path = $absolute_file_path;
-
         parent::__construct(
             "Failed to insert $this->absolute_file_path as an Wordpress attachment into database.",
-            0,
+            ExceptionCode::intentional_interrupt->value,
             $previous
         );
-    }
-
-    public function getAbsoluteFilePath(): string
-    {
-        return $this->absolute_file_path;
     }
 }
