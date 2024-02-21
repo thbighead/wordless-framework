@@ -38,7 +38,7 @@ class MakeScheduler extends ConsoleCommand
         return [
             ArgumentDTO::make(
                 self::SCHEDULER_CLASS_ARGUMENT_NAME,
-                'The class name of your new hooker file in pascal case.',
+                'The class name of your new scheduler file in pascal case.',
                 ArgumentMode::required
             ),
         ];
@@ -46,12 +46,12 @@ class MakeScheduler extends ConsoleCommand
 
     protected function description(): string
     {
-        return 'Creates a hook listener.';
+        return 'Creates a scheduler class.';
     }
 
     protected function help(): string
     {
-        return 'If no type is defined through options, a generic listener class is created.';
+        return 'Creates a scheduler class to interact with wordpress schedule logic.';
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Wordless\Application\Commands\Makers;
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
+use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
@@ -24,6 +25,8 @@ use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 
 class MakeController extends ConsoleCommand
 {
+    use LoadWpConfig;
+
     final public const COMMAND_NAME = 'make:controller';
     private const CONTROLLER_CLASS_ARGUMENT_NAME = 'PascalCasedControllerClass';
     private const NO_PERMISSIONS_MODE = 'no-permissions';
