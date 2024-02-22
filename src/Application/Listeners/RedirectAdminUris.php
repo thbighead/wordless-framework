@@ -53,7 +53,8 @@ class RedirectAdminUris extends ActionListener
     private static function isRequestingAdminUri(): bool
     {
         return untrailingslashit($_SERVER['REQUEST_URI']) === home_url(
-                AdminCustomUrlProvider::getCustomUri(false)
+                AdminCustomUrlProvider::getCustomUri(false),
+                'relative'
             );
     }
 }
