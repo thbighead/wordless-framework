@@ -3,17 +3,18 @@
 namespace Wordless\Application\Commands\Schedules;
 
 use Symfony\Component\Console\Command\Command;
-use Wordless\Application\Commands\Traits\LoadWpConfig;
-use Wordless\Application\Helpers\ProjectPath;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
+use Symfony\Component\Console\Exception\ExceptionInterface;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Wordless\Application\Commands\Traits\RunWpCliCommand;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Infrastructure\ConsoleCommand;
 
 class RunSchedules extends ConsoleCommand
 {
-    use LoadWpConfig;
+    use RunWpCliCommand;
 
     final public const COMMAND_NAME = 'schedule:run';
-    private const FILENAME = 'wp-cron.php';
 
     protected function arguments(): array
     {
@@ -28,7 +29,7 @@ class RunSchedules extends ConsoleCommand
 
     protected function help(): string
     {
-        return 'Checks for Wordpress cron jobs to run throughout ' . self::FILENAME . ' requisition.';
+        return 'Checks for Wordpress cron jobs to run throughout WP-CLI command.';
     }
 
     protected function options(): array
@@ -38,11 +39,14 @@ class RunSchedules extends ConsoleCommand
 
     /**
      * @return int
-     * @throws PathNotFoundException
+     * @throws CommandNotFoundException
+     * @throws ExceptionInterface
+     * @throws InvalidArgumentException
+     * @throws WpCliCommandReturnedNonZero
      */
     protected function runIt(): int
     {
-        require ProjectPath::wpCore(self::FILENAME);
+        $this->runWpCliCommand('cron event run --due-now');
 
         return Command::SUCCESS;
     }

@@ -40,10 +40,9 @@ class RegisterSchedules extends ConsoleCommand
 
     /**
      * @return int
-     * @throws InvalidConfigKey
+     * @throws EmptyConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
-     * @throws EmptyConfigKey
      */
     protected function runIt(): int
     {

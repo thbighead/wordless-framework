@@ -12,10 +12,9 @@ trait Schedules
 {
     /**
      * @return void
-     * @throws InvalidConfigKey
+     * @throws EmptyConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
-     * @throws EmptyConfigKey
      */
     public static function bootIntoRegisterSchedulesCommand(): void
     {
