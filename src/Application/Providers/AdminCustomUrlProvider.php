@@ -6,9 +6,11 @@ use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Listeners\RedirectAdminUris;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO\Exceptions\TriedToSetFunctionWhenRemovingListener;
+use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Wordpress\Hook\Enums\Action;
 
 class AdminCustomUrlProvider extends Provider
@@ -34,6 +36,22 @@ class AdminCustomUrlProvider extends Provider
         }
 
         return $wrapped ? Str::wrap($custom_admin_uri) : trim($custom_admin_uri, '/');
+    }
+
+    /**
+     * @return string[]|Listener[]
+     * @throws EmptyConfigKey
+     * @throws PathNotFoundException
+     */
+    public function registerListeners(): array
+    {
+        if (!$this->hasCustomAdminUrlConfigured()) {
+            return [];
+        }
+
+        return [
+            RedirectAdminUris::class,
+        ];
     }
 
     /**
