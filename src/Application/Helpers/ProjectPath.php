@@ -202,7 +202,7 @@ class ProjectPath
      * @return string
      * @throws PathNotFoundException
      */
-    final public static function schedules(string $additional_path = ''): string
+    final public static function schedulers(string $additional_path = ''): string
     {
         return self::app("Schedulers/$additional_path");
     }

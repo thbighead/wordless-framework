@@ -78,7 +78,7 @@ class MakeScheduler extends ConsoleCommand
         $this->wrapScriptWithMessages(
             "Creating $scheduler_class_name...",
             function () use ($scheduler_class_name) {
-                SchedulerStubMounter::make(ProjectPath::schedules() . "/$scheduler_class_name.php")
+                SchedulerStubMounter::make(ProjectPath::schedulers() . "/$scheduler_class_name.php")
                     ->setReplaceContentDictionary([
                         'DummyScheduler' => $scheduler_class_name,
                     ])->mountNewFile();
