@@ -58,7 +58,9 @@ class ReplaceBaseUrls extends ConsoleCommand
      */
     protected function options(): array
     {
-        return [];
+        return [
+            $this->mountAllowRootModeOption(),
+        ];
     }
 
     /**

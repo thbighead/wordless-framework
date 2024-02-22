@@ -106,6 +106,7 @@ class WordlessInstall extends ConsoleCommand
      * @throws CliReturnedNonZero
      * @throws ClientExceptionInterface
      * @throws CommandNotFoundException
+     * @throws EmptyConfigKey
      * @throws ExceptionInterface
      * @throws FailedToChangePathPermissions
      * @throws FailedToCopyFile
@@ -286,6 +287,7 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws EmptyConfigKey
      * @throws FailedToCopyStub
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
@@ -608,6 +610,7 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @return $this
      * @throws CommandNotFoundException
+     * @throws EmptyConfigKey
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
      * @throws PathNotFoundException

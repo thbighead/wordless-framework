@@ -42,7 +42,9 @@ class HelixShell extends ConsoleCommand
      */
     protected function options(): array
     {
-        return [];
+        return [
+            $this->mountAllowRootModeOption(),
+        ];
     }
 
     /**
@@ -52,7 +54,7 @@ class HelixShell extends ConsoleCommand
      */
     protected function runIt(): int
     {
-        $this->callWpCliCommandSilentlyWithoutInterruption('shell');
+        $this->runWpCliCommandSilentlyWithoutInterruption('shell');
 
         return Command::SUCCESS;
     }
