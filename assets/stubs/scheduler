@@ -8,7 +8,6 @@ use Wordless\Infrastructure\Wordpress\Schedule\Enums\Recurrence;
 
 class DummyScheduler extends Schedule
 {
-
     public static function run(): void
     {
         // TODO: Implement run() method.
