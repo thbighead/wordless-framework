@@ -31,7 +31,6 @@ class HelixShell extends ConsoleCommand
         return 'Initializes an interactive shell.';
     }
 
-
     protected function help(): string
     {
         return "As many interactive shells have a name, we call ours as Helix (based on the Helix Fossil, since it's a shell).\n\"ALL HAIL HELIX FOSSIL!\"\n\"ALL HAIL LORD HELIX!\"\n - Twitch plays Pokémon chat.";
@@ -43,7 +42,7 @@ class HelixShell extends ConsoleCommand
     protected function options(): array
     {
         return [
-            $this->mountAllowRootModeOption(),
+            ...$this->mountRunWpCliOptions(),
         ];
     }
 

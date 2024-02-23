@@ -52,7 +52,7 @@ class ConfigureDateOptions extends ConsoleCommand
     protected function options(): array
     {
         return [
-            $this->mountAllowRootModeOption(),
+            ...$this->mountRunWpCliOptions(),
         ];
     }
 

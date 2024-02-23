@@ -156,7 +156,7 @@ class WordlessInstall extends ConsoleCommand
     protected function options(): array
     {
         return [
-            $this->mountAllowRootModeOption(),
+            ...$this->mountRunWpCliOptions(),
             $this->mountForceModeOption('Forces a project installation.'),
         ];
     }

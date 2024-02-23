@@ -6,6 +6,7 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\InvalidArgumentException as SymfonyProcessInvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
+use Wordless\Application\Commands\Traits\NoTtyMode;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -13,9 +14,12 @@ use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 
 class WpCliCaller extends ConsoleCommand
 {
+    use NoTtyMode;
+
     final public const COMMAND_NAME = 'wp:run';
     final public const WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME = 'wp_cli_full_command_string';
     private const NON_WINDOWS_OS = 'non-windows';
@@ -30,7 +34,7 @@ class WpCliCaller extends ConsoleCommand
     protected function arguments(): array
     {
         return [
-            new ArgumentDTO(
+            ArgumentDTO::make(
                 self::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME,
                 'A string containing exactly what you want to run with "wp"',
                 ArgumentMode::optional,
@@ -63,7 +67,7 @@ class WpCliCaller extends ConsoleCommand
 
         $this->writelnInfoWhenVerbose("Executing $full_command...");
 
-        return $this->callExternalCommand($full_command)->result_code;
+        return $this->callExternalCommand($full_command, !$this->isNoTtyMode())->result_code;
     }
 
     protected function help(): string
@@ -76,7 +80,9 @@ class WpCliCaller extends ConsoleCommand
      */
     protected function options(): array
     {
-        return [];
+        return [
+            $this->mountNoTtyOption(),
+        ];
     }
 
     /**

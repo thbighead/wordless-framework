@@ -12,14 +12,15 @@ trait External
 {
     /**
      * @param string $full_command
+     * @param bool $set_tty
      * @return Response
      * @throws CliReturnedNonZero
      * @throws InvalidArgumentException
      * @throws LogicException
      */
-    protected function callExternalCommand(string $full_command): Response
+    protected function callExternalCommand(string $full_command, bool $set_tty = true): Response
     {
-        $process = $this->mountCommandProcess($full_command);
+        $process = $this->mountCommandProcess($full_command, $set_tty);
 
         $commandResponse = new Response($process->run(
             function ($type, $buffer): void {
@@ -40,14 +41,15 @@ trait External
 
     /**
      * @param string $full_command
+     * @param bool $set_tty
      * @return Response
      * @throws CliReturnedNonZero
      * @throws InvalidArgumentException
      * @throws LogicException
      */
-    protected function callExternalCommandSilently(string $full_command): Response
+    protected function callExternalCommandSilently(string $full_command, bool $set_tty = true): Response
     {
-        $process = $this->mountCommandProcess($full_command);
+        $process = $this->mountCommandProcess($full_command, $set_tty);
         $command_output = '';
 
         $commandResponse = new Response($process->run(
@@ -99,14 +101,15 @@ trait External
 
     /**
      * @param string $full_command
+     * @param bool $set_tty
      * @return Process
      * @throws InvalidArgumentException
      * @throws LogicException
      */
-    private function mountCommandProcess(string $full_command): Process
+    private function mountCommandProcess(string $full_command, bool $set_tty = true): Process
     {
         return Process::fromShellCommandline($full_command)
             ->setTimeout(null)
-            ->setTty(true);
+            ->setTty($set_tty);
     }
 }

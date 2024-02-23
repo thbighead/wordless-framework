@@ -56,7 +56,7 @@ abstract class SeederCommand extends ConsoleCommand
                 mode: OptionMode::required_value,
                 default: static::DEFAULT_NUMBER_OF_OBJECTS
             ),
-            $this->mountAllowRootModeOption(),
+            ...$this->mountRunWpCliOptions(),
         ];
     }
 

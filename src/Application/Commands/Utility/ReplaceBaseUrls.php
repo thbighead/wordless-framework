@@ -59,7 +59,7 @@ class ReplaceBaseUrls extends ConsoleCommand
     protected function options(): array
     {
         return [
-            $this->mountAllowRootModeOption(),
+            ...$this->mountRunWpCliOptions(),
         ];
     }
 
