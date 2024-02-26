@@ -3,8 +3,9 @@
 namespace Wordless\Application\Helpers;
 
 use Wordless\Application\Helpers\Debugger\Traits\Internal;
+use Wordless\Infrastructure\Helper;
 
-class Debugger
+class Debugger extends Helper
 {
     use Internal;
 

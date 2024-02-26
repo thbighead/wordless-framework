@@ -15,8 +15,9 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileConten
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Infrastructure\Helper;
 
-class DirectoryFiles
+class DirectoryFiles extends Helper
 {
     /**
      * @param string $path

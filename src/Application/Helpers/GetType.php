@@ -3,8 +3,9 @@
 namespace Wordless\Application\Helpers;
 
 use DateTimeInterface;
+use Wordless\Infrastructure\Helper;
 
-class GetType
+class GetType extends Helper
 {
     final public const ARRAY = 'array';
     final public const BOOLEAN = 'boolean';

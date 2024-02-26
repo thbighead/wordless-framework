@@ -5,8 +5,9 @@ namespace Wordless\Application\Helpers;
 use Wordless\Application\Helpers\Crypto\Traits\Base64;
 use Wordless\Application\Helpers\Crypto\Traits\Base64\Exceptions\FailedToDecode;
 use Wordless\Application\Helpers\Crypto\Traits\Internal;
+use Wordless\Infrastructure\Helper;
 
-class Crypto
+class Crypto extends Helper
 {
     use Base64;
     use Internal;

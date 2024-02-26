@@ -14,8 +14,9 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Core\InternalCache;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
+use Wordless\Infrastructure\Helper;
 
-class Environment
+class Environment extends Helper
 {
     use Internal;
 

@@ -5,8 +5,9 @@ namespace Wordless\Application\Helpers;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\ProjectPath\Traits\Internal;
+use Wordless\Infrastructure\Helper;
 
-class ProjectPath
+class ProjectPath extends Helper
 {
     use Internal;
 

@@ -8,8 +8,9 @@ use Wordless\Application\Helpers\DataCache\Exceptions\InvalidTransientExpiration
 use Wordless\Application\Helpers\DataCache\Exceptions\TransientKeyIsTooLong;
 use Wordless\Application\Helpers\DataCache\Exceptions\TransientKeyNotFound;
 use Wordless\Application\Helpers\DataCache\Traits\Internal;
+use Wordless\Infrastructure\Helper;
 
-class DataCache
+class DataCache extends Helper
 {
     use Internal;
 

@@ -3,8 +3,9 @@
 namespace Wordless\Application\Helpers;
 
 use Wordless\Application\Libraries\LogManager\Logger;
+use Wordless\Infrastructure\Helper;
 
-class Log
+class Log extends Helper
 {
     public static function alert($message, array $context = []): void
     {

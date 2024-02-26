@@ -4,8 +4,9 @@ namespace Wordless\Application\Helpers;
 
 use Wordless\Application\Helpers\Reserved\Enums\PostTypeKey;
 use Wordless\Application\Helpers\Reserved\Traits\Internal;
+use Wordless\Infrastructure\Helper;
 
-class Reserved
+class Reserved extends Helper
 {
     use Internal;
 

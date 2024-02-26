@@ -2,7 +2,9 @@
 
 namespace Wordless\Application\Helpers;
 
-class Template
+use Wordless\Infrastructure\Helper;
+
+class Template extends Helper
 {
     public static function includeTemplate(string $template_name, array $data = []): void
     {

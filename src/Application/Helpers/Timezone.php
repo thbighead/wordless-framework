@@ -6,8 +6,9 @@ use Wordless\Application\Commands\ConfigureDateOptions;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Infrastructure\Helper;
 
-class Timezone
+class Timezone extends Helper
 {
     final public const CONFIG_KEY = 'timezone';
 

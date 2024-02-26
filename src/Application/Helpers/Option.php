@@ -5,8 +5,9 @@ namespace Wordless\Application\Helpers;
 use Wordless\Application\Helpers\Option\Exception\FailedToCreateOption;
 use Wordless\Application\Helpers\Option\Exception\FailedToFindOption;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
+use Wordless\Infrastructure\Helper;
 
-class Option
+class Option extends Helper
 {
     /**
      * @param string $option_key

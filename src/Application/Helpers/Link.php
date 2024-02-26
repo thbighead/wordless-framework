@@ -4,8 +4,9 @@ namespace Wordless\Application\Helpers;
 
 use Wordless\Application\Helpers\Link\Traits\Internal;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Infrastructure\Helper;
 
-class Link
+class Link extends Helper
 {
     use Internal;
 

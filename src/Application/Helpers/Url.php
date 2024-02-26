@@ -5,10 +5,10 @@ namespace Wordless\Application\Helpers;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Url\Traits\Internal;
-use Wordless\Application\Listeners\CustomAdminUrl\Contracts\BaseListener;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
+use Wordless\Infrastructure\Helper;
 
-class Url
+class Url extends Helper
 {
     use Internal;
 
