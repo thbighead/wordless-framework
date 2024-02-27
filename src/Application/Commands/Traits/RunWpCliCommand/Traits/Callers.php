@@ -27,7 +27,7 @@ trait Callers
         try {
             return $this->callConsoleCommand(WpCliCaller::COMMAND_NAME, [
                 WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => $wp_cli_command,
-                NoTtyModeOptionDTO::NO_TTY_MODE => $this->isNoTtyMode(),
+                '--' . NoTtyModeOptionDTO::NO_TTY_MODE => $this->isNoTtyMode(),
             ]);
         } catch (CliReturnedNonZero $exception) {
             throw new WpCliCommandReturnedNonZero($exception->full_command, $exception->commandResponse, $exception);
@@ -46,7 +46,7 @@ trait Callers
         try {
             return $this->callConsoleCommandSilently(WpCliCaller::COMMAND_NAME, [
                 WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => $wp_cli_command,
-                NoTtyModeOptionDTO::NO_TTY_MODE => $this->isNoTtyMode(),
+                '--' . NoTtyModeOptionDTO::NO_TTY_MODE => $this->isNoTtyMode(),
             ]);
         } catch (CliReturnedNonZero $exception) {
             throw new WpCliCommandReturnedNonZero($exception->full_command, $exception->commandResponse, $exception);
