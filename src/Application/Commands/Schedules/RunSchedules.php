@@ -2,12 +2,12 @@
 
 namespace Wordless\Application\Commands\Schedules;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
-use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
+use Wordless\Application\Commands\Traits\NoTtyMode\DTO\NoTtyModeOptionDTO;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
-use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Application\Commands\WpCliCaller;
 use Wordless\Infrastructure\ConsoleCommand;
 
 class RunSchedules extends ConsoleCommand
@@ -35,21 +35,21 @@ class RunSchedules extends ConsoleCommand
     protected function options(): array
     {
         return [
-            ...$this->mountRunWpCliOptions(),
+            $this->mountAllowRootModeOption()
         ];
     }
 
     /**
      * @return int
+     * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
      * @throws ExceptionInterface
-     * @throws InvalidArgumentException
-     * @throws WpCliCommandReturnedNonZero
      */
     protected function runIt(): int
     {
-        $this->runWpCliCommand('cron event run --due-now');
-
-        return Command::SUCCESS;
+        return $this->callConsoleCommand(WpCliCaller::COMMAND_NAME, [
+            WpCliCaller::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME => 'cron event run --due-now',
+            '--' . NoTtyModeOptionDTO::NO_TTY_MODE => true,
+        ])->result_code;
     }
 }
