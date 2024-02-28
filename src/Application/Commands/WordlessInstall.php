@@ -38,16 +38,13 @@ use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFil
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Application\Helpers\Timezone;
 use Wordless\Application\Mounters\Stub\RobotsTxtStubMounter;
 use Wordless\Application\Mounters\Stub\WordlessPluginStubMounter;
-use Wordless\Application\Mounters\Stub\WpConfigStubMounter;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
-use Wordless\Wordpress\Enums\StartOfWeek;
 
 class WordlessInstall extends ConsoleCommand
 {
@@ -315,27 +312,13 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws FailedToCopyFile
-     * @throws FailedToCopyStub
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
-     * @throws PathNotFoundException
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
+     * @throws ExceptionInterface
      */
     private function createWpConfigFromStub(): static
     {
-        $wp_config_destiny_path = ProjectPath::wpCore() . '/wp-config.php';
-
-        if (Environment::isFramework()) {
-            DirectoryFiles::copyFile(
-                ProjectPath::root('wp-config.php'),
-                $wp_config_destiny_path,
-                false
-            );
-
-            return $this;
-        }
-
-        WpConfigStubMounter::make($wp_config_destiny_path)->mountNewFile();
+        $this->callConsoleCommand(PublishWpConfigPhp::COMMAND_NAME);
 
         return $this;
     }
