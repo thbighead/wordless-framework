@@ -1,10 +1,7 @@
-/.git                                           export-ignore
-/.idea                                          export-ignore
-/console                                        export-ignore
-/docker                                         export-ignore
-/logs                                           export-ignore
-/vendor                                         export-ignore
-/wp                                             export-ignore
+/.git/                                          export-ignore
+/.idea/                                         export-ignore
+/docker/                                        export-ignore
+/logs/                                          export-ignore
 /.editorconfig                                  export-ignore
 /console                                        export-ignore
 /docker-compose.yml                             export-ignore
