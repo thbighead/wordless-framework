@@ -14,6 +14,7 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryP
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\NotAPhpFile;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Helper;
 
@@ -200,6 +201,34 @@ class DirectoryFiles extends Helper
         }
 
         return ProjectPath::realpath($current_working_directory);
+    }
+
+    /**
+     * @param string $php_file_path
+     * @param array $variables_to_extract
+     * @return string
+     * @throws NotAPhpFile
+     * @throws PathNotFoundException
+     */
+    public static function getFileEcho(string $php_file_path, array $variables_to_extract = []): string
+    {
+        if (!Str::endsWith($php_file_path = ProjectPath::realpath($php_file_path), '.php')) {
+            throw new NotAPhpFile($php_file_path);
+        }
+
+        unset($variables_to_extract['php_file_path']);
+        unset($variables_to_extract['variables_to_extract']);
+
+        if (!empty($variables_to_extract)) {
+            extract($variables_to_extract);
+        }
+
+        ob_start();
+        include($php_file_path);
+        $rendered_message = ob_get_contents();
+        ob_end_clean();
+
+        return $rendered_message;
     }
 
     /**
