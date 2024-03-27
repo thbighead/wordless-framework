@@ -38,7 +38,7 @@ trait ManagePlugin
         $vendor_path = $composerEvent->getComposer()->getConfig()->get('vendor-dir');
 
         if (is_file("$vendor_path/autoload.php")) {
-            passthru("php console wp:run \"plugin $plugin_command $plugin_name\"");
+            passthru("php console wp:run \"plugin $plugin_command $plugin_name\" --no-tty");
         }
     }
 }
