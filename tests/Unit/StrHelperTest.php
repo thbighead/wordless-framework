@@ -2,76 +2,69 @@
 
 namespace Wordless\Tests\Unit;
 
-use Wordless\Helpers\Str;
-use Wordless\Tests\Unit\StrHelperTest\CaseStyleTests;
-use Wordless\Tests\Unit\StrHelperTest\UuidTests;
+use InvalidArgumentException;
+use Wordless\Application\Helpers\Str;
+use Wordless\Tests\Unit\StrHelperTest\Traits\BooleanTests;
+use Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests;
+use Wordless\Tests\Unit\StrHelperTest\Traits\SubstringTests;
+use Wordless\Tests\Unit\StrHelperTest\Traits\UuidTests;
 use Wordless\Tests\WordlessTestCase;
 
 class StrHelperTest extends WordlessTestCase
 {
-    use CaseStyleTests, UuidTests;
+    use BooleanTests;
+    use CaseStyleTests;
+    use MutatorsTests;
+    use UuidTests;
+    use SubstringTests;
 
-    private const CLEAN_RAW_CASE_EXAMPLE = 'thanks for reading';
-    private const CLEAN_TITLE_CASE_EXAMPLE = 'Thanks For Reading';
-    private const CLEAN_CAMEL_CASE_EXAMPLE = 'thanksForReading';
-    private const CLEAN_PASCAL_CASE_EXAMPLE = 'ThanksForReading';
-    private const CLEAN_SNAKE_CASE_EXAMPLE = 'thanks_for_reading';
-    private const CLEAN_KEBAB_CASE_EXAMPLE = 'thanks-for-reading';
+    private const BASE_STRING = 'TestStringSubstrings';
+    private const COUNT_STRING = 'Test Test Test Test';
 
-    private const NUMERICAL_RAW_CASE_EXAMPLE = 'thanks 4 reading';
-    private const NUMERICAL_TITLE_CASE_EXAMPLE = 'Thanks 4 Reading';
-    private const NUMERICAL_CAMEL_CASE_EXAMPLE = 'thanks4Reading';
-    private const NUMERICAL_PASCAL_CASE_EXAMPLE = 'Thanks4Reading';
-    private const NUMERICAL_SNAKE_CASE_EXAMPLE = 'thanks_4_reading';
-    private const NUMERICAL_KEBAB_CASE_EXAMPLE = 'thanks-4-reading';
-
-    private const FINISHING_WORD = ' example';
-    private const EXCLAMATION_MARK = '!';
-    private const INTERROGATION_MARK = '?';
-    private const SLASH = '/';
-
-    public function testFinishWith()
+    public function testCountSubstring(): void
     {
-        $pure_string = 'a pure string';
-        $string_finished_with_slash = $pure_string . self::SLASH;
-        $string_finished_with_exclamation_mark = $pure_string . self::EXCLAMATION_MARK;
-        $string_finished_with_interrogation_mark = $pure_string . self::INTERROGATION_MARK;
-        $string_finished_with_example = $pure_string . self::FINISHING_WORD;
+        $this->assertEquals(1, Str::countSubstring(self::BASE_STRING, 'Test'));
+        $this->assertEquals(2, Str::countSubstring(self::BASE_STRING, 'tring'));
+        $this->assertEquals(0, Str::countSubstring(self::BASE_STRING, '$'));
+    }
 
-        $this->assertEquals(
-            $string_finished_with_slash,
-            Str::finishWith($pure_string, self::SLASH)
-        );
-        $this->assertEquals(
-            $string_finished_with_slash,
-            Str::finishWith($string_finished_with_slash, self::SLASH)
-        );
+    public function testLimitWords(): void
+    {
+        $this->assertEquals('Test...', Str::limitWords(self::COUNT_STRING, 1));
+        $this->assertEquals('Test Test...', Str::limitWords(self::COUNT_STRING, 2));
+        $this->assertEquals('Test Test Test...', Str::limitWords(self::COUNT_STRING, 3));
+    }
 
-        $this->assertEquals(
-            $string_finished_with_exclamation_mark,
-            Str::finishWith($pure_string, self::EXCLAMATION_MARK)
-        );
-        $this->assertEquals(
-            $string_finished_with_exclamation_mark,
-            Str::finishWith($string_finished_with_exclamation_mark, self::EXCLAMATION_MARK)
-        );
+    /**
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    public function testPluralize(): void
+    {
+        $this->assertEquals('tests', Str::plural('test'));
+        $this->assertEquals('testes', Str::plural('teste', 'portuguese'));
+    }
 
-        $this->assertEquals(
-            $string_finished_with_interrogation_mark,
-            Str::finishWith($pure_string, self::INTERROGATION_MARK)
-        );
-        $this->assertEquals(
-            $string_finished_with_interrogation_mark,
-            Str::finishWith($string_finished_with_interrogation_mark, self::INTERROGATION_MARK)
-        );
+    /**
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    public function testSingularize(): void
+    {
+        $this->assertEquals('test', Str::singular('tests'));
+        $this->assertEquals('teste', Str::singular('testes', 'portuguese'));
+    }
 
-        $this->assertEquals(
-            $string_finished_with_example,
-            Str::finishWith($pure_string, self::FINISHING_WORD)
-        );
-        $this->assertEquals(
-            $string_finished_with_example,
-            Str::finishWith($string_finished_with_example, self::FINISHING_WORD)
-        );
+    public function testRandomString()
+    {
+        $this->assertIsString(Str::random());
+    }
+
+    public function testTruncate()
+    {
+        $this->assertEquals('TestStringSubst', Str::truncate(self::BASE_STRING, 0));
+        $this->assertEquals('TestS', Str::truncate(self::BASE_STRING, 5));
+        $this->assertEquals('TestStringSubst', Str::truncate(self::BASE_STRING, -1));
     }
 }

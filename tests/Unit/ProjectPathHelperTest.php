@@ -2,30 +2,28 @@
 
 namespace Wordless\Tests\Unit;
 
-use Wordless\Exceptions\InvalidUuidVersion;
-use Wordless\Exceptions\PathNotFoundException;
-use Wordless\Helpers\ProjectPath;
-use Wordless\Helpers\Str;
-use Wordless\Tests\Contracts\NeedsTestEnvironment;
+use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Str;
 use Wordless\Tests\WordlessTestCase;
 
 class ProjectPathHelperTest extends WordlessTestCase
 {
-    use NeedsTestEnvironment;
-
     /**
      * @return void
      * @throws PathNotFoundException
      */
     public function testAppPath()
     {
-        $this->assertEquals(realpath(__DIR__ . '/../../test-environment/app'), ProjectPath::app());
+        $this->assertEquals(
+            realpath(__DIR__ . '/../..') . DIRECTORY_SEPARATOR . 'app',
+            ProjectPath::app()
+        );
     }
 
     /**
      * @return void
      * @throws PathNotFoundException
-     * @throws InvalidUuidVersion
      */
     public function testInvalidPath()
     {

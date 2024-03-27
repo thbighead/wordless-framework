@@ -1,15 +1,17 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
-const ROOT_PROJECT_PATH = __DIR__;
-
-require __DIR__ . '/vendor/autoload.php';
+declare(strict_types=1);
 
 use Symfony\Component\Console\Application;
-use Wordless\Commands\InitializeTestEnvironment;
+use Wordless\Application\Helpers\Environment;
+use Wordless\Core\Bootstrapper;
 
-$application = new Application;
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/env.php';
 
-$application->add(new InitializeTestEnvironment);
+const FRAMEWORK_ENVIRONMENT = true;
+const ROOT_PROJECT_PATH = __DIR__;
 
-/** @noinspection PhpUnhandledExceptionInspection */
-$application->run();
+Environment::loadDotEnv();
+
+Bootstrapper::bootConsole(new Application);
