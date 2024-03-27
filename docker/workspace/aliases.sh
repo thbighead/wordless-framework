@@ -33,6 +33,7 @@ alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
 # Always use color output for `ls`
 alias ls="command ls ${colorflag}"
 
+<<<<<<< HEAD
 # Commonly Used Aliases
 alias ..="cd .."
 alias ...="cd ../.."
@@ -52,12 +53,15 @@ alias cls="clear && ls"
 alias code="cd /var/www"
 alias ea="vi ~/aliases.sh"
 
+=======
+>>>>>>> github/feature/php8.2
 # Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
+<<<<<<< HEAD
 alias art="php artisan"
 alias artisan="php artisan"
 alias cdump="composer dump-autoload -o"
@@ -87,10 +91,14 @@ alias npm-global="npm list -g --depth 0"
 alias ra="reload"
 alias reload="source ~/.aliases && echo \"$COL_GREEN ==> Aliases Reloaded... $COL_RESET \n \""
 alias run="npm run"
+=======
+alias console="php console"
+>>>>>>> github/feature/php8.2
 
 # Xvfb
 alias xvfb="Xvfb -ac :0 -screen 0 1024x768x16 &"
 
+<<<<<<< HEAD
 # requires installation of 'https://www.npmjs.com/package/npms-cli'
 alias npms="npms search"
 # requires installation of 'https://www.npmjs.com/package/package-menu-cli'
@@ -114,6 +122,8 @@ alias gbr="git branch"
 alias gc="git commit"
 alias gck="git checkout"
 
+=======
+>>>>>>> github/feature/php8.2
 # Create a new directory and enter it
 function mkd() {
     mkdir -p "$@" && cd "$@"
@@ -149,6 +159,7 @@ function fs() {
 	fi;
 }
 
+<<<<<<< HEAD
 # Add artisan autocomplete
 function _artisan()
 {
@@ -159,3 +170,14 @@ function _artisan()
 }
 complete -F _artisan art
 complete -F _artisan artisan
+=======
+# Add console autocomplete
+function _console()
+{
+	COMP_WORDBREAKS=${COMP_WORDBREAKS//:}
+	COMMANDS=`php console --raw --no-ansi list | sed "s/[[:space:]].*//g"`
+	COMPREPLY=(`compgen -W "$COMMANDS" -- "${COMP_WORDS[COMP_CWORD]}"`)
+	return 0
+}
+complete -F _console console
+>>>>>>> github/feature/php8.2

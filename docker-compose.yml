@@ -31,7 +31,11 @@ services:
         - INSTALL_GNUPG=false
         - INSTALL_XDEBUG=false
         - XDEBUG_PORT=9003
+<<<<<<< HEAD
         - INSTALL_PCOV=false
+=======
+        - INSTALL_PCOV=true
+>>>>>>> github/feature/php8.2
         - INSTALL_PHPDBG=false
         - INSTALL_BLACKFIRE=false
         - INSTALL_SSH2=false
@@ -94,7 +98,11 @@ services:
         - INSTALL_GRAPHVIZ=false
         - INSTALL_IONCUBE=false
         - INSTALL_APCU=false
+<<<<<<< HEAD
         - INSTALL_MYSQL_CLIENT=false
+=======
+        - INSTALL_MYSQL_CLIENT=true
+>>>>>>> github/feature/php8.2
         - INSTALL_PING=false
         - INSTALL_SSHPASS=false
         - INSTALL_INOTIFY=false
@@ -140,19 +148,63 @@ services:
     volumes:
       ## APP_CODE_PATH_HOST:APP_CODE_PATH_CONTAINER APP_CODE_CONTAINER_FLAG
       - ./:/var/www:cached
+<<<<<<< HEAD
     extra_hosts:
       - "dockerhost:10.0.75.1"
+=======
+>>>>>>> github/feature/php8.2
     ports:
       ## WORKSPACE_SSH_PORT
       - "2222:22"
     tty: true
     environment:
       - PHP_IDE_CONFIG=serverName=laradock
+<<<<<<< HEAD
       - DOCKER_HOST=tcp://docker-in-docker:2376
       - DOCKER_TLS_VERIFY=1
       - DOCKER_TLS_CERTDIR=/certs
       - DOCKER_CERT_PATH=/certs/client
       - CHOKIDAR_USEPOLLING=true
+=======
+    networks:
+      - frontend
+      - backend
+  ### MariaDB ##############################################
+  mariadb:
+    container_name: wordless-framework-mariadb
+    build:
+      context: ./docker/mariadb
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+        - MARIADB_VERSION=lts
+    volumes:
+      - ~/.laradock/data/mariadb:/var/lib/mysql
+      - ./docker/mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    environment:
+      - TZ=UTC
+      - MYSQL_DATABASE=default
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - backend
+  ### Adminer ###########################################
+  adminer:
+    build:
+      context: ./docker/adminer
+      args:
+        - INSTALL_MSSQL=false
+    environment:
+      - ADMINER_PLUGINS=
+      - ADMINER_DESIGN=pepa-linha
+      - ADMINER_DEFAULT_SERVER=mysql
+    ports:
+      - "8081:8080"
+>>>>>>> github/feature/php8.2
     networks:
       - frontend
       - backend
