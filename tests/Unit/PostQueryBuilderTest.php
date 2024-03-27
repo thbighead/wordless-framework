@@ -2,277 +2,281 @@
 
 namespace Wordless\Tests\Unit;
 
-use Wordless\Abstractions\Enums\WpQueryTaxonomy;
-use Wordless\Abstractions\Pagination\Posts;
-use Wordless\Adapters\Post;
-use Wordless\Adapters\PostType;
-use Wordless\Adapters\QueryBuilder\PostQueryBuilder;
-use Wordless\Adapters\QueryBuilder\PostQueryBuilder\EmptyTaxonomySubQueryBuilder;
-use Wordless\Adapters\QueryBuilder\QueryBuilder;
-use Wordless\Tests\Contracts\NeedsTestEnvironment;
-use Wordless\Tests\WordlessTestCase;
+use ReflectionException;
+use Wordless\Application\Helpers\Reflection;
+use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\AuthorTests;
+use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\CategoryTests;
+use Wordless\Tests\WordlessTestCase\QueryBuilderTestCase;
+use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
+use Wordless\Wordpress\Models\PostType;
+use Wordless\Wordpress\Models\PostType\Enums\StandardType;
+use Wordless\Wordpress\Pagination\Posts;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\ColumnReference;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\Direction;
 
-class PostQueryBuilderTest extends WordlessTestCase
+class PostQueryBuilderTest extends QueryBuilderTestCase
 {
-    use NeedsTestEnvironment;
+    use AuthorTests;
+    use CategoryTests;
 
-    public function testQueryAlreadySetExceptionCannotOccurOnConstructor()
+    private const DEFAULT_ARGUMENTS = [
+        PostType::QUERY_TYPE_KEY => StandardType::ANY,
+        'post_status' => StandardStatus::REALLY_ANY,
+        'ignore_sticky_posts' => true,
+        PostQueryBuilder::KEY_NO_FOUND_ROWS => true,
+        PostQueryBuilder::KEY_NO_PAGING => true,
+        Posts::KEY_POSTS_PER_PAGE => -1,
+        PostsListFormat::FIELDS_KEY => PostsListFormat::all_fields->value,
+    ];
+    public const DUMMY_POST_IDS = [1, 2, 3, 4];
+    public const DUMMY_POST_NAMES = ['post1', 'post2', 'post3'];
+    private const ARGUMENTS_KEY = 'arguments';
+    private const KEY_ORDER_BY = 'orderby';
+    private const KEY_AUTHOR = 'author';
+    private const KEY_AUTHOR_NICE_NAME = 'author_name';
+    private const CUSTOM_POST_TYPES = ['first_type', 'second_type'];
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testEmptyQuery(): void
     {
-        $query1 = new PostQueryBuilder;
-        $query2 = new PostQueryBuilder;
-        $query3 = QueryBuilder::fromPostEntity();
-        $query4 = QueryBuilder::fromPostEntity(PostType::POST);
-
-        $this->assertInstanceOf(PostQueryBuilder::class, get_class($query1));
-        $this->assertInstanceOf(PostQueryBuilder::class, get_class($query2));
-        $this->assertInstanceOf(PostQueryBuilder::class, get_class($query3));
-        $this->assertInstanceOf(PostQueryBuilder::class, get_class($query4));
-    }
-
-    public function testPaginatedQueryResult(): Posts
-    {
-        $this->assertInstanceOf(Posts::class, $result = (new PostQueryBuilder)->paginate());
-
-        return $result;
+        $this->assertEquals(
+            self::DEFAULT_ARGUMENTS,
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder))
+        );
     }
 
     /**
-     * @param Posts $result
-     * @depends testPaginatedQueryResult
+     * @return void
+     * @throws ReflectionException
      */
-    public function testPaginationFirstPage(Posts $result)
+    public function testWhereTypeQuery(): void
     {
-        $this->assertEquals(Posts::FIRST_PAGE, $result->getCurrentPageNumber());
-    }
-
-    /**
-     * @param Posts $result
-     * @depends testPaginatedQueryResult
-     */
-    public function testPaginationPostsKeyedById(Posts $result)
-    {
-        foreach ($result->getCurrentPageItems() as $post_id => $post) {
-            $this->assertInstanceOf(Post::class, $post);
-            $this->assertEquals($post_id, $post->ID ?? null);
-        }
-    }
-
-    /**
-     * @param Posts $result
-     * @depends testPaginatedQueryResult
-     */
-    public function testNextPage(Posts $result)
-    {
-        $current_page = $result->getCurrentPageNumber();
-        $pageOne = $result->getCurrentPageItems();
-
-        $result->nextPage();
-
-        if ($result->getNumberOfPages() > 1) {
-            $this->assertEquals(++$current_page, $result->getCurrentPageNumber());
-            $this->assertNotEquals($pageOne, $result->getCurrentPageItems());
-
-            return;
-        }
-
-        $this->assertEquals(1, $result->getCurrentPageNumber());
-        $this->assertEquals($pageOne, $result->getCurrentPageNumber());
-    }
-
-    public function testTaxonomySubQueries()
-    {
-        $query = new PostQueryBuilder;
-        $taxonomySubQuery = new EmptyTaxonomySubQueryBuilder;
-
-        $taxonomySubQuery = $taxonomySubQuery->whereTaxonomyIs(
-            $taxonomy_testing = 'testing',
-            WpQueryTaxonomy::COLUMN_TERM_ID,
-            $taxonomy_testing_term_ids = [1, 2, 5, 48]
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, [PostType::QUERY_TYPE_KEY => [self::CUSTOM_POST_TYPES[0]]]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->whereType(self::CUSTOM_POST_TYPES[0]))
         );
 
-        $this->assertEquals($arguments = [[
-            WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_testing,
-            WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_TERM_ID,
-            WpQueryTaxonomy::KEY_TERMS => $taxonomy_testing_term_ids,
-            WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_AND,
-            WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
-        ]], $taxonomySubQuery->build());
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, [PostType::QUERY_TYPE_KEY => self::CUSTOM_POST_TYPES]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->whereType(...self::CUSTOM_POST_TYPES))
+        );
+    }
 
-        $taxonomy_chemical_element = 'chemical_element';
-        $taxonomy_chemical_element_slugs = ['ag', 'o', 'pb'];
-        $taxonomySubQuery = $taxonomySubQuery->orWhereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subQuery) use (
-            $taxonomy_chemical_element,
-            $taxonomy_chemical_element_slugs
-        ) {
-            return $subQuery->whereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subSubQuery) use (
-                $taxonomy_chemical_element,
-                $taxonomy_chemical_element_slugs
-            ) {
-                return $subSubQuery->whereTaxonomyIn(
-                    $taxonomy_chemical_element,
-                    WpQueryTaxonomy::COLUMN_SLUG,
-                    $taxonomy_chemical_element_slugs,
-                    false
-                );
-            });
-        });
-
-        $arguments[WpQueryTaxonomy::KEY_RELATION] = WpQueryTaxonomy::RELATION_OR;
-        $arguments[] = [
-            WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_chemical_element,
-            WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_SLUG,
-            WpQueryTaxonomy::KEY_TERMS => $taxonomy_chemical_element_slugs,
-            WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_IN,
-            WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => false,
-        ];
-
-        $this->assertEquals($arguments, $taxonomySubQuery->build());
-
-        $taxonomy_pokemon = 'pokemon';
-        $taxonomy_pokemon_term_taxonomy_id = 374;
-        $taxonomy_chemical_element_term_id = 5;
-        $taxonomy_testing_names = ['A/B Test', 'Math Test'];
-        $taxonomy_book = 'book';
-        $taxonomy_book_slug = 'harry-potter';
-        $taxonomySubQuery = $taxonomySubQuery->orWhereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subQuery) use (
-            $taxonomy_chemical_element,
-            $taxonomy_chemical_element_term_id,
-            $taxonomy_pokemon,
-            $taxonomy_pokemon_term_taxonomy_id,
-            $taxonomy_testing,
-            $taxonomy_testing_names,
-            $taxonomy_book,
-            $taxonomy_book_slug
-        ) {
-            return $subQuery->whereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subSubQuery) use (
-                $taxonomy_chemical_element,
-                $taxonomy_chemical_element_term_id,
-                $taxonomy_pokemon,
-                $taxonomy_pokemon_term_taxonomy_id,
-                $taxonomy_testing,
-                $taxonomy_testing_names,
-                $taxonomy_book,
-                $taxonomy_book_slug
-            ) {
-                return $subSubQuery->whereTaxonomyNotExists(
-                    $taxonomy_chemical_element,
-                    WpQueryTaxonomy::COLUMN_TERM_ID,
-                    $taxonomy_chemical_element_term_id
-                )->andWhereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subSubSubQuery) use (
-                    $taxonomy_pokemon,
-                    $taxonomy_pokemon_term_taxonomy_id,
-                    $taxonomy_testing,
-                    $taxonomy_testing_names,
-                    $taxonomy_book,
-                    $taxonomy_book_slug
-                ) {
-                    return $subSubSubQuery->whereTaxonomyNotIn(
-                        $taxonomy_pokemon,
-                        WpQueryTaxonomy::COLUMN_TERM_TAXONOMY_ID,
-                        $taxonomy_pokemon_term_taxonomy_id
-                    )->orWhereTaxonomyIn(
-                        $taxonomy_testing,
-                        WpQueryTaxonomy::COLUMN_NAME,
-                        $taxonomy_testing_names
-                    )->orWhereTaxonomyIs($taxonomy_book, WpQueryTaxonomy::COLUMN_SLUG, $taxonomy_book_slug);
-                });
-            });
-        });
-
-        $arguments[] = [
-            WpQueryTaxonomy::KEY_RELATION => WpQueryTaxonomy::RELATION_AND,
-            [
-                WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_chemical_element,
-                WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_TERM_ID,
-                WpQueryTaxonomy::KEY_TERMS => $taxonomy_chemical_element_term_id,
-                WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_NOT_EXISTS,
-                WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
-            ],
-            [
-                WpQueryTaxonomy::KEY_RELATION => WpQueryTaxonomy::RELATION_OR,
-                [
-                    WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_pokemon,
-                    WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_TERM_TAXONOMY_ID,
-                    WpQueryTaxonomy::KEY_TERMS => $taxonomy_pokemon_term_taxonomy_id,
-                    WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_NOT_IN,
-                    WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
-                ],
-                [
-                    WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_testing,
-                    WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_NAME,
-                    WpQueryTaxonomy::KEY_TERMS => $taxonomy_testing_names,
-                    WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_IN,
-                    WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
-                ],
-                [
-                    WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_book,
-                    WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_SLUG,
-                    WpQueryTaxonomy::KEY_TERMS => $taxonomy_book_slug,
-                    WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_AND,
-                    WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
-                ],
-            ],
-        ];
-
-        $this->assertEquals($arguments, $taxonomySubQuery->build());
-
-        $taxonomy_chemical_element_slug = 'cl';
-        $taxonomySubQuery = $taxonomySubQuery->orWhereTaxonomyIs(
-            $taxonomy_chemical_element,
-            WpQueryTaxonomy::COLUMN_SLUG,
-            $taxonomy_chemical_element_slug
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testOrderByQuery(): void
+    {
+        $this->assertEquals(
+            array_merge(
+                self::DEFAULT_ARGUMENTS,
+                [self::KEY_ORDER_BY => [ColumnReference::author->value => Direction::ascending->value]]
+            ),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->orderByAscending(ColumnReference::author)
+            )
         );
 
-        $arguments[] = [
-            WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_chemical_element,
-            WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_SLUG,
-            WpQueryTaxonomy::KEY_TERMS => $taxonomy_chemical_element_slug,
-            WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_AND,
-            WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
-        ];
+        $this->assertEquals(
+            array_merge(
+                self::DEFAULT_ARGUMENTS,
+                [self::KEY_ORDER_BY => [
+                    ColumnReference::author->value => Direction::ascending->value,
+                    ColumnReference::slug->value => Direction::ascending->value,
+                ]]
+            ),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->orderByAscending(ColumnReference::author, ColumnReference::slug)
+            )
+        );
 
-        $this->assertEquals($arguments, $taxonomySubQuery->build());
+        $this->assertEquals(
+            array_merge(
+                self::DEFAULT_ARGUMENTS,
+                [self::KEY_ORDER_BY => [ColumnReference::author->value => Direction::descending->value]]
+            ),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->orderByDescending(ColumnReference::author)
+            )
+        );
 
-        $taxonomy_pokemon_name = 'Bulbasaur';
-        $taxonomy_pokemon_type = 'pokemon_type';
-        $taxonomy_pokemon_type_term_taxonomy_ids = [19, 65, 103];
-        $taxonomySubQuery = $taxonomySubQuery->orWhereTaxonomy(function (EmptyTaxonomySubQueryBuilder $subQuery) use (
-            $taxonomy_pokemon,
-            $taxonomy_pokemon_name,
-            $taxonomy_pokemon_type,
-            $taxonomy_pokemon_type_term_taxonomy_ids
-        ) {
-            return $subQuery->whereTaxonomyExists(
-                $taxonomy_pokemon,
-                WpQueryTaxonomy::COLUMN_NAME,
-                $taxonomy_pokemon_name
-            )->andWhereTaxonomyNotIn(
-                $taxonomy_pokemon_type,
-                WpQueryTaxonomy::COLUMN_TERM_TAXONOMY_ID,
-                $taxonomy_pokemon_type_term_taxonomy_ids
-            );
-        });
+        $this->assertEquals(
+            array_merge(
+                self::DEFAULT_ARGUMENTS,
+                [self::KEY_ORDER_BY => [
+                    ColumnReference::author->value => Direction::descending->value,
+                    ColumnReference::slug->value => Direction::descending->value,
+                ]]
+            ),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->orderByDescending(ColumnReference::author, ColumnReference::slug)
+            )
+        );
 
-        $arguments[] = [
-            WpQueryTaxonomy::KEY_RELATION => WpQueryTaxonomy::RELATION_AND,
-            [
-                WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_pokemon,
-                WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_NAME,
-                WpQueryTaxonomy::KEY_TERMS => $taxonomy_pokemon_name,
-                WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_EXISTS,
-                WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
-            ],
-            [
-                WpQueryTaxonomy::KEY_TAXONOMY => $taxonomy_pokemon_type,
-                WpQueryTaxonomy::KEY_COLUMN => WpQueryTaxonomy::COLUMN_TERM_TAXONOMY_ID,
-                WpQueryTaxonomy::KEY_TERMS => $taxonomy_pokemon_type_term_taxonomy_ids,
-                WpQueryTaxonomy::KEY_OPERATOR => WpQueryTaxonomy::OPERATOR_NOT_IN,
-                WpQueryTaxonomy::KEY_INCLUDE_CHILDREN => true,
-            ],
-        ];
+        $this->assertEquals(
+            array_merge(
+                self::DEFAULT_ARGUMENTS,
+                [self::KEY_ORDER_BY => [
+                    ColumnReference::author->value => Direction::descending->value,
+                    ColumnReference::slug->value => Direction::ascending->value,
+                ]]
+            ),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->orderByDescending(ColumnReference::author)
+                ->orderByAscending(ColumnReference::slug)
+            )
+        );
 
-        $this->assertEquals($arguments, $taxonomySubQuery->build());
+        $this->assertEquals(
+            array_merge(
+                self::DEFAULT_ARGUMENTS,
+                [self::KEY_ORDER_BY => [
+                    ColumnReference::author->value => Direction::ascending->value,
+                ]]
+            ),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->orderBy(ColumnReference::author)
+            )
+        );
 
-        $query->whereTaxonomy($taxonomySubQuery);
+        $this->assertEquals(
+            array_merge(
+                self::DEFAULT_ARGUMENTS,
+                [self::KEY_ORDER_BY => [
+                    ColumnReference::author->value => Direction::descending->value,
+                ]]
+            ),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->orderBy(ColumnReference::author, Direction::descending)
+            )
+        );
+
+        $this->assertEquals(
+            array_merge(
+                self::DEFAULT_ARGUMENTS,
+                [self::KEY_ORDER_BY => [
+                    ColumnReference::author->value => Direction::ascending->value,
+                    ColumnReference::slug->value => Direction::descending->value,
+                ]]
+            ),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->orderBy(ColumnReference::author)
+                ->orderBy(ColumnReference::slug, Direction::descending)
+            )
+        );
+
+        $this->assertEquals(
+            array_merge(
+                self::DEFAULT_ARGUMENTS,
+                [self::KEY_ORDER_BY => [
+                    ColumnReference::author->value => Direction::ascending->value,
+                    ColumnReference::slug->value => Direction::descending->value,
+                    ColumnReference::date->value => Direction::ascending->value,
+                ]]
+            ),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->orderBy(ColumnReference::author)
+                ->orderBy(ColumnReference::slug, Direction::descending)
+                ->orderByAscending(ColumnReference::date)
+            )
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testWhereIdQuery()
+    {
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, [
+                'page_id' => self::DUMMY_POST_IDS[0],
+                'p' => self::DUMMY_POST_IDS[0],
+            ]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)->whereId(self::DUMMY_POST_IDS[0]))
+        );
+
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, ['post__in' => self::DUMMY_POST_IDS]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)->whereId(...self::DUMMY_POST_IDS))
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testWhereNotIdQuery()
+    {
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, ['post__not_in' => [self::DUMMY_POST_IDS[0]]]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)->whereNotId(self::DUMMY_POST_IDS[0]))
+        );
+
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, ['post__not_in' => self::DUMMY_POST_IDS]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)->whereNotId(...self::DUMMY_POST_IDS))
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testWhereSlugQuery()
+    {
+        $slugs = ['slug_1', 'slug_2', 'slug_3'];
+
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, ['pagename' => $slugs[0], 'name' => $slugs[0]]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)->whereSlug($slugs[0]))
+        );
+
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, ['post_name__in' => $slugs]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)->whereSlug(...$slugs))
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testWhereStatusQuery()
+    {
+        $key_post_status = Reflection::getNonPublicConstValue(PostQueryBuilder::class, 'KEY_POST_STATUS');
+
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, [$key_post_status => [StandardStatus::ANY]]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)->whereStatus(StandardStatus::ANY))
+        );
+
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, [
+                $key_post_status => [StandardStatus::ANY],
+                PostType::QUERY_TYPE_KEY => [StandardType::attachment->name],
+            ]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->whereStatus(StandardStatus::ANY)
+                ->whereType(StandardType::attachment))
+        );
+
+        $this->assertEquals(
+            array_merge(self::DEFAULT_ARGUMENTS, [
+                $key_post_status => [StandardStatus::publish->value],
+                PostType::QUERY_TYPE_KEY => [StandardType::attachment->name],
+            ]),
+            $this->buildArgumentsFromQueryBuilder((new PostQueryBuilder)
+                ->whereStatus(StandardStatus::publish)
+                ->whereType(StandardType::attachment))
+        );
     }
 }
