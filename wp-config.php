@@ -38,17 +38,10 @@ require_once ROOT_PROJECT_PATH . '/vendor/autoload.php';
 require_once ROOT_PROJECT_PATH . '/env.php';
 
 use ParagonIE\CSPBuilder\CSPBuilder;
-<<<<<<< HEAD:src/stubs/wp-config.php
-use Wordless\Abstractions\InternalCache;
-use Wordless\Helpers\Config;
-use Wordless\Helpers\Environment;
-use Wordless\Helpers\Str;
-=======
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Timezone;
->>>>>>> github/feature/php8.2:wp-config.php
 
 /** @noinspection PhpUnhandledExceptionInspection */
 Environment::loadDotEnv();
@@ -190,12 +183,8 @@ if (Environment::get('WORDLESS_CSP', false)) {
         header('Strict-Transport-Security: max-age=63072000; includeSubDomains; preload');
         header('X-Content-Type-Options: nosniff');
         header('X-XSS-Protection: 1; mode=block');
-<<<<<<< HEAD:src/stubs/wp-config.php
-        (new CSPBuilder(Config::get('csp')))->sendCSPHeader();
-=======
         /** @noinspection PhpUnhandledExceptionInspection */
         CSPBuilder::fromArray(Config::wordlessCsp()->get())->sendCSPHeader();
->>>>>>> github/feature/php8.2:wp-config.php
     }
 }
 

@@ -1,6 +1,6 @@
 # Wordless Framework
 
-The custom [Wordless](https://bitbucket.org/infobaseit/wordless/src/master/) project framework made for Infobase.
+The [Wordless](https://github.com/thbighead/Wordless) project framework.
 
 ## Directory and files organization
 

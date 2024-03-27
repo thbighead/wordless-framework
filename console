@@ -14,9 +14,4 @@ const ROOT_PROJECT_PATH = __DIR__;
 
 Environment::loadDotEnv();
 
-<<<<<<< HEAD
-/** @noinspection PhpUnhandledExceptionInspection */
-$application->run();
-=======
 Bootstrapper::bootConsole(new Application);
->>>>>>> github/feature/php8.2
