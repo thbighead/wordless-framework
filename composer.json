@@ -21,27 +21,46 @@
   "config": {
     "optimize-autoloader": true,
     "preferred-install": "dist",
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "roots/wordpress-core-installer": true
+    }
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": "^7.4",
+    "php": "^8.2",
+    "ext-fileinfo": "*",
     "ext-json": "*",
     "ext-openssl": "*",
+    "ext-pcntl": "*",
     "doctrine/inflector": "^2.0",
-    "lcobucci/jwt": "^4.2",
-    "ramsey/uuid": "^4.2",
-    "symfony/console": "^5.3",
-    "symfony/dotenv": "^5.3",
-    "symfony/http-client": "^5.3",
-    "symfony/http-foundation": "^5.3",
-    "symfony/validator": "^5.4",
-    "wp-cli/wp-cli-bundle": "^2.5"
+    "lcobucci/jwt": "^5.2",
+    "monolog/monolog": "^3.5",
+    "nesbot/carbon": "^2.72",
+    "paragonie/csp-builder": "^3.0",
+    "ramsey/uuid": "^4.7",
+    "roots/wordpress": "^6",
+    "symfony/console": "^6.3",
+    "symfony/dotenv": "^6.3",
+    "symfony/http-client": "^6.3",
+    "symfony/http-foundation": "^6.3",
+    "symfony/validator": "^6.3",
+    "wp-cli/wp-cli-bundle": "^2.6"
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.5",
-    "psy/psysh": "^0.10.8",
-    "symfony/var-dumper": "^5.3"
+    "fakerphp/faker": "~1.23.0",
+    "phpunit/phpunit": "~10.5.3",
+    "psy/psysh": "^0.11.22",
+    "symfony/var-dumper": "^6.3"
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "touch .env",
+      "rm -f app config stubs && ln -s src/Application app  && ln -s assets/config config && ln -s assets/stubs stubs"
+    ]
+  },
+  "extra": {
+    "wordpress-install-dir": "wp/wp-core"
   }
 }
