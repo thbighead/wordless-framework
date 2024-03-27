@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Commands;
+
+use Symfony\Component\Console\Command\Command;
+use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
+use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
+
+class DummyCommand extends ConsoleCommand
+{
+    final public const COMMAND_NAME = 'command:name';
+
+    /**
+     * @return ArgumentDTO[]
+     */
+    protected function arguments(): array
+    {
+        return [];
+    }
+
+    protected function description(): string
+    {
+        return '';
+    }
+
+
+    protected function help(): string
+    {
+        return '';
+    }
+
+    /**
+     * @return OptionDTO[]
+     */
+    protected function options(): array
+    {
+        return [];
+    }
+
+    protected function runIt(): int
+    {
+        return Command::SUCCESS;
+    }
+}
+

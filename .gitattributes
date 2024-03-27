@@ -1,7 +1,10 @@
-/.git                                           export-ignore
-/.idea                                          export-ignore
+/.git/                                          export-ignore
+/.idea/                                         export-ignore
+/docker/                                        export-ignore
+/logs/                                          export-ignore
+/.editorconfig                                  export-ignore
 /console                                        export-ignore
-/src/Commands/InitializeTestEnvironment.php     export-ignore
-/test-environment                               export-ignore
-/test-environment-backup                        export-ignore
-/vendor                                         export-ignore
+/docker-compose.yml                             export-ignore
+/env.php                                        export-ignore
+/wp-cli.yml                                     export-ignore
+/wp-config.php                                  export-ignore
