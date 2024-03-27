@@ -1,4 +1,8 @@
-/.idea/
-/test-environment/
-/vendor/
-/.phpunit.result.cache
+/.idea
+/.phpunit.cache
+/vendor
+/wp
+/.env
+/app
+/config
+/stubs
