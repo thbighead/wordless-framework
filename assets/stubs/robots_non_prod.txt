@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: /
-#custom_admin_uri
-Sitemap: {APP_URL}sitemap.xml

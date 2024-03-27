@@ -1,5 +1,0 @@
-<<<<<<< HEAD
-* * * * * laradock /usr/bin/php /var/www/artisan schedule:run >> /dev/null 2>&1
-=======
-* * * * * laradock cd /var/www && /usr/bin/php console schedule:run --no-tty >> /dev/null 2>&1
->>>>>>> github/feature/php8.2

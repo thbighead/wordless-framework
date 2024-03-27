@@ -1,9 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /wp-core/
-Disallow: /wp-admin/
-Disallow: /login/
-Disallow: /admin/
-Disallow: /wp-content/plugins/
-#custom_admin_uri
-Sitemap: {APP_URL}sitemap.xml
