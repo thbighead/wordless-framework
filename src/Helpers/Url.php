@@ -40,6 +40,17 @@ class Url
         return null;
     }
 
+    public static function home(?string $additional_path = null): string
+    {
+        if (function_exists('home_url')) {
+            return home_url($additional_path ?? '');
+        }
+
+        return Environment::get('APP_URL') . (
+            $additional_path === null ? '' : Str::startWith($additional_path, '/')
+            );
+    }
+
     /**
      * @return bool
      * @throws PathNotFoundException
@@ -70,7 +81,7 @@ class Url
         return Str::beginsWith(static::currentUri(), '/' . rest_get_url_prefix());
     }
 
-    public static function isCurrentUri(string $uri):bool
+    public static function isCurrentUri(string $uri): bool
     {
         return trim(Url::currentUri(), '/') === trim($uri, '/');
     }
