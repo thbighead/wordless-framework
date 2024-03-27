@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: /
-#custom_login_url
-Sitemap: {APP_URL}sitemap.xml
