@@ -12,6 +12,7 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Core\Bootstrapper;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
@@ -23,6 +24,8 @@ class PublishConfigurationFiles extends ConsoleCommand
 
     final public const COMMAND_NAME = 'publish:config';
     private const CONFIG_FILENAME_ARGUMENT_NAME = 'config_filename';
+
+    private array $provided_configs;
 
     /**
      * @return ArgumentDTO[]
@@ -70,6 +73,8 @@ class PublishConfigurationFiles extends ConsoleCommand
     {
         $config_filenames = $this->input->getArgument(self::CONFIG_FILENAME_ARGUMENT_NAME);
 
+        $this->provided_configs = Bootstrapper::bootProvidedConfigs();
+
         !empty($config_filenames) ?
             $this->publishConfigFilesFromCommandArgument($config_filenames) :
             $this->publishConfigFilesFromVendorPackage();
@@ -102,11 +107,32 @@ class PublishConfigurationFiles extends ConsoleCommand
     {
         foreach ($config_filenames as $config_filename) {
             $config_filename_with_extension = Str::finishWith($config_filename, '.php');
+
+            if ($this->resolveFromPackageProvider($config_filename_with_extension)) {
+                continue;
+            }
+
             $config_relative_filepath = "config/$config_filename_with_extension";
             $config_filepath_from = ProjectPath::assets($config_relative_filepath);
 
             $this->skipOrCopyConfigFile($config_filepath_from);
         }
+    }
+
+    /**
+     * @param string $config_filename
+     * @return bool
+     * @throws FailedToCopyConfig
+     */
+    private function resolveFromPackageProvider(string $config_filename): bool
+    {
+        if (isset($this->provided_configs[$config_filename])) {
+            $this->skipOrCopyConfigFile($this->provided_configs[$config_filename]);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -120,6 +146,10 @@ class PublishConfigurationFiles extends ConsoleCommand
     {
         foreach (DirectoryFiles::recursiveRead(ProjectPath::assets('config')) as $config_filepath_from) {
             $this->skipOrCopyConfigFile($config_filepath_from);
+        }
+
+        foreach ($this->provided_configs as $provided_config) {
+            $this->skipOrCopyConfigFile($provided_config);
         }
     }
 
