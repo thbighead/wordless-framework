@@ -60,7 +60,8 @@ trait InstallEnqueueables
      */
     private function resolveScriptEnqueues(): static
     {
-        foreach ($this->loaded_enqueueable_scripts as $enqueueable_script_namespace) {
+        /** @var EnqueueableScript $enqueueable_script_namespace */
+        foreach ($this->loaded_enqueueable_scripts as $enqueueable_script_namespace => $can_enqueue) {
             $enqueueable_script_namespace::make()->enqueue();
         }
 
@@ -75,7 +76,8 @@ trait InstallEnqueueables
      */
     private function resolveStyleEnqueues(): static
     {
-        foreach ($this->loaded_enqueueable_styles as $enqueueable_style_namespace) {
+        /** @var EnqueueableStyle $enqueueable_style_namespace */
+        foreach ($this->loaded_enqueueable_styles as $enqueueable_style_namespace => $can_enqueue) {
             $enqueueable_style_namespace::make()->enqueue();
         }
 
