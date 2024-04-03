@@ -21,6 +21,7 @@ use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
 use Wordless\Application\Listeners\ManageRestResponseContentTypeHeader;
 use Wordless\Application\Listeners\RemoveAdditionalCssFromAdmin;
 use Wordless\Application\Listeners\RemoveGlobalCustomInlineStyles;
+use Wordless\Application\Listeners\ResolveEnqueues;
 use Wordless\Application\Listeners\ShowCustomFrontPageAtAdminSideMenu;
 use Wordless\Application\Listeners\WordlessVersionOnAdmin;
 use Wordless\Infrastructure\Provider;
@@ -55,6 +56,7 @@ class CoreProvider extends Provider
             ManageRestResponseContentTypeHeader::class,
             RemoveAdditionalCssFromAdmin::class,
             RemoveGlobalCustomInlineStyles::class,
+            ResolveEnqueues::class,
             ShowCustomFrontPageAtAdminSideMenu::class,
             WordlessVersionOnAdmin::class,
         ];
