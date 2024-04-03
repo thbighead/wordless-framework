@@ -42,8 +42,6 @@ use Wordless\Application\Providers\AdminCustomUrlProvider;
 use Wordless\Core\InternalCache;
 
 /** @noinspection PhpUnhandledExceptionInspection */
-Environment::loadDotEnv();
-/** @noinspection PhpUnhandledExceptionInspection */
 InternalCache::load();
 
 /** @noinspection PhpUnhandledExceptionInspection */
