@@ -30,6 +30,7 @@ class Environment extends Helper
 STRING;
     final public const PRODUCTION = 'production';
     final public const STAGING = 'staging';
+    private const DOT_ENV_LOADED_CONSTANT_NAME = 'DOT_ENV_LOADED';
 
     /**
      * @return string
@@ -61,8 +62,18 @@ STRING;
         }
     }
 
+    /**
+     * @param string $key
+     * @param mixed|null $default
+     * @return mixed
+     * @throws DotEnvNotSetException
+     */
     public static function get(string $key, mixed $default = null): mixed
     {
+        if (!defined(self::DOT_ENV_LOADED_CONSTANT_NAME)) {
+            self::loadDotEnv();
+        }
+
         try {
             $value = InternalCache::getValueOrFail("environment.$key");
         } catch (FailedToFindCachedKey|InternalCacheNotLoaded) {
@@ -77,11 +88,19 @@ STRING;
         return defined('FRAMEWORK_ENVIRONMENT') && FRAMEWORK_ENVIRONMENT === true;
     }
 
+    /**
+     * @return bool
+     * @throws DotEnvNotSetException
+     */
     public static function isLocal(): bool
     {
         return static::get('APP_ENV') === self::LOCAL;
     }
 
+    /**
+     * @return bool
+     * @throws DotEnvNotSetException
+     */
     public static function isNotLocal(): bool
     {
         return !static::isLocal();
@@ -92,31 +111,55 @@ STRING;
         return !static::isFramework();
     }
 
+    /**
+     * @return bool
+     * @throws DotEnvNotSetException
+     */
     public static function isNotProduction(): bool
     {
         return !static::isProduction();
     }
 
+    /**
+     * @return bool
+     * @throws DotEnvNotSetException
+     */
     public static function isNotRemote(): bool
     {
         return !static::isRemote();
     }
 
+    /**
+     * @return bool
+     * @throws DotEnvNotSetException
+     */
     public static function isNotStaging(): bool
     {
         return !static::isStaging();
     }
 
+    /**
+     * @return bool
+     * @throws DotEnvNotSetException
+     */
     public static function isProduction(): bool
     {
         return static::get('APP_ENV') === self::PRODUCTION;
     }
 
+    /**
+     * @return bool
+     * @throws DotEnvNotSetException
+     */
     public static function isRemote(): bool
     {
         return static::isProduction() && static::isStaging();
     }
 
+    /**
+     * @return bool
+     * @throws DotEnvNotSetException
+     */
     public static function isStaging(): bool
     {
         return static::get('APP_ENV') === self::STAGING;
@@ -131,6 +174,7 @@ STRING;
     {
         try {
             (new Dotenv)->load(ProjectPath::root('.env'));
+            define(self::DOT_ENV_LOADED_CONSTANT_NAME, true);
         } catch (PathNotFoundException $exception) {
             throw new DotEnvNotSetException(".env file not found at $exception->path");
         }
