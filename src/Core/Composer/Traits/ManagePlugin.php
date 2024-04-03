@@ -36,8 +36,10 @@ trait ManagePlugin
         $plugin_name = Str::after($package->getName(), '/');
         static::getIo()->write("Activating plugin '$plugin_name'.");
         $vendor_path = $composerEvent->getComposer()->getConfig()->get('vendor-dir');
+        $autoload_path = "$vendor_path/autoload.php";
 
-        if (is_file("$vendor_path/autoload.php")) {
+        if (is_file($autoload_path)) {
+            require_once $autoload_path;
             passthru("php console wp:run \"plugin $plugin_command $plugin_name\" --no-tty");
         }
     }
