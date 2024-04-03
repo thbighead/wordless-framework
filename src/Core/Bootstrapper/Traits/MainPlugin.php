@@ -54,6 +54,16 @@ trait MainPlugin
 
     /**
      * @return void
+     * @throws InvalidProviderClass
+     * @throws PathNotFoundException
+     */
+    public static function bootEnqueues(): void
+    {
+        self::getInstance()->resolveEnqueues();
+    }
+
+    /**
+     * @return void
      * @throws CustomPostTypeRegistrationFailed
      * @throws DuplicatedEnqueueableId
      * @throws DuplicatedMenuId
@@ -61,7 +71,6 @@ trait MainPlugin
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidCustomTaxonomyName
      * @throws InvalidMenuClass
-     * @throws PathNotFoundException
      * @throws ReservedCustomPostStatusKey
      * @throws ReservedCustomPostTypeKey
      */
@@ -121,14 +130,12 @@ trait MainPlugin
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidCustomTaxonomyName
      * @throws InvalidMenuClass
-     * @throws PathNotFoundException
      * @throws ReservedCustomPostTypeKey
      */
     private function finishWordpressServicesBoot(): void
     {
         $this->resolveListeners()
             ->resolveMenus()
-            ->resolveEnqueues()
             ->resolveCustomTaxonomies()
             ->resolveCustomPostTypes();
     }
