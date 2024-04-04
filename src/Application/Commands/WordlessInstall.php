@@ -188,7 +188,7 @@ class WordlessInstall extends ConsoleCommand
         }
 
         $this->runWpCliCommand(
-            "theme activate {$this->getEnvVariableByKey('WP_THEME', 'wordless')}"
+            'theme activate ' . Config::wordpress(Config::KEY_THEME, 'wordless')
         );
 
         return $this;
