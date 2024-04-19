@@ -47,7 +47,7 @@ abstract class EnqueueableAsset
         return [];
     }
 
-    protected static function version(): ?string
+    protected function version(): ?string
     {
         return null;
     }
@@ -75,7 +75,7 @@ abstract class EnqueueableAsset
      */
     protected function getVersion(): string|bool
     {
-        return static::version() ?? false;
+        return $this->version() ?? false;
     }
 
     /**
