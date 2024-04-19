@@ -52,7 +52,7 @@ class WordlessInstall extends ConsoleCommand
     use ForFramework;
     use RunWpCliCommand;
 
-    final public const COMMAND_NAME = 'wordless:install';
+    public const COMMAND_NAME = 'wordless:install';
     final public const TEMP_MAIL = 'temp@mail.not.real';
     private const WORDPRESS_SALT_FILLABLE_VALUES = [
         '#AUTH_KEY',
