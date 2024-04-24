@@ -3,12 +3,14 @@
 namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits;
 
 use InvalidArgumentException;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\CustomTaxonomyRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Labels;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Rewrite;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\ReservedCustomTaxonomyName;
 use Wordless\Wordpress\Enums\ObjectType;
+use WP_Error;
 
 trait Register
 {
@@ -111,6 +113,7 @@ trait Register
 
     /**
      * @return void
+     * @throws CustomTaxonomyRegistrationFailed
      * @throws InvalidArgumentException
      * @throws InvalidCustomTaxonomyName
      * @throws ReservedCustomTaxonomyName
@@ -118,8 +121,15 @@ trait Register
     public static function register(): void
     {
         self::validateNameKey();
+        self::validateNameKey();
 
-        register_taxonomy(static::NAME_KEY, static::availableTo(), self::mountArguments());
+        if (($registrationResult = register_taxonomy(
+                static::NAME_KEY,
+                static::availableTo(),
+                self::mountArguments()
+            )) instanceof WP_Error) {
+            throw new CustomTaxonomyRegistrationFailed($registrationResult);
+        }
     }
 
     /**
