@@ -20,8 +20,10 @@ use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validati
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
 use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\CustomTaxonomyRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\ReservedCustomTaxonomyName;
+use Wordless\Wordpress\Hook\Enums\Action;
 
 trait MainPlugin
 {
@@ -34,10 +36,10 @@ trait MainPlugin
     /**
      * @return void
      * @throws CustomPostTypeRegistrationFailed
-     * @throws DuplicatedEnqueueableId
+     * @throws CustomTaxonomyRegistrationFailed
      * @throws DuplicatedMenuId
+     * @throws EmptyConfigKey
      * @throws InvalidArgumentException
-     * @throws InvalidConfigKey
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidCustomTaxonomyName
      * @throws InvalidMenuClass
@@ -45,7 +47,7 @@ trait MainPlugin
      * @throws PathNotFoundException
      * @throws ReservedCustomPostStatusKey
      * @throws ReservedCustomPostTypeKey
-     * @throws EmptyConfigKey
+     * @throws ReservedCustomTaxonomyName
      */
     public static function bootMainPlugin(): void
     {
@@ -54,6 +56,9 @@ trait MainPlugin
 
     /**
      * @return void
+     * @throws DuplicatedEnqueueableId
+     * @throws EmptyConfigKey
+     * @throws InvalidArgumentException
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
      */
@@ -65,7 +70,7 @@ trait MainPlugin
     /**
      * @return void
      * @throws CustomPostTypeRegistrationFailed
-     * @throws DuplicatedEnqueueableId
+     * @throws CustomTaxonomyRegistrationFailed
      * @throws DuplicatedMenuId
      * @throws InvalidArgumentException
      * @throws InvalidCustomPostTypeKey
@@ -73,6 +78,7 @@ trait MainPlugin
      * @throws InvalidMenuClass
      * @throws ReservedCustomPostStatusKey
      * @throws ReservedCustomPostTypeKey
+     * @throws ReservedCustomTaxonomyName
      */
     private function bootIntoWordpress(): void
     {
@@ -93,20 +99,27 @@ trait MainPlugin
      * @throws ReservedCustomPostStatusKey
      * @throws ReservedCustomPostTypeKey
      * @throws ReservedCustomTaxonomyName
+     * @throws CustomTaxonomyRegistrationFailed
      */
     private function preBootWordpressServicesFromProvider(Provider $provider): void
     {
-        foreach ($provider->registerTaxonomies() as $customTaxonomyClassNamespace) {
-            $customTaxonomyClassNamespace::register();
-        }
+        add_action(
+            Action::init->value,
+            function () use ($provider) {
+                foreach ($provider->registerTaxonomies() as $customTaxonomyClassNamespace) {
+                    $customTaxonomyClassNamespace::register();
+                }
 
-        foreach ($provider->registerPostStatus() as $customPostStatusClassNamespace) {
-            $customPostStatusClassNamespace::register();
-        }
+                foreach ($provider->registerPostStatus() as $customPostStatusClassNamespace) {
+                    $customPostStatusClassNamespace::register();
+                }
 
-        foreach ($provider->registerPostTypes() as $customPostTypeClassNamespace) {
-            $customPostTypeClassNamespace::register();
-        }
+                foreach ($provider->registerPostTypes() as $customPostTypeClassNamespace) {
+                    $customPostTypeClassNamespace::register();
+                }
+            },
+            accepted_args: 0
+        );
 
         foreach ($provider->registerSchedules() as $scheduleClassNamespace) {
             $scheduleClassNamespace::registerHook();
@@ -124,13 +137,13 @@ trait MainPlugin
     /**
      * @return void
      * @throws CustomPostTypeRegistrationFailed
-     * @throws DuplicatedEnqueueableId
      * @throws DuplicatedMenuId
      * @throws InvalidArgumentException
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidCustomTaxonomyName
      * @throws InvalidMenuClass
      * @throws ReservedCustomPostTypeKey
+     * @throws ReservedCustomTaxonomyName
      */
     private function finishWordpressServicesBoot(): void
     {
