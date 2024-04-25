@@ -67,6 +67,7 @@ STRING;
      * @param mixed|null $default
      * @return mixed
      * @throws DotEnvNotSetException
+     * @throws FormatException
      */
     public static function get(string $key, mixed $default = null): mixed
     {
@@ -83,6 +84,31 @@ STRING;
         return self::returnTypedValue($value);
     }
 
+    public static function isCli(): bool
+    {
+        if (defined('STDIN')) {
+            return true;
+        }
+
+        if (php_sapi_name() === 'cli') {
+            return true;
+        }
+
+        if (array_key_exists('SHELL', $_ENV)) {
+            return true;
+        }
+
+        if (empty($_SERVER['REMOTE_ADDR'] ?? null) && !isset($_SERVER['HTTP_USER_AGENT']) && count($_SERVER['argv']) > 0) {
+            return true;
+        }
+
+        if (!array_key_exists('REQUEST_METHOD', $_SERVER)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static function isFramework(): bool
     {
         return defined('FRAMEWORK_ENVIRONMENT') && FRAMEWORK_ENVIRONMENT === true;
@@ -91,15 +117,22 @@ STRING;
     /**
      * @return bool
      * @throws DotEnvNotSetException
+     * @throws FormatException
      */
     public static function isLocal(): bool
     {
         return static::get('APP_ENV') === self::LOCAL;
     }
 
+    public static function isNotCli(): bool
+    {
+        return !static::isCli();
+    }
+
     /**
      * @return bool
      * @throws DotEnvNotSetException
+     * @throws FormatException
      */
     public static function isNotLocal(): bool
     {
@@ -114,6 +147,7 @@ STRING;
     /**
      * @return bool
      * @throws DotEnvNotSetException
+     * @throws FormatException
      */
     public static function isNotProduction(): bool
     {
@@ -123,6 +157,7 @@ STRING;
     /**
      * @return bool
      * @throws DotEnvNotSetException
+     * @throws FormatException
      */
     public static function isNotRemote(): bool
     {
@@ -132,6 +167,7 @@ STRING;
     /**
      * @return bool
      * @throws DotEnvNotSetException
+     * @throws FormatException
      */
     public static function isNotStaging(): bool
     {
@@ -141,6 +177,7 @@ STRING;
     /**
      * @return bool
      * @throws DotEnvNotSetException
+     * @throws FormatException
      */
     public static function isProduction(): bool
     {
@@ -150,6 +187,7 @@ STRING;
     /**
      * @return bool
      * @throws DotEnvNotSetException
+     * @throws FormatException
      */
     public static function isRemote(): bool
     {
@@ -159,6 +197,7 @@ STRING;
     /**
      * @return bool
      * @throws DotEnvNotSetException
+     * @throws FormatException
      */
     public static function isStaging(): bool
     {
