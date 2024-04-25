@@ -4,28 +4,29 @@ namespace Wordless\Core;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\ApiControllers;
-use Wordless\Core\Bootstrapper\Traits\PublishConfigs;
 use Wordless\Core\Bootstrapper\Traits\Console;
+use Wordless\Core\Bootstrapper\Traits\Entities;
 use Wordless\Core\Bootstrapper\Traits\InternalCachers;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin;
 use Wordless\Core\Bootstrapper\Traits\Migrations;
+use Wordless\Core\Bootstrapper\Traits\PublishConfigs;
 use Wordless\Core\Bootstrapper\Traits\Schedules;
 use Wordless\Infrastructure\Provider;
 
 final class Bootstrapper extends Singleton
 {
     use ApiControllers;
-    use PublishConfigs;
     use Console;
+    use Entities;
     use InternalCachers;
     use MainPlugin;
     use Migrations;
+    use PublishConfigs;
     use Schedules;
 
     final public const CONFIG_KEY_ERROR_REPORTING = 'error_reporting';
