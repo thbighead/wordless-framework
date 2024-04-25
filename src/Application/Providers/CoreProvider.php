@@ -19,6 +19,7 @@ use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
 use Wordless\Application\Listeners\HideContentEditorForCustomFrontPageAtAdmin;
 use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
 use Wordless\Application\Listeners\ManageRestResponseContentTypeHeader;
+use Wordless\Application\Listeners\RegisterEntities;
 use Wordless\Application\Listeners\RemoveAdditionalCssFromAdmin;
 use Wordless\Application\Listeners\RemoveGlobalCustomInlineStyles;
 use Wordless\Application\Listeners\ResolveEnqueues;
@@ -36,6 +37,7 @@ class CoreProvider extends Provider
             GeneratePublicWordpressSymbolicLinks::class,
             PublishConfigurationFiles::class,
             PublishWpConfigPhp::class,
+            RegisterEntities::class,
             SyncRoles::class,
             WordlessInstall::class,
             WpCliCaller::class,
