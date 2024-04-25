@@ -21,6 +21,7 @@ use Wordless\Infrastructure\Provider;
 $current_wp_theme = Config::wordpressTheme()->get(default: 'wordless');
 /** @var Provider[] $providers */
 $providers = [
+    AdminCustomUrlProvider::class,
     CoreProvider::class,
     CommentsProvider::class,
     RemoveEmojiProvider::class,
