@@ -24,13 +24,6 @@ trait Register
     /** @var array<static, string> */
     private static array $type_keys = [];
 
-    final public static function getTypeKey(): string
-    {
-        return self::$type_keys[static::class] ??
-            self::$type_keys[static::class] = static::TYPE_KEY ??
-                (new CustomPostTypeKeyGuesser(static::class))->getValue();
-    }
-
     /**
      * @return void
      * @throws CustomPostTypeRegistrationFailed
@@ -38,7 +31,7 @@ trait Register
      * @throws InvalidCustomPostTypeKey
      * @throws ReservedCustomPostTypeKey
      */
-    final public static function register(): void
+    public static function register(): void
     {
         self::validateTypeKey();
 
@@ -48,6 +41,13 @@ trait Register
             )) instanceof WP_Error) {
             throw new CustomPostTypeRegistrationFailed($registrationResult);
         }
+    }
+
+    final public static function getTypeKey(): string
+    {
+        return self::$type_keys[static::class] ??
+            self::$type_keys[static::class] = static::TYPE_KEY ??
+                (new CustomPostTypeKeyGuesser(static::class))->getValue();
     }
 
     /**

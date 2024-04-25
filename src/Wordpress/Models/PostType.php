@@ -31,9 +31,11 @@ class PostType
             return;
         }
 
-        if (($this->wpPostType = get_post_type_object($post_type)) === null) {
+        if (!(($wpPostType = get_post_type_object($post_type)) instanceof WP_Post_Type)) {
             throw new PostTypeNotRegistered($post_type);
         }
+
+        $this->wpPostType = $wpPostType;
     }
 
     public function getPermissions(): array
