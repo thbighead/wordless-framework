@@ -63,7 +63,7 @@ abstract class Provider
     /**
      * @return string[]|CustomPostStatus[]
      */
-    public function registerPostStatus(): array
+    public function registerPostStatuses(): array
     {
         return [];
     }
