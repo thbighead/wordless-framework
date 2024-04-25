@@ -47,6 +47,7 @@ InternalCache::load();
 /** @noinspection PhpUnhandledExceptionInspection */
 date_default_timezone_set(Timezone::forPhpIni());
 
+const WP_DEBUG = true;
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-plugin-and-theme-update-and-installation
 const DISALLOW_FILE_MODS = true;
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-wordpress-auto-updates
@@ -128,12 +129,14 @@ const WP_DISABLE_FATAL_ERROR_HANDLER = WP_ENVIRONMENT_TYPE === Environment::LOCA
 // https://wordpress.org/support/article/editing-wp-config-php/#empty-trash
 const EMPTY_TRASH_DAYS = WP_ENVIRONMENT_TYPE === Environment::LOCAL ? 0 : 30;
 
-define('WP_DEBUG', $debug = Environment::get('WP_DEBUG', false));
 // https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
 define('WP_DEBUG_LOG', Logger::getFullTimedPathName());
 // https://wordpress.org/support/article/debugging-in-wordpress/#wp_debug_display
-// Enabled only when WP_DEBUG is on in non-production environments and WP_DEBUG_LOG is off, otherwise check debug.log file.
-define('WP_DEBUG_DISPLAY', $debug && (WP_ENVIRONMENT_TYPE !== Environment::PRODUCTION));
+// Enabled only when WP_DEBUG_DISPLAY is on in non-production environments and WP_DEBUG_LOG is off, otherwise check debug.log file.
+define(
+    'WP_DEBUG_DISPLAY',
+    WP_DEBUG && Environment::get('WP_DEBUG_DISPLAY', false) && (WP_ENVIRONMENT_TYPE !== Environment::PRODUCTION)
+);
 
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-wordpress-auto-updates
 define('COOKIE_DOMAIN', $app_domain = Str::after($site_url = Environment::get('APP_URL'), '://'));
