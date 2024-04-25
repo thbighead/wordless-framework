@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits;
+namespace Wordless\Core\Bootstrapper\Traits\Entities\Traits;
 
 use InvalidArgumentException;
 use Wordless\Infrastructure\Provider;
