@@ -1,10 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits;
+namespace Wordless\Core\Bootstrapper\Traits\Entities\Traits;
 
 use InvalidArgumentException;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\CustomTaxonomyRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\ReservedCustomTaxonomyName;
 
@@ -31,9 +32,10 @@ trait InstallCustomTaxonomies
 
     /**
      * @return $this
-     * @throws ReservedCustomTaxonomyName
-     * @throws InvalidCustomTaxonomyName
+     * @throws CustomTaxonomyRegistrationFailed
      * @throws InvalidArgumentException
+     * @throws InvalidCustomTaxonomyName
+     * @throws ReservedCustomTaxonomyName
      */
     private function resolveCustomTaxonomies(): static
     {
