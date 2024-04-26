@@ -384,15 +384,15 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
+     * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
     private function flushWpRewriteRules(): static
     {
-        $permalink_structure = $this->getEnvVariableByKey('WP_PERMALINK', '/%postname%/');
+        $permalink_structure = Config::wordpress(Config::KEY_PERMALINK, '/%postname%/');
 
         $this->runWpCliCommand("rewrite structure '$permalink_structure' --hard");
         $this->runWpCliCommand('rewrite flush --hard');
