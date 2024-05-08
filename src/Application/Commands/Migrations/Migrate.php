@@ -6,11 +6,13 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Migrations\Migrate\Traits\ExecutionTimestamp;
 use Wordless\Application\Commands\Migrations\Migrate\Traits\ForceMode;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\Arr;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Option;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
@@ -19,6 +21,7 @@ use Wordless\Core\Bootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\InvalidMigrationFilename;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\Migration;
 
@@ -83,10 +86,12 @@ class Migrate extends ConsoleCommand
      * @return int
      * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
      * @throws ExceptionInterface
      * @throws FailedToUpdateOption
+     * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws InvalidConfigKey
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
@@ -142,11 +147,13 @@ class Migrate extends ConsoleCommand
 
     /**
      * @return array<string, string>
-     * @throws InvalidProviderClass
+     * @throws EmptyConfigKey
      * @throws InvalidMigrationFilename
+     * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
-     * @throws InvalidConfigKey
      * @throws PathNotFoundException
+     * @throws FormatException
+     * @throws DotEnvNotSetException
      */
     final protected function getLoadedMigrations(): array
     {
@@ -199,7 +206,9 @@ class Migrate extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws InvalidConfigKey
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound

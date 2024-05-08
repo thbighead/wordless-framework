@@ -5,7 +5,9 @@ namespace Wordless\Application\Commands\Makers;
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
@@ -14,6 +16,7 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\CustomPostTypeStubMounter;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
@@ -24,6 +27,7 @@ use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
@@ -83,13 +87,16 @@ class MakeCustomPostType extends ConsoleCommand
     /**
      * @return int
      * @throws CustomPostTypeRegistrationFailed
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws EmptyQueryBuilderArguments
      * @throws FailedToCopyStub
      * @throws FailedToCreateDirectory
      * @throws FailedToCreateRole
      * @throws FailedToFindRole
      * @throws FailedToGetDirectoryPermissions
+     * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws InvalidConfigKey
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
@@ -168,10 +175,13 @@ class MakeCustomPostType extends ConsoleCommand
      * @param string $custom_post_type_class_name
      * @return void
      * @throws CustomPostTypeRegistrationFailed
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws EmptyQueryBuilderArguments
      * @throws FailedToCreateRole
      * @throws FailedToFindRole
+     * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws InvalidConfigKey
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException

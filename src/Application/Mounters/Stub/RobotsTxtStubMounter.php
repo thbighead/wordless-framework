@@ -2,7 +2,9 @@
 
 namespace Wordless\Application\Mounters\Stub;
 
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Mounters\StubMounter;
 
 class RobotsTxtStubMounter extends StubMounter
@@ -11,6 +13,11 @@ class RobotsTxtStubMounter extends StubMounter
     public const STUB_PROD_FILENAME = 'robots_prod.txt';
     public const STUB_NON_PROD_FILENAME = 'robots_non_prod.txt';
 
+    /**
+     * @return string
+     * @throws FormatException
+     * @throws DotEnvNotSetException
+     */
     protected function relativeStubFilename(): string
     {
         return Environment::isProduction()

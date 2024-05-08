@@ -2,10 +2,12 @@
 
 namespace Wordless\Application\Cachers;
 
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Cacher;
 
 class EnvironmentCacher extends Cacher
@@ -16,7 +18,9 @@ class EnvironmentCacher extends Cacher
     }
 
     /**
-     * @return array
+     * @return array<string, string>
+     * @throws DotEnvNotSetException
+     * @throws FormatException
      * @throws PathNotFoundException
      */
     protected function mountCacheArray(): array
@@ -25,8 +29,10 @@ class EnvironmentCacher extends Cacher
     }
 
     /**
-     * @return array
+     * @return array<string, string>
      * @throws PathNotFoundException
+     * @throws FormatException
+     * @throws DotEnvNotSetException
      */
     private function parseDotEnvFileContent(): array
     {

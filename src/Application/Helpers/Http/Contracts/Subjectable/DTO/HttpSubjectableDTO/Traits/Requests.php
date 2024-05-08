@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Wordless\Application\Helpers\Http\Contracts\Subjectable\DTO\HttpSubjectableDTO\Traits;
 
 use JsonException;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Http;
 use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Http\Request\Enums\Verb;
 use Wordless\Infrastructure\Http\Response;
 
@@ -14,9 +16,11 @@ trait Requests
 {
     /**
      * @param string $endpoint
-     * @param array|string $body
-     * @param array $additional_headers
+     * @param array<string, string>|string $body
+     * @param array<string, string> $additional_headers
      * @return Response
+     * @throws DotEnvNotSetException
+     * @throws FormatException
      * @throws JsonException
      * @throws RequestFailed
      */
@@ -31,9 +35,11 @@ trait Requests
 
     /**
      * @param string $endpoint
-     * @param array|string $body
-     * @param array $additional_headers
+     * @param array<string, string>|string $body
+     * @param array<string, string> $additional_headers
      * @return Response
+     * @throws DotEnvNotSetException
+     * @throws FormatException
      * @throws JsonException
      * @throws RequestFailed
      */
@@ -48,9 +54,11 @@ trait Requests
 
     /**
      * @param string $endpoint
-     * @param array|string $body
-     * @param array $additional_headers
+     * @param array<string, string>|string $body
+     * @param array<string, string> $additional_headers
      * @return Response
+     * @throws DotEnvNotSetException
+     * @throws FormatException
      * @throws JsonException
      * @throws RequestFailed
      */
@@ -65,9 +73,11 @@ trait Requests
 
     /**
      * @param string $endpoint
-     * @param array|string $body
-     * @param array $additional_headers
+     * @param array<string, string>|string $body
+     * @param array<string, string> $additional_headers
      * @return Response
+     * @throws DotEnvNotSetException
+     * @throws FormatException
      * @throws JsonException
      * @throws RequestFailed
      */
@@ -85,6 +95,8 @@ trait Requests
      * @param array<string, string>|string $body
      * @param array<string, string> $additional_headers
      * @return Response
+     * @throws DotEnvNotSetException
+     * @throws FormatException
      * @throws JsonException
      * @throws RequestFailed
      */
@@ -100,11 +112,13 @@ trait Requests
     /**
      * @param Verb $httpVerb
      * @param string $endpoint
-     * @param array|string $body
-     * @param array $additional_headers
+     * @param array<string, string>|string $body
+     * @param array<string, string> $additional_headers
      * @return Response
-     * @throws RequestFailed
      * @throws JsonException
+     * @throws RequestFailed
+     * @throws FormatException
+     * @throws DotEnvNotSetException
      */
     public function request(
         Verb         $httpVerb,

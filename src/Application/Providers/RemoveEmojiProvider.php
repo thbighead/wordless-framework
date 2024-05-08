@@ -22,7 +22,8 @@ class RemoveEmojiProvider extends Provider
     private const FUNCTION_WP_STATICIZE_EMOJI = 'wp_staticize_emoji';
 
     /**
-     * @return string[]|Listener[]
+     * @return class-string[]|Listener[]
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
     public function registerListeners(): array
@@ -39,6 +40,7 @@ class RemoveEmojiProvider extends Provider
 
     /**
      * @return RemoveHookDTO[]
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      * @throws TriedToSetFunctionWhenRemovingListener
      */
@@ -64,6 +66,7 @@ class RemoveEmojiProvider extends Provider
 
     /**
      * @return RemoveHookDTO[]
+     * @throws EmptyConfigKey
      * @throws PathNotFoundException
      * @throws TriedToSetFunctionWhenRemovingListener
      */

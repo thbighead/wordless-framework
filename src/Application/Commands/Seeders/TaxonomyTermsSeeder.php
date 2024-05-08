@@ -9,6 +9,7 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Wordless\Application\Commands\Seeders\Contracts\SeederCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\ResultFormat;
 
@@ -35,6 +36,7 @@ class TaxonomyTermsSeeder extends SeederCommand
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
+     * @throws EmptyQueryBuilderArguments
      */
     protected function runIt(): int
     {

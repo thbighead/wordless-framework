@@ -36,6 +36,12 @@ final class TaxonomyQueryBuilder extends QueryBuilder
     {
     }
 
+    /**
+     * @param int $quantity
+     * @param ResultFormat|null $format
+     * @return WP_Taxonomy|array|string|null
+     * @throws EmptyQueryBuilderArguments
+     */
     public function first(int $quantity = 1, ?ResultFormat $format = null): WP_Taxonomy|array|string|null
     {
         $full_result = $this->get($format);
