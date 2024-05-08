@@ -2,6 +2,7 @@
 
 namespace Wordless\Core;
 
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Environment;
@@ -17,6 +18,7 @@ use Wordless\Core\Bootstrapper\Traits\Migrations;
 use Wordless\Core\Bootstrapper\Traits\PublishConfigs;
 use Wordless\Core\Bootstrapper\Traits\Schedules;
 use Wordless\Infrastructure\Provider;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 final class Bootstrapper extends Singleton
 {
@@ -36,7 +38,9 @@ final class Bootstrapper extends Singleton
 
     /**
      * @return static
+     * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
      * @noinspection PhpUnnecessaryStaticReferenceInspection
@@ -48,7 +52,9 @@ final class Bootstrapper extends Singleton
 
     /**
      * @return Bootstrapper
+     * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
      */
@@ -98,7 +104,9 @@ final class Bootstrapper extends Singleton
     /**
      * @return self
      * @throws EmptyConfigKey
+     * @throws DotEnvNotSetException
      * @throws PathNotFoundException
+     * @throws FormatException
      */
     private function setErrorReporting(): self
     {
