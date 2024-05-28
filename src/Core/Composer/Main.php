@@ -18,12 +18,14 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Composer\Traits\InputOutput;
 use Wordless\Core\Composer\Traits\ManagePlugin;
+use Wordless\Core\Composer\Traits\PackageDiscovery;
 use Wordless\Core\Composer\Traits\SetHostFromNginx;
 
 class Main
 {
     use InputOutput;
     use ManagePlugin;
+    use PackageDiscovery;
     use SetHostFromNginx;
 
     public static function getFrameworkInstalledVersion(): string
