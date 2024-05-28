@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Wordless\Application\Helpers;
 
 use JsonException;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Http\Contracts\Subjectable;
 use Wordless\Application\Helpers\Http\Enums\Version;
 use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
 use Wordless\Application\Helpers\Http\Traits\Internal;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Http\Request\Enums\Verb;
 use Wordless\Infrastructure\Http\Response;
 use WP_Error;
@@ -24,10 +26,12 @@ class Http extends Subjectable
 
     /**
      * @param string $endpoint
-     * @param array $body
-     * @param array $headers
+     * @param array<string, string>|string $body
+     * @param array<string, string> $headers
      * @param Version $http_version
      * @return Response
+     * @throws DotEnvNotSetException
+     * @throws FormatException
      * @throws JsonException
      * @throws RequestFailed
      */
@@ -43,10 +47,12 @@ class Http extends Subjectable
 
     /**
      * @param string $endpoint
-     * @param array $body
-     * @param array $headers
+     * @param array<string, string>|string $body
+     * @param array<string, string> $headers
      * @param Version $http_version
      * @return Response
+     * @throws DotEnvNotSetException
+     * @throws FormatException
      * @throws JsonException
      * @throws RequestFailed
      */
@@ -62,10 +68,12 @@ class Http extends Subjectable
 
     /**
      * @param string $endpoint
-     * @param array $body
-     * @param array $headers
+     * @param array<string, string>|string $body
+     * @param array<string, string> $headers
      * @param Version $http_version
      * @return Response
+     * @throws DotEnvNotSetException
+     * @throws FormatException
      * @throws JsonException
      * @throws RequestFailed
      */
@@ -81,10 +89,12 @@ class Http extends Subjectable
 
     /**
      * @param string $endpoint
-     * @param array $body
-     * @param array $headers
+     * @param array<string, string>|string $body
+     * @param array<string, string> $headers
      * @param Version $http_version
      * @return Response
+     * @throws DotEnvNotSetException
+     * @throws FormatException
      * @throws JsonException
      * @throws RequestFailed
      */
@@ -100,10 +110,12 @@ class Http extends Subjectable
 
     /**
      * @param string $endpoint
-     * @param array $body
-     * @param array $headers
+     * @param array<string, string>|string $body
+     * @param array<string, string> $headers
      * @param Version $http_version
      * @return Response
+     * @throws DotEnvNotSetException
+     * @throws FormatException
      * @throws JsonException
      * @throws RequestFailed
      */
@@ -120,13 +132,15 @@ class Http extends Subjectable
     /**
      * @param Verb $httpVerb
      * @param string $endpoint
-     * @param array|string $body
-     * @param array $headers
+     * @param array<string, string>|string $body
+     * @param array<string, string> $headers
      * @param bool|null $only_with_ssl
      * @param Version $http_version
      * @return Response
      * @throws JsonException
      * @throws RequestFailed
+     * @throws FormatException
+     * @throws DotEnvNotSetException
      */
     public static function request(
         Verb         $httpVerb,

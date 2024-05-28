@@ -58,7 +58,7 @@ final class ExampleSchedule extends Schedule
     {
     }
 
-    protected static function hook(): Hook
+    protected static function hook(): ActionHook
     {
         return Action::init;
     }

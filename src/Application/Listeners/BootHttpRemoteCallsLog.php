@@ -2,8 +2,10 @@
 
 namespace Wordless\Application\Listeners;
 
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 use Wordless\Wordpress\Hook\Enums\Action;
@@ -17,7 +19,17 @@ class BootHttpRemoteCallsLog extends ActionListener
      */
     protected const FUNCTION = 'debugWordPressRemoteRequest';
 
-    /** @noinspection PhpUnusedParameterInspection */
+    /**
+     * @param WP_Error|array $response
+     * @param mixed $context
+     * @param mixed $class
+     * @param array $request
+     * @param string $url
+     * @return void
+     * @throws FormatException
+     * @throws DotEnvNotSetException
+     * @noinspection PhpUnusedParameterInspection
+     */
     public static function debugWordPressRemoteRequest(
         WP_Error|array $response,
         mixed          $context,

@@ -2,10 +2,13 @@
 
 namespace Wordless\Application\Helpers\Link\Traits;
 
+use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 trait Internal
 {
@@ -13,6 +16,9 @@ trait Internal
 
     /**
      * @return string
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws PathNotFoundException
      */
     private static function getBaseAssetsUri(): string
@@ -31,6 +37,9 @@ trait Internal
     /**
      * @return string
      * @throws PathNotFoundException
+     * @throws FormatException
+     * @throws EmptyConfigKey
+     * @throws DotEnvNotSetException
      */
     private static function guessBaseAssetsUri(): string
     {
