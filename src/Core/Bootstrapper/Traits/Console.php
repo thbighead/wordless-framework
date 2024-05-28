@@ -47,10 +47,6 @@ trait Console
             }
         }
 
-        if (!defined('WP_CLI')) {
-            define('WP_CLI', true);
-        }
-
         try {
             $application->run();
         } catch (Exception $exception) {
