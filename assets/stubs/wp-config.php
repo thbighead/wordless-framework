@@ -20,10 +20,6 @@ declare(strict_types=1);
  *
  * @package WordPress
  */
-if (defined('WORDLESS_CONSOLE') && WORDLESS_CONSOLE && !defined('WP_CLI')) {
-    define('WP_CLI', true);
-}
-
 if (!defined('ROOT_PROJECT_PATH')) {
     define('ROOT_PROJECT_PATH', __DIR__ . '/../..');
 }
