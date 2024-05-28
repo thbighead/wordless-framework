@@ -4,8 +4,10 @@ namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\PublishConfigurationFiles\Exceptions\FailedToCopyConfig;
 use Wordless\Application\Commands\Traits\ForceMode;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
@@ -13,10 +15,12 @@ use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
+use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 
 class PublishConfigurationFiles extends ConsoleCommand
 {
@@ -64,10 +68,14 @@ class PublishConfigurationFiles extends ConsoleCommand
 
     /**
      * @return int
+     * @throws InvalidProviderClass
      * @throws FailedToCopyConfig
      * @throws InvalidArgumentException
      * @throws InvalidDirectory
      * @throws PathNotFoundException
+     * @throws FormatException
+     * @throws EmptyConfigKey
+     * @throws DotEnvNotSetException
      */
     protected function runIt(): int
     {
@@ -123,6 +131,7 @@ class PublishConfigurationFiles extends ConsoleCommand
      * @param string $config_filename
      * @return bool
      * @throws FailedToCopyConfig
+     * @throws InvalidArgumentException
      */
     private function resolveFromPackageProvider(string $config_filename): bool
     {
