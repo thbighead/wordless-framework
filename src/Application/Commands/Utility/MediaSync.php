@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\SignalableCommandInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachment;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachmentMetadata;
@@ -19,6 +20,7 @@ use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirect
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\Traits\SignalResolver;
 
@@ -58,10 +60,12 @@ class MediaSync extends ConsoleCommand implements SignalableCommandInterface
 
     /**
      * @return int
+     * @throws DotEnvNotSetException
      * @throws FailedToCreateWordpressAttachment
      * @throws FailedToCreateWordpressAttachmentMetadata
      * @throws FailedToDeleteAttachment
      * @throws FailedToRetrieveAttachmentUrl
+     * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidChunkValue
      * @throws InvalidDirectory
@@ -82,6 +86,11 @@ class MediaSync extends ConsoleCommand implements SignalableCommandInterface
         return Command::SUCCESS;
     }
 
+    /**
+     * @return string
+     * @throws FormatException
+     * @throws DotEnvNotSetException
+     */
     private function getUploadsBaseUrl(): string
     {
         return $this->uploads_base_url ??

@@ -37,6 +37,13 @@ trait Wordpress
         return self::fromWordpressFile(self::KEY_ADMIN, $key, $default);
     }
 
+    /**
+     * @param string|null $key
+     * @param mixed|null $default
+     * @return mixed
+     * @throws EmptyConfigKey
+     * @throws PathNotFoundException
+     */
     public static function wordpressLanguages(?string $key = null, mixed $default = null): mixed
     {
         return self::fromWordpressFile(self::KEY_LANGUAGES, $key, $default);

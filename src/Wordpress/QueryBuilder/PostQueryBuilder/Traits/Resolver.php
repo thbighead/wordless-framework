@@ -144,6 +144,11 @@ trait Resolver
         return $this;
     }
 
+    /**
+     * @param array $arguments
+     * @return $this
+     * @throws EmptyQueryBuilderArguments
+     */
     private function resolveMetaSubQuery(array &$arguments): static
     {
         $metaSubQueryBuilder = $arguments[MetaSubQueryBuilder::ARGUMENT_KEY] ?? null;

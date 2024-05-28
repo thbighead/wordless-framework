@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver\Traits;
 
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Pagination\Posts;
@@ -12,6 +13,10 @@ trait Pagination
     final public const KEY_NO_FOUND_ROWS = 'no_found_rows';
     final public const KEY_NO_PAGING = 'nopaging';
 
+    /**
+     * @return int|null
+     * @throws EmptyQueryBuilderArguments
+     */
     public function getNumberOfPages(): ?int
     {
         if (!$this->arePostsAlreadyLoaded()) {
@@ -24,6 +29,7 @@ trait Pagination
     /**
      * @param PaginationArgumentsBuilder $paginationBuilder
      * @return Posts
+     * @throws EmptyQueryBuilderArguments
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */

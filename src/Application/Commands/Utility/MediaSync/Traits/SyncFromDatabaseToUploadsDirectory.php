@@ -5,6 +5,7 @@ namespace Wordless\Application\Commands\Utility\MediaSync\Traits;
 use Generator;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachment;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachmentMetadata;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk;
@@ -16,6 +17,7 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 trait SyncFromDatabaseToUploadsDirectory
 {
@@ -124,8 +126,10 @@ trait SyncFromDatabaseToUploadsDirectory
 
     /**
      * @return int
+     * @throws DotEnvNotSetException
      * @throws FailedToCreateWordpressAttachment
      * @throws FailedToCreateWordpressAttachmentMetadata
+     * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidChunkValue
      * @throws InvalidDirectory
@@ -175,8 +179,10 @@ trait SyncFromDatabaseToUploadsDirectory
 
     /**
      * @return void
+     * @throws DotEnvNotSetException
      * @throws FailedToCreateWordpressAttachment
      * @throws FailedToCreateWordpressAttachmentMetadata
+     * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidChunkValue
      * @throws InvalidDirectory
