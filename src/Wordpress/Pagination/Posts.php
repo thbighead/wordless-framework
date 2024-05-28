@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\Pagination;
 
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Post;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
@@ -24,6 +25,7 @@ final class Posts
      * @param PaginationArgumentsBuilder $paginationBuilder
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
+     * @throws EmptyQueryBuilderArguments
      */
     public function __construct(
         private readonly PostQueryBuilder           $queryBuilder,
@@ -53,6 +55,7 @@ final class Posts
     /**
      * @param int $page
      * @return $this
+     * @throws EmptyQueryBuilderArguments
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */
@@ -68,6 +71,7 @@ final class Posts
 
     /**
      * @return $this
+     * @throws EmptyQueryBuilderArguments
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */
@@ -79,6 +83,7 @@ final class Posts
     /**
      * @param int $page
      * @return Post[]
+     * @throws EmptyQueryBuilderArguments
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */
@@ -89,6 +94,7 @@ final class Posts
 
     /**
      * @return Post[]
+     * @throws EmptyQueryBuilderArguments
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */
@@ -108,6 +114,7 @@ final class Posts
 
     /**
      * @return Post[]
+     * @throws EmptyQueryBuilderArguments
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */

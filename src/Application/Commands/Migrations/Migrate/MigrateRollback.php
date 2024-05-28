@@ -4,8 +4,10 @@ namespace Wordless\Application\Commands\Migrations\Migrate;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Migrations\Migrate;
 use Wordless\Application\Commands\Migrations\Migrate\Exceptions\FailedToFindExecutedMigrationScript;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -13,6 +15,7 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\InvalidMigrationFilename;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
@@ -60,10 +63,12 @@ class MigrateRollback extends Migrate
 
     /**
      * @return int
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
      * @throws FailedToFindExecutedMigrationScript
      * @throws FailedToUpdateOption
+     * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws InvalidConfigKey
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
@@ -81,11 +86,13 @@ class MigrateRollback extends Migrate
      * @param string $migration_filename
      * @return string
      * @throws FailedToFindExecutedMigrationScript
-     * @throws InvalidConfigKey
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
      * @throws PathNotFoundException
+     * @throws FormatException
+     * @throws EmptyConfigKey
+     * @throws DotEnvNotSetException
      */
     final protected function findLoadedMigrationFilepathByFilename(string $migration_filename): string
     {
@@ -96,9 +103,11 @@ class MigrateRollback extends Migrate
     /**
      * @param string $migration_filename
      * @return void
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
      * @throws FailedToFindExecutedMigrationScript
      * @throws FailedToUpdateOption
-     * @throws InvalidConfigKey
+     * @throws FormatException
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
@@ -133,9 +142,11 @@ class MigrateRollback extends Migrate
 
     /**
      * @return $this
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
      * @throws FailedToFindExecutedMigrationScript
+     * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws InvalidConfigKey
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound

@@ -2,12 +2,14 @@
 
 namespace Wordless\Application\Commands\Utility\MediaSync\Traits;
 
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToDeleteAttachment;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToRetrieveAttachmentUrl;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use WP_Post;
 
 trait SyncFromUploadsDirectoryToDatabase
@@ -17,6 +19,12 @@ trait SyncFromUploadsDirectoryToDatabase
     private int $deleted_attachments_count = 0;
     private int $fixed_attachments_count = 0;
 
+    /**
+     * @param string $media_url
+     * @return bool
+     * @throws DotEnvNotSetException
+     * @throws FormatException
+     */
     private function isApplicationUploadsFileUrlBroken(string $media_url): bool
     {
         return !Str::startWith($media_url, $this->getUploadsBaseUrl());
@@ -27,6 +35,8 @@ trait SyncFromUploadsDirectoryToDatabase
      * @return void
      * @throws FailedToDeleteAttachment
      * @throws FailedToRetrieveAttachmentUrl
+     * @throws FormatException
+     * @throws DotEnvNotSetException
      */
     private function processDatabaseAttachments(array $attachments): void
     {
@@ -58,8 +68,10 @@ trait SyncFromUploadsDirectoryToDatabase
 
     /**
      * @return void
+     * @throws DotEnvNotSetException
      * @throws FailedToDeleteAttachment
      * @throws FailedToRetrieveAttachmentUrl
+     * @throws FormatException
      */
     private function syncFromDatabaseToUploadsDirectory(): void
     {

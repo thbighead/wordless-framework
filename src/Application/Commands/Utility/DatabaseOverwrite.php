@@ -7,6 +7,7 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO\Exceptions\InvalidRawUserData;
@@ -16,6 +17,7 @@ use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectD
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
 use wpdb;
 
@@ -30,6 +32,11 @@ class DatabaseOverwrite extends ConsoleCommand
     private ?array $configurations;
     private ConfirmationQuestion $tryAgainQuestion;
 
+    /**
+     * @return bool
+     * @throws FormatException
+     * @throws DotEnvNotSetException
+     */
     public function canRun(): bool
     {
         return Environment::isLocal();
@@ -57,8 +64,10 @@ class DatabaseOverwrite extends ConsoleCommand
 
     /**
      * @return int
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws InvalidConfigKey
      * @throws InvalidRawUserData
      * @throws LogicException
      * @throws PathNotFoundException
@@ -94,7 +103,9 @@ class DatabaseOverwrite extends ConsoleCommand
 
     /**
      * @return $this
+     * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws PathNotFoundException
      */
     private function initializeConfigurations(): static

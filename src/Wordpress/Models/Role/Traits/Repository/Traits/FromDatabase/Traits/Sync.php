@@ -3,12 +3,14 @@
 namespace Wordless\Wordpress\Models\Role\Traits\Repository\Traits\FromDatabase\Traits;
 
 use InvalidArgumentException;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\SyncRoles;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\PostType;
@@ -17,15 +19,19 @@ use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 
 trait Sync
 {
     /**
      * @return void
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws EmptyQueryBuilderArguments
      * @throws FailedToCreateRole
      * @throws FailedToFindRole
+     * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws InvalidConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
      */
@@ -87,11 +93,13 @@ trait Sync
 
     /**
      * @return void
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws EmptyQueryBuilderArguments
      * @throws FailedToFindRole
-     * @throws InvalidConfigKey
+     * @throws FormatException
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
-     * @throws InvalidArgumentException
      */
     public static function syncPermissionsToAdminAsDefault(): void
     {
@@ -103,9 +111,11 @@ trait Sync
     /**
      * @param Role $role
      * @return void
-     * @throws InvalidConfigKey
-     * @throws PathNotFoundException
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws InvalidProviderClass
+     * @throws PathNotFoundException
      */
     public static function syncRestResourcesPermissionsToRole(Role $role): void
     {
