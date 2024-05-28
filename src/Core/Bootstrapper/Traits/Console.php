@@ -5,22 +5,25 @@ namespace Wordless\Core\Bootstrapper\Traits;
 use Exception;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 trait Console
 {
     /**
      * @param Application $application
      * @return void
-     * @throws InvalidConfigKey
+     * @throws EmptyConfigKey
      * @throws InvalidProviderClass
      * @throws LogicException
      * @throws PathNotFoundException
-     * @throws EmptyConfigKey
+     * @throws FormatException
+     * @throws DotEnvNotSetException
      */
     public static function bootConsole(Application $application): void
     {
@@ -42,6 +45,10 @@ trait Console
                     $application->add($command);
                 }
             }
+        }
+
+        if (!defined('WP_CLI')) {
+            define('WP_CLI', true);
         }
 
         try {
