@@ -3,10 +3,12 @@
 namespace Wordless\Core\Bootstrapper\Traits;
 
 use Generator;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 trait Schedules
 {
@@ -15,6 +17,8 @@ trait Schedules
      * @throws EmptyConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
+     * @throws FormatException
+     * @throws DotEnvNotSetException
      */
     public static function bootIntoRegisterSchedulesCommand(): void
     {

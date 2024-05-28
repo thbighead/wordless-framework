@@ -16,6 +16,7 @@ trait RestingWordPress
     /**
      * @param WP_REST_Request $request
      * @return Response|WP_Error
+     * @throws InvalidArgumentException
      */
     final public function create_item($request): Response|WP_Error
     {
@@ -32,6 +33,7 @@ trait RestingWordPress
     /**
      * @param WP_REST_Request $request
      * @return Response|WP_Error
+     * @throws InvalidArgumentException
      */
     final public function delete_item($request): Response|WP_Error
     {
@@ -58,6 +60,7 @@ trait RestingWordPress
     /**
      * @param WP_REST_Request $request
      * @return Response|WP_Error
+     * @throws InvalidArgumentException
      */
     final public function get_item($request): Response|WP_Error
     {
@@ -74,6 +77,7 @@ trait RestingWordPress
     /**
      * @param WP_REST_Request $request
      * @return Response|WP_Error
+     * @throws InvalidArgumentException
      */
     final public function get_items($request): Response|WP_Error
     {
@@ -130,6 +134,7 @@ trait RestingWordPress
     /**
      * @param WP_REST_Request $request
      * @return Response|WP_Error
+     * @throws InvalidArgumentException
      */
     final public function update_item($request): Response|WP_Error
     {

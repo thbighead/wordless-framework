@@ -17,6 +17,11 @@ class FireExceptionOnMailSendError extends ActionListener
         return Action::wp_mail_failed;
     }
 
+    /**
+     * @param WP_Error $error
+     * @return void
+     * @throws FailedToSendMailMessage
+     */
     public static function interruptWhenFail(WP_Error $error): void
     {
         throw new FailedToSendMailMessage($error);

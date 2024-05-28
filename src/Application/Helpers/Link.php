@@ -2,9 +2,12 @@
 
 namespace Wordless\Application\Helpers;
 
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Link\Traits\Internal;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Helper;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 
 class Link extends Helper
 {
@@ -13,6 +16,9 @@ class Link extends Helper
     /**
      * @param string $css_filename
      * @return string
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws PathNotFoundException
      */
     public static function css(string $css_filename): string
@@ -23,6 +29,9 @@ class Link extends Helper
     /**
      * @param string $img_filename
      * @return string
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws PathNotFoundException
      */
     public static function img(string $img_filename): string
@@ -33,6 +42,9 @@ class Link extends Helper
     /**
      * @param string $js_filename
      * @return string
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws PathNotFoundException
      */
     public static function js(string $js_filename): string
@@ -43,6 +55,9 @@ class Link extends Helper
     /**
      * @param string $additional_path
      * @return string
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws PathNotFoundException
      */
     public static function themePublic(string $additional_path = ''): string

@@ -2,6 +2,7 @@
 
 namespace Wordless\Core;
 
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
@@ -17,6 +18,7 @@ use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 use Wordless\Core\InternalCache\Exceptions\InvalidCache;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 final class InternalCache
 {
@@ -25,13 +27,14 @@ final class InternalCache
 
     /**
      * @return void
+     * @throws EmptyConfigKey
+     * @throws DotEnvNotSetException
      * @throws FailedToCopyStub
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
-     * @throws InvalidConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
-     * @throws EmptyConfigKey
+     * @throws FormatException
      */
     public static function generate(): void
     {
@@ -84,6 +87,8 @@ final class InternalCache
 
     /**
      * @return void
+     * @throws DotEnvNotSetException
+     * @throws FormatException
      * @throws InvalidCache
      * @throws InvalidDirectory
      * @throws PathNotFoundException

@@ -3,6 +3,7 @@
 namespace Wordless\Infrastructure\Wordpress;
 
 use Generator;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
@@ -10,6 +11,7 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Core\Bootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Core\InternalCache;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\AuthorizationCheck;
@@ -60,7 +62,9 @@ abstract class ApiController extends WP_REST_Controller
 
     /**
      * @return Generator<string>
-     * @throws InvalidConfigKey
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
      */
@@ -80,11 +84,12 @@ abstract class ApiController extends WP_REST_Controller
     }
 
     /**
-     * @return string[]|ApiController[]
-     * @throws InvalidConfigKey
+     * @return class-string[]|ApiController[]
+     * @throws EmptyConfigKey
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
-     * @throws EmptyConfigKey
+     * @throws FormatException
+     * @throws DotEnvNotSetException
      */
     public static function loadProvidedApiControllers(): array
     {
