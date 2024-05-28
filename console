@@ -8,7 +8,6 @@ use Wordless\Core\Bootstrapper;
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/env.php';
 
-const WORDLESS_CONSOLE = true;
 const FRAMEWORK_ENVIRONMENT = true;
 const ROOT_PROJECT_PATH = __DIR__;
 
