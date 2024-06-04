@@ -1,7 +1,7 @@
 {
-  "name": "infobaseit/wordless-framework",
-  "description": "Wordless Framework Infobase Version.",
-  "license": "proprietary",
+  "name": "thbighead/wordless-framework",
+  "description": "Wordless Framework.",
+  "license": "MIT",
   "autoload": {
     "psr-4": {
       "Wordless\\": "src/"
@@ -14,8 +14,8 @@
   },
   "authors": [
     {
-      "name": "PHP Team",
-      "email": "php-team@infobase.com.br"
+      "name": "Thales Nathan",
+      "email": "thcmatias@gmail.com"
     }
   ],
   "config": {

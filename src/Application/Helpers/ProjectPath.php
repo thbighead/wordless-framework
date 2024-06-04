@@ -11,7 +11,7 @@ class ProjectPath extends Helper
 {
     use Internal;
 
-    final public const VENDOR_PACKAGE_PROJECT = 'infobaseit/wordless';
+    final public const VENDOR_PACKAGE_PROJECT = 'thbighead/wordless';
     final public const VENDOR_PACKAGE_RELATIVE_PATH = self::VENDOR_PACKAGE_PROJECT . '-framework';
 
     /**
