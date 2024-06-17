@@ -46,7 +46,8 @@
     "symfony/http-client": "^6.3",
     "symfony/http-foundation": "^6.3",
     "symfony/validator": "^6.3",
-    "wp-cli/wp-cli-bundle": "^2.6"
+    "wp-cli/wp-cli-bundle": "^2.10",
+    "wp-cli/wp-cli": "^2.10"
   },
   "require-dev": {
     "fakerphp/faker": "~1.23.0",
