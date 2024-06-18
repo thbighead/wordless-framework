@@ -117,7 +117,6 @@ class WordlessInstall extends ConsoleCommand
      * @throws FailedToRewriteDotEnvFile
      * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws InvalidDirectory
      * @throws PathNotFoundException
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
@@ -667,18 +666,17 @@ class WordlessInstall extends ConsoleCommand
      * @return $this
      * @throws FailedToDeletePath
      * @throws InvalidArgumentException
-     * @throws InvalidDirectory
      */
     private function resolveForceMode(): static
     {
         if ($this->isForceMode()) {
             try {
-                $wp_core_path = ProjectPath::wpCore();
-                $gitignore_wp_core_filepath = ProjectPath::wpCore('.gitignore');
+                $wp_config_filepath = ProjectPath::wpCore('wp-config.php');
+
                 $this->wrapScriptWithMessages(
-                    "Deleting everything inside $wp_core_path but $gitignore_wp_core_filepath...",
-                    function () use ($wp_core_path, $gitignore_wp_core_filepath) {
-                        DirectoryFiles::recursiveDelete($wp_core_path, [$gitignore_wp_core_filepath], false);
+                    "Deleting $wp_config_filepath...",
+                    function () use ($wp_config_filepath) {
+                        DirectoryFiles::delete($wp_config_filepath);
                     }
                 );
 
