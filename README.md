@@ -11,6 +11,8 @@ The [Wordless](https://github.com/thbighead/Wordless) project framework.
 | \
 |  | config (Keep base configuration files)
 |  | stubs (Keep files stubs to generate new ones)
+| docker (Local development environment containers to work with framework changes)
+| logs (Local development environment log files)
 | src
 | \
 |  | Application (Classes implementation, just like in project app directory)
@@ -26,14 +28,18 @@ The [Wordless](https://github.com/thbighead/Wordless) project framework.
 |  | Core (Core Wordless classes, they raise all framework functionalities)
 |  | Infrastructure (Abstract classes used by Application and Wordpress)
 |  | Wordpress (Wordpress adapted class abstractions)
+|  |>ide_helper.php (File to help IDEs helping the developers using or improving this framework)
 | tests (Automated tests)
 | \
 |  | coverage (files with test coverage results in any format)
 |  | Unit (Class methods unitary tests)
-|>.env.example (Used to create new .env files)
 |>composer.json (Composer)
 |>console (Wordless CLI file)
+|>docker-compose.yml (Docker Compose configurations for local environment to work with framework changes)
+|>env.php (Adapted file to load environment variables needed when changing Frameworn into local development environment)
 |>phpunit.xml (PHP Unit configuration)
+|>wp-cli.yml (WP CLI configuration)
+|>wp-config.php (Adapted Wordpress configuration for Framework local development environment)
 ```
 
 ### Relative directories
@@ -44,18 +50,9 @@ Inside any [main directory](#main-directories-and-files) we may have the followi
 | Contracts (Useful Interfaces or abstract classes with abstract methods)
 | DTO (Useful DTO implementations to avoid complex array data configuration)
 | Enums (Useful Enums to avoid magic values)
-| Exceptions (Keep custom Exceptions. Better then if-else)
+| Exceptions (Keeps custom Exceptions. Better then if-else)
 | Traits (Traits used to group methods, properties and constants in a scope or to be used in more than one specialized class.)
-```
-
-## Exception codes
-
-0. *Caught internally*: those exceptions should never interrupt application because they are (or should be) always
-caught by the framework itself everytime it would be thrown;
-1. *Development error*: it's a kind of exception that should only interrupt application when a develop mistake occurs;
-2. *Logic control*: it controls any application logic. It may be wrapped by a try-catch code or not depending on what
-developers expect;
-3. *Intentional interrupt*: should never be caught, those exceptions are made to ALWAYS interrupt application. 
+``` 
 
 ## Docker
 
@@ -99,3 +96,15 @@ to execute; in this case, we are executing the workspace.
 > docker compose exec --user=laradock workspace bash
 > docker compose exec workspace bash # as root
 > ```
+
+## Exception codes
+
+Our Exception classes uses standardized codes to give information about the raised problem. The meaning of them is as
+follows:
+
+0. *Caught internally*: those exceptions should never interrupt application because they are (or should be) always
+   caught by the framework itself everytime it would be thrown;
+1. *Development error*: it's a kind of exception that should only interrupt application when a develop mistake occurs;
+2. *Logic control*: it controls any application logic. It may be wrapped by a try-catch code or not depending on what
+   developers expect;
+3. *Intentional interrupt*: should never be caught, those exceptions are made to ALWAYS interrupt application.
