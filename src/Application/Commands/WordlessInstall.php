@@ -26,13 +26,11 @@ use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangePathPermissions;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Application\Helpers\ProjectPath;
@@ -55,6 +53,7 @@ class WordlessInstall extends ConsoleCommand
 
     public const COMMAND_NAME = 'wordless:install';
     final public const TEMP_MAIL = 'temp@mail.not.real';
+    private const MU_PLUGIN_FILE_NAME = 'wordless-plugin.php';
     private const WORDPRESS_SALT_FILLABLE_VALUES = [
         '#AUTH_KEY',
         '#SECURE_AUTH_KEY',
@@ -229,7 +228,7 @@ class WordlessInstall extends ConsoleCommand
      */
     private function createWordlessPluginFromStub(): static
     {
-        WordlessPluginStubMounter::make(ProjectPath::wp() . '/wp-content/mu-plugins/wordless-plugin.php')
+        WordlessPluginStubMounter::make(ProjectPath::wpMustUsePlugins() . '/' . self::MU_PLUGIN_FILE_NAME)
             ->mountNewFile();
 
         return $this;
@@ -359,6 +358,67 @@ class WordlessInstall extends ConsoleCommand
     private function databaseUpdate(): static
     {
         $this->runWpCliCommand('core update-db');
+
+        return $this;
+    }
+
+    /**
+     * @param string $filepath
+     * @return void
+     * @throws FailedToDeletePath
+     * @throws PathNotFoundException
+     */
+    private function deleteFileForForceMode(string $filepath): void
+    {
+        $this->wrapScriptWithMessages(
+            "Deleting $filepath...",
+            function () use ($filepath) {
+                DirectoryFiles::delete($filepath);
+            }
+        );
+    }
+
+    /**
+     * @return $this
+     * @throws FailedToDeletePath
+     */
+    private function deleteRobotsTxtForForceMode(): static
+    {
+        try {
+            $this->deleteFileForForceMode(ProjectPath::public('robots.txt'));
+        } catch (PathNotFoundException $exception) {
+            $this->writePathNotFoundMessageForForceMode($exception);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws FailedToDeletePath
+     */
+    private function deleteWordlessMuPluginForForceMode(): static
+    {
+        try {
+            $this->deleteFileForForceMode(ProjectPath::wpMustUsePlugins(self::MU_PLUGIN_FILE_NAME));
+        } catch (PathNotFoundException $exception) {
+            $this->writePathNotFoundMessageForForceMode($exception);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws FailedToDeletePath
+     */
+    private function deleteWpConfigForForceMode(): static
+    {
+        try {
+            $this->deleteFileForForceMode(ProjectPath::wpCore('wp-config.php'));
+        } catch (PathNotFoundException $exception) {
+            $this->writePathNotFoundMessageForForceMode($exception);
+        }
 
         return $this;
     }
@@ -670,27 +730,9 @@ class WordlessInstall extends ConsoleCommand
     private function resolveForceMode(): static
     {
         if ($this->isForceMode()) {
-            try {
-                $wp_config_filepath = ProjectPath::wpCore('wp-config.php');
-
-                $this->wrapScriptWithMessages(
-                    "Deleting $wp_config_filepath...",
-                    function () use ($wp_config_filepath) {
-                        DirectoryFiles::delete($wp_config_filepath);
-                    }
-                );
-
-                $robots_txt_filepath = ProjectPath::public('robots.txt');
-
-                $this->wrapScriptWithMessages(
-                    "Deleting $robots_txt_filepath...",
-                    function () use ($robots_txt_filepath) {
-                        DirectoryFiles::delete($robots_txt_filepath);
-                    }
-                );
-            } catch (PathNotFoundException $exception) {
-                $this->writelnCommentWhenVerbose("{$exception->getMessage()} Skipped from force mode.");
-            }
+            $this->deleteWordlessMuPluginForForceMode()
+                ->deleteWpConfigForForceMode()
+                ->deleteRobotsTxtForForceMode();
         }
 
         return $this;
@@ -761,5 +803,10 @@ class WordlessInstall extends ConsoleCommand
         $this->runWpCliCommand("maintenance-mode $switch_string");
 
         $this->maintenance_mode = $switch;
+    }
+
+    private function writePathNotFoundMessageForForceMode(PathNotFoundException $exception): void
+    {
+        $this->writelnCommentWhenVerbose("{$exception->getMessage()} Skipped from force mode.");
     }
 }
