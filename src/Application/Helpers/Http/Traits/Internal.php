@@ -26,15 +26,17 @@ trait Internal
     /**
      * @param array|string $body
      * @param array $headers
-     * @return string
+     * @return array|string
      * @throws JsonException
      */
-    private static function prepareRequestBody(array|string $body, array &$headers): string
+    private static function prepareRequestBody(array|string $body, array &$headers): array|string
     {
-        if (is_array($body)) {
-            $headers[static::CONTENT_TYPE] = MimeType::application_json->value;
+        if (isset($headers[static::CONTENT_TYPE])) {
+            return $body;
+        }
 
-            return Arr::toJson($body);
+        if (is_array($body)) {
+            $body = Arr::toJson($body);
         }
 
         if (Str::isJson($body)) {
