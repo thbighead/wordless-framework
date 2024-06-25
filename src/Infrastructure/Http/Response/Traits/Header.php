@@ -5,9 +5,16 @@ namespace Wordless\Infrastructure\Http\Response\Traits;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
 use WpOrg\Requests\Utility\CaseInsensitiveDictionary;
+use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 
 trait Header
 {
+    /**
+     * @param string $key
+     * @param array|string|null $default
+     * @return string|array|null
+     * @throws FailedToParseArrayKey
+     */
     public function getHeader(string $key, array|string|null $default = null): string|array|null
     {
         try {
