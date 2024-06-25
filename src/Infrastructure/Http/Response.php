@@ -8,6 +8,7 @@ use Wordless\Application\Helpers\Http;
 use Wordless\Infrastructure\Http\Response\Traits\Cookies;
 use Wordless\Infrastructure\Http\Response\Traits\Header;
 use Wordless\Infrastructure\Http\Response\Traits\StatusCode;
+use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 
 class Response implements ImmutableHeaderBag
 {
@@ -19,6 +20,12 @@ class Response implements ImmutableHeaderBag
     {
     }
 
+    /**
+     * @param string|null $key
+     * @param mixed|null $default
+     * @return mixed
+     * @throws FailedToParseArrayKey
+     */
     public function body(?string $key = null, mixed $default = null): mixed
     {
         $body = $this->raw_response[Http::BODY] ?? [];
