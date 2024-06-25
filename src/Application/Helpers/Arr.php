@@ -7,6 +7,7 @@ namespace Wordless\Application\Helpers;
 use JsonException;
 use Wordless\Application\Helpers\Arr\Contracts\Subjectable;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
+use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 
 class Arr extends Subjectable
 {
@@ -37,6 +38,13 @@ class Arr extends Subjectable
         return $array[static::getFirstKey($array) ?? 0] ?? null;
     }
 
+    /**
+     * @param array $array
+     * @param int|string $key
+     * @param mixed|null $default
+     * @return mixed
+     * @throws FailedToParseArrayKey
+     */
     public static function get(array $array, int|string $key, mixed $default = null): mixed
     {
         try {
@@ -56,12 +64,13 @@ class Arr extends Subjectable
      * @param int|string $key
      * @return mixed
      * @throws FailedToFindArrayKey
+     * @throws FailedToParseArrayKey
      */
     public static function getOrFail(array $array, int|string $key): mixed
     {
         $key = (string)$key;
         $key_pathing = explode('.', $key);
-        $first_key = Arr::getFirstKey($key_pathing);
+        $first_key = array_shift($key_pathing) ?? throw new FailedToParseArrayKey($key);
         $pointer = $array[$first_key] ?? throw new FailedToFindArrayKey($array, $key, $first_key);
 
         foreach ($key_pathing as $key_path) {
@@ -96,6 +105,12 @@ class Arr extends Subjectable
         return array_keys($array) !== range(0, count($array) - 1);
     }
 
+    /**
+     * @param array $array
+     * @param array $only_keys
+     * @return array
+     * @throws FailedToParseArrayKey
+     */
     public static function only(array $array, array $only_keys): array
     {
         $filtered_array = [];
