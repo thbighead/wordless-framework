@@ -153,8 +153,8 @@ class Http extends Subjectable
     {
         $response = self::getWpHttp()->request($endpoint, wp_parse_args([
             'method' => $httpVerb->value,
-            self::BODY => self::prepareRequestBody($body, $headers),
             'headers' => $headers,
+            self::BODY => $body,
             'timeout' => static::TIMEOUT,
             'sslverify' => $only_with_ssl ?? Environment::isProduction(),
             'httpversion' => $http_version->value,
