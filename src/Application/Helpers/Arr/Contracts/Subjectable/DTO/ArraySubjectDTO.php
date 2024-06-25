@@ -9,6 +9,7 @@ use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Arr\Contracts\Subjectable\DTO\ArraySubjectDTO\Traits\Internal;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
 use Wordless\Infrastructure\Helper\Contracts\Subjectable\DTO\SubjectDTO;
+use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 
 final class ArraySubjectDTO extends SubjectDTO
 {
@@ -33,6 +34,12 @@ final class ArraySubjectDTO extends SubjectDTO
         return Arr::first($this->subject);
     }
 
+    /**
+     * @param int|string $key
+     * @param mixed|null $default
+     * @return mixed
+     * @throws FailedToParseArrayKey
+     */
     public function get(int|string $key, mixed $default = null): mixed
     {
         return Arr::get($this->subject, $key, $default);
@@ -46,6 +53,7 @@ final class ArraySubjectDTO extends SubjectDTO
     /**
      * @param int|string $key
      * @return mixed
+     * @throws FailedToParseArrayKey
      * @throws FailedToFindArrayKey
      */
     public function getOrFail(int|string $key): mixed
@@ -68,6 +76,11 @@ final class ArraySubjectDTO extends SubjectDTO
         return Arr::isAssociative($this->subject);
     }
 
+    /**
+     * @param array $only_keys
+     * @return $this
+     * @throws FailedToParseArrayKey
+     */
     public function only(array $only_keys): self
     {
         $this->subject = Arr::only($this->subject, $only_keys);
@@ -75,6 +88,11 @@ final class ArraySubjectDTO extends SubjectDTO
         return $this;
     }
 
+    /**
+     * @param mixed $value
+     * @return $this
+     * @throws FailedToParseArrayKey
+     */
     public function prepend(mixed $value): self
     {
         $this->subject = Arr::only($this->subject, $value);
