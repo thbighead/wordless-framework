@@ -1,8 +1,25 @@
+### MAC ###
+.DS_Store
+
+### PHPSTORM ###
 /.idea
-/.phpunit.cache
-/vendor
+
+### VSCODE ###
+/.vscode
+
+### WORDPRESS ###
+.htaccess
 /wp
+
+### COMPOSER ###
+/vendor
+/auth.json
+
+### WORDLESS ###
 /.env
 /app
 /config
 /stubs
+
+### PHP UNIT ###
+/.phpunit.cache
