@@ -16,7 +16,8 @@ use Wordless\Application\Providers\CoreProvider;
 use Wordless\Application\Providers\MigrationsProvider;
 use Wordless\Application\Providers\RemoveEmojiProvider;
 use Wordless\Application\Providers\SeedersProvider;
-use Wordless\Core\Cors;
+use Wordless\Infrastructure\Http\Security\Cors;
+use Wordless\Infrastructure\Http\Security\Csp;
 use Wordless\Infrastructure\Provider;
 
 $current_wp_theme = Config::wordpressTheme()->get(default: 'wordless');
@@ -31,7 +32,7 @@ $providers = [
 ];
 
 return [
-    Config::KEY_CSP => [
+    Csp::CONFIG_KEY => [
         'default-src' => ['self' => true],
         'font-src' => [
             'self' => true,

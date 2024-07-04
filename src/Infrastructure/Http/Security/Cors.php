@@ -1,6 +1,6 @@
 <?php
 
-namespace Wordless\Core;
+namespace Wordless\Infrastructure\Http\Security;
 
 use Wordless\Application\Libraries\DesignPattern\Singleton;
 
