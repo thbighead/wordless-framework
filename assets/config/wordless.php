@@ -50,7 +50,7 @@ return [
             'allow' => [
                 'https://secure.gravatar.com',
                 'https://s.w.org',
-            ]
+            ],
         ],
         'script-src' => [
             'blob' => true,
@@ -83,7 +83,7 @@ return [
         LogFormatter::CONFIG_KEY_LINE_FORMAT => '[%datetime%] %channel%.%level_name%: %message% %context% %extra%',
         Logger::CONFIG_KEY_MAX_FILES_LIMIT => 10,
         Logger::CONFIG_KEY_WORDLESS_LINE_PREFIX => Environment::get('APP_NAME', 'wordless')
-            . '.' . Environment::get('APP_ENV')
+            . '.' . Environment::get('APP_ENV'),
     ],
     Provider::CONFIG_KEY => $providers,
     GeneratePublicWordpressSymbolicLinks::PUBLIC_SYMLINK_KEY => [
