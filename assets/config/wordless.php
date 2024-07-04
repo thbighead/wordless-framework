@@ -16,6 +16,7 @@ use Wordless\Application\Providers\CoreProvider;
 use Wordless\Application\Providers\MigrationsProvider;
 use Wordless\Application\Providers\RemoveEmojiProvider;
 use Wordless\Application\Providers\SeedersProvider;
+use Wordless\Core\Cors;
 use Wordless\Infrastructure\Provider;
 
 $current_wp_theme = Config::wordpressTheme()->get(default: 'wordless');
@@ -65,6 +66,9 @@ return [
             ],
         ],
         'upgrade-insecure-requests' => true,
+    ],
+    Cors::CONFIG_KEY => [
+
     ],
     Config::KEY_DATABASE => [
         UserDTO::USER_DEFAULT_OVERWRITE_PASSWORD_KEY => 'password',

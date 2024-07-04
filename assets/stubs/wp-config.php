@@ -38,6 +38,7 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Timezone;
 use Wordless\Application\Libraries\LogManager\Logger;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
+use Wordless\Core\Cors;
 use Wordless\Core\InternalCache;
 
 /** @noinspection PhpUnhandledExceptionInspection */
@@ -163,6 +164,11 @@ if (!empty($allowed_hosts)) {
     // https://wordpress.org/support/article/editing-wp-config-php/#block-external-url-requests
     define('WP_HTTP_BLOCK_EXTERNAL', true);
     define('WP_ACCESSIBLE_HOSTS', $accessible_hosts);
+}
+
+// CORS settings
+if (Environment::get('WORDLESS_CORS', false)) {
+    Cors::enable();
 }
 
 // CSP settings
