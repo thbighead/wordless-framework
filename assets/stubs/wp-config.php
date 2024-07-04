@@ -31,8 +31,6 @@ if (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null) === 'https') {
 
 require_once ROOT_PROJECT_PATH . '/vendor/autoload.php';
 
-use ParagonIE\CSPBuilder\CSPBuilder;
-use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Timezone;
