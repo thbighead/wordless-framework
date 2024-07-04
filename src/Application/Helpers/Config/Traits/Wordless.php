@@ -6,6 +6,7 @@ use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectD
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Http\Security\Cors;
+use Wordless\Infrastructure\Http\Security\Csp;
 
 trait Wordless
 {
@@ -30,9 +31,21 @@ trait Wordless
      * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
-    public static function wordlessCsp(?string $key = null, mixed $default = null): mixed
+    public static function wordlessCors(?string $key = null, mixed $default = null): mixed
     {
         return self::fromWordlessFile(Cors::CONFIG_KEY, $key, $default);
+    }
+
+    /**
+     * @param string|null $key
+     * @param mixed|null $default
+     * @return ConfigSubjectDTO|mixed
+     * @throws EmptyConfigKey
+     * @throws PathNotFoundException
+     */
+    public static function wordlessCsp(?string $key = null, mixed $default = null): mixed
+    {
+        return self::fromWordlessFile(Csp::CONFIG_KEY, $key, $default);
     }
 
     /**
