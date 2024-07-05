@@ -68,8 +68,15 @@ return [
         ],
         'upgrade-insecure-requests' => true,
     ],
+    // https://github.com/fruitcake/php-cors/tree/v1.3.0?tab=readme-ov-file#options
     Cors::CONFIG_KEY => [
-
+        'allowedHeaders'         => ['*'],
+        'allowedMethods'         => ['*'],
+        'allowedOrigins'         => ['*'],
+        'allowedOriginsPatterns' => [],
+        'exposedHeaders'         => [],
+        'maxAge'                 => 0,
+        'supportsCredentials'    => false,
     ],
     Config::KEY_DATABASE => [
         UserDTO::USER_DEFAULT_OVERWRITE_PASSWORD_KEY => 'password',
