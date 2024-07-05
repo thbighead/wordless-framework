@@ -27,11 +27,6 @@ final class Csp extends Singleton
             ->sendHeaders();
     }
 
-    private function __construct()
-    {
-        parent::__construct();
-    }
-
     private function addCommonCspHeaders(): self
     {
         header('Referrer-Policy: no-referrer-when-downgrade');

@@ -30,7 +30,7 @@ final class Cors extends Singleton
      * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
-    private function __construct()
+    protected function __construct()
     {
         $this->service = new CorsService(Config::wordlessCors()->get());
         $this->request = Request::getInstance();
