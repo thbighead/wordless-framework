@@ -1,5 +1,7 @@
 <?php
 
+namespace Wordless\Tests\Unit;
+
 use Wordless\Application\Helpers\Reflection;
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInAdminMenuTests;
 use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInRestApiTests;
