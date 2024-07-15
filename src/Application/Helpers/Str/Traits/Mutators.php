@@ -35,7 +35,7 @@ trait Mutators
      */
     public static function removeSuffix(string $string, string $suffix): string
     {
-        return !static::endsWith($string, $suffix) ? $string : substr($string, 0, -strlen($suffix));
+        return !static::endsWith($string, $suffix) ? $string : static::substring($string, 0, -strlen($suffix));
     }
 
     /**
