@@ -9,23 +9,18 @@ use Wordless\Wordpress\Hook\Enums\Filter;
 
 class DeferEnqueuedScripts extends FilterListener
 {
-    private const DEFER_ATTRIBUTE = 'defer=\'true';
     /**
      * The function which shall be executed during hook
      */
     protected const FUNCTION = 'addReferToScriptTag';
 
-    public static function addReferToScriptTag(string $url): string
+    public static function addReferToScriptTag(string $tag): string
     {
-        if (is_admin() || !Str::of($url)->beforeLast('?')->endsWith('.js')) {
-            return $url;
+        if (is_admin() || self::tagAlreadyHasDeferOrAsyncLoadRule($tag)) {
+            return $tag;
         }
 
-        if (!Str::contains($url, self::DEFER_ATTRIBUTE)) {
-            return "$url' " . self::DEFER_ATTRIBUTE;
-        }
-
-        return $url;
+        return Str::replace($tag, ' src=', ' defer src=');
     }
 
     public static function priority(): int
@@ -40,6 +35,11 @@ class DeferEnqueuedScripts extends FilterListener
 
     protected static function hook(): FilterHook
     {
-        return Filter::clean_url;
+        return Filter::script_loader_tag;
+    }
+
+    private static function tagAlreadyHasDeferOrAsyncLoadRule(string $tag): bool
+    {
+        return (bool)preg_match('/^((?:[^"\\\\]|\\.|"(?:[^"\\\\]|\\.)*")*?)(defer|async)/', $tag);
     }
 }
