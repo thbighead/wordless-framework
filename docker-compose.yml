@@ -29,7 +29,7 @@ services:
         - INSTALL_BZ2=false
         - INSTALL_GMP=false
         - INSTALL_GNUPG=false
-        - INSTALL_XDEBUG=true
+        - INSTALL_XDEBUG=false
         - XDEBUG_PORT=9003
         - INSTALL_PCOV=true
         - INSTALL_PHPDBG=false
