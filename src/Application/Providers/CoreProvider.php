@@ -2,6 +2,8 @@
 
 namespace Wordless\Application\Providers;
 
+use Wordless\Application\Cachers\ConfigCacher;
+use Wordless\Application\Cachers\EnvironmentCacher;
 use Wordless\Application\Commands\ConfigureDateOptions;
 use Wordless\Application\Commands\CreateInternalCache;
 use Wordless\Application\Commands\GeneratePublicWordpressSymbolicLinks;
@@ -25,6 +27,7 @@ use Wordless\Application\Listeners\RemoveGlobalCustomInlineStyles;
 use Wordless\Application\Listeners\ResolveEnqueues;
 use Wordless\Application\Listeners\ShowCustomFrontPageAtAdminSideMenu;
 use Wordless\Application\Listeners\WordlessVersionOnAdmin;
+use Wordless\Infrastructure\Cacher;
 use Wordless\Infrastructure\Provider;
 
 class CoreProvider extends Provider
@@ -61,6 +64,17 @@ class CoreProvider extends Provider
             ResolveEnqueues::class,
             ShowCustomFrontPageAtAdminSideMenu::class,
             WordlessVersionOnAdmin::class,
+        ];
+    }
+
+    /**
+     * @return string[]|Cacher[]
+     */
+    public function registerInternalCachers(): array
+    {
+        return [
+            ConfigCacher::class,
+            EnvironmentCacher::class,
         ];
     }
 
