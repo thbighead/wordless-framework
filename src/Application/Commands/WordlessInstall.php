@@ -290,7 +290,6 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @return $this
      * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
      * @throws FailedToCopyStub
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
@@ -311,7 +310,6 @@ class WordlessInstall extends ConsoleCommand
 
         $robotStubMounter->setReplaceContentDictionary([
             '{APP_URL}' => Str::finishWith($this->getEnvVariableByKey('APP_URL', ''), '/'),
-            '#custom_admin_uri' => 'Disallow: ' . AdminCustomUrlProvider::getCustomUri()
         ])->mountNewFile();
 
         return $this;
