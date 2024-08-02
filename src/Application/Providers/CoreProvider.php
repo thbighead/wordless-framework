@@ -18,6 +18,8 @@ use Wordless\Application\Listeners\ChooseImageEditor;
 use Wordless\Application\Listeners\DeferEnqueuedScripts;
 use Wordless\Application\Listeners\DisableXmlrpc;
 use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
+use Wordless\Application\Listeners\EnableCors;
+use Wordless\Application\Listeners\EnableCsp;
 use Wordless\Application\Listeners\HideContentEditorForCustomFrontPageAtAdmin;
 use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
 use Wordless\Application\Listeners\ManageRestResponseContentTypeHeader;
@@ -55,6 +57,8 @@ class CoreProvider extends Provider
             DeferEnqueuedScripts::class,
             DisableXmlrpc::class,
             DoNotLoadWpAdminBarOutsidePanel::class,
+            EnableCors::class,
+            EnableCsp::class,
             HideContentEditorForCustomFrontPageAtAdmin::class,
             HideDiagnosticsFromUserRoles::class,
             ManageRestResponseContentTypeHeader::class,

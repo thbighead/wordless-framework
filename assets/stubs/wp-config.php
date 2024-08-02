@@ -37,8 +37,6 @@ use Wordless\Application\Helpers\Timezone;
 use Wordless\Application\Libraries\LogManager\Logger;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
 use Wordless\Core\InternalCache;
-use Wordless\Infrastructure\Http\Security\Cors;
-use Wordless\Infrastructure\Http\Security\Csp;
 
 /** @noinspection PhpUnhandledExceptionInspection */
 InternalCache::load();
@@ -166,20 +164,6 @@ if (!empty($allowed_hosts)) {
     // https://wordpress.org/support/article/editing-wp-config-php/#block-external-url-requests
     define('WP_HTTP_BLOCK_EXTERNAL', true);
     define('WP_ACCESSIBLE_HOSTS', $accessible_hosts);
-}
-
-// CORS settings
-/** @noinspection PhpUnhandledExceptionInspection */
-if (Environment::get('WORDLESS_CORS', false)) {
-    Cors::enable();
-}
-
-// CSP settings
-// Solving insecure cookies (https://rainastudio.com/enable-secure-cookie-setting/)
-/** @noinspection PhpUnhandledExceptionInspection */
-if (Environment::get('WORDLESS_CSP', false)) {
-    /** @noinspection PhpUnhandledExceptionInspection */
-    Csp::enable();
 }
 
 /* That's all, stop editing! Happy publishing. */
