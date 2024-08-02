@@ -13,4 +13,10 @@ class Request extends SymfonyRequest
     {
         return static::createFromGlobals();
     }
+
+    /** @noinspection PhpRedundantMethodOverrideInspection */
+    public function __clone()
+    {
+        parent::__clone();
+    }
 }
