@@ -4,6 +4,7 @@ namespace Wordless\Infrastructure\Http;
 
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
+use Wordless\Infrastructure\Http\Request\Enums\Verb;
 
 class Request extends SymfonyRequest
 {
@@ -24,6 +25,11 @@ class Request extends SymfonyRequest
     public function __clone()
     {
         parent::__clone();
+    }
+
+    public function isMethodVerb(Verb $method): bool
+    {
+        return parent::isMethod($method->value);
     }
 
     protected function __construct(
