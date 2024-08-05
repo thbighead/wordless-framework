@@ -19,11 +19,7 @@ final class Cors extends Singleton
 
     public static function enable(): void
     {
-        $singleton = self::getInstance();
-
-        if ($singleton->isCorsRequest()) {
-            $singleton->handleCorsRequest();
-        }
+        self::getInstance()->handleCorsRequest();
     }
 
     /**
@@ -40,7 +36,7 @@ final class Cors extends Singleton
 
     private function handleCorsRequest(): void
     {
-        if ($this->service->isPreflightRequest($this->request)) {
+        if ($this->isPreflightRequest()) {
             $this->handlePreflightRequest();
         }
 
@@ -49,12 +45,20 @@ final class Cors extends Singleton
 
     private function handlePreflightRequest(): void
     {
-        $this->service->handlePreflightRequest($this->request)->send();
+        $this->service->varyHeader(
+            $this->service->handlePreflightRequest($this->request),
+            'Access-Control-Request-Method'
+        )->send();
         die;
     }
 
     private function isCorsRequest(): bool
     {
         return $this->service->isCorsRequest($this->request);
+    }
+
+    private function isPreflightRequest(): bool
+    {
+        return $this->service->isPreflightRequest($this->request);
     }
 }
