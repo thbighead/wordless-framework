@@ -11,12 +11,31 @@ class Request extends SymfonyRequest
 
     protected static function newInstance(): static
     {
-        return static::createFromGlobals();
+        return new self(
+            $_GET,
+            $_POST,
+            cookies: $_COOKIE,
+            files: $_FILES,
+            server: $_SERVER
+        );
     }
 
     /** @noinspection PhpRedundantMethodOverrideInspection */
     public function __clone()
     {
         parent::__clone();
+    }
+
+    protected function __construct(
+        array $query = [],
+        array $request = [],
+        array $attributes = [],
+        array $cookies = [],
+        array $files = [],
+        array $server = [],
+              $content = null
+    )
+    {
+        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
     }
 }
