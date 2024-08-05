@@ -2,13 +2,14 @@
 
 namespace Wordless\Infrastructure\Wordpress\Listener\ActionListener\AjaxListener;
 
+use Closure;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener\AjaxListener;
 
 abstract class AdminAjaxListener extends AjaxListener
 {
-    public static function hookIt(): void
+    public static function hookIt(?Closure $callback = null): void
     {
-        static::addActionToAdminPanel();
+        static::addActionToAdminPanel($callback);
     }
 
     final protected static function isAvailableToAdminPanel(): bool

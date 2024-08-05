@@ -2,6 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 
+use Closure;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 
@@ -24,32 +25,32 @@ abstract class AjaxListener extends ActionListener
     final protected const PREFIX_WP_AJAX = 'wp_ajax_';
     final protected const PREFIX_WP_AJAX_NOPRIV = 'wp_ajax_nopriv_';
 
-    public static function hookIt(): void
+    public static function hookIt(?Closure $callback = null): void
     {
         if (static::isAvailableToFrontend()) {
-            static::addActionToFrontend();
+            static::addActionToFrontend($callback);
         }
 
         if (static::isAvailableToAdminPanel()) {
-            static::addActionToAdminPanel();
+            static::addActionToAdminPanel($callback);
         }
     }
 
-    final protected static function addActionToAdminPanel(): void
+    final protected static function addActionToAdminPanel(?Closure $callback = null): void
     {
         add_action(
             Str::startWith(static::hook()->value, self::PREFIX_WP_AJAX),
-            [static::class, static::FUNCTION],
+            $callback ?? [static::class, static::FUNCTION],
             static::priority(),
             static::functionNumberOfArgumentsAccepted()
         );
     }
 
-    final protected static function addActionToFrontend(): void
+    final protected static function addActionToFrontend(?Closure $callback = null): void
     {
         add_action(
             Str::startWith(static::hook()->value, self::PREFIX_WP_AJAX_NOPRIV),
-            [static::class, static::FUNCTION],
+            $callback ?? [static::class, static::FUNCTION],
             static::priority(),
             static::functionNumberOfArgumentsAccepted()
         );
