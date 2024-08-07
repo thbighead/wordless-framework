@@ -17,7 +17,6 @@ final class Cors extends Singleton
     public const CONFIG_KEY = 'cors';
     private const HEADER_ACCESS_CONTROL_REQUEST_METHOD = 'Access-Control-Request-Method';
 
-    private bool $handle_on_shutdown = true;
     private Request $request;
     private CorsService $service;
 
@@ -38,11 +37,6 @@ final class Cors extends Singleton
         parent::__construct();
     }
 
-    private function avoidHandleOnShutdown(): void
-    {
-        $this->handle_on_shutdown = false;
-    }
-
     private function handleCorsRequest(): void
     {
         if ($this->isPreflightRequest()) {
@@ -50,7 +44,7 @@ final class Cors extends Singleton
         }
 
         HandleCors::hookIt(function () {
-            if (!$this->handle_on_shutdown) {
+            if (headers_sent()) {
                 return;
             }
 
@@ -66,8 +60,6 @@ final class Cors extends Singleton
 
     private function handlePreflightRequest(): void
     {
-        $this->avoidHandleOnShutdown();
-
         $this->service->varyHeader(
             $this->service->handlePreflightRequest($this->request),
             self::HEADER_ACCESS_CONTROL_REQUEST_METHOD
