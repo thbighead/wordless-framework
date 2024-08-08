@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Listeners;
 
+use InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
@@ -21,6 +22,7 @@ class EnableCors extends ActionListener
      * @return void
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws InvalidArgumentException
      */
     public static function enable(): void
     {

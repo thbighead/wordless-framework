@@ -10,6 +10,6 @@ class HandleCors extends ActionListener
 {
     protected static function hook(): ActionHook
     {
-        return Action::shutdown;
+        return Action::send_headers;
     }
 }
