@@ -2,9 +2,12 @@
 
 namespace Wordless\Core\Bootstrapper\Traits;
 
+use Generator;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
+use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -43,26 +46,45 @@ trait Migrations
 
     /**
      * @return $this
+     * @throws InvalidDirectory
      * @throws InvalidMigrationFilename
      * @throws MigrationFileNotFound
+     * @throws PathNotFoundException
      */
     private function loadProvidedMigrations(): static
     {
         foreach ($this->loaded_providers as $provider) {
-            foreach ($provider->registerMigrations() as $migration_absolute_filepath) {
-                $migration_absolute_filepath = $this->validateMigrationFilepath($migration_absolute_filepath);
+            foreach ($provider->registerMigrations() as $migration_absolute_path) {
+                foreach ($this->retrieveMigrationFilePathsFrom($migration_absolute_path) as $migration_absolute_filepath) {
+                    $migration_absolute_filepath = $this->validateMigrationFilepath($migration_absolute_filepath);
 
-                $migration_filename = Str::afterLast($migration_absolute_filepath, DIRECTORY_SEPARATOR);
+                    $migration_filename = Str::afterLast($migration_absolute_filepath, DIRECTORY_SEPARATOR);
 
-                $this->validateMigrationFilename($migration_filename);
+                    $this->validateMigrationFilename($migration_filename);
 
-                $this->loaded_migrations_filepath[$migration_filename] = $migration_absolute_filepath;
+                    $this->loaded_migrations_filepath[$migration_filename] = $migration_absolute_filepath;
+                }
             }
         }
 
         ksort($this->loaded_migrations_filepath);
 
         return $this;
+    }
+
+    /**
+     * @param string $migration_absolute_path
+     * @return Generator
+     * @throws InvalidDirectory
+     * @throws PathNotFoundException
+     */
+    private function retrieveMigrationFilePathsFrom(string $migration_absolute_path): Generator
+    {
+        if (is_dir($migration_absolute_path)) {
+            return DirectoryFiles::recursiveRead($migration_absolute_path);
+        }
+
+        yield $migration_absolute_path;
     }
 
     /**
