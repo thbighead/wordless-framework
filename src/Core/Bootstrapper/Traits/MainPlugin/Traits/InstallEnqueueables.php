@@ -70,9 +70,9 @@ trait InstallEnqueueables
 
     /**
      * @return $this
+     * @throws DuplicatedEnqueueableId
      * @throws InvalidArgumentException
      * @throws PathNotFoundException
-     * @throws DuplicatedEnqueueableId
      */
     private function resolveStyleEnqueues(): static
     {

@@ -4,6 +4,7 @@ namespace Wordless\Infrastructure\Wordpress;
 
 use InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Guessers\EnqueueableAssetIdGuesser;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Link;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -14,8 +15,6 @@ use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqu
 
 abstract class EnqueueableAsset
 {
-    abstract protected static function id(): string;
-
     abstract protected static function relativeFilepath(): string;
 
     abstract public function enqueue(): void;
@@ -48,6 +47,11 @@ abstract class EnqueueableAsset
     protected static function dependencies(): array
     {
         return [];
+    }
+
+    protected static function id(): string
+    {
+        return (new EnqueueableAssetIdGuesser(static::class))->getValue();
     }
 
     protected function version(): ?string
