@@ -28,6 +28,7 @@ class MakeListener extends ConsoleCommand
 
     final public const COMMAND_NAME = 'make:listener';
     private const ARGUMENT_NAME_LISTENER_CLASS = 'PascalCasedListenerClass';
+    private const ARGUMENT_NAME_REGISTER_FUNCTION = 'camelCasedMethodName';
     private const MODE_LISTENER_ACTION = 'action';
     private const MODE_LISTENER_FILTER = 'filter';
 
@@ -39,8 +40,13 @@ class MakeListener extends ConsoleCommand
         return [
             ArgumentDTO::make(
                 self::ARGUMENT_NAME_LISTENER_CLASS,
-                'The class name of your new hooker file in pascal case.',
+                'The class name of your new listener file in pascal case.',
                 ArgumentMode::required
+            ),
+            ArgumentDTO::make(
+                self::ARGUMENT_NAME_REGISTER_FUNCTION,
+                'The method name registered for your new listener file in camel case.',
+                ArgumentMode::optional
             ),
         ];
     }
@@ -123,6 +129,12 @@ class MakeListener extends ConsoleCommand
                 $listener_class_name_key = 'DummyListener';
         }
 
-        return $stubMounter->setReplaceContentDictionary([$listener_class_name_key => $listener_class_name]);
+        $replace_content_dictionary = [$listener_class_name_key => $listener_class_name];
+
+        if (!empty($register_function = $this->input->getOption(self::ARGUMENT_NAME_REGISTER_FUNCTION))) {
+            $replace_content_dictionary['myCustomFunction'] = $register_function;
+        }
+
+        return $stubMounter->setReplaceContentDictionary($replace_content_dictionary);
     }
 }
