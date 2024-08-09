@@ -8,6 +8,6 @@ class AdminBarEnvironmentFlagStyle extends EnqueueableStyle
 {
     protected static function relativeFilepath(): string
     {
-        // TODO: Implement relativeFilepath() method.
+        return 'public/css/env-flag.min.css';
     }
 }

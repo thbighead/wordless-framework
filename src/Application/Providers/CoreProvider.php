@@ -88,6 +88,7 @@ class CoreProvider extends Provider
     public function registerProviders(): array
     {
         return [
+            AdminBarEnvironmentFlagProvider::class,
             MakersProvider::class,
             MigrationsProvider::class,
             ScheduleProvider::class,

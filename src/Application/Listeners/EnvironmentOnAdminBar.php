@@ -2,7 +2,9 @@
 
 namespace Wordless\Application\Listeners;
 
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 use Wordless\Wordpress\Hook\Enums\Action;
@@ -15,6 +17,12 @@ class EnvironmentOnAdminBar extends ActionListener
      */
     protected const FUNCTION = 'addEnvironmentFlagToAdminBarMenu';
 
+    /**
+     * @param WP_Admin_Bar $wpAdminBar
+     * @return void
+     * @throws DotEnvNotSetException
+     * @throws FormatException
+     */
     public static function addEnvironmentFlagToAdminBarMenu(WP_Admin_Bar $wpAdminBar): void
     {
         $environment_name = Environment::get('APP_ENV');
@@ -23,6 +31,9 @@ class EnvironmentOnAdminBar extends ActionListener
             'id' => "wordless_{$environment_name}_environment_admin_bar_flag",
             'parent' => 'top-secondary',
             'title' => $environment_name,
+            'meta' => [
+                'html' => '<div>oi</div>',
+            ],
         ]);
     }
 
