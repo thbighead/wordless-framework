@@ -131,7 +131,7 @@ class MakeListener extends ConsoleCommand
 
         $replace_content_dictionary = [$listener_class_name_key => $listener_class_name];
 
-        if (!empty($register_function = $this->input->getOption(self::ARGUMENT_NAME_REGISTER_FUNCTION))) {
+        if (!empty($register_function = $this->input->getArgument(self::ARGUMENT_NAME_REGISTER_FUNCTION))) {
             $replace_content_dictionary['myCustomFunction'] = $register_function;
         }
 
