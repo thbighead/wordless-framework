@@ -101,6 +101,16 @@ class ProjectPath extends Helper
      * @return string
      * @throws PathNotFoundException
      */
+    final public static function dist(string $additional_path = ''): string
+    {
+        return self::vendorPackageRoot("dist/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     final public static function docker(string $additional_path = ''): string
     {
         return self::root("docker/$additional_path");

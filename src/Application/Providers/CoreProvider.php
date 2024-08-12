@@ -6,6 +6,7 @@ use Wordless\Application\Cachers\ConfigCacher;
 use Wordless\Application\Cachers\EnvironmentCacher;
 use Wordless\Application\Commands\ConfigureDateOptions;
 use Wordless\Application\Commands\CreateInternalCache;
+use Wordless\Application\Commands\DistributeFront;
 use Wordless\Application\Commands\GeneratePublicWordpressSymbolicLinks;
 use Wordless\Application\Commands\PublishConfigurationFiles;
 use Wordless\Application\Commands\PublishWpConfigPhp;
@@ -39,6 +40,7 @@ class CoreProvider extends Provider
         return [
             ConfigureDateOptions::class,
             CreateInternalCache::class,
+            DistributeFront::class,
             GeneratePublicWordpressSymbolicLinks::class,
             PublishConfigurationFiles::class,
             PublishWpConfigPhp::class,

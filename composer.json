@@ -60,7 +60,8 @@
   "scripts": {
     "post-autoload-dump": [
       "touch .env",
-      "rm -f app config stubs && ln -s src/Application app  && ln -s assets/config config && ln -s assets/stubs stubs"
+      "rm -f app config stubs && ln -s src/Application app  && ln -s assets/config config && ln -s assets/stubs stubs",
+      "php console distribute"
     ]
   },
   "extra": {
