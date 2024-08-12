@@ -8,12 +8,12 @@ use Wordless\Infrastructure\Provider;
 
 class AdminBarEnvironmentFlagProvider extends Provider
 {
-//    public function registerEnqueueableStyles(): array
-//    {
-//        return [
-//            AdminBarEnvironmentFlagStyle::class,
-//        ];
-//    }
+    public function registerEnqueueableStyles(): array
+    {
+        return [
+            AdminBarEnvironmentFlagStyle::class,
+        ];
+    }
 
     public function registerListeners(): array
     {
