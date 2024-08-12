@@ -80,11 +80,7 @@ trait Migrations
      */
     private function retrieveMigrationFilePathsFrom(string $migration_absolute_path): Generator
     {
-        if (is_dir($migration_absolute_path)) {
-            return DirectoryFiles::recursiveRead($migration_absolute_path);
-        }
-
-        yield $migration_absolute_path;
+        return DirectoryFiles::recursiveRead($migration_absolute_path);
     }
 
     /**
