@@ -3,21 +3,19 @@
 namespace Wordless\Infrastructure\Wordpress;
 
 use InvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Guessers\EnqueueableAssetIdGuesser;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Link;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
 
 abstract class EnqueueableAsset
 {
-    abstract protected static function relativeFilepath(): string;
-
     abstract public function enqueue(): void;
+
+    abstract protected function filename(): string;
+
+    abstract protected function mountFileUrl(): string;
 
     private static array $ids_pool = [
         EnqueueableStyle::class => [],
@@ -26,7 +24,7 @@ abstract class EnqueueableAsset
 
     /** @var string[] $dependencies */
     private array $dependencies = [];
-    private string $filepath;
+    private string $file_url;
     private string $id;
 
     /**
@@ -67,9 +65,9 @@ abstract class EnqueueableAsset
         return $this->dependencies;
     }
 
-    protected function getFilepath(): string
+    protected function getFileUrl(): string
     {
-        return $this->filepath;
+        return $this->file_url;
     }
 
     protected function getId(): string
@@ -86,17 +84,13 @@ abstract class EnqueueableAsset
     }
 
     /**
-     * @throws DotEnvNotSetException
      * @throws DuplicatedEnqueueableId
-     * @throws EmptyConfigKey
-     * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws PathNotFoundException
      */
     private function __construct()
     {
         $this->setId()
-            ->setFilepath()
+            ->setFileUrl()
             ->setDependencies();
     }
 
@@ -107,16 +101,9 @@ abstract class EnqueueableAsset
         }
     }
 
-    /**
-     * @return $this
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws PathNotFoundException
-     */
-    private function setFilepath(): static
+    private function setFileUrl(): static
     {
-        $this->filepath = Link::themePublic(static::relativeFilepath());
+        $this->file_url = $this->mountFileUrl();
 
         return $this;
     }
