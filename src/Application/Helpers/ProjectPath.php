@@ -293,7 +293,9 @@ class ProjectPath extends Helper
      */
     final public static function vendorPackageRoot(string $additional_path = ''): string
     {
-        return self::vendor(self::VENDOR_PACKAGE_RELATIVE_PATH . "/$additional_path");
+        return Environment::isFramework() ?
+            self::root($additional_path) :
+            self::vendor(self::VENDOR_PACKAGE_RELATIVE_PATH . "/$additional_path");
     }
 
     /**
