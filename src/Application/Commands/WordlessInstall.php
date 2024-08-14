@@ -121,7 +121,6 @@ class WordlessInstall extends ConsoleCommand
             ->createRobotsTxtFromStub()
             ->createWordlessPluginFromStub()
             ->createWpDatabase()
-            ->distributeAssets()
             ->coreSteps()
             ->registerSchedules()
             ->runMigrations()
@@ -411,21 +410,6 @@ class WordlessInstall extends ConsoleCommand
             $this->deleteFileForForceMode(ProjectPath::wpCore('wp-config.php'));
         } catch (PathNotFoundException $exception) {
             $this->writePathNotFoundMessageForForceMode($exception);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     * @throws CliReturnedNonZero
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
-     */
-    private function distributeAssets(): static
-    {
-        if (Environment::isFramework()) {
-            $this->callConsoleCommand(DistributeFront::COMMAND_NAME);
         }
 
         return $this;
