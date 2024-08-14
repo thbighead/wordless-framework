@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f049b30b92344e12d8803b828b926f28",
+    "content-hash": "b870e8d64b81776686150c406c62e06a",
     "packages": [
         {
             "name": "brick/math",
@@ -5955,6 +5955,70 @@
                 "source": "https://github.com/wp-cli/php-cli-tools/tree/v0.11.22"
             },
             "time": "2023-12-03T19:25:05+00:00"
+        },
+        {
+            "name": "wp-cli/profile-command",
+            "version": "v2.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wp-cli/profile-command.git",
+                "reference": "04c20f23da4f04bf5ff880207e96a0e5cf3ad90a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wp-cli/profile-command/zipball/04c20f23da4f04bf5ff880207e96a0e5cf3ad90a",
+                "reference": "04c20f23da4f04bf5ff880207e96a0e5cf3ad90a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6",
+                "wp-cli/wp-cli": "^2.5"
+            },
+            "require-dev": {
+                "wp-cli/wp-cli-tests": "^4"
+            },
+            "type": "wp-cli-package",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                },
+                "commands": [
+                    "profile stage",
+                    "profile hook",
+                    "profile eval",
+                    "profile eval-file"
+                ],
+                "readme": {
+                    "sections": [
+                        "Overview",
+                        "Using",
+                        "Installing",
+                        "Contributing"
+                    ],
+                    "overview": {
+                        "post": "bin/readme/overview-body.md"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [
+                    "profile-command.php"
+                ],
+                "psr-4": {
+                    "WP_CLI\\Profile\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Quickly identify what's slow with WordPress.",
+            "homepage": "https://github.com/wp-cli/profile-command/",
+            "support": {
+                "issues": "https://github.com/wp-cli/profile-command/issues",
+                "source": "https://github.com/wp-cli/profile-command/tree/v2.1.4"
+            },
+            "time": "2024-07-22T10:28:56+00:00"
         },
         {
             "name": "wp-cli/rewrite-command",
