@@ -9,9 +9,9 @@ use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
-use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle\GlobalEnqueueableStyle;
 
-class AdminBarEnvironmentFlagStyle extends EnqueueableStyle
+class AdminBarEnvironmentFlagStyle extends GlobalEnqueueableStyle
 {
     /**
      * @return string

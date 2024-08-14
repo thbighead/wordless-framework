@@ -13,6 +13,10 @@ abstract class EnqueueableAsset
 {
     abstract public function enqueue(): void;
 
+    abstract public function loadOnAdmin(): bool;
+
+    abstract public function loadOnFrontend(): bool;
+
     abstract protected function filename(): string;
 
     abstract protected function mountFileUrl(): string;

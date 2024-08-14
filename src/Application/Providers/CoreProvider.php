@@ -27,7 +27,8 @@ use Wordless\Application\Listeners\ManageRestResponseContentTypeHeader;
 use Wordless\Application\Listeners\RegisterEntities;
 use Wordless\Application\Listeners\RemoveAdditionalCssFromAdmin;
 use Wordless\Application\Listeners\RemoveGlobalCustomInlineStyles;
-use Wordless\Application\Listeners\ResolveEnqueues;
+use Wordless\Application\Listeners\ResolveAdminEnqueues;
+use Wordless\Application\Listeners\ResolveFrontendEnqueues;
 use Wordless\Application\Listeners\ShowCustomFrontPageAtAdminSideMenu;
 use Wordless\Application\Listeners\WordlessVersionOnAdmin;
 use Wordless\Infrastructure\Cacher;
@@ -67,7 +68,8 @@ class CoreProvider extends Provider
             RegisterEntities::class,
             RemoveAdditionalCssFromAdmin::class,
             RemoveGlobalCustomInlineStyles::class,
-            ResolveEnqueues::class,
+            ResolveAdminEnqueues::class,
+            ResolveFrontendEnqueues::class,
             ShowCustomFrontPageAtAdminSideMenu::class,
             WordlessVersionOnAdmin::class,
         ];
