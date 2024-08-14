@@ -59,7 +59,7 @@
   },
   "scripts": {
     "post-autoload-dump": [
-      "touch .env",
+      "touch .env && mkdir -p cache && mkdir -p wp/wp-content/mu-plugins",
       "rm -f app config stubs && ln -s src/Application app  && ln -s assets/config config && ln -s assets/stubs stubs",
       "php console distribute"
     ]
