@@ -15,6 +15,7 @@ use Wordless\Application\Commands\WpCliCaller;
 use Wordless\Application\Listeners\BootApiControllers;
 use Wordless\Application\Listeners\BootHttpRemoteCallsLog;
 use Wordless\Application\Listeners\ChooseImageEditor;
+use Wordless\Application\Listeners\ConfigureUrlGuessing;
 use Wordless\Application\Listeners\DeferEnqueuedScripts;
 use Wordless\Application\Listeners\DisableXmlrpc;
 use Wordless\Application\Listeners\DoNotLoadWpAdminBarOutsidePanel;
@@ -54,6 +55,7 @@ class CoreProvider extends Provider
             BootApiControllers::class,
             BootHttpRemoteCallsLog::class,
             ChooseImageEditor::class,
+            ConfigureUrlGuessing::class,
             DeferEnqueuedScripts::class,
             DisableXmlrpc::class,
             DoNotLoadWpAdminBarOutsidePanel::class,
