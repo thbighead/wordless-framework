@@ -13,6 +13,35 @@ use Wordless\Core\Exceptions\DotEnvNotSetException;
 trait Internal
 {
     private static ?string $base_assets_uri = null;
+    private static ?string $base_uri = null;
+
+    /**
+     * @return string
+     * @throws DotEnvNotSetException
+     * @throws FormatException
+     */
+    private static function getBaseUri(): string
+    {
+        if (static::$base_uri !== null) {
+            return static::$base_uri;
+        }
+
+        if (function_exists('home_url')) {
+            return static::$base_uri = home_url();
+        }
+
+        return static::$base_uri = self::guessBaseUri();
+    }
+
+    /**
+     * @return string
+     * @throws DotEnvNotSetException
+     * @throws FormatException
+     */
+    private static function guessBaseUri(): string
+    {
+        return Environment::get('FRONT_END_URL', '');
+    }
 
     /**
      * @return string

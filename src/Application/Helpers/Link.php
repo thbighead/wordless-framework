@@ -56,6 +56,17 @@ class Link extends Helper
      * @param string $additional_path
      * @return string
      * @throws DotEnvNotSetException
+     * @throws FormatException
+     */
+    public static function raw(string $additional_path = ''): string
+    {
+        return self::getBaseUri() . "/$additional_path";
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws FormatException
      * @throws PathNotFoundException

@@ -6,6 +6,7 @@ use Wordless\Application\Cachers\ConfigCacher;
 use Wordless\Application\Cachers\EnvironmentCacher;
 use Wordless\Application\Commands\ConfigureDateOptions;
 use Wordless\Application\Commands\CreateInternalCache;
+use Wordless\Application\Commands\DistributeFront;
 use Wordless\Application\Commands\GeneratePublicWordpressSymbolicLinks;
 use Wordless\Application\Commands\PublishConfigurationFiles;
 use Wordless\Application\Commands\PublishWpConfigPhp;
@@ -26,7 +27,8 @@ use Wordless\Application\Listeners\ManageRestResponseContentTypeHeader;
 use Wordless\Application\Listeners\RegisterEntities;
 use Wordless\Application\Listeners\RemoveAdditionalCssFromAdmin;
 use Wordless\Application\Listeners\RemoveGlobalCustomInlineStyles;
-use Wordless\Application\Listeners\ResolveEnqueues;
+use Wordless\Application\Listeners\ResolveAdminEnqueues;
+use Wordless\Application\Listeners\ResolveFrontendEnqueues;
 use Wordless\Application\Listeners\ShowCustomFrontPageAtAdminSideMenu;
 use Wordless\Application\Listeners\WordlessVersionOnAdmin;
 use Wordless\Infrastructure\Cacher;
@@ -39,6 +41,7 @@ class CoreProvider extends Provider
         return [
             ConfigureDateOptions::class,
             CreateInternalCache::class,
+            DistributeFront::class,
             GeneratePublicWordpressSymbolicLinks::class,
             PublishConfigurationFiles::class,
             PublishWpConfigPhp::class,
@@ -65,7 +68,8 @@ class CoreProvider extends Provider
             RegisterEntities::class,
             RemoveAdditionalCssFromAdmin::class,
             RemoveGlobalCustomInlineStyles::class,
-            ResolveEnqueues::class,
+            ResolveAdminEnqueues::class,
+            ResolveFrontendEnqueues::class,
             ShowCustomFrontPageAtAdminSideMenu::class,
             WordlessVersionOnAdmin::class,
         ];
@@ -88,6 +92,7 @@ class CoreProvider extends Provider
     public function registerProviders(): array
     {
         return [
+            AdminBarEnvironmentFlagProvider::class,
             MakersProvider::class,
             MigrationsProvider::class,
             ScheduleProvider::class,
