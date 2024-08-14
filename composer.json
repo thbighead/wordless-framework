@@ -48,6 +48,7 @@
     "symfony/http-client": "^6.3",
     "symfony/http-foundation": "^6.3",
     "symfony/validator": "^6.3",
+    "wp-cli/doctor-command": "^2.1",
     "wp-cli/profile-command": "^2.1",
     "wp-cli/wp-cli": "^2.10",
     "wp-cli/wp-cli-bundle": "^2.10"

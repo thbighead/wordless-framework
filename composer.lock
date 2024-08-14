@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b870e8d64b81776686150c406c62e06a",
+    "content-hash": "5a7f16434cdf5ba7d7b4fa78dc4b4e73",
     "packages": [
         {
             "name": "brick/math",
@@ -4928,6 +4928,78 @@
                 "source": "https://github.com/wp-cli/db-command/tree/v2.1.0"
             },
             "time": "2024-04-27T03:11:44+00:00"
+        },
+        {
+            "name": "wp-cli/doctor-command",
+            "version": "v2.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wp-cli/doctor-command.git",
+                "reference": "ad8446bede9b2630daa68baf776c5bc43a460d86"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wp-cli/doctor-command/zipball/ad8446bede9b2630daa68baf776c5bc43a460d86",
+                "reference": "ad8446bede9b2630daa68baf776c5bc43a460d86",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "wp-cli/checksum-command": "^2",
+                "wp-cli/core-command": "^2",
+                "wp-cli/cron-command": "^2",
+                "wp-cli/entity-command": "^2",
+                "wp-cli/extension-command": "^2",
+                "wp-cli/language-command": "^2",
+                "wp-cli/wp-cli": "^2.1"
+            },
+            "require-dev": {
+                "wp-cli/wp-cli-tests": "^4"
+            },
+            "type": "wp-cli-package",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                },
+                "commands": [
+                    "doctor check",
+                    "doctor list"
+                ],
+                "readme": {
+                    "sections": [
+                        "Overview",
+                        "Using",
+                        "Installing",
+                        "Contributing"
+                    ],
+                    "overview": {
+                        "body": "bin/readme/overview-body.md"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [
+                    "command.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel Bachhuber",
+                    "email": "daniel@runcommand.io",
+                    "homepage": "https://runcommand.io"
+                }
+            ],
+            "description": "Diagnose problems within WordPress by running a series of checks for symptoms.",
+            "homepage": "https://runcommand.io/wp/doctor/",
+            "support": {
+                "issues": "https://github.com/wp-cli/doctor-command/issues",
+                "source": "https://github.com/wp-cli/doctor-command/tree/v2.1.3"
+            },
+            "time": "2023-08-31T10:34:39+00:00"
         },
         {
             "name": "wp-cli/embed-command",
