@@ -5,22 +5,20 @@ namespace Wordless\Application\Commands;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
+use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
+use Wordless\Application\Commands\Traits\NoTtyMode\DTO\NoTtyModeOptionDTO;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
-use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Link;
-use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\Str;
-use Wordless\Application\Helpers\Url;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
-use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
 
 class Diagnostics extends ConsoleCommand
 {
@@ -71,6 +69,11 @@ class Diagnostics extends ConsoleCommand
     protected function help(): string
     {
         return 'Creates a full report with PHP info (CLI and FPM), development-shareable environment variables and WP CLI profile hook, profile stage, cli info and doctor list commands. It is recommended to output this command to a file suffixing it with \' > wordless-report.txt\'';
+    }
+
+    protected function isNoTtyMode(): bool
+    {
+        return true;
     }
 
     /**
@@ -147,7 +150,7 @@ class Diagnostics extends ConsoleCommand
     private function phpCliInfo(): static
     {
         $this->wrapInfoBlock('PHP CLI info', function () {
-            $this->callExternalCommandWithoutInterruption('php -i');
+            $this->callExternalCommandWithoutInterruption('php -i', false);
         })->writeBlocksSeparator();
 
         return $this;
