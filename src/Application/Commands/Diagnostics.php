@@ -103,6 +103,11 @@ class Diagnostics extends ConsoleCommand
         return Command::SUCCESS;
     }
 
+    private function detachTitleOutput(string $title_output): string
+    {
+        return Str::wrap(" $title_output ", self::OUTPUT_TITLE_DETACHER);
+    }
+
     /**
      * @return $this
      * @throws DotEnvNotSetException
@@ -142,7 +147,7 @@ class Diagnostics extends ConsoleCommand
     private function phpCliInfo(): static
     {
         $this->wrapInfoBlock('PHP CLI info', function () {
-            $this->callExternalCommandWithoutInterruption('php -i', false);
+            $this->callExternalCommandWithoutInterruption('php -i');
         })->writeBlocksSeparator();
 
         return $this;
@@ -179,25 +184,22 @@ class Diagnostics extends ConsoleCommand
                 $test_url_option = empty($this->getTestUrls()) ? '' : " --url={$this->getTestUrls()[$i]}";
 
                 if (!empty($test_url_option)) {
-                    $this->writeln(Str::wrap(
-                        " Analysing URL: {$this->getTestUrls()[$i]} ",
-                        self::OUTPUT_TITLE_DETACHER
-                    ));
+                    $this->writeDetachedTitle("Analysing URL: {$this->getTestUrls()[$i]}");
                 }
 
-                $this->writeln('Draft');
+                $this->writeDetachedTitle('Draft');
                 $this->callWpCliCommandWithoutInterruption("profile stage$test_url_option");
 
-                $this->writeln('Bootstrap');
+                $this->writeDetachedTitle('Bootstrap');
                 $this->callWpCliCommandWithoutInterruption("profile stage bootstrap$test_url_option");
 
-                $this->writeln('Main Query');
+                $this->writeDetachedTitle('Main Query');
                 $this->callWpCliCommandWithoutInterruption("profile stage main_query$test_url_option");
 
-                $this->writeln('Template');
+                $this->writeDetachedTitle('Template');
                 $this->callWpCliCommandWithoutInterruption("profile stage template$test_url_option");
 
-                $this->writeln('Hooks');
+                $this->writeDetachedTitle('Hooks');
                 $this->callWpCliCommandWithoutInterruption("profile hook --all$test_url_option");
 
                 $i++;
@@ -209,11 +211,11 @@ class Diagnostics extends ConsoleCommand
 
     private function wrapInfoBlock(string $title, callable $info_block): static
     {
-        $this->writeln(Str::wrap(" $title (BEGIN) ", self::OUTPUT_TITLE_DETACHER));
+        $this->writeDetachedTitle("$title (BEGIN)");
 
         $info_block();
 
-        $this->writeln(Str::wrap(" $title (END) ", self::OUTPUT_TITLE_DETACHER));
+        $this->writeDetachedTitle("$title (END)");
 
         return $this;
     }
@@ -221,6 +223,11 @@ class Diagnostics extends ConsoleCommand
     private function writeBlocksSeparator(): void
     {
         $this->writeln(".\n.\n.");
+    }
+
+    private function writeDetachedTitle(string $title): void
+    {
+        $this->writeln($this->detachTitleOutput($title));
     }
 }
 
