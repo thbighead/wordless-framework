@@ -16,7 +16,7 @@ trait RunWpCliCommand
     /**
      * @return OptionDTO[]
      */
-    protected function mountRunWpCliOptions():array
+    protected function mountRunWpCliOptions(): array
     {
         return [
             $this->mountAllowRootModeOption(),
