@@ -138,6 +138,8 @@ class Diagnostics extends ConsoleCommand
     private function composerInfo(): static
     {
         $this->wrapInfoBlock('Composer INFO', function () {
+            $this->writeDetachedTitle('Composer JSON');
+            $this->writeln(DirectoryFiles::getFileContent(ProjectPath::root('composer.json')));
             $this->writeTableFromJson(
                 $this->callExternalCommandSilentlyWithoutInterruption(
                     'composer show --format=json'
