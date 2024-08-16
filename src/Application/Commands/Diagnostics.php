@@ -198,35 +198,40 @@ class Diagnostics extends ConsoleCommand
                     $this->callWpCliCommandSilentlyWithoutInterruption(
                         "profile stage --format=csv$test_url_option"
                     )->output ?? '',
-                    'Draft'
+                    'Draft',
+                    true
                 );
 
                 $this->writeTableFromCsv(
                     $this->callWpCliCommandSilentlyWithoutInterruption(
                         "profile stage bootstrap --format=csv$test_url_option"
                     )->output ?? '',
-                    'Bootstrap'
+                    'Bootstrap',
+                    true
                 );
 
                 $this->writeTableFromCsv(
                     $this->callWpCliCommandSilentlyWithoutInterruption(
                         "profile stage main_query --format=csv$test_url_option"
                     )->output ?? '',
-                    'Main Query'
+                    'Main Query',
+                    true
                 );
 
                 $this->writeTableFromCsv(
                     $this->callWpCliCommandSilentlyWithoutInterruption(
                         "profile stage template --format=csv$test_url_option"
                     )->output ?? '',
-                    'Template'
+                    'Template',
+                    true
                 );
 
                 $this->writeTableFromCsv(
                     $this->callWpCliCommandSilentlyWithoutInterruption(
                         "profile hook --all --format=csv$test_url_option"
                     )->output ?? '',
-                    'Hooks'
+                    'Hooks',
+                    true
                 );
 
                 $i++;

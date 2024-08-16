@@ -7,6 +7,7 @@ use League\Csv\Reader;
 use League\Csv\SyntaxError;
 use League\Csv\UnavailableStream;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableStyle;
 
 trait TabledMessage
 {
@@ -60,12 +61,25 @@ trait TabledMessage
     /**
      * @param string $csv_reference
      * @param string|null $table_title
+     * @param bool $without_decoration
      * @return void
      * @throws Exception
      * @throws SyntaxError
      */
-    protected function writeTableFromCsv(string $csv_reference, ?string $table_title = null): void
+    protected function writeTableFromCsv(
+        string $csv_reference,
+        ?string $table_title = null,
+        bool $without_decoration = false
+    ): void
     {
-        $this->mountTableFromCsv($csv_reference, $table_title)->render();
+        $table = $this->mountTableFromCsv($csv_reference, $table_title);
+
+        if ($without_decoration) {
+            $table->setStyle((new TableStyle)
+                ->setCellHeaderFormat('%s')
+                ->setHeaderTitleFormat('%s'));
+        }
+
+        $table->render();
     }
 }
