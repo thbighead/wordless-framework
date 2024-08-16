@@ -31,6 +31,7 @@
   "require": {
     "php": "^8.2",
     "ext-fileinfo": "*",
+    "ext-filter": "*",
     "ext-json": "*",
     "ext-openssl": "*",
     "ext-pcntl": "*",
@@ -38,6 +39,7 @@
     "fakerphp/faker": "~1.23.0",
     "fruitcake/php-cors": "^1.3",
     "lcobucci/jwt": "^5.2",
+    "league/csv": "^9.16",
     "monolog/monolog": "^3.5",
     "nesbot/carbon": "^2.72",
     "paragonie/csp-builder": "^3.0",
