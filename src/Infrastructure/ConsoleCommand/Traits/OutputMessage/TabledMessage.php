@@ -2,12 +2,17 @@
 
 namespace Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage;
 
+use JsonException;
 use League\Csv\Exception;
 use League\Csv\Reader;
 use League\Csv\SyntaxError;
 use League\Csv\UnavailableStream;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableStyle;
+use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use function WP_CLI\Utils\is_json;
 
 trait TabledMessage
 {
@@ -56,6 +61,43 @@ trait TabledMessage
 
         return $table->setHeaders($csv->getHeader())
             ->setRows($csv_rows);
+    }
+
+    /**
+     * @param string $json_reference
+     * @param string|null $table_title
+     * @return Table|null
+     * @throws FailedToGetFileContent
+     * @throws PathNotFoundException
+     */
+    protected function mountTableFromJson(string $json_reference, ?string $table_title = null): ?Table
+    {
+        if (empty($json_reference)) {
+            return null;
+        }
+
+        try {
+            $json_content = json_decode(
+                is_file($json_reference) ? DirectoryFiles::getFileContent($json_reference) : $json_reference,
+                true,
+                flags: JSON_THROW_ON_ERROR
+            );
+        } catch (JsonException)  {
+            return null;
+        }
+
+        if (empty($json_content)) {
+            return null;
+        }
+
+        $table = $this->mountTable();
+
+        if (!empty($table_title)) {
+            $table->setHeaderTitle($table_title);
+        }
+
+        return $table->setHeaders(array_keys($json_content[0]))
+            ->setRows($json_content);
     }
 
     /**
@@ -110,6 +152,31 @@ trait TabledMessage
     ): void
     {
         $table = $this->mountTableFromCsv($csv_reference, $table_title);
+
+        if ($without_decoration) {
+            $table->setStyle((new TableStyle)
+                ->setCellHeaderFormat('%s')
+                ->setHeaderTitleFormat('%s'));
+        }
+
+        $table->render();
+    }
+
+    /**
+     * @param string $json_reference
+     * @param string|null $table_title
+     * @param bool $without_decoration
+     * @return void
+     * @throws Exception
+     * @throws SyntaxError
+     */
+    protected function writeTableFromJson(
+        string  $json_reference,
+        ?string $table_title = null,
+        bool    $without_decoration = false
+    ): void
+    {
+        $table = $this->mountTableFromJson($json_reference, $table_title);
 
         if ($without_decoration) {
             $table->setStyle((new TableStyle)

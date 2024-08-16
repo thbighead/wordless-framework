@@ -107,6 +107,7 @@ class Diagnostics extends ConsoleCommand
     protected function runIt(): int
     {
         $this->dotEnvInfo()
+            ->composerInfo()
             ->wpConfigAnalysis()
             ->wpExecutionAnalysis()
             ->wpCliInfo()
@@ -120,6 +121,23 @@ class Diagnostics extends ConsoleCommand
         $this->isWpConfigFilePlaced() ?
             $this->writeln(self::WP_CONFIG_FILENAME . ' placed correctly.') :
             $this->writeln(self::WP_CONFIG_FILENAME . ' in wp-core is not the same from stubs directory!!!');
+    }
+
+    private function composerInfo(): static
+    {
+        $this->wrapInfoBlock('Composer INFO', function () {
+            $this->checkWpConfigFile();
+
+            $this->writeTableFromJson(
+                $this->callExternalCommandSilentlyWithoutInterruption(
+                    'composer show --format=json'
+                )->output ?? '',
+                'Composer Installed Packages',
+                true
+            );
+        })->writeBlocksSeparator();
+
+        return $this;
     }
 
     private function detachTitleOutput(string $title_output): string
