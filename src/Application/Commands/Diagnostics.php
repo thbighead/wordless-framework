@@ -2,6 +2,8 @@
 
 namespace Wordless\Application\Commands;
 
+use League\Csv\Exception;
+use League\Csv\SyntaxError;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
@@ -177,6 +179,8 @@ class Diagnostics extends ConsoleCommand
      * @throws ExceptionInterface
      * @throws FormatException
      * @throws SymfonyInvalidArgumentException
+     * @throws Exception
+     * @throws SyntaxError
      */
     private function wpExecutionAnalysis(): static
     {
@@ -190,20 +194,40 @@ class Diagnostics extends ConsoleCommand
                     $this->writeDetachedTitle("Analysing URL: {$this->getTestUrls()[$i]}");
                 }
 
-                $this->writeDetachedTitle('Draft');
-                $this->callWpCliCommandWithoutInterruption("profile stage$test_url_option");
+                $this->writeTableFromCsv(
+                    $this->callWpCliCommandSilentlyWithoutInterruption(
+                        "profile stage --format=csv$test_url_option"
+                    )->output ?? '',
+                    'Draft'
+                );
 
-                $this->writeDetachedTitle('Bootstrap');
-                $this->callWpCliCommandWithoutInterruption("profile stage bootstrap$test_url_option");
+                $this->writeTableFromCsv(
+                    $this->callWpCliCommandSilentlyWithoutInterruption(
+                        "profile stage bootstrap --format=csv$test_url_option"
+                    )->output ?? '',
+                    'Bootstrap'
+                );
 
-                $this->writeDetachedTitle('Main Query');
-                $this->callWpCliCommandWithoutInterruption("profile stage main_query$test_url_option");
+                $this->writeTableFromCsv(
+                    $this->callWpCliCommandSilentlyWithoutInterruption(
+                        "profile stage main_query --format=csv$test_url_option"
+                    )->output ?? '',
+                    'Main Query'
+                );
 
-                $this->writeDetachedTitle('Template');
-                $this->callWpCliCommandWithoutInterruption("profile stage template$test_url_option");
+                $this->writeTableFromCsv(
+                    $this->callWpCliCommandSilentlyWithoutInterruption(
+                        "profile stage template --format=csv$test_url_option"
+                    )->output ?? '',
+                    'Template'
+                );
 
-                $this->writeDetachedTitle('Hooks');
-                $this->callWpCliCommandWithoutInterruption("profile hook --all$test_url_option");
+                $this->writeTableFromCsv(
+                    $this->callWpCliCommandSilentlyWithoutInterruption(
+                        "profile hook --all --format=csv$test_url_option"
+                    )->output ?? '',
+                    'Hooks'
+                );
 
                 $i++;
             } while (isset($this->getTestUrls()[$i]));
