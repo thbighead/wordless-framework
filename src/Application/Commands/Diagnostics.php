@@ -11,10 +11,13 @@ use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInval
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
-use Wordless\Application\Commands\Traits\NoTtyMode\DTO\NoTtyModeOptionDTO;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
+use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Link;
+use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
@@ -43,6 +46,7 @@ class Diagnostics extends ConsoleCommand
     ];
     private const ARGUMENT_NAME_TEST_URLS = 'test_urls';
     private const OUTPUT_TITLE_DETACHER = '==========';
+    private const WP_CONFIG_FILENAME = 'wp-config.php';
 
     /** @var string[] $test_urls */
     private array $test_urls;
@@ -92,20 +96,30 @@ class Diagnostics extends ConsoleCommand
      * @return int
      * @throws CommandNotFoundException
      * @throws DotEnvNotSetException
+     * @throws Exception
      * @throws ExceptionInterface
      * @throws FormatException
      * @throws InvalidArgumentException
      * @throws LogicException
      * @throws SymfonyInvalidArgumentException
+     * @throws SyntaxError
      */
     protected function runIt(): int
     {
         $this->dotEnvInfo()
+            ->wpConfigAnalysis()
             ->wpExecutionAnalysis()
             ->wpCliInfo()
             ->phpCliInfo();
 
         return Command::SUCCESS;
+    }
+
+    private function checkWpConfigFile(): void
+    {
+        $this->isWpConfigFilePlaced() ?
+            $this->writeln(self::WP_CONFIG_FILENAME . ' placed correctly.') :
+            $this->writeln(self::WP_CONFIG_FILENAME . ' in wp-core is not the same from stubs directory!!!');
     }
 
     private function detachTitleOutput(string $title_output): string
@@ -144,6 +158,22 @@ class Diagnostics extends ConsoleCommand
         }, $this->input->getArgument(self::ARGUMENT_NAME_TEST_URLS));
     }
 
+    private function isWpConfigFilePlaced(): bool
+    {
+        try {
+            $wp_config_content = DirectoryFiles::getFileContent(
+                ProjectPath::wpCore(self::WP_CONFIG_FILENAME)
+            );
+            $wp_config_stub_content = DirectoryFiles::getFileContent(
+                ProjectPath::stubs(self::WP_CONFIG_FILENAME)
+            );
+
+            return $wp_config_content === $wp_config_stub_content;
+        } catch (FailedToGetFileContent|PathNotFoundException) {
+            return false;
+        }
+    }
+
     /**
      * @return $this
      * @throws InvalidArgumentException
@@ -167,6 +197,33 @@ class Diagnostics extends ConsoleCommand
     {
         $this->wrapInfoBlock('WP CLI info', function () {
             $this->callWpCliCommandWithoutInterruption('cli info');
+        })->writeBlocksSeparator();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws CommandNotFoundException
+     * @throws Exception
+     * @throws ExceptionInterface
+     * @throws SyntaxError
+     */
+    private function wpConfigAnalysis(): static
+    {
+        $this->wrapInfoBlock(self::WP_CONFIG_FILENAME . ' analysis', function () {
+            $this->checkWpConfigFile();
+
+            $this->writeTableFromCsv(
+                preg_replace(
+                    '/^(DB_NAME|DB_USER|DB_PASSWORD|DB_HOST),.*$/m',
+                    '',
+                    $this->callWpCliCommandSilentlyWithoutInterruption(
+                        'config list --format=csv'
+                    )->output) ?? '',
+                'Config List',
+                true
+            );
         })->writeBlocksSeparator();
 
         return $this;
@@ -262,4 +319,3 @@ class Diagnostics extends ConsoleCommand
         $this->writeln($this->detachTitleOutput($title));
     }
 }
-
