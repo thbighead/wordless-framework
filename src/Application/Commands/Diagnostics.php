@@ -12,6 +12,7 @@ use Symfony\Component\Dotenv\Exception\FormatException;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
+use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\Environment;
@@ -98,9 +99,12 @@ class Diagnostics extends ConsoleCommand
      * @throws DotEnvNotSetException
      * @throws Exception
      * @throws ExceptionInterface
+     * @throws FailedToGetFileContent
+     * @throws FailedToParseArrayKey
      * @throws FormatException
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws PathNotFoundException
      * @throws SymfonyInvalidArgumentException
      * @throws SyntaxError
      */
@@ -123,15 +127,22 @@ class Diagnostics extends ConsoleCommand
             $this->writeln(self::WP_CONFIG_FILENAME . ' in wp-core is not the same from stubs directory!!!');
     }
 
+    /**
+     * @return $this
+     * @throws FailedToGetFileContent
+     * @throws FailedToParseArrayKey
+     * @throws InvalidArgumentException
+     * @throws LogicException
+     * @throws PathNotFoundException
+     */
     private function composerInfo(): static
     {
         $this->wrapInfoBlock('Composer INFO', function () {
-            $this->checkWpConfigFile();
-
             $this->writeTableFromJson(
                 $this->callExternalCommandSilentlyWithoutInterruption(
                     'composer show --format=json'
                 )->output ?? '',
+                'installed',
                 'Composer Installed Packages',
                 true
             );
