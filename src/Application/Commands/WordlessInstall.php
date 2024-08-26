@@ -116,6 +116,7 @@ class WordlessInstall extends ConsoleCommand
     {
         $this->resolveForceMode()
             ->resolveDotEnv()
+            ->createCache()
             ->loadWpLanguages()
             ->createWpConfigFromStub()
             ->createRobotsTxtFromStub()
@@ -125,7 +126,6 @@ class WordlessInstall extends ConsoleCommand
             ->registerSchedules()
             ->runMigrations()
             ->syncRoles()
-            ->createCache()
             ->resolveWpConfigChmod();
 
         return Command::SUCCESS;
