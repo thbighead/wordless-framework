@@ -7,6 +7,7 @@ use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectD
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
@@ -24,6 +25,23 @@ final class InternalCache
 {
     public const INTERNAL_WORDLESS_CACHE_CONSTANT_NAME = 'INTERNAL_WORDLESS_CACHE';
     private const PHP_EXTENSION = '.php';
+
+    /**
+     * @return void
+     * @throws FailedToDeletePath
+     * @throws InvalidDirectory
+     * @throws PathNotFoundException
+     */
+    public static function clean(): void
+    {
+        foreach (DirectoryFiles::listFromDirectory(ProjectPath::cache()) as $supposed_cache_file) {
+            if (!Str::endsWith($supposed_cache_file, '.php')) {
+                continue;
+            }
+
+            DirectoryFiles::delete(ProjectPath::cache($supposed_cache_file));
+        }
+    }
 
     /**
      * @return void

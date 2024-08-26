@@ -47,7 +47,7 @@ class EnvironmentCacher extends Cacher
                 continue;
             }
 
-            $parsed_dot_env_content[$env_key] = Environment::get($env_key);
+            $parsed_dot_env_content[$env_key] = Environment::getWithoutCache($env_key);
         }
 
         return $parsed_dot_env_content;
