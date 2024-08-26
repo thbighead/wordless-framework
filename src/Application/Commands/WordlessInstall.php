@@ -54,16 +54,6 @@ class WordlessInstall extends ConsoleCommand
     public const COMMAND_NAME = 'wordless:install';
     final public const TEMP_MAIL = 'temp@mail.not.real';
     private const MU_PLUGIN_FILE_NAME = 'wordless-plugin.php';
-    private const WORDPRESS_SALT_FILLABLE_VALUES = [
-        '#AUTH_KEY',
-        '#SECURE_AUTH_KEY',
-        '#LOGGED_IN_KEY',
-        '#NONCE_KEY',
-        '#AUTH_SALT',
-        '#SECURE_AUTH_SALT',
-        '#LOGGED_IN_SALT',
-        '#NONCE_SALT',
-    ];
     private const WORDPRESS_SALT_URL_GETTER = 'https://api.wordpress.org/secret-key/1.1/salt/';
 
     private array $fresh_new_env_content;
@@ -439,7 +429,7 @@ class WordlessInstall extends ConsoleCommand
      */
     private function fillDotEnv(string $dot_env_filepath): void
     {
-        if (($dot_env_content = $this->guessAndResolveDotEnvWpSaltVariables(
+        if (($dot_env_content = $this->rotateDotEnvWpSaltVariables(
                 $dot_env_original_content = DirectoryFiles::getFileContent($dot_env_filepath)
             )) !== $dot_env_original_content) {
             Environment::rewriteDotEnvFile($dot_env_filepath, $dot_env_content);
@@ -507,12 +497,8 @@ class WordlessInstall extends ConsoleCommand
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      */
-    private function guessAndResolveDotEnvWpSaltVariables(string $dot_env_content): string
+    private function rotateDotEnvWpSaltVariables(string $dot_env_content): string
     {
-        if (!Str::contains($dot_env_content, self::WORDPRESS_SALT_FILLABLE_VALUES)) {
-            return $dot_env_content;
-        }
-
         $wp_salt_response = $this->wrapScriptWithMessages(
             'Retrieving WP SALTS at ' . self::WORDPRESS_SALT_URL_GETTER . '...',
             function () {
@@ -531,12 +517,12 @@ class WordlessInstall extends ConsoleCommand
             $parse_wp_salt_response_regex_result
         );
 
-        return str_replace(
+        return preg_replace(
             array_map(function ($env_variable_name) {
-                return "#$env_variable_name";
+                return "/^($env_variable_name=).*$/m";
             }, $parse_wp_salt_response_regex_result[1] ?? []),
             array_map(function ($salt_value) {
-                return Str::replace("\"$salt_value\"", '$', 'S');
+                return '$1' . Str::replace("\"$salt_value\"", '$', 'S');
             }, $parse_wp_salt_response_regex_result[2] ?? []),
             $dot_env_content
         );
