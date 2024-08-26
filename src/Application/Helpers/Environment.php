@@ -84,6 +84,22 @@ STRING;
         return self::returnTypedValue($value);
     }
 
+    /**
+     * @param string $key
+     * @param mixed|null $default
+     * @return mixed
+     * @throws DotEnvNotSetException
+     * @throws FormatException
+     */
+    public static function getWithoutCache(string $key, mixed $default = null): mixed
+    {
+        if (!defined(self::DOT_ENV_LOADED_CONSTANT_NAME)) {
+            self::loadDotEnv();
+        }
+
+        return self::returnTypedValue(self::retrieveValue($key, $default));
+    }
+
     public static function isCli(): bool
     {
         if (defined('STDIN')) {
