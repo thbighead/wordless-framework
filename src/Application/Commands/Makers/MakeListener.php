@@ -27,9 +27,10 @@ class MakeListener extends ConsoleCommand
     use LoadWpConfig;
 
     final public const COMMAND_NAME = 'make:listener';
-    private const LISTENER_CLASS_ARGUMENT_NAME = 'PascalCasedListenerClass';
-    const LISTENER_ACTION_MODE = 'action';
-    const LISTENER_FILTER_MODE = 'filter';
+    private const ARGUMENT_NAME_LISTENER_CLASS = 'PascalCasedListenerClass';
+    private const ARGUMENT_NAME_REGISTER_FUNCTION = 'camelCasedMethodName';
+    private const MODE_LISTENER_ACTION = 'action';
+    private const MODE_LISTENER_FILTER = 'filter';
 
     /**
      * @return ArgumentDTO[]
@@ -38,9 +39,14 @@ class MakeListener extends ConsoleCommand
     {
         return [
             ArgumentDTO::make(
-                self::LISTENER_CLASS_ARGUMENT_NAME,
-                'The class name of your new hooker file in pascal case.',
+                self::ARGUMENT_NAME_LISTENER_CLASS,
+                'The class name of your new listener file in pascal case.',
                 ArgumentMode::required
+            ),
+            ArgumentDTO::make(
+                self::ARGUMENT_NAME_REGISTER_FUNCTION,
+                'The method name registered for your new listener file in camel case.',
+                ArgumentMode::optional
             ),
         ];
     }
@@ -62,12 +68,12 @@ class MakeListener extends ConsoleCommand
     {
         return [
             OptionDTO::make(
-                self::LISTENER_FILTER_MODE,
+                self::MODE_LISTENER_FILTER,
                 'Generates a filter listener.',
                 mode: OptionMode::no_value
             ),
             OptionDTO::make(
-                self::LISTENER_ACTION_MODE,
+                self::MODE_LISTENER_ACTION,
                 'Generates an action listener.',
                 mode: OptionMode::no_value
             ),
@@ -86,7 +92,7 @@ class MakeListener extends ConsoleCommand
     protected function runIt(): int
     {
         $listenerStubMounter = $this->mountStubMounter(
-            $listener_class_name = Str::pascalCase($this->input->getArgument(self::LISTENER_CLASS_ARGUMENT_NAME))
+            $listener_class_name = Str::pascalCase($this->input->getArgument(self::ARGUMENT_NAME_LISTENER_CLASS))
         );
 
         $this->wrapScriptWithMessages(
@@ -102,6 +108,7 @@ class MakeListener extends ConsoleCommand
     /**
      * @param string $listener_class_name
      * @return StubMounter
+     * @throws InvalidArgumentException
      * @throws PathNotFoundException
      * @throws SymfonyInvalidArgumentException
      */
@@ -110,11 +117,11 @@ class MakeListener extends ConsoleCommand
         $mounter_new_file_path = ProjectPath::listeners() . "/$listener_class_name.php";
 
         switch (true) {
-            case $this->input->getOption(self::LISTENER_ACTION_MODE):
+            case $this->input->getOption(self::MODE_LISTENER_ACTION):
                 $stubMounter = ActionListenerStubMounter::make($mounter_new_file_path);
                 $listener_class_name_key = 'DummyActionListener';
                 break;
-            case $this->input->getOption(self::LISTENER_FILTER_MODE):
+            case $this->input->getOption(self::MODE_LISTENER_FILTER):
                 $stubMounter = FilterListenerStubMounter::make($mounter_new_file_path);
                 $listener_class_name_key = 'DummyFilterListener';
                 break;
@@ -123,6 +130,12 @@ class MakeListener extends ConsoleCommand
                 $listener_class_name_key = 'DummyListener';
         }
 
-        return $stubMounter->setReplaceContentDictionary([$listener_class_name_key => $listener_class_name]);
+        $replace_content_dictionary = [$listener_class_name_key => $listener_class_name];
+
+        if (!empty($register_function = $this->input->getArgument(self::ARGUMENT_NAME_REGISTER_FUNCTION))) {
+            $replace_content_dictionary['myCustomFunction'] = Str::camelCase($register_function);
+        }
+
+        return $stubMounter->setReplaceContentDictionary($replace_content_dictionary);
     }
 }
