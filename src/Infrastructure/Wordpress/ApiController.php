@@ -24,7 +24,11 @@ use WP_REST_Controller;
 
 abstract class ApiController extends WP_REST_Controller
 {
-    use AuthorizationCheck, ResourceValidation, RestingWordPress, Routing, Constructors;
+    use AuthorizationCheck;
+    use Constructors;
+    use ResourceValidation;
+    use RestingWordPress;
+    use Routing;
 
     final public const CACHE_PATH_KEY = 'path';
     /** @var bool[] */
