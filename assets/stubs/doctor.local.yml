@@ -1,24 +1,49 @@
 autoload-options-size:
+  check: Autoload_Options_Size
+  options:
+    threshold_kb: 1024
 cache-flush:
+  check: Cache_Flush
 constant-savequeries-falsy:
+  check: Constant_Definition
+  options:
+    constant: SAVEQUERIES
+    falsy: true
 constant-wp-debug-falsy:
   check: Constant_Definition
   options:
     constant: WP_DEBUG
     falsy: false
 core-update:
+  check: Core_Update
 core-verify-checksums:
+  check: Core_Verify_Checksums
 cron-count:
+  check: Cron_Count
+  options:
+    threshold_count: 50
 cron-duplicates:
-file-eval:
+  check: Cron_Duplicates
+  options:
+    threshold_count: 10
 language-update:
+  check: Language_Update
 option-blog-public:
   check: Option_Value
   options:
     option: blog_public
     value: 0
 php-in-upload:
+  check: PHP_In_Upload
 plugin-active-count:
+  check: Plugin_Active_Count
+  options:
+    threshold_count: 50
 plugin-deactivated:
+  check: Plugin_Deactivated
+  options:
+    threshold_percentage: 0
 plugin-update:
+  check: Plugin_Update
 theme-update:
+  check: Theme_Update
