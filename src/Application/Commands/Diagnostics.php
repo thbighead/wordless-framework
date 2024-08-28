@@ -111,11 +111,11 @@ class Diagnostics extends ConsoleCommand
     protected function runIt(): int
     {
         $this->dotEnvInfo()
+            ->phpCliInfo()
             ->composerInfo()
             ->wpConfigAnalysis()
-            ->wpExecutionAnalysis()
             ->wpCliInfo()
-            ->phpCliInfo();
+            ->wpExecutionAnalysis();
 
         return Command::SUCCESS;
     }
