@@ -38,12 +38,6 @@ use Wordless\Application\Libraries\LogManager\Logger;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
 use Wordless\Core\InternalCache;
 
-/** @noinspection PhpUnhandledExceptionInspection */
-InternalCache::load();
-
-/** @noinspection PhpUnhandledExceptionInspection */
-date_default_timezone_set(Timezone::forPhpIni());
-
 const WP_DEBUG = true;
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-plugin-and-theme-update-and-installation
 const DISALLOW_FILE_MODS = true;
@@ -58,9 +52,14 @@ const WP_POST_REVISIONS = 10; // Maximum number of a post revisions
 // https://developer.wordpress.org/plugins/cron/hooking-wp-cron-into-the-system-task-scheduler/
 const DISABLE_WP_CRON = true;
 
+/** @noinspection PhpUnhandledExceptionInspection */
+InternalCache::load();
+
+/** @noinspection PhpUnhandledExceptionInspection */
+date_default_timezone_set(Timezone::forPhpIni());
+
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
-
 define('DB_NAME', Environment::get('DB_NAME'));
 
 /** MySQL database username */
