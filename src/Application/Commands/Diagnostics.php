@@ -115,7 +115,8 @@ class Diagnostics extends ConsoleCommand
             ->composerInfo()
             ->wpConfigAnalysis()
             ->wpCliInfo()
-            ->wpExecutionAnalysis();
+            ->wpExecutionAnalysis()
+            ->wpCliDoctorAnalysis();
 
         return Command::SUCCESS;
     }
@@ -221,6 +222,13 @@ class Diagnostics extends ConsoleCommand
         })->writeBlocksSeparator();
 
         return $this;
+    }
+
+    private function wpCliDoctorAnalysis(): void
+    {
+        $this->wrapInfoBlock('WP CLI info', function () {
+            $this->callWpCliCommandWithoutInterruption('cli info');
+        });
     }
 
     /**
