@@ -53,7 +53,7 @@ class HelixShell extends ConsoleCommand
      */
     protected function runIt(): int
     {
-        $this->runWpCliCommandSilentlyWithoutInterruption('shell');
+        $this->runWpCliCommandWithoutInterruption('shell');
 
         return Command::SUCCESS;
     }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f049b30b92344e12d8803b828b926f28",
+    "content-hash": "c5b798c1ed3a0b0db1984413311146c7",
     "packages": [
         {
             "name": "brick/math",
@@ -1282,6 +1282,94 @@
                 }
             ],
             "time": "2024-04-11T23:07:54+00:00"
+        },
+        {
+            "name": "league/csv",
+            "version": "9.16.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/csv.git",
+                "reference": "998280c6c34bd67d8125fdc8b45bae28d761b440"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/csv/zipball/998280c6c34bd67d8125fdc8b45bae28d761b440",
+                "reference": "998280c6c34bd67d8125fdc8b45bae28d761b440",
+                "shasum": ""
+            },
+            "require": {
+                "ext-filter": "*",
+                "php": "^8.1.2"
+            },
+            "require-dev": {
+                "doctrine/collections": "^2.2.2",
+                "ext-dom": "*",
+                "ext-xdebug": "*",
+                "friendsofphp/php-cs-fixer": "^3.57.1",
+                "phpbench/phpbench": "^1.2.15",
+                "phpstan/phpstan": "^1.11.1",
+                "phpstan/phpstan-deprecation-rules": "^1.2.0",
+                "phpstan/phpstan-phpunit": "^1.4.0",
+                "phpstan/phpstan-strict-rules": "^1.6.0",
+                "phpunit/phpunit": "^10.5.16 || ^11.1.3",
+                "symfony/var-dumper": "^6.4.6 || ^7.0.7"
+            },
+            "suggest": {
+                "ext-dom": "Required to use the XMLConverter and the HTMLConverter classes",
+                "ext-iconv": "Needed to ease transcoding CSV using iconv stream filters",
+                "ext-mbstring": "Needed to ease transcoding CSV using mb stream filters"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "9.x-dev"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/functions_include.php"
+                ],
+                "psr-4": {
+                    "League\\Csv\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ignace Nyamagana Butera",
+                    "email": "nyamsprod@gmail.com",
+                    "homepage": "https://github.com/nyamsprod/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "CSV data manipulation made easy in PHP",
+            "homepage": "https://csv.thephpleague.com",
+            "keywords": [
+                "convert",
+                "csv",
+                "export",
+                "filter",
+                "import",
+                "read",
+                "transform",
+                "write"
+            ],
+            "support": {
+                "docs": "https://csv.thephpleague.com",
+                "issues": "https://github.com/thephpleague/csv/issues",
+                "rss": "https://github.com/thephpleague/csv/releases.atom",
+                "source": "https://github.com/thephpleague/csv"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/nyamsprod",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-05-24T11:04:54+00:00"
         },
         {
             "name": "mck89/peast",
@@ -4930,6 +5018,78 @@
             "time": "2024-04-27T03:11:44+00:00"
         },
         {
+            "name": "wp-cli/doctor-command",
+            "version": "v2.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wp-cli/doctor-command.git",
+                "reference": "ad8446bede9b2630daa68baf776c5bc43a460d86"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wp-cli/doctor-command/zipball/ad8446bede9b2630daa68baf776c5bc43a460d86",
+                "reference": "ad8446bede9b2630daa68baf776c5bc43a460d86",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "wp-cli/checksum-command": "^2",
+                "wp-cli/core-command": "^2",
+                "wp-cli/cron-command": "^2",
+                "wp-cli/entity-command": "^2",
+                "wp-cli/extension-command": "^2",
+                "wp-cli/language-command": "^2",
+                "wp-cli/wp-cli": "^2.1"
+            },
+            "require-dev": {
+                "wp-cli/wp-cli-tests": "^4"
+            },
+            "type": "wp-cli-package",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                },
+                "commands": [
+                    "doctor check",
+                    "doctor list"
+                ],
+                "readme": {
+                    "sections": [
+                        "Overview",
+                        "Using",
+                        "Installing",
+                        "Contributing"
+                    ],
+                    "overview": {
+                        "body": "bin/readme/overview-body.md"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [
+                    "command.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel Bachhuber",
+                    "email": "daniel@runcommand.io",
+                    "homepage": "https://runcommand.io"
+                }
+            ],
+            "description": "Diagnose problems within WordPress by running a series of checks for symptoms.",
+            "homepage": "https://runcommand.io/wp/doctor/",
+            "support": {
+                "issues": "https://github.com/wp-cli/doctor-command/issues",
+                "source": "https://github.com/wp-cli/doctor-command/tree/v2.1.3"
+            },
+            "time": "2023-08-31T10:34:39+00:00"
+        },
+        {
             "name": "wp-cli/embed-command",
             "version": "v2.0.16",
             "source": {
@@ -5955,6 +6115,70 @@
                 "source": "https://github.com/wp-cli/php-cli-tools/tree/v0.11.22"
             },
             "time": "2023-12-03T19:25:05+00:00"
+        },
+        {
+            "name": "wp-cli/profile-command",
+            "version": "v2.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wp-cli/profile-command.git",
+                "reference": "04c20f23da4f04bf5ff880207e96a0e5cf3ad90a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wp-cli/profile-command/zipball/04c20f23da4f04bf5ff880207e96a0e5cf3ad90a",
+                "reference": "04c20f23da4f04bf5ff880207e96a0e5cf3ad90a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6",
+                "wp-cli/wp-cli": "^2.5"
+            },
+            "require-dev": {
+                "wp-cli/wp-cli-tests": "^4"
+            },
+            "type": "wp-cli-package",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                },
+                "commands": [
+                    "profile stage",
+                    "profile hook",
+                    "profile eval",
+                    "profile eval-file"
+                ],
+                "readme": {
+                    "sections": [
+                        "Overview",
+                        "Using",
+                        "Installing",
+                        "Contributing"
+                    ],
+                    "overview": {
+                        "post": "bin/readme/overview-body.md"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [
+                    "profile-command.php"
+                ],
+                "psr-4": {
+                    "WP_CLI\\Profile\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Quickly identify what's slow with WordPress.",
+            "homepage": "https://github.com/wp-cli/profile-command/",
+            "support": {
+                "issues": "https://github.com/wp-cli/profile-command/issues",
+                "source": "https://github.com/wp-cli/profile-command/tree/v2.1.4"
+            },
+            "time": "2024-07-22T10:28:56+00:00"
         },
         {
             "name": "wp-cli/rewrite-command",
@@ -8624,6 +8848,7 @@
     "platform": {
         "php": "^8.2",
         "ext-fileinfo": "*",
+        "ext-filter": "*",
         "ext-json": "*",
         "ext-openssl": "*",
         "ext-pcntl": "*"
