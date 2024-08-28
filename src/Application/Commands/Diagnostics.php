@@ -224,10 +224,15 @@ class Diagnostics extends ConsoleCommand
         return $this;
     }
 
+    /**
+     * @return void
+     * @throws CommandNotFoundException
+     * @throws ExceptionInterface
+     */
     private function wpCliDoctorAnalysis(): void
     {
-        $this->wrapInfoBlock('WP CLI info', function () {
-            $this->callWpCliCommandWithoutInterruption('cli info');
+        $this->wrapInfoBlock('WP CLI doctor Analysis', function () {
+            $this->callWpCliCommandWithoutInterruption('doctor check --all');
         });
     }
 
