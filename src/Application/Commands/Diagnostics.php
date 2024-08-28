@@ -228,8 +228,10 @@ class Diagnostics extends ConsoleCommand
      * @return void
      * @throws CommandNotFoundException
      * @throws DotEnvNotSetException
+     * @throws Exception
      * @throws ExceptionInterface
      * @throws FormatException
+     * @throws SyntaxError
      */
     private function wpCliDoctorAnalysis(): void
     {
@@ -249,7 +251,13 @@ class Diagnostics extends ConsoleCommand
                 );
             }
 
-            $this->callWpCliCommandWithoutInterruption("doctor check --all$config_flag");
+            $this->writeTableFromCsv(
+                $this->callWpCliCommandSilentlyWithoutInterruption(
+                    "doctor check --format=csv --all$config_flag"
+                )->output,
+                'WP-CLI doctor check all',
+                true
+            );
         });
     }
 
