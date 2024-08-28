@@ -4,6 +4,7 @@ namespace Wordless\Application\Providers;
 
 use Wordless\Application\Cachers\ConfigCacher;
 use Wordless\Application\Cachers\EnvironmentCacher;
+use Wordless\Application\Commands\CleanInternalCache;
 use Wordless\Application\Commands\ConfigureDateOptions;
 use Wordless\Application\Commands\CreateInternalCache;
 use Wordless\Application\Commands\DistributeFront;
@@ -41,6 +42,7 @@ class CoreProvider extends Provider
     {
         return [
             ConfigureDateOptions::class,
+            CleanInternalCache::class,
             CreateInternalCache::class,
             DistributeFront::class,
             GeneratePublicWordpressSymbolicLinks::class,
