@@ -156,7 +156,7 @@ trait RestingWordPress
     private function mountNotImplementedError(Request $request): Response
     {
         return Response::error(
-            StatusCode::not_found_404,
+            StatusCode::method_not_allowed_405,
             sprintf(
                 __('Method \'%s\' not implemented. Must be overridden in subclass.'),
                 Debugger::calledFrom()

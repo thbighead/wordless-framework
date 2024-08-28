@@ -41,44 +41,61 @@ trait InstallEnqueueables
     }
 
     /**
+     * @param bool $on_admin
      * @return $this
      * @throws DuplicatedEnqueueableId
      * @throws InvalidArgumentException
      * @throws PathNotFoundException
      */
-    private function resolveEnqueues(): static
+    private function resolveEnqueues(bool $on_admin): static
     {
-        return $this->resolveScriptEnqueues()
-            ->resolveStyleEnqueues();
+        return $this->resolveScriptEnqueues($on_admin)
+            ->resolveStyleEnqueues($on_admin);
     }
 
     /**
+     * @param bool $loading_on_admin
      * @return $this
      * @throws DuplicatedEnqueueableId
      * @throws InvalidArgumentException
      * @throws PathNotFoundException
      */
-    private function resolveScriptEnqueues(): static
+    private function resolveScriptEnqueues(bool $loading_on_admin): static
     {
         /** @var EnqueueableScript $enqueueable_script_namespace */
         foreach ($this->loaded_enqueueable_scripts as $enqueueable_script_namespace => $can_enqueue) {
-            $enqueueable_script_namespace::make()->enqueue();
+            $enqueuableScript = $enqueueable_script_namespace::make();
+
+            if (
+                ($loading_on_admin && $enqueuableScript->loadOnAdmin())
+                || (!$loading_on_admin && $enqueuableScript->loadOnFrontend())
+            ) {
+                $enqueuableScript->enqueue();
+            }
         }
 
         return $this;
     }
 
     /**
+     * @param bool $loading_on_admin
      * @return $this
+     * @throws DuplicatedEnqueueableId
      * @throws InvalidArgumentException
      * @throws PathNotFoundException
-     * @throws DuplicatedEnqueueableId
      */
-    private function resolveStyleEnqueues(): static
+    private function resolveStyleEnqueues(bool $loading_on_admin): static
     {
         /** @var EnqueueableStyle $enqueueable_style_namespace */
         foreach ($this->loaded_enqueueable_styles as $enqueueable_style_namespace => $can_enqueue) {
-            $enqueueable_style_namespace::make()->enqueue();
+            $enqueuableStyle = $enqueueable_style_namespace::make();
+
+            if (
+                ($loading_on_admin && $enqueuableStyle->loadOnAdmin())
+                || (!$loading_on_admin && $enqueuableStyle->loadOnFrontend())
+            ) {
+                $enqueuableStyle->enqueue();
+            }
         }
 
         return $this;

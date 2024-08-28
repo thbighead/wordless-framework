@@ -3,6 +3,7 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Process\Exception\InvalidArgumentException as SymfonyProcessInvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
@@ -66,6 +67,14 @@ class WpCliCaller extends ConsoleCommand
         $full_command = "$wp_cli_filepath $wp_cli_full_command_string";
 
         $this->writelnInfoWhenVerbose("Executing $full_command...");
+
+        if ($this->output instanceof BufferedOutput) {
+            $commandResponse = $this->callExternalCommandSilently($full_command);
+
+            $this->output->write($commandResponse->output);
+
+            return $commandResponse->result_code;
+        }
 
         return $this->callExternalCommand($full_command, !$this->isNoTtyMode())->result_code;
     }

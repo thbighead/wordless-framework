@@ -41,15 +41,14 @@ trait External
 
     /**
      * @param string $full_command
-     * @param bool $set_tty
      * @return Response
      * @throws CliReturnedNonZero
      * @throws InvalidArgumentException
      * @throws LogicException
      */
-    protected function callExternalCommandSilently(string $full_command, bool $set_tty = true): Response
+    protected function callExternalCommandSilently(string $full_command): Response
     {
-        $process = $this->mountCommandProcess($full_command, $set_tty);
+        $process = $this->mountCommandProcess($full_command, false);
         $command_output = '';
 
         $commandResponse = new Response($process->run(
@@ -71,14 +70,15 @@ trait External
 
     /**
      * @param string $full_command
+     * @param bool $set_tty
      * @return Response
      * @throws InvalidArgumentException
      * @throws LogicException
      */
-    protected function callExternalCommandSilentlyWithoutInterruption(string $full_command): Response
+    protected function callExternalCommandSilentlyWithoutInterruption(string $full_command, bool $set_tty = true): Response
     {
         try {
-            return $this->callExternalCommandSilently($full_command);
+            return $this->callExternalCommandSilently($full_command, $set_tty);
         } catch (CliReturnedNonZero $exception) {
             return $exception->commandResponse;
         }
@@ -86,14 +86,15 @@ trait External
 
     /**
      * @param string $full_command
+     * @param bool $set_tty
      * @return Response
      * @throws InvalidArgumentException
      * @throws LogicException
      */
-    protected function callExternalCommandWithoutInterruption(string $full_command): Response
+    protected function callExternalCommandWithoutInterruption(string $full_command, bool $set_tty = true): Response
     {
         try {
-            return $this->callExternalCommand($full_command);
+            return $this->callExternalCommand($full_command, $set_tty);
         } catch (CliReturnedNonZero $exception) {
             return $exception->commandResponse;
         }
