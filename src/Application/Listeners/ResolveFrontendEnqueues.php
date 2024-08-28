@@ -14,7 +14,7 @@ use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 use Wordless\Wordpress\Hook\Enums\Action;
 
-class ResolveEnqueues extends ActionListener
+class ResolveFrontendEnqueues extends ActionListener
 {
     /**
      * The function which shall be executed during hook
