@@ -227,12 +227,29 @@ class Diagnostics extends ConsoleCommand
     /**
      * @return void
      * @throws CommandNotFoundException
+     * @throws DotEnvNotSetException
      * @throws ExceptionInterface
+     * @throws FormatException
      */
     private function wpCliDoctorAnalysis(): void
     {
         $this->wrapInfoBlock('WP CLI doctor Analysis', function () {
-            $this->callWpCliCommandWithoutInterruption('doctor check --all');
+            $config_flag = '';
+            $environment = Environment::get('APP_ENV', 'undefined');
+
+            try {
+                $config_filename = "doctor.$environment.yml";
+                $config_filepath = ProjectPath::stubs($config_filename);
+                $config_flag = " --config=$config_filepath";
+
+                $this->writeln("Using $config_filename doctor configuration for environment $environment.");
+            } catch (PathNotFoundException $exception) {
+                $this->writeln(
+                    "{$exception->getMessage()} Using no doctor configuration for environment $environment."
+                );
+            }
+
+            $this->callWpCliCommandWithoutInterruption("doctor check --all$config_flag");
         });
     }
 
