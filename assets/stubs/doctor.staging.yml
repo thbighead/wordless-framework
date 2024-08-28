@@ -1,10 +1,24 @@
+autoload-options-size:
+cache-flush:
+constant-savequeries-falsy:
 constant-wp-debug-falsy:
   check: Constant_Definition
   options:
     constant: WP_DEBUG
     falsy: false
-  option-blog-public:
-    check: Option_Value
-    options:
-      option: blog_public
-      value: 0
+core-update:
+core-verify-checksums:
+cron-count:
+cron-duplicates:
+file-eval:
+language-update:
+option-blog-public:
+  check: Option_Value
+  options:
+    option: blog_public
+    value: 0
+php-in-upload:
+plugin-active-count:
+plugin-deactivated:
+plugin-update:
+theme-update:
