@@ -213,7 +213,11 @@ class Diagnostics extends ConsoleCommand
     private function phpCliInfo(): static
     {
         $this->wrapInfoBlock('PHP CLI info', function () {
-            $this->callExternalCommandWithoutInterruption('php -i', false);
+            $this->writeln(preg_replace(
+                '/^(\$_SERVER\[[\'"])?(DB_NAME|DB_USER|DB_PASSWORD|DB_HOST)([\'"]])? => .*$/m',
+                '',
+                $this->callExternalCommandSilentlyWithoutInterruption('php -i', false)->output
+            ));
         })->writeBlocksSeparator();
 
         return $this;
@@ -251,7 +255,8 @@ class Diagnostics extends ConsoleCommand
                     '',
                     $this->callWpCliCommandSilentlyWithoutInterruption(
                         'config list --format=csv'
-                    )->output) ?? '',
+                    )->output
+                ) ?? '',
                 'Config List',
                 true
             );
