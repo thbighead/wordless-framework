@@ -20,7 +20,7 @@ trait Substring
             return $string;
         }
 
-        return substr($string, $substring_position + strlen($delimiter));
+        return static::substring($string, $substring_position + strlen($delimiter));
     }
 
     /**
@@ -36,7 +36,7 @@ trait Substring
             return $string;
         }
 
-        return substr($string, $substring_position + strlen($delimiter));
+        return static::substring($string, $substring_position + strlen($delimiter));
     }
 
     /**
@@ -64,7 +64,7 @@ trait Substring
             return $string;
         }
 
-        return substr($string, 0, $substring_position);
+        return static::substring($string, 0, $substring_position);
     }
 
     /**
@@ -96,8 +96,13 @@ trait Substring
         );
     }
 
+    public static function substring(string $string, int $offset, ?int $length = null): string
+    {
+        return substr($string, $offset, $length);
+    }
+
     public static function truncate(string $string, int $max_chars = self::DEFAULT_TRUNCATE_SIZE): string
     {
-        return substr($string, 0, $max_chars <= 0 ? self::DEFAULT_TRUNCATE_SIZE : $max_chars);
+        return static::substring($string, 0, $max_chars <= 0 ? self::DEFAULT_TRUNCATE_SIZE : $max_chars);
     }
 }

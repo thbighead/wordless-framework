@@ -392,11 +392,11 @@ class DirectoryFiles extends Helper
 
     /**
      * @param string $path
-     * @return Generator|void
+     * @return Generator
      * @throws InvalidDirectory
      * @throws PathNotFoundException
      */
-    public static function recursiveRead(string $path)
+    public static function recursiveRead(string $path): Generator
     {
         if (is_dir($real_path = ProjectPath::realpath($path))) {
             foreach (static::listFromDirectory($real_path) as $file) {

@@ -72,7 +72,9 @@ class Main
         $root_project_path_constant = 'ROOT_PROJECT_PATH';
 
         if (!defined($root_project_path_constant)) {
-            static::getIo()->write("Defining $root_project_path_constant as {$composer->getConfig()->get('vendor-dir')}/..");
+            static::getIo()->write(
+                "Defining $root_project_path_constant as {$composer->getConfig()->get('vendor-dir')}/.."
+            );
             define(
                 $root_project_path_constant,
                 "{$composer->getConfig()->get('vendor-dir')}/.."

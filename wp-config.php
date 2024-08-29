@@ -37,11 +37,11 @@ if (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null) === 'https') {
 require_once ROOT_PROJECT_PATH . '/vendor/autoload.php';
 require_once ROOT_PROJECT_PATH . '/env.php';
 
-use ParagonIE\CSPBuilder\CSPBuilder;
-use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Timezone;
+use Wordless\Application\Libraries\LogManager\Logger;
+use Wordless\Application\Providers\AdminCustomUrlProvider;
 
 /** @noinspection PhpUnhandledExceptionInspection */
 Environment::loadDotEnv();
@@ -49,6 +49,7 @@ Environment::loadDotEnv();
 /** @noinspection PhpUnhandledExceptionInspection */
 date_default_timezone_set(Timezone::forPhpIni());
 
+const WP_DEBUG = true;
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-plugin-and-theme-update-and-installation
 const DISALLOW_FILE_MODS = true;
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-wordpress-auto-updates
@@ -108,6 +109,7 @@ define('NONCE_SALT', Environment::get('NONCE_SALT'));
  * You can have multiple installations in one database if you give each
  * a unique prefix. Only numbers, letters, and underscores please!
  */
+/** @noinspection PhpUnhandledExceptionInspection */
 $table_prefix = Environment::get('DB_TABLE_PREFIX', 'wp_');
 
 /**
@@ -130,12 +132,14 @@ const WP_DISABLE_FATAL_ERROR_HANDLER = WP_ENVIRONMENT_TYPE === Environment::LOCA
 // https://wordpress.org/support/article/editing-wp-config-php/#empty-trash
 const EMPTY_TRASH_DAYS = WP_ENVIRONMENT_TYPE === Environment::LOCAL ? 0 : 30;
 
-define('WP_DEBUG', $debug = Environment::get('WP_DEBUG', false));
 // https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
-define('WP_DEBUG_LOG', $debug);
+define('WP_DEBUG_LOG', Logger::getFullTimedPathName());
 // https://wordpress.org/support/article/debugging-in-wordpress/#wp_debug_display
-// Enabled only when WP_DEBUG is on in non-production environments and WP_DEBUG_LOG is off, otherwise check debug.log file.
-define('WP_DEBUG_DISPLAY', $debug && (WP_ENVIRONMENT_TYPE !== Environment::PRODUCTION) && (WP_DEBUG_LOG === false));
+// Enabled only when WP_DEBUG_DISPLAY is on in non-production environments and WP_DEBUG_LOG is off, otherwise check logs files.
+define(
+    'WP_DEBUG_DISPLAY',
+    WP_DEBUG && Environment::get('WP_DEBUG_DISPLAY', false) && (WP_ENVIRONMENT_TYPE !== Environment::PRODUCTION)
+);
 
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-wordpress-auto-updates
 define('COOKIE_DOMAIN', $app_domain = Str::after(
@@ -148,7 +152,7 @@ define('WP_HOME', $site_url);
 
 // https://wordpress.org/support/article/editing-wp-config-php/#wp_siteurl
 $site_url = Str::finishWith($site_url, '/');
-define('WP_SITEURL', "{$site_url}wp-core");
+define('WP_SITEURL', $site_url . AdminCustomUrlProvider::getCustomUri(false));
 
 // https://wordpress.org/support/article/editing-wp-config-php/#moving-wp-content-folder
 define('WP_CONTENT_DIR', realpath(__DIR__ . '/../wp-content'));
@@ -157,8 +161,10 @@ define('WP_CONTENT_URL', "{$site_url}wp-content");
 // https://wordpress.org/support/article/editing-wp-config-php/#require-ssl-for-admin-and-logins
 define('FORCE_SSL_ADMIN', $environment === Environment::PRODUCTION);
 
+/** @noinspection PhpUnhandledExceptionInspection */
 $allowed_hosts = Environment::get('WP_ACCESSIBLE_HOSTS', '*.wordpress.org');
 if (!empty($allowed_hosts)) {
+    /** @noinspection PhpUnhandledExceptionInspection */
     $front_domain = Str::after($site_url = Environment::get('FRONT_END_URL', ''), '://');
     $accessible_hosts = $front_domain !== $app_domain ?
         "$allowed_hosts,$app_domain,*.$app_domain,$front_domain,*.$front_domain" :
@@ -166,26 +172,6 @@ if (!empty($allowed_hosts)) {
     // https://wordpress.org/support/article/editing-wp-config-php/#block-external-url-requests
     define('WP_HTTP_BLOCK_EXTERNAL', true);
     define('WP_ACCESSIBLE_HOSTS', $accessible_hosts);
-}
-
-// CSP settings
-// Solving insecure cookies (https://rainastudio.com/enable-secure-cookie-setting/)
-if (Environment::get('WORDLESS_CSP', false)) {
-    /** @noinspection PhpUsageOfSilenceOperatorInspection */
-    @ini_set('session.cookie_httponly', true);
-    /** @noinspection PhpUsageOfSilenceOperatorInspection */
-    @ini_set('session.cookie_secure', true);
-    /** @noinspection PhpUsageOfSilenceOperatorInspection */
-    @ini_set('session.use_only_cookies', true);
-
-    if (!headers_sent()) {
-        header('Referrer-Policy: no-referrer-when-downgrade');
-        header('Strict-Transport-Security: max-age=63072000; includeSubDomains; preload');
-        header('X-Content-Type-Options: nosniff');
-        header('X-XSS-Protection: 1; mode=block');
-        /** @noinspection PhpUnhandledExceptionInspection */
-        CSPBuilder::fromArray(Config::wordlessCsp()->get())->sendCSPHeader();
-    }
 }
 
 /* That's all, stop editing! Happy publishing. */

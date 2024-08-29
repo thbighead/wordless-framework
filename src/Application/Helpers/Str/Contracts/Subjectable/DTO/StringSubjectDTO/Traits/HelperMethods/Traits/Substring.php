@@ -53,6 +53,13 @@ trait Substring
         return $this;
     }
 
+    public function substring(int $offset, ?int $length = null): static
+    {
+        $this->subject = Str::substring($this->subject, $offset, $length);
+
+        return $this;
+    }
+
     public function truncate(int $max_chars = Str::DEFAULT_TRUNCATE_SIZE): static
     {
         $this->subject = Str::truncate($this->subject, $max_chars);

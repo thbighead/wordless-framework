@@ -2,6 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress;
 
+use Closure;
 use Wordless\Wordpress\Hook\Enums\Type;
 
 abstract class Listener
@@ -15,12 +16,12 @@ abstract class Listener
      */
     protected const FUNCTION = 'register';
 
-    public static function hookIt(): void
+    public static function hookIt(?Closure $callback = null): void
     {
         $hook_addition_function = 'add_' . static::type()->name;
         $hook_addition_function(
             static::hook()->value,
-            [static::class, static::FUNCTION],
+            $callback ?? [static::class, static::FUNCTION],
             static::priority(),
             abs(static::functionNumberOfArgumentsAccepted())
         );
