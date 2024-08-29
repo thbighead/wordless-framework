@@ -10,7 +10,12 @@ trait Constructors
 
     public static function getInstance(): static
     {
-        return self::$instances[static::class] ?? self::$instances[static::class] = new static;
+        return self::$instances[static::class] ?? self::$instances[static::class] = static::newInstance();
+    }
+
+    protected static function newInstance(): static
+    {
+        return new static;
     }
 
     /**

@@ -8,7 +8,7 @@ use WpOrg\Requests\Cookie\Jar;
 
 trait Cookies
 {
-    public function cookies(bool $as_array = true): Jar|array|null
+    public function cookies(bool $as_array = true): Jar|array
     {
         if (!$as_array) {
             return $this->retrieveOriginalCookiesJar() ?? $this->retrieveOriginalCookiesArray() ?? [];

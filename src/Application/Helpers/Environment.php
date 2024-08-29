@@ -71,9 +71,7 @@ STRING;
      */
     public static function get(string $key, mixed $default = null): mixed
     {
-        if (!defined(self::DOT_ENV_LOADED_CONSTANT_NAME)) {
-            self::loadDotEnv();
-        }
+        self::loadDotEnv();
 
         try {
             $value = InternalCache::getValueOrFail("environment.$key");
@@ -227,6 +225,10 @@ STRING;
      */
     public static function loadDotEnv(): void
     {
+        if (defined(self::DOT_ENV_LOADED_CONSTANT_NAME)) {
+            return;
+        }
+
         try {
             (new Dotenv)->load(ProjectPath::root('.env'));
             define(self::DOT_ENV_LOADED_CONSTANT_NAME, true);
