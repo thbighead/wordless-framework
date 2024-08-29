@@ -38,7 +38,7 @@ class BootHttpRemoteCallsLog extends ActionListener
         string         $url
     ): void
     {
-        if (WP_DEBUG && Str::beginsWith($url, Environment::get('APP_URL'))) {
+        if (WP_DEBUG && Str::beginsWith($url, Environment::get('APP_URL', ''))) {
             $request_as_json = json_encode([
                 'http_method' => $request['method'] ?? null,
                 'headers' => $request['headers'] ?? null,

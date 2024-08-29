@@ -38,6 +38,7 @@ trait MainPlugin
     }
 
     /**
+     * @param bool $on_admin
      * @return void
      * @throws DotEnvNotSetException
      * @throws DuplicatedEnqueueableId
@@ -47,9 +48,9 @@ trait MainPlugin
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
      */
-    public static function bootEnqueues(): void
+    public static function bootEnqueues(bool $on_admin = false): void
     {
-        self::getInstance()->resolveEnqueues();
+        self::getInstance()->resolveEnqueues($on_admin);
     }
 
     /**
