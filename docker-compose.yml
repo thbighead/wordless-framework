@@ -93,7 +93,7 @@ services:
         - INSTALL_LIBPNG=false
         - INSTALL_GRAPHVIZ=false
         - INSTALL_IONCUBE=false
-        - INSTALL_APCU=false
+        - INSTALL_APCU=true
         - INSTALL_MYSQL_CLIENT=true
         - INSTALL_PING=false
         - INSTALL_SSHPASS=false
@@ -131,7 +131,7 @@ services:
         - INSTALL_TRADER=false
         - PROTOC_VERSION=latest
         - INSTALL_DOCKER_CLIENT=false
-        - INSTALL_MEMCACHED=false
+        - INSTALL_MEMCACHED=true
         - INSTALL_EVENT=false
         - INSTALL_DNSUTILS=true
         - http_proxy
