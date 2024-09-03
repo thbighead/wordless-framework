@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "693eebf4f994e3f9e64d8161ecb90131",
+    "content-hash": "9cb17bd5395468f089323f6e25c7f8fc",
     "packages": [
         {
             "name": "brick/math",
@@ -7618,16 +7618,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.30",
+            "version": "10.5.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "b15524febac0153876b4ba9aab3326c2ee94c897"
+                "reference": "43e7c3e6a484e538453f89dfa6a6f308c32792da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b15524febac0153876b4ba9aab3326c2ee94c897",
-                "reference": "b15524febac0153876b4ba9aab3326c2ee94c897",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/43e7c3e6a484e538453f89dfa6a6f308c32792da",
+                "reference": "43e7c3e6a484e538453f89dfa6a6f308c32792da",
                 "shasum": ""
             },
             "require": {
@@ -7641,7 +7641,7 @@
                 "phar-io/manifest": "^2.0.4",
                 "phar-io/version": "^3.2.1",
                 "php": ">=8.1",
-                "phpunit/php-code-coverage": "^10.1.15",
+                "phpunit/php-code-coverage": "^10.1.16",
                 "phpunit/php-file-iterator": "^4.1.0",
                 "phpunit/php-invoker": "^4.0.0",
                 "phpunit/php-text-template": "^3.0.1",
@@ -7699,7 +7699,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.30"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.31"
             },
             "funding": [
                 {
@@ -7715,7 +7715,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-08-13T06:09:37+00:00"
+            "time": "2024-09-03T11:57:55+00:00"
         },
         {
             "name": "psy/psysh",
@@ -8858,6 +8858,7 @@
         "php": "^8.2",
         "ext-apcu": "*",
         "ext-bcmath": "*",
+        "ext-ctype": "*",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-exif": "*",
@@ -8871,9 +8872,12 @@
         "ext-mysqli": "*",
         "ext-openssl": "*",
         "ext-pcntl": "*",
+        "ext-pcre": "*",
+        "ext-session": "*",
         "ext-shmop": "*",
         "ext-simplexml": "*",
         "ext-sodium": "*",
+        "ext-tokenizer": "*",
         "ext-xml": "*",
         "ext-xmlreader": "*"
     },
