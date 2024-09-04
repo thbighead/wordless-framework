@@ -75,14 +75,14 @@ trait InstallListeners
                 continue;
             }
 
-            $functions_usec_on_hook = $removableHook->getFunctionsUsedOnHook();
+            $functions_used_on_hook = $removableHook->getFunctionsUsedOnHook();
 
-            if (empty($functions_usec_on_hook)) {
+            if (empty($functions_used_on_hook)) {
                 $remove_all_function($removableHook->hook);
                 continue;
             }
 
-            foreach ($functions_usec_on_hook as $function_used_on_hook) {
+            foreach ($functions_used_on_hook as $function_used_on_hook) {
                 $remove_single_function(
                     $removableHook->hook,
                     $function_used_on_hook[RemoveHookDTO::FUNCTION_KEY],
