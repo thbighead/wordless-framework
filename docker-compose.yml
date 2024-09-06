@@ -2,8 +2,10 @@ version: '3.5'
 
 networks:
   frontend:
+    name: wordless-frontend-network
     driver: bridge
   backend:
+    name: wordless-backend-network
     driver: bridge
 
 volumes:
