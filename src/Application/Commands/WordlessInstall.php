@@ -116,13 +116,14 @@ class WordlessInstall extends ConsoleCommand
     {
         $this->resolveForceMode()
             ->resolveDotEnv()
-            ->createCache()
+            ->flushCache()
             ->loadWpLanguages()
             ->createWpConfigFromStub()
             ->createRobotsTxtFromStub()
             ->createWordlessPluginFromStub()
             ->createWpDatabase()
             ->coreSteps()
+            ->createCache()
             ->registerSchedules()
             ->runMigrations()
             ->syncRoles()
@@ -270,8 +271,6 @@ class WordlessInstall extends ConsoleCommand
      */
     private function createCache(): static
     {
-        $this->callConsoleCommand(CleanInternalCache::COMMAND_NAME);
-
         if ($this->getEnvVariableByKey('APP_ENV') !== Environment::LOCAL) {
             $this->callConsoleCommand(CreateInternalCache::COMMAND_NAME);
         }
@@ -439,6 +438,19 @@ class WordlessInstall extends ConsoleCommand
 
         // populates an internal array with env variables freshly new.
         $this->fresh_new_env_content = (new Dotenv)->parse($dot_env_content);
+    }
+
+    /**
+     * @return $this
+     * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
+     * @throws ExceptionInterface
+     */
+    private function flushCache(): static
+    {
+        $this->callConsoleCommand(CleanInternalCache::COMMAND_NAME);
+
+        return $this;
     }
 
     /**
