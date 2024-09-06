@@ -3,7 +3,6 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -15,8 +14,6 @@ use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\DecoratedMessage
 
 class CleanInternalCache extends ConsoleCommand
 {
-    use LoadWpConfig;
-
     final public const COMMAND_NAME = 'cache:clean';
 
     /**
