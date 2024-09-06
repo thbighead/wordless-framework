@@ -4,7 +4,6 @@ namespace Wordless\Application\Helpers\DirectoryFiles\Exceptions;
 
 use InvalidArgumentException;
 use Throwable;
-use Wordless\Core\InternalCache;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToFindCachedKey extends InvalidArgumentException
@@ -16,9 +15,7 @@ class FailedToFindCachedKey extends InvalidArgumentException
     )
     {
         parent::__construct(
-            "Failed to retrieve '$this->full_key_string' key from "
-            . InternalCache::INTERNAL_WORDLESS_CACHE_CONSTANT_NAME
-            . " at '$this->partial_key_which_failed'.",
+            "Failed to retrieve '$this->full_key_string' key from internal framework cache at '$this->partial_key_which_failed'.",
             ExceptionCode::intentional_interrupt->value,
             $previous
         );

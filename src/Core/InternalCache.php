@@ -23,8 +23,10 @@ use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 final class InternalCache
 {
-    public const INTERNAL_WORDLESS_CACHE_CONSTANT_NAME = 'INTERNAL_WORDLESS_CACHE';
     private const PHP_EXTENSION = '.php';
+
+    private static array $internal_wordless_cache = [];
+    private static bool $internal_wordless_cache_loaded = false;
 
     /**
      * @return void
@@ -41,6 +43,14 @@ final class InternalCache
 
             DirectoryFiles::delete(ProjectPath::cache($supposed_cache_file));
         }
+
+        self::flush();
+    }
+
+    public static function flush(): void
+    {
+        self::$internal_wordless_cache = [];
+        self::$internal_wordless_cache_loaded = false;
     }
 
     /**
@@ -91,7 +101,7 @@ final class InternalCache
         $key_pathing = explode('.', $key_pathing_string);
         $first_key = array_shift($key_pathing);
 
-        $pointer = INTERNAL_WORDLESS_CACHE[$first_key] ?? throw new FailedToFindCachedKey(
+        $pointer = self::$internal_wordless_cache[$first_key] ?? throw new FailedToFindCachedKey(
             $key_pathing_string,
             $first_key
         );
@@ -114,13 +124,14 @@ final class InternalCache
     public static function load(): void
     {
         if (Environment::isNotLocal() && !self::isLoaded()) {
-            define(self::INTERNAL_WORDLESS_CACHE_CONSTANT_NAME, self::retrieveCachedValues());
+            self::$internal_wordless_cache = self::retrieveCachedValues();
+            self::$internal_wordless_cache_loaded = true;
         }
     }
 
     private static function isLoaded(): bool
     {
-        return defined(self::INTERNAL_WORDLESS_CACHE_CONSTANT_NAME);
+        return self::$internal_wordless_cache_loaded;
     }
 
     /**
