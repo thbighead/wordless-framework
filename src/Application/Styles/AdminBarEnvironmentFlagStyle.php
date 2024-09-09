@@ -22,7 +22,7 @@ class AdminBarEnvironmentFlagStyle extends GlobalEnqueueableStyle
     public static function mountSymlinkTargetRelativePath(): string
     {
         return '../' . Str::after(
-                ProjectPath::vendorPackageRoot(Environment::isProduction() ? 'dist' : 'assets'),
+                ProjectPath::vendorPackageRoot(Environment::isNotLocal() ? 'dist' : 'assets'),
                 Str::finishWith(ProjectPath::root(), DIRECTORY_SEPARATOR)
             );
     }
