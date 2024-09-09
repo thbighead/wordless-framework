@@ -40,7 +40,7 @@ return [
             'data' => true,
             'allow' => [
                 'https://fonts.gstatic.com',
-            ]
+            ],
         ],
         'frame-src' => [
             'blob' => true,
