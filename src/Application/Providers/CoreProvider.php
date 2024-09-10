@@ -34,10 +34,15 @@ use Wordless\Application\Listeners\ResolveFrontendEnqueues;
 use Wordless\Application\Listeners\ShowCustomFrontPageAtAdminSideMenu;
 use Wordless\Application\Listeners\WordlessVersionOnAdmin;
 use Wordless\Infrastructure\Cacher;
+use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\Provider;
+use Wordless\Infrastructure\Wordpress\Listener;
 
 class CoreProvider extends Provider
 {
+    /**
+     * @return string[]|ConsoleCommand[]
+     */
     public function registerCommands(): array
     {
         return [
@@ -54,28 +59,24 @@ class CoreProvider extends Provider
         ];
     }
 
+    /**
+     * @return string[]|Listener[]
+     */
     public function registerListeners(): array
     {
         return [
             BootApiControllers::class,
-            BootHttpRemoteCallsLog::class,
             ChooseImageEditor::class,
             ConfigureUrlGuessing::class,
             DeferEnqueuedScripts::class,
             DisableXmlrpc::class,
-            DoNotLoadWpAdminBarOutsidePanel::class,
             EnableCors::class,
             EnableCsp::class,
-            HideContentEditorForCustomFrontPageAtAdmin::class,
-            HideDiagnosticsFromUserRoles::class,
             ManageRestResponseContentTypeHeader::class,
             RegisterEntities::class,
-            RemoveAdditionalCssFromAdmin::class,
             RemoveGlobalCustomInlineStyles::class,
             ResolveAdminEnqueues::class,
             ResolveFrontendEnqueues::class,
-            ShowCustomFrontPageAtAdminSideMenu::class,
-            WordlessVersionOnAdmin::class,
         ];
     }
 
@@ -96,7 +97,7 @@ class CoreProvider extends Provider
     public function registerProviders(): array
     {
         return [
-            AdminBarEnvironmentFlagProvider::class,
+            AdminConfigProvider::class,
             MakersProvider::class,
             MigrationsProvider::class,
             ScheduleProvider::class,

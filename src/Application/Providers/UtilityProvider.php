@@ -8,7 +8,10 @@ use Wordless\Application\Commands\Utility\DatabaseOverwrite;
 use Wordless\Application\Commands\Utility\ReplaceBaseUrls;
 use Wordless\Application\Commands\Utility\RunTests;
 use Wordless\Application\Commands\Utility\WpHooksList;
+use Wordless\Application\Listeners\BootHttpRemoteCallsLog;
+use Wordless\Application\Listeners\WordlessVersionOnAdmin;
 use Wordless\Infrastructure\Provider;
+use Wordless\Infrastructure\Wordpress\Listener;
 
 class UtilityProvider extends Provider
 {
@@ -21,6 +24,16 @@ class UtilityProvider extends Provider
             RunTests::class,
             HelixShell::class,
             WpHooksList::class,
+        ];
+    }
+
+    /**
+     * @return string[]|Listener[]
+     */
+    public function registerListeners(): array
+    {
+        return [
+            BootHttpRemoteCallsLog::class,
         ];
     }
 
