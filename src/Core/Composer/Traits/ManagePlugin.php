@@ -26,6 +26,7 @@ trait ManagePlugin
     private static function managePlugin(PackageEvent $composerEvent, string $plugin_command): void
     {
         static::initializeIo($composerEvent);
+
         $package = self::extractPackageFromEvent($composerEvent);
 
         if ($package === null || !self::isWpPluginPackage($package)) {
@@ -34,12 +35,20 @@ trait ManagePlugin
         }
 
         $plugin_name = Str::after($package->getName(), '/');
-        static::getIo()->write("Activating plugin '$plugin_name'.");
+        static::getIo()->write(ucfirst($plugin_command) . " plugin '$plugin_name'.");
         $vendor_path = $composerEvent->getComposer()->getConfig()->get('vendor-dir');
         $autoload_path = "$vendor_path/autoload.php";
 
         if (is_file($autoload_path)) {
             require_once $autoload_path;
+
+            exec('php console wp:run "db check"', result_code: $db_checking);
+
+            if ($db_checking) {
+                static::getIo()->write('Database not ok. Skipping.');
+                return;
+            }
+
             passthru("php console wp:run \"plugin $plugin_command $plugin_name\" --no-tty");
         }
     }
