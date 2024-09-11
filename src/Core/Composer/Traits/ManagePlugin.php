@@ -42,7 +42,7 @@ trait ManagePlugin
         if (is_file($autoload_path)) {
             require_once $autoload_path;
 
-            exec('php console wp:run "db check"', result_code: $db_checking);
+            exec('php console wp:run "db check" --no-tty', result_code: $db_checking);
 
             if ($db_checking) {
                 static::getIo()->write('Database not ok. Skipping.');
