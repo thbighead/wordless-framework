@@ -10,6 +10,7 @@ use Wordless\Application\Libraries\JWT\Enums\CryptoAlgorithm;
 use Wordless\Application\Libraries\JWT\Token;
 use Wordless\Application\Libraries\LogManager\Logger;
 use Wordless\Application\Libraries\LogManager\Logger\LogFormatter;
+use Wordless\Application\Listeners\DisableComments\Contracts\DisableCommentsActionListener;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
 use Wordless\Application\Providers\CommentsProvider;
 use Wordless\Application\Providers\CoreProvider;
@@ -31,6 +32,11 @@ $providers = [
     MigrationsProvider::class,
     SeedersProvider::class,
 ];
+$wp_core_link_reference = '../wp/wp-core!.htaccess,.htaccess.bk,.maintenance,license.txt,readme.html,wp-config.php,wp-cron.php,xmlrpc.php';
+
+if (DisableCommentsActionListener::areCommentsDisabled()) {
+    $wp_core_link_reference .= ',wp-comments-post.php';
+}
 
 return [
     Csp::CONFIG_KEY => [
@@ -101,6 +107,6 @@ return [
         "wp-content/themes/$current_wp_theme/public" => "../wp/wp-content/themes/$current_wp_theme/public",
         'wp-content/uploads' => '../wp/wp-content/uploads',
         'vendor/wordless/dist' => AdminBarEnvironmentFlagStyle::mountSymlinkTargetRelativePath(),
-        AdminCustomUrlProvider::getCustomUri(false) => '../wp/wp-core!.htaccess,.htaccess.bk,.maintenance,license.txt,readme.html,wp-config.php,wp-cron.php,xmlrpc.php',
+        AdminCustomUrlProvider::getCustomUri(false) => $wp_core_link_reference,
     ],
 ];
