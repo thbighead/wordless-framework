@@ -21,7 +21,17 @@ abstract class DisableCommentsActionListener extends ActionListener
      * @throws EmptyConfigKey
      * @throws PathNotFoundException
      */
-    final protected static function areCommentsEnabled(): bool
+    public static function areCommentsDisabled(): bool
+    {
+        return !self::areCommentsEnabled();
+    }
+
+    /**
+     * @return bool
+     * @throws EmptyConfigKey
+     * @throws PathNotFoundException
+     */
+    final public static function areCommentsEnabled(): bool
     {
         return Config::wordpressAdmin(self::CONFIG_KEY_ENABLE_COMMENTS, false);
     }
