@@ -30,8 +30,8 @@ services:
         - INSTALL_GMP=false
         - INSTALL_GNUPG=false
         - INSTALL_XDEBUG=false
-        - XDEBUG_PORT=9003
-        - INSTALL_PCOV=true
+        - XDEBUG_PORT=9000
+        - INSTALL_PCOV=false
         - INSTALL_PHPDBG=false
         - INSTALL_BLACKFIRE=false
         - INSTALL_SSH2=false
@@ -48,7 +48,7 @@ services:
         - INSTALL_PHPREDIS=false
         - INSTALL_MSSQL=false
         - NVM_NODEJS_ORG_MIRROR=
-        - INSTALL_NODE=false
+        - INSTALL_NODE=true
         - NPM_REGISTRY=
         - NPM_FETCH_RETRIES=2
         - NPM_FETCH_RETRY_FACTOR=10
@@ -60,6 +60,7 @@ services:
         - INSTALL_NPM_BOWER=false
         - INSTALL_NPM_VUE_CLI=false
         - INSTALL_NPM_ANGULAR_CLI=false
+        - INSTALL_NPM_CHECK_UPDATES_CLI=false
         - INSTALL_DRUSH=false
         - INSTALL_WP_CLI=false
         - INSTALL_DRUPAL_CONSOLE=false
@@ -113,7 +114,7 @@ services:
         - DRUSH_VERSION=8.4.6
         - AST_VERSION=1.0.10
         - IMAGEMAGICK_VERSION=latest
-        - TZ=UTC
+        - TZ=UTC-3
         - BLACKFIRE_CLIENT_ID="<client_id>"
         - BLACKFIRE_CLIENT_TOKEN="<client_token>"
         - INSTALL_POWERLINE=false
@@ -134,18 +135,28 @@ services:
         - INSTALL_MEMCACHED=true
         - INSTALL_EVENT=false
         - INSTALL_DNSUTILS=true
+        - INSTALL_POPPLER_UTILS=false
+        - INSTALL_JDK=false
+        - INSTALL_GITHUB_CLI=false
+        - ORACLE_INSTANT_CLIENT_MIRROR=https://github.com/the-paulus/oracle-instantclient/raw/master/
+        - ORACLE_INSTANT_CLIENT_ARCH=x86_64
+        - ORACLE_INSTANT_CLIENT_MAJOR=18
+        - ORACLE_INSTANT_CLIENT_MINOR=3
         - http_proxy
         - https_proxy
         - no_proxy
     volumes:
-      ## APP_CODE_PATH_HOST:APP_CODE_PATH_CONTAINER APP_CODE_CONTAINER_FLAG
       - ./:/var/www:cached
     ports:
-      ## WORKSPACE_SSH_PORT
       - "2222:22"
     tty: true
     environment:
       - PHP_IDE_CONFIG=serverName=laradock
+      - DOCKER_HOST=tcp://docker-in-docker:2376
+      - DOCKER_TLS_VERIFY=1
+      - DOCKER_TLS_CERTDIR=/certs
+      - DOCKER_CERT_PATH=/certs/client
+      - CHOKIDAR_USEPOLLING=true
     networks:
       - frontend
       - backend
@@ -160,12 +171,12 @@ services:
         - no_proxy
         - MARIADB_VERSION=lts
     volumes:
-      - ~/.laradock/data/mariadb:/var/lib/mysql
+      - ~/.laradock/data/mariadb/wordless-framework:/var/lib/mysql
       - ./docker/mariadb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
     environment:
-      - TZ=UTC
+      - TZ=UTC-3
       - MYSQL_DATABASE=default
       - MYSQL_USER=root
       - MYSQL_PASSWORD=root
@@ -181,7 +192,7 @@ services:
     environment:
       - ADMINER_PLUGINS=
       - ADMINER_DESIGN=pepa-linha
-      - ADMINER_DEFAULT_SERVER=mysql
+      - ADMINER_DEFAULT_SERVER=mariadb
     ports:
       - "8081:8080"
     networks:

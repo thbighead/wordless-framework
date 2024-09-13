@@ -33,6 +33,25 @@ alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
 # Always use color output for `ls`
 alias ls="command ls ${colorflag}"
 
+# Commonly Used Aliases
+alias ..="cd .."
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias ~="cd ~" # `cd` is probably faster to type though
+alias -- -="cd -"
+alias home="cd ~"
+
+alias h="history"
+alias j="jobs"
+alias e='exit'
+alias c="clear"
+alias cla="clear && ls -la"
+alias cll="clear && ls -l"
+alias cls="clear && ls"
+alias code="cd /var/www"
+alias ea="vi ~/aliases.sh"
+
 # Always enable colored `grep` output
 # Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
 alias grep='grep --color=auto'
@@ -40,9 +59,65 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 alias console="php console"
+alias artisan="php artisan"
+alias cdump="composer dump-autoload -o"
+alias composer:dump="composer dump-autoload -o"
+alias db:reset="php artisan migrate:reset && php artisan migrate --seed"
+alias dusk="php artisan dusk"
+alias fresh="php artisan migrate:fresh"
+alias migrate="php artisan migrate"
+alias refresh="php artisan migrate:refresh"
+alias rollback="php artisan migrate:rollback"
+alias seed="php artisan db:seed"
+alias serve="php artisan serve --quiet &"
+
+alias pint="./vendor/bin/pint"
+alias pest="./vendor/bin/pest"
+alias phpstan="./vendor/bin/phpstan"
+alias php-cs-fixer="./vendor/bin/php-cs-fixer"
+
+alias phpunit="./vendor/bin/phpunit"
+alias pu="phpunit"
+alias puf="phpunit --filter"
+alias pud='phpunit --debug'
+
+alias cc='codecept'
+alias ccb='codecept build'
+alias ccr='codecept run'
+alias ccu='codecept run unit'
+alias ccf='codecept run functional'
+
+alias g="gulp"
+alias npm-global="npm list -g --depth 0"
+alias ra="reload"
+alias reload="source ~/.aliases && echo \"$COL_GREEN ==> Aliases Reloaded... $COL_RESET \n \""
+alias run="npm run"
 
 # Xvfb
 alias xvfb="Xvfb -ac :0 -screen 0 1024x768x16 &"
+
+# requires installation of 'https://www.npmjs.com/package/npms-cli'
+alias npms="npms search"
+# requires installation of 'https://www.npmjs.com/package/package-menu-cli'
+alias pm="package-menu"
+# requires installation of 'https://www.npmjs.com/package/pkg-version-cli'
+alias pv="package-version"
+# requires installation of 'https://github.com/sindresorhus/latest-version-cli'
+alias lv="latest-version"
+
+# git aliases
+alias gaa="git add ."
+alias gd="git --no-pager diff"
+alias git-revert="git reset --hard && git clean -df"
+alias gs="git status"
+alias whoops="git reset --hard && git clean -df"
+alias glog="git log --oneline --decorate --graph"
+alias gloga="git log --oneline --decorate --graph --all"
+alias gsh="git show"
+alias grb="git rebase -i"
+alias gbr="git branch"
+alias gc="git commit"
+alias gck="git checkout"
 
 # Create a new directory and enter it
 function mkd() {
