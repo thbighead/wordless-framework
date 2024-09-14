@@ -681,12 +681,32 @@ class WordlessInstall extends ConsoleCommand
     private function performUrlDatabaseFix(): static
     {
         $app_url = $this->getEnvVariableByKey('APP_URL');
+        $db_table_prefix = $this->getEnvVariableByKey('DB_TABLE_PREFIX');
+        $siteurl_option_value = "$app_url/" . AdminCustomUrlProvider::getCustomUri(false);
+        $home_option_value = Environment::isFramework() ? '/' : $app_url;
 
-        $this->runWpCliCommandSilentlyWithoutInterruption(
-            "option update siteurl $app_url" . AdminCustomUrlProvider::getCustomUri()
+        /*
+         * Raw queries must be used instead of
+         * $this->runWpCliCommandSilentlyWithoutInterruption("option update siteurl $siteurl_option_value");
+         * and
+         * $this->runWpCliCommandSilentlyWithoutInterruption("option update home $home_option_value");
+         * because WP-CLI let those options be retrieved from WP_SITEURL and WP_HOME constants when checking if it
+         * should change them in database leading to a wrong results of
+         * "Success: Value passed for 'siteurl' option is unchanged."
+         * and
+         * "Success: Value passed for 'home' option is unchanged."
+         *
+         * Also, for some reason, even with the constants defined, WordPress does not work correctly if the database
+         * isn't correct either. (even saying those options won't be retrieved from database)
+         * We could test it when running multiple environments and needed to access a URL with a defined custom port
+         * like https://another-project.test:4430, which would redirect us to the other project url like
+         * https://project.test even with all the right configurations.
+         */
+        $this->runWpCliCommandWithoutInterruption(
+            "db query 'UPDATE {$db_table_prefix}options SET option_value=\"$siteurl_option_value\" WHERE option_name=\"siteurl\"'"
         );
-        $this->runWpCliCommandSilentlyWithoutInterruption(
-            'option update home ' . (Environment::isFramework() ? '/' : $app_url)
+        $this->runWpCliCommandWithoutInterruption(
+            "db query 'UPDATE {$db_table_prefix}options SET option_value=\"$home_option_value\" WHERE option_name=\"home\"'"
         );
         $this->runWpCliCommand('db optimize');
 
