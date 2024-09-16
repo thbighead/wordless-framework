@@ -4,8 +4,8 @@ namespace Wordless\Infrastructure\Http\Response\Traits;
 
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
-use WpOrg\Requests\Utility\CaseInsensitiveDictionary;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
+use WpOrg\Requests\Utility\CaseInsensitiveDictionary;
 
 trait Header
 {
@@ -32,6 +32,17 @@ trait Header
     public function hasHeader(string $key): bool
     {
         return isset($this->getHeaders()[$key]);
+    }
+
+    public function sendHeaders(): static
+    {
+        if (!headers_sent()) {
+            foreach ($this->getHeaders() as $header => $value) {
+                header("$header: $value");
+            }
+        }
+
+        return $this;
     }
 
     private function retrieveWordpressResponseHeaderObject(): ?CaseInsensitiveDictionary
