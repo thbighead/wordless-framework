@@ -7,6 +7,13 @@ use Wordless\Infrastructure\Http\Response\Enums\StatusCode as StatusCodeEnum;
 
 trait StatusCode
 {
+    public function sendStatusCode(): static
+    {
+        http_response_code($this->statusCode(true));
+
+        return $this;
+    }
+
     public function statusCode(bool $as_int = false): int|StatusCodeEnum|null
     {
         $status_code = $this->retrieveResponseArray()['code'] ?? null;
