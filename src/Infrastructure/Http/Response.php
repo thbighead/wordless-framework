@@ -2,9 +2,11 @@
 
 namespace Wordless\Infrastructure\Http;
 
+use JsonException;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
 use Wordless\Application\Helpers\Http;
+use Wordless\Infrastructure\Http\Response\Exceptions\FailedToPrepareResponseBodyToSend;
 use Wordless\Infrastructure\Http\Response\Traits\Cookies;
 use Wordless\Infrastructure\Http\Response\Traits\Header;
 use Wordless\Infrastructure\Http\Response\Traits\StatusCode;
@@ -39,5 +41,45 @@ class Response implements ImmutableHeaderBag
         } catch (FailedToFindArrayKey) {
             return $default;
         }
+    }
+
+    /**
+     * @param string|null $custom_body
+     * @return void
+     * @throws FailedToParseArrayKey
+     * @throws FailedToPrepareResponseBodyToSend
+     * @throws JsonException
+     */
+    public function respond(?string $custom_body = null): void
+    {
+        $this->sendStatusCode()
+            ->sendHeaders()
+            ->sendBody($custom_body);
+
+        exit;
+    }
+
+    /**
+     * @param string|null $custom_body
+     * @return $this
+     * @throws FailedToParseArrayKey
+     * @throws FailedToPrepareResponseBodyToSend
+     * @throws JsonException
+     */
+    public function sendBody(?string $custom_body = null): static
+    {
+        $body = $custom_body ?? $this->body();
+
+        if (is_array($body)) {
+            $body = json_encode($body, JSON_THROW_ON_ERROR);
+        }
+
+        if (!is_string($body)) {
+            throw new FailedToPrepareResponseBodyToSend($body);
+        }
+
+        echo $body;
+
+        return $this;
     }
 }
