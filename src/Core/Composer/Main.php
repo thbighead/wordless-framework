@@ -13,6 +13,7 @@ use Composer\Installer\PackageEvent;
 use Composer\Package\CompletePackage;
 use Composer\Package\RootPackage;
 use Composer\Script\Event;
+use OutOfBoundsException;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -28,6 +29,10 @@ class Main
     use PackageDiscovery;
     use SetHostFromNginx;
 
+    /**
+     * @return string
+     * @throws OutOfBoundsException
+     */
     public static function getFrameworkInstalledVersion(): string
     {
         return InstalledVersions::getVersion(ProjectPath::VENDOR_PACKAGE_RELATIVE_PATH);
