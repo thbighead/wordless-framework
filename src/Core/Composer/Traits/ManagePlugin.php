@@ -4,15 +4,26 @@ namespace Wordless\Core\Composer\Traits;
 
 use Composer\Installer\PackageEvent;
 use Composer\Package\CompletePackage;
+use RuntimeException;
 use Wordless\Application\Helpers\Str;
 
 trait ManagePlugin
 {
+    /**
+     * @param PackageEvent $composerEvent
+     * @return void
+     * @throws RuntimeException
+     */
     public static function activatePlugin(PackageEvent $composerEvent): void
     {
         self::managePlugin($composerEvent, 'activate');
     }
 
+    /**
+     * @param PackageEvent $composerEvent
+     * @return void
+     * @throws RuntimeException
+     */
     public static function deactivatePlugin(PackageEvent $composerEvent): void
     {
         self::managePlugin($composerEvent, 'deactivate');
@@ -23,6 +34,12 @@ trait ManagePlugin
         return $package->getType() === 'wordpress-plugin';
     }
 
+    /**
+     * @param PackageEvent $composerEvent
+     * @param string $plugin_command
+     * @return void
+     * @throws RuntimeException
+     */
     private static function managePlugin(PackageEvent $composerEvent, string $plugin_command): void
     {
         static::initializeIo($composerEvent);
@@ -42,7 +59,7 @@ trait ManagePlugin
         if (is_file($autoload_path)) {
             require_once $autoload_path;
 
-            exec('php console wp:run "db check" --no-tty', result_code: $db_checking);
+            exec('php console wp:run "db check" --quiet --no-tty', result_code: $db_checking);
 
             if ($db_checking) {
                 static::getIo()->write('Database not ok. Skipping.');
