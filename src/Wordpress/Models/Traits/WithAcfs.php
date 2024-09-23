@@ -2,19 +2,22 @@
 
 namespace Wordless\Wordpress\Models\Traits;
 
+use Wordless\Application\Helpers\Arr;
+use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
+
 trait WithAcfs
 {
     private array $acfs = [];
 
-    public function getAcf(string $field_key, $default = null)
+    /**
+     * @param string $field_key
+     * @param mixed|null $default
+     * @return mixed
+     * @throws FailedToParseArrayKey
+     */
+    public function getAcf(string $field_key, mixed $default = null): mixed
     {
-        $field_value = $this->acfs[$field_key] ?? null;
-
-        if ($field_value === false) {
-            return $default;
-        }
-
-        return $field_value ?? $default;
+        return Arr::get($this->acfs, $field_key, $default);
     }
 
     public function getAcfs(): array

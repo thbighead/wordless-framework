@@ -6,9 +6,9 @@ use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData\Exc
 
 trait WithMetaData
 {
+    private bool $all_meta_loaded = false;
     /** @var array<string, mixed> $metaFields */
     private array $metaFields = [];
-    private bool $all_meta_loaded = false;
 
     /**
      * @param string $meta_key
