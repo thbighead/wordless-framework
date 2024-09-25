@@ -3,11 +3,11 @@
 namespace Wordless\Wordpress\Pagination;
 
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
-use Wordless\Wordpress\Models\Post;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PaginationArgumentsBuilder;
+use WP_Post;
 
 final class Posts
 {
@@ -40,7 +40,7 @@ final class Posts
     }
 
     /**
-     * @return Post[]
+     * @return WP_Post[]
      */
     public function getCurrentPageItems(): array
     {
@@ -82,7 +82,7 @@ final class Posts
 
     /**
      * @param int $page
-     * @return Post[]
+     * @return WP_Post[]
      * @throws EmptyQueryBuilderArguments
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
@@ -93,7 +93,7 @@ final class Posts
     }
 
     /**
-     * @return Post[]
+     * @return WP_Post[]
      * @throws EmptyQueryBuilderArguments
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
@@ -113,16 +113,11 @@ final class Posts
     }
 
     /**
-     * @return Post[]
+     * @return WP_Post[]
      * @throws EmptyQueryBuilderArguments
-     * @throws InitializingModelWithWrongPostType
-     * @throws PostTypeNotRegistered
      */
     private function query(): array
     {
-        return $this->queryBuilder->get(
-            $this->paginationBuilder->load_acfs,
-            $this->paginationBuilder->getPaginationArguments()
-        );
+        return $this->queryBuilder->get($this->paginationBuilder->getPaginationArguments());
     }
 }

@@ -4,11 +4,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
 use stdClass;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
-use Wordless\Wordpress\Models\Post;
 use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
-use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
-use Wordless\Wordpress\Models\PostStatus;
-use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
@@ -36,32 +32,26 @@ trait Resolver
     }
 
     /**
-     * @param bool $with_acfs
-     * @return Post|null
+     * @return WP_Post|null
      * @throws EmptyQueryBuilderArguments
-     * @throws InitializingModelWithWrongPostType
-     * @throws PostTypeNotRegistered
      */
-    public function first(bool $with_acfs = false): ?Post
+    public function first(): ?WP_Post
     {
-        return $this->get($with_acfs)[0] ?? null;
+        return $this->get()[0] ?? null;
     }
 
     /**
-     * @param bool $with_acfs
      * @param array $extra_arguments
-     * @return Post[]
+     * @return array<int, WP_Post>
      * @throws EmptyQueryBuilderArguments
-     * @throws InitializingModelWithWrongPostType
-     * @throws PostTypeNotRegistered
      */
-    public function get(bool $with_acfs = false, array $extra_arguments = []): array
+    public function get(array $extra_arguments = []): array
     {
         $posts = [];
 
         foreach ($this->query($extra_arguments) as $post) {
             /** @var WP_Post $post */
-            $posts[$post->ID] = new Post($post, $with_acfs);
+            $posts[$post->ID] = $post;
         }
 
         return $posts;
