@@ -2,9 +2,12 @@
 
 namespace Wordless\Wordpress\Pagination;
 
+use WP_Post;
+
 class Page
 {
     private int $number;
+    /** @var WP_Post[] $items */
     private array $items;
 
     public function __construct(int $page_number, array $items)
@@ -13,6 +16,9 @@ class Page
         $this->items = $items;
     }
 
+    /**
+     * @return WP_Post[]
+     */
     public function getItems(): array
     {
         return $this->items;

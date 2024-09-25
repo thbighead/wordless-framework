@@ -12,7 +12,7 @@ trait Repository
     {
         $all = [];
 
-        foreach (get_posts() as $post) {
+        foreach (get_posts(['post_type' => static::TYPE_KEY]) as $post) {
             $all[] = new static($post, $with_acfs);
         }
 

@@ -2,10 +2,9 @@
 
 namespace Wordless\Wordpress\Models;
 
-use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 
-class Attachment extends CustomPost
+class Attachment extends Post
 {
     protected const TYPE_KEY = StandardType::attachment->name;
 }
