@@ -19,7 +19,9 @@ class InitializingModelWithWrongPostType extends InvalidArgumentException
 
     private function mountMessage(): string
     {
-        return "Tried to initialize a {$this->model::class} "
+        $model_class_namespace = $this->model::class;
+
+        return "Tried to initialize a {$model_class_namespace} "
             . ($this->with_acfs ? 'with' : 'without')
             . " ACFs from a post of type '{$this->model->asWpPost()->post_type}'";
     }

@@ -15,7 +15,7 @@ class PaginationArgumentsBuilder
         Posts::KEY_PAGED => Posts::FIRST_PAGE,
     ];
 
-    public function __construct(public readonly bool $load_acfs = false)
+    public function __construct()
     {
     }
 
