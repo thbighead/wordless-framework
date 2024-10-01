@@ -34,7 +34,13 @@ class AdminBarEnvironmentFlagStyle extends GlobalEnqueueableStyle
      */
     protected function filename(): string
     {
-        return 'env-flag' . (Environment::isProduction() ? '.min.css' : '.css');
+        $filename = 'env-flag';
+
+        if (Environment::isNotLocal()) {
+            $filename .= '.min';
+        }
+
+        return "$filename.css";
     }
 
     /**
