@@ -3,6 +3,7 @@
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
 use stdClass;
+use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
@@ -37,7 +38,7 @@ trait Resolver
      */
     public function first(): ?WP_Post
     {
-        return $this->get()[0] ?? null;
+        return Arr::first($this->get()) ?? null;
     }
 
     /**
