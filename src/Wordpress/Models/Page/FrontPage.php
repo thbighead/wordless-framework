@@ -31,7 +31,7 @@ class FrontPage extends Page
         bool $override = false
     ): static
     {
-        if (!($page instanceof Page)) {
+        if (is_int($page)) {
             $page = new Page($page);
         }
 
@@ -60,7 +60,7 @@ class FrontPage extends Page
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */
-    protected function __construct(bool $with_acfs = true)
+    public function __construct(bool $with_acfs = true)
     {
         if (!is_null($front_page_id = Option::get(self::OPTION_KEY_FRONT_PAGE_ID))
             && is_numeric($front_page_id)) {
