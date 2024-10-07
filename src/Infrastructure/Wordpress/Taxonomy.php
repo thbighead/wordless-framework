@@ -33,6 +33,11 @@ abstract class Taxonomy implements IRelatedMetaData
 
     public readonly WP_Taxonomy $wpTaxonomy;
 
+    final public static function getNameKey(): string
+    {
+        return static::NAME_KEY;
+    }
+
     final public static function objectType(): ObjectType
     {
         return ObjectType::term;

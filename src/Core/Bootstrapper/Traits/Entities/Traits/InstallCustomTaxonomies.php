@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\CustomTaxonomyRegistrationFailed;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\InvalidObjectTypeAssociationToTaxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\ReservedCustomTaxonomyName;
 
@@ -35,6 +36,7 @@ trait InstallCustomTaxonomies
      * @throws CustomTaxonomyRegistrationFailed
      * @throws InvalidArgumentException
      * @throws InvalidCustomTaxonomyName
+     * @throws InvalidObjectTypeAssociationToTaxonomy
      * @throws ReservedCustomTaxonomyName
      */
     private function resolveCustomTaxonomies(): static

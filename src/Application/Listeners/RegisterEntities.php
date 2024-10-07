@@ -16,6 +16,7 @@ use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Va
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\CustomTaxonomyRegistrationFailed;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\InvalidObjectTypeAssociationToTaxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\ReservedCustomTaxonomyName;
 use Wordless\Wordpress\Hook\Enums\Action;
@@ -31,17 +32,18 @@ class RegisterEntities extends ActionListener
      * @return void
      * @throws CustomPostTypeRegistrationFailed
      * @throws CustomTaxonomyRegistrationFailed
+     * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidCustomTaxonomyName
+     * @throws InvalidObjectTypeAssociationToTaxonomy
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
      * @throws ReservedCustomPostStatusKey
      * @throws ReservedCustomPostTypeKey
      * @throws ReservedCustomTaxonomyName
-     * @throws FormatException
-     * @throws DotEnvNotSetException
      */
     public static function register(): void
     {

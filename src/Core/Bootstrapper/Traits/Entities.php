@@ -17,6 +17,7 @@ use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validati
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
 use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\CustomTaxonomyRegistrationFailed;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\InvalidObjectTypeAssociationToTaxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\ReservedCustomTaxonomyName;
 
@@ -30,17 +31,18 @@ trait Entities
      * @return void
      * @throws CustomPostTypeRegistrationFailed
      * @throws CustomTaxonomyRegistrationFailed
+     * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidCustomTaxonomyName
+     * @throws InvalidObjectTypeAssociationToTaxonomy
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
      * @throws ReservedCustomPostStatusKey
      * @throws ReservedCustomPostTypeKey
      * @throws ReservedCustomTaxonomyName
-     * @throws FormatException
-     * @throws DotEnvNotSetException
      */
     public static function registerEntities(): void
     {
