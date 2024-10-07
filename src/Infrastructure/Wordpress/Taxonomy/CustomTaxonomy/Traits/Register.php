@@ -3,13 +3,17 @@
 namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits;
 
 use InvalidArgumentException;
+use Wordless\Application\Helpers\GetType;
+use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\CustomTaxonomyRegistrationFailed;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\InvalidObjectTypeAssociationToTaxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Labels;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Rewrite;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\InvalidCustomTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions\ReservedCustomTaxonomyName;
 use Wordless\Wordpress\Enums\ObjectType;
+use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use WP_Error;
 
 trait Register
@@ -17,11 +21,11 @@ trait Register
     use Labels, Rewrite, Validation;
 
     /**
-     * @return ObjectType[]
+     * @return array<int, ObjectType|CustomPost|StandardType>
      */
     public static function availableTo(): array
     {
-        return [ObjectType::post];
+        return [];
     }
 
     /**
@@ -116,16 +120,16 @@ trait Register
      * @throws CustomTaxonomyRegistrationFailed
      * @throws InvalidArgumentException
      * @throws InvalidCustomTaxonomyName
+     * @throws InvalidObjectTypeAssociationToTaxonomy
      * @throws ReservedCustomTaxonomyName
      */
     public static function register(): void
     {
         self::validateNameKey();
-        self::validateNameKey();
 
         if (($registrationResult = register_taxonomy(
                 static::NAME_KEY,
-                static::availableTo(),
+                static::mountAvailableTo(),
                 self::mountArguments()
             )) instanceof WP_Error) {
             throw new CustomTaxonomyRegistrationFailed($registrationResult);
@@ -238,5 +242,33 @@ trait Register
         }
 
         return $arguments;
+    }
+
+    /**
+     * @return string[]
+     * @throws InvalidObjectTypeAssociationToTaxonomy
+     */
+    private static function mountAvailableTo(): array
+    {
+        $available_to = static::availableTo();
+
+        foreach ($available_to as &$objectType) {
+            if ($objectType instanceof ObjectType || $objectType instanceof StandardType) {
+                $objectType = $objectType->name;
+
+                continue;
+            }
+
+            if (is_a($objectType, CustomPost::class, true)) {
+                /** @var CustomPost $objectType */
+                $objectType = $objectType::getTypeKey();
+
+                continue;
+            }
+
+            throw new InvalidObjectTypeAssociationToTaxonomy($objectType, static::NAME_KEY);
+        }
+
+        return $available_to;
     }
 }
