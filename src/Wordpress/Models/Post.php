@@ -50,7 +50,7 @@ class Post implements IRelatedMetaData
      * @param WP_Post|int $post
      * @param bool $with_acfs
      * @throws InitializingModelWithWrongPostType
-     * @throws PostType\Exceptions\PostTypeNotRegistered
+     * @throws PostTypeNotRegistered
      */
     public function __construct(WP_Post|int $post, bool $with_acfs = true)
     {
