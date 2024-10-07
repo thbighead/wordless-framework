@@ -65,6 +65,8 @@ class FrontPage extends Page
         if (!is_null($front_page_id = Option::get(self::OPTION_KEY_FRONT_PAGE_ID))
             && is_numeric($front_page_id)) {
             parent::__construct((int)$front_page_id, $with_acfs);
+
+            return;
         }
 
         throw new FrontPageIsNotSet;
