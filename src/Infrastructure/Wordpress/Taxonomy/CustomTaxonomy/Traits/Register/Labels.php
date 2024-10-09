@@ -40,7 +40,7 @@ trait Labels
         $singular_name = static::singularName();
 
         if ($plural_name !== null) {
-            $labels['name'] = __($plural_name = Str::titleCase($plural_name));
+            $labels['name'] = __($plural_name);
             $labels['all_items'] = sprintf(__('All %s'), $plural_name);
             $labels['search_items'] = sprintf(__('Search %s'), $plural_name);
             $labels['popular_items'] = sprintf(__('Popular %s'), $plural_name);
@@ -58,7 +58,7 @@ trait Labels
         }
 
         if ($singular_name !== null) {
-            $labels['singular_name'] = __($singular_name = Str::titleCase($singular_name));
+            $labels['singular_name'] = __($singular_name);
             $labels['edit_item'] = sprintf(__('Edit %s'), $singular_name);
             $labels['view_item'] = sprintf(__('View %s'), $singular_name);
             $labels['update_item'] = sprintf(__('Update %s'), $singular_name);
