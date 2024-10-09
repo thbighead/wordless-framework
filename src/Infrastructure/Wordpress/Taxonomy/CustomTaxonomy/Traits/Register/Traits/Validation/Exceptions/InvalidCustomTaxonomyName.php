@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Validation\Exceptions;
+namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Traits\Validation\Exceptions;
 
 use InvalidArgumentException;
 use Throwable;
