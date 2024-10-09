@@ -52,7 +52,7 @@ trait Register
      */
     public static function isPublic(): bool
     {
-        return false;
+        return true;
     }
 
     /**
