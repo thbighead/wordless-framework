@@ -7,15 +7,9 @@ use Wordless\Application\Helpers\Str;
 
 trait Labels
 {
-    public static function pluralName(): ?string
-    {
-        return null;
-    }
+    abstract public static function pluralName(): string;
 
-    public static function singularName(): ?string
-    {
-        return null;
-    }
+    abstract public static function singularName(): string;
 
     /**
      * https://developer.wordpress.org/reference/functions/register_taxonomy/#arguments
@@ -39,7 +33,7 @@ trait Labels
         $plural_name = static::pluralName();
         $singular_name = static::singularName();
 
-        if ($plural_name !== null) {
+        if (!empty($plural_name)) {
             $labels['name'] = __($plural_name);
             $labels['all_items'] = sprintf(__('All %s'), $plural_name);
             $labels['search_items'] = sprintf(__('Search %s'), $plural_name);
@@ -57,7 +51,7 @@ trait Labels
             $labels['back_to_items'] = sprintf(__('← Back to %s'), $lower_cased_plural_name);
         }
 
-        if ($singular_name !== null) {
+        if (!empty($singular_name)) {
             $labels['singular_name'] = __($singular_name);
             $labels['edit_item'] = sprintf(__('Edit %s'), $singular_name);
             $labels['view_item'] = sprintf(__('View %s'), $singular_name);

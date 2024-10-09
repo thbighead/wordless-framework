@@ -7,15 +7,9 @@ use Wordless\Application\Helpers\Str;
 
 trait Labels
 {
-    public static function pluralName(): ?string
-    {
-        return null;
-    }
+    abstract public static function pluralName(): string;
 
-    public static function singularName(): ?string
-    {
-        return null;
-    }
+    abstract public static function singularName(): string;
 
     /**
      * https://developer.wordpress.org/reference/functions/get_post_type_labels/#description
@@ -39,7 +33,7 @@ trait Labels
         $plural_name = static::pluralName();
         $singular_name = static::singularName();
 
-        if ($plural_name !== null) {
+        if (!empty($plural_name)) {
             $labels['name'] = __($plural_name = Str::titleCase($plural_name));
             $labels['view_items'] = sprintf(__('View %s'), $plural_name);
             $labels['search_items'] = sprintf(__('Search %s'), $plural_name);
@@ -54,7 +48,7 @@ trait Labels
             $labels['items_list'] = sprintf(__('%s list'), $plural_name);
         }
 
-        if ($singular_name !== null) {
+        if (!empty($singular_name)) {
             $labels['singular_name'] = __($singular_name = Str::titleCase($singular_name));
             $labels['add_new_item'] = sprintf(__('Add New %s'), $singular_name);
             $labels['edit_item'] = sprintf(__('Edit %s'), $singular_name);
