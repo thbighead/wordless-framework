@@ -173,7 +173,7 @@ trait Register
      */
     protected static function isPublic(): bool
     {
-        return false;
+        return true;
     }
 
     /**
