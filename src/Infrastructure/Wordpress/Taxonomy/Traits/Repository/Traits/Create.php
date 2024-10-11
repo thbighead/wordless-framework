@@ -46,7 +46,7 @@ trait Create
             throw new InsertTermError($result);
         }
 
-        return $result[self::TERM_ID_RESULT_KEY] ?? throw new FailedToRetrieveNewTermId($name, $result);
+        return (int)($result[self::TERM_ID_RESULT_KEY] ?? throw new FailedToRetrieveNewTermId($name, $result));
     }
 
     private static function prepareParent(Taxonomy|WP_Term|int|null $parent): ?int
