@@ -29,9 +29,9 @@ final class ArraySubjectDTO extends SubjectDTO
         return $this;
     }
 
-    public function first(): mixed
+    public function first(int $quantity = 1): mixed
     {
-        return Arr::first($this->subject);
+        return Arr::first($this->subject, $quantity);
     }
 
     /**
