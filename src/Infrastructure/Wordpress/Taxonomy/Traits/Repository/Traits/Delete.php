@@ -28,4 +28,16 @@ trait Delete
             throw new DeleteTermError($result);
         }
     }
+
+    /**
+     * @return void
+     * @throws DeleteTermError
+     */
+    public static function truncate(): void
+    {
+        foreach (static::all() as $term) {
+            /** @var WP_Term $term */
+            static::delete($term->term_id);
+        }
+    }
 }
