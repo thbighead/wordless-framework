@@ -2,10 +2,13 @@
 
 namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits;
 
+use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Create;
 use WP_Term;
 
 trait Repository
 {
+    use Create;
+
     /**
      * @return WP_Term[]
      */
