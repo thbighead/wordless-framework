@@ -4,6 +4,10 @@ namespace Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits;
 
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
+use Symfony\Component\Process\Exception\ProcessSignaledException;
+use Symfony\Component\Process\Exception\ProcessStartFailedException;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
+use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Process\Process;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Response;
@@ -17,6 +21,10 @@ trait External
      * @throws CliReturnedNonZero
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws ProcessSignaledException
+     * @throws ProcessStartFailedException
+     * @throws ProcessTimedOutException
+     * @throws RuntimeException
      */
     protected function callExternalCommand(string $full_command, bool $set_tty = true): Response
     {
@@ -45,6 +53,10 @@ trait External
      * @throws CliReturnedNonZero
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws ProcessSignaledException
+     * @throws ProcessStartFailedException
+     * @throws ProcessTimedOutException
+     * @throws RuntimeException
      */
     protected function callExternalCommandSilently(string $full_command): Response
     {
@@ -74,6 +86,10 @@ trait External
      * @return Response
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws ProcessSignaledException
+     * @throws ProcessStartFailedException
+     * @throws ProcessTimedOutException
+     * @throws RuntimeException
      */
     protected function callExternalCommandSilentlyWithoutInterruption(string $full_command, bool $set_tty = true): Response
     {
@@ -90,6 +106,10 @@ trait External
      * @return Response
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws ProcessSignaledException
+     * @throws ProcessStartFailedException
+     * @throws ProcessTimedOutException
+     * @throws RuntimeException
      */
     protected function callExternalCommandWithoutInterruption(string $full_command, bool $set_tty = true): Response
     {
@@ -106,6 +126,7 @@ trait External
      * @return Process
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws RuntimeException
      */
     private function mountCommandProcess(string $full_command, bool $set_tty = true): Process
     {

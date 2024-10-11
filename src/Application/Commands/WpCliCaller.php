@@ -6,6 +6,10 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Process\Exception\InvalidArgumentException as SymfonyProcessInvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
+use Symfony\Component\Process\Exception\ProcessSignaledException;
+use Symfony\Component\Process\Exception\ProcessStartFailedException;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
+use Symfony\Component\Process\Exception\RuntimeException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Traits\NoTtyMode;
 use Wordless\Application\Helpers\ProjectPath;
@@ -55,6 +59,10 @@ class WpCliCaller extends ConsoleCommand
      * @throws InvalidArgumentException
      * @throws LogicException
      * @throws PathNotFoundException
+     * @throws ProcessSignaledException
+     * @throws ProcessStartFailedException
+     * @throws ProcessTimedOutException
+     * @throws RuntimeException
      * @throws SymfonyProcessInvalidArgumentException
      */
     protected function runIt(): int
