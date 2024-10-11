@@ -49,6 +49,40 @@ trait Create
         return (int)($result[self::TERM_ID_RESULT_KEY] ?? throw new FailedToRetrieveNewTermId($name, $result));
     }
 
+    /**
+     * @param array<string, string|array> $hierarchy
+     * @return array<int, int|array>
+     * @throws FailedToRetrieveNewTermId
+     * @throws InsertTermError
+     */
+    public static function createHierarchically(array $hierarchy): array
+    {
+        return self::createRecursively($hierarchy);
+    }
+
+    /**
+     * @param array $siblings
+     * @param int|null $parent
+     * @return array<int, int|array>
+     * @throws FailedToRetrieveNewTermId
+     * @throws InsertTermError
+     */
+    private static function createRecursively(array $siblings, ?int $parent = null): array
+    {
+        $ids = [];
+
+        foreach ($siblings as $key => $value) {
+            if (!is_string($key)) {
+                $ids[] = static::create($value, $parent);
+                continue;
+            }
+
+            $ids[$parent] = self::createRecursively($value, static::create($key, $parent));
+        }
+
+        return $ids;
+    }
+
     private static function prepareParent(Taxonomy|WP_Term|int|null $parent): ?int
     {
         if ($parent === null) {
