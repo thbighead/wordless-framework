@@ -33,9 +33,15 @@ class Arr extends Subjectable
         return array_diff_key($array, $except_array);
     }
 
-    public static function first(array $array): mixed
+    public static function first(array $array, int $quantity = 1): mixed
     {
-        return $array[static::getFirstKey($array) ?? 0] ?? null;
+        array_splice($array, max(1, abs($quantity)));
+
+        return match (sizeof($array)) {
+            0 => null,
+            1 => $array[static::getFirstKey($array) ?? 0],
+            default => $array
+        };
     }
 
     /**
