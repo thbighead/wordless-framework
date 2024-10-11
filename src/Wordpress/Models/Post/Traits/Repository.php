@@ -2,8 +2,29 @@
 
 namespace Wordless\Wordpress\Models\Post\Traits;
 
+use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
+
 trait Repository
 {
+    /**
+     * @param int $quantity
+     * @return static[]
+     */
+    public static function firstPublished(int $quantity = 1): array
+    {
+        $posts = [];
+
+        foreach (get_posts([
+            'posts_per_page' => $quantity,
+            'post_type' => static::TYPE_KEY,
+            'post_status' => StandardStatus::publish->value,
+        ]) as $casePost) {
+            $posts[] = new static($casePost);
+        }
+
+        return $posts;
+    }
+
     /**
      * @param bool $with_acfs
      * @return static[]
