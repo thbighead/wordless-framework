@@ -115,8 +115,8 @@ class WordlessInstall extends ConsoleCommand
     protected function runIt(): int
     {
         $this->resolveForceMode()
-            ->resolveDotEnv()
             ->flushCache()
+            ->resolveDotEnv()
             ->loadWpLanguages()
             ->createWpConfigFromStub()
             ->createRobotsTxtFromStub()
