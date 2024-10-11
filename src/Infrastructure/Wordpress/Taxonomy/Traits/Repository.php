@@ -3,11 +3,13 @@
 namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits;
 
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Create;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Delete;
 use WP_Term;
 
 trait Repository
 {
     use Create;
+    use Delete;
 
     /**
      * @return WP_Term[]
