@@ -35,7 +35,6 @@ if (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null) === 'https') {
 }
 
 require_once ROOT_PROJECT_PATH . '/vendor/autoload.php';
-require_once ROOT_PROJECT_PATH . '/env.php';
 
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
@@ -65,16 +64,16 @@ date_default_timezone_set(Timezone::forPhpIni());
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
-define('DB_NAME', Environment::get('DB_NAME'));
+define('DB_NAME', Environment::get('DB_NAME', 'wordless'));
 
 /** MySQL database username */
-define('DB_USER', Environment::get('DB_USER'));
+define('DB_USER', Environment::get('DB_USER', 'root'));
 
 /** MySQL database password */
-define('DB_PASSWORD', Environment::get('DB_PASSWORD'));
+define('DB_PASSWORD', Environment::get('DB_PASSWORD', 'root'));
 
 /** MySQL hostname */
-define('DB_HOST', Environment::get('DB_HOST'));
+define('DB_HOST', Environment::get('DB_HOST', 'wordless-framework-mariadb'));
 
 /** Database Charset to use in creating database tables. */
 define('DB_CHARSET', Environment::get('DB_CHARSET', 'utf8'));
@@ -142,7 +141,7 @@ define(
 
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-wordpress-auto-updates
 define('COOKIE_DOMAIN', $app_domain = Str::after(
-    $site_url = Environment::get('APP_URL', ''),
+    $site_url = Environment::get('APP_URL', 'https://wordless-framework.test'),
     '://'
 ));
 
