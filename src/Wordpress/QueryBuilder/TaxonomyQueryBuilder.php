@@ -44,13 +44,7 @@ final class TaxonomyQueryBuilder extends QueryBuilder
      */
     public function first(int $quantity = 1, ?ResultFormat $format = null): WP_Taxonomy|array|string|null
     {
-        $full_result = $this->get($format);
-
-        if ($quantity > 1) {
-            return array_slice($full_result, 0, $quantity);
-        }
-
-        return $full_result[0] ?? null;
+        return Arr::first($this->get($format), $quantity) ?? null;
     }
 
     /**
