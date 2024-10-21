@@ -70,6 +70,11 @@ abstract class Taxonomy implements IRelatedMetaData
         return $this->taxonomy === $name;
     }
 
+    final public function id(): int
+    {
+        return $this->term_id;
+    }
+
     /**
      * @return string
      * @throws InvalidArgumentException
