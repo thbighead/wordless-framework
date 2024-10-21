@@ -116,4 +116,9 @@ class Post implements IRelatedMetaData
 
         return $this->url = $url;
     }
+
+    final public function id(): int
+    {
+        return $this->ID;
+    }
 }
