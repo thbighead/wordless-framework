@@ -22,5 +22,7 @@ trait Delete
             ) === false) {
             throw new FailedToDeleteMetaData($this, $meta_key, $meta_value);
         }
+
+        unset($this->metaFields[$meta_key]);
     }
 }

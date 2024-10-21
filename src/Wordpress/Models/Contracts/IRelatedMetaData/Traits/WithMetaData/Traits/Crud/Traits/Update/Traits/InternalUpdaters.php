@@ -25,6 +25,8 @@ trait InternalUpdaters
             throw new FailedToUpdateMetaData($this, $meta_key, $meta_value, $if_value_is);
         }
 
+        $this->metaFields[$meta_key] = $meta_value;
+
         return $result;
     }
 }

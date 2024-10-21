@@ -25,6 +25,8 @@ trait InternalAdders
             throw new FailedToInsertMetaData($this, $meta_key, $meta_value, $unique);
         }
 
+        $this->metaFields[$meta_key] = $meta_value;
+
         return $new_meta_id;
     }
 }
