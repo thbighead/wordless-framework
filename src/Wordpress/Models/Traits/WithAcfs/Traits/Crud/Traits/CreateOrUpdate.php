@@ -10,12 +10,12 @@ trait CreateOrUpdate
 {
     /**
      * @param string $acf_reference
-     * @param string $value
+     * @param mixed $value
      * @return int|true
      * @throws FailedToCreateOrUpdateAcfValue
      * @throws InvalidAcfFunction
      */
-    public function createOrUpdateAcfValue(string $acf_reference, string $value): int|true
+    public function createOrUpdateAcfValue(string $acf_reference, mixed $value): int|true
     {
         if (($result = $this->validateAcfFunction('update_field')(
                 $acf_reference = Str::replace($acf_reference, '.', '_'),
