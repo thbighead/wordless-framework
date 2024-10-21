@@ -4,14 +4,17 @@ namespace Wordless\Infrastructure\Wordpress;
 
 use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedToGetTermLink;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\MixinWpTerm;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
+use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 use WP_Taxonomy;
@@ -32,6 +35,7 @@ abstract class Taxonomy implements IRelatedMetaData
     protected const NAME_KEY = null;
 
     public readonly WP_Taxonomy $wpTaxonomy;
+    protected string $url;
 
     final public static function getNameKey(): string
     {
@@ -46,9 +50,11 @@ abstract class Taxonomy implements IRelatedMetaData
     /**
      * @param WP_Term|int|string $term
      * @param bool $with_acfs
-     * @throws InitializingModelWithWrongTaxonomyName
-     * @throws InvalidArgumentException
+     * @throws EmptyQueryBuilderArguments
      * @throws EmptyStringParameter
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws InvalidAcfFunction
+     * @throws InvalidArgumentException
      */
     public function __construct(WP_Term|int|string $term, bool $with_acfs = true)
     {
@@ -70,6 +76,23 @@ abstract class Taxonomy implements IRelatedMetaData
         return $this->taxonomy === $name;
     }
 
+    /**
+     * @return string
+     * @throws FailedToGetTermLink
+     */
+    public function url(): string
+    {
+        if (isset($this->url)) {
+            return $this->url;
+        }
+
+        if (!is_string($url = get_term_link($wpTerm = $this->asWpTerm(), static::NAME_KEY))) {
+            throw new FailedToGetTermLink($wpTerm, $url);
+        }
+
+        return $this->url = $url;
+    }
+
     final public function id(): int
     {
         return $this->term_id;
@@ -87,6 +110,7 @@ abstract class Taxonomy implements IRelatedMetaData
     /**
      * @param int $from_id
      * @return void
+     * @throws InvalidAcfFunction
      * @throws InvalidArgumentException
      */
     private function loadTermAcfs(int $from_id): void
