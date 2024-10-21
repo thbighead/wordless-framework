@@ -8,11 +8,11 @@ trait Delete
 {
     /**
      * @param string $meta_key
-     * @param string|null $meta_value
+     * @param mixed|null $meta_value
      * @return void
      * @throws FailedToDeleteMetaData
      */
-    public function deleteMetaField(string $meta_key, ?string $meta_value = null): void
+    public function deleteMetaField(string $meta_key, mixed $meta_value = null): void
     {
         if (delete_metadata(
                 static::objectType()->name,
