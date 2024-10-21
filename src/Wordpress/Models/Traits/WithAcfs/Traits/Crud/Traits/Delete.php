@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\Models\Traits\WithAcfs\Traits\Crud\Traits;
 
+use Wordless\Application\Helpers\Str;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Traits\Crud\Traits\Delete\Exceptions\FailedToDeleteAcfValue;
 
@@ -16,7 +17,7 @@ trait Delete
     public function deleteAcfValue(string $acf_reference): int|true
     {
         if (($result = $this->validateAcfFunction('delete_field')(
-                $acf_reference,
+                $acf_reference = Str::replace($acf_reference, '.', '_'),
                 $this->acf_from_id
             )) === false) {
             throw new FailedToDeleteAcfValue($acf_reference, $this->acf_from_id);
