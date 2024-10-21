@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\Models\Traits\WithAcfs\Traits\Crud\Traits;
 
+use Wordless\Application\Helpers\Str;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Traits\Crud\Traits\CreateOrUpdate\Exceptions\FailedToCreateOrUpdateAcfValue;
 
@@ -17,7 +18,7 @@ trait CreateOrUpdate
     public function createOrUpdateAcfValue(string $acf_reference, string $value): int|true
     {
         if (($result = $this->validateAcfFunction('update_field')(
-                $acf_reference,
+                $acf_reference = Str::replace($acf_reference, '.', '_'),
                 $value,
                 $this->acf_from_id
             )) === false) {
