@@ -10,7 +10,7 @@ trait InternalUpdaters
      * @param string $meta_key
      * @param string $meta_value
      * @param string|null $if_value_is
-     * @return int
+     * @return int|true
      * @throws FailedToUpdateMetaData
      */
     private function callUpdateMetaData(string $meta_key, string $meta_value, ?string $if_value_is = null): int|true

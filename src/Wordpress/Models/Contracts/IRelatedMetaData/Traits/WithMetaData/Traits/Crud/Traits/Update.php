@@ -15,8 +15,24 @@ trait Update
      * @return int|true
      * @throws FailedToUpdateMetaData
      */
-    public function updateMetaField(string $meta_key, string $meta_value): int|true
+    public function updateOrCreateMetaField(string $meta_key, string $meta_value): int|true
     {
         return $this->callUpdateMetaData($meta_key, $meta_value);
+    }
+
+    /**
+     * @param string $meta_key
+     * @param string $meta_value
+     * @param string $actual_value
+     * @return int|true
+     * @throws FailedToUpdateMetaData
+     */
+    public function updateOrCreateMetaFieldIfValueIs(
+        string $meta_key,
+        string $meta_value,
+        string $actual_value
+    ): int|true
+    {
+        return $this->callUpdateMetaData($meta_key, $meta_value, $actual_value);
     }
 }
