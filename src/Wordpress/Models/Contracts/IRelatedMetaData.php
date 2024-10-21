@@ -8,6 +8,8 @@ interface IRelatedMetaData
 {
     public static function objectType(): ObjectType;
 
+    public function id(): int;
+
     public function getMetaField(string $meta_key, mixed $default = null): mixed;
 
     /**
