@@ -53,6 +53,11 @@ class User extends WP_User implements IRelatedMetaData
         return $user_as_array;
     }
 
+    final public function id(): int
+    {
+        return $this->ID;
+    }
+
     private function loadUserAcfs(int $from_id): void
     {
         $this->loadAcfs("user_$from_id");
