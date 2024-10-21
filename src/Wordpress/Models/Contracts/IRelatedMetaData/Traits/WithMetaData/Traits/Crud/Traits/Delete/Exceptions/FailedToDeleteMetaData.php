@@ -25,10 +25,10 @@ class FailedToDeleteMetaData extends ErrorException
         $introduction = "Failed to delete meta data values with key '$this->meta_key'";
 
         if (!empty($this->meta_value)) {
-            $introduction .= ' and value '
+            $introduction .= ' and '
                 . (GetType::isStringable($this->meta_value)
-                    ? "'$this->meta_value'"
-                    : '[a not stringable value (' . GetType::of($this->meta_value) . ')]');
+                    ? "value '$this->meta_value'"
+                    : 'a not stringable value (' . GetType::of($this->meta_value) . ')');
         }
 
         return "$introduction of " . $this->object::objectType()->name . " with ID {$this->object->id()}.";
