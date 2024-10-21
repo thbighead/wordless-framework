@@ -4,6 +4,7 @@ namespace Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaDa
 
 use ErrorException;
 use Throwable;
+use Wordless\Application\Helpers\GetType;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 
@@ -11,10 +12,10 @@ class FailedToUpdateMetaData extends ErrorException
 {
     public function __construct(
         public readonly IRelatedMetaData $object,
-        public readonly string $meta_key,
-        public readonly string $meta_value,
-        public readonly string $if_value_is,
-        ?Throwable $previous = null
+        public readonly string           $meta_key,
+        public readonly mixed            $meta_value,
+        public readonly mixed            $if_value_is,
+        ?Throwable                       $previous = null
     )
     {
         parent::__construct($this->mountMessage(), ExceptionCode::intentional_interrupt->value, previous: $previous);
@@ -22,10 +23,16 @@ class FailedToUpdateMetaData extends ErrorException
 
     private function mountMessage(): string
     {
-        $introduction = "Failed to update meta data values with key '$this->meta_key' to '$this->meta_value'";
+        $introduction = "Failed to update meta data values with key '$this->meta_key' to "
+            . (GetType::isStringable($this->meta_value)
+                ? "'$this->meta_value'"
+                : 'a not stringable value (' . GetType::of($this->meta_value) . ')');
 
         if (!empty($this->if_value_is)) {
-            $introduction .= " if value is '$this->if_value_is'";
+            $introduction .= ' if value is '
+                . (GetType::isStringable($this->if_value_is)
+                    ? "'$this->if_value_is'"
+                    : GetType::of($this->meta_value) . ' (not stringable)');
         }
 
         return "$introduction of "

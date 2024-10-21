@@ -8,12 +8,12 @@ trait InternalAdders
 {
     /**
      * @param string $meta_key
-     * @param string $meta_value
+     * @param mixed $meta_value
      * @param bool $unique
      * @return int
      * @throws FailedToInsertMetaData
      */
-    private function callAddMetaData(string $meta_key, string $meta_value, bool $unique = false): int
+    private function callAddMetaData(string $meta_key, mixed $meta_value, bool $unique = false): int
     {
         if (($new_meta_id = add_metadata(
                 static::objectType()->name,

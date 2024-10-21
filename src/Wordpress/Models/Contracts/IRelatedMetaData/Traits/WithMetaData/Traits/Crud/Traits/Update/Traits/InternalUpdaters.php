@@ -8,12 +8,12 @@ trait InternalUpdaters
 {
     /**
      * @param string $meta_key
-     * @param string $meta_value
-     * @param string|null $if_value_is
+     * @param mixed $meta_value
+     * @param mixed|null $if_value_is
      * @return int|true
      * @throws FailedToUpdateMetaData
      */
-    private function callUpdateMetaData(string $meta_key, string $meta_value, ?string $if_value_is = null): int|true
+    private function callUpdateMetaData(string $meta_key, mixed $meta_value, mixed $if_value_is = null): int|true
     {
         if (($result = update_metadata(
                 static::objectType()->name,
