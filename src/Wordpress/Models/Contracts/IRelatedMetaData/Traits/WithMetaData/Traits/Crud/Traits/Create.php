@@ -11,22 +11,22 @@ trait Create
 
     /**
      * @param string $meta_key
-     * @param string $meta_value
+     * @param mixed $meta_value
      * @return int
      * @throws FailedToInsertMetaData
      */
-    public function createMetaField(string $meta_key, string $meta_value): int
+    public function createMetaField(string $meta_key, mixed $meta_value): int
     {
         return $this->callAddMetaData($meta_key, $meta_value);
     }
 
     /**
      * @param string $meta_key
-     * @param string $meta_value
+     * @param mixed $meta_value
      * @return int
      * @throws FailedToInsertMetaData
      */
-    public function createUniqueMetaField(string $meta_key, string $meta_value): int
+    public function createUniqueMetaField(string $meta_key, mixed $meta_value): int
     {
         return $this->callAddMetaData($meta_key, $meta_value, true);
     }
