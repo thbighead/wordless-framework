@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData\Exceptions;
+namespace Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData\Traits\Crud\Traits\Read\Exceptions;
 
 use Exception;
 use Throwable;
