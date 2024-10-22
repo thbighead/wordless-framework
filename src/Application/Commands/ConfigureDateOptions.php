@@ -6,13 +6,16 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
+use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Timezone;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -59,8 +62,10 @@ class ConfigureDateOptions extends ConsoleCommand
     /**
      * @return int
      * @throws CommandNotFoundException
+     * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws ExceptionInterface
+     * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidConfigKey
      * @throws PathNotFoundException
@@ -88,19 +93,25 @@ class ConfigureDateOptions extends ConsoleCommand
     /**
      * @return void
      * @throws CommandNotFoundException
+     * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws ExceptionInterface
+     * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidConfigKey
      * @throws PathNotFoundException
-     * @throws WpCliCommandReturnedNonZero
      */
     private function setTimezone(): void
     {
-        $option_timezone_string = Timezone::forOptionTimezoneString();
-        $option_gmt_offset = Timezone::forOptionGmtOffset();
+        $db_table_prefix = Environment::get('DB_TABLE_PREFIX', 'wp_');
+        $gmt_offset_option_value = Timezone::forOptionGmtOffset();
+        $timezone_string_option_value = Timezone::forOptionTimezoneString();
 
-        $this->runWpCliCommand("option update gmt_offset '$option_gmt_offset'");
-        $this->runWpCliCommand("option update timezone_string '$option_timezone_string'");
+        $this->runWpCliCommandWithoutInterruption(
+            "db query 'UPDATE {$db_table_prefix}options SET option_value=\"$gmt_offset_option_value\" WHERE option_name=\"gmt_offset\"'"
+        );
+        $this->runWpCliCommandWithoutInterruption(
+            "db query 'UPDATE {$db_table_prefix}options SET option_value=\"$timezone_string_option_value\" WHERE option_name=\"timezone_string\"'"
+        );
     }
 }
