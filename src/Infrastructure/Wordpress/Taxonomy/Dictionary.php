@@ -3,11 +3,13 @@
 namespace Wordless\Infrastructure\Wordpress\Taxonomy;
 
 use Wordless\Application\Libraries\DesignPattern\Singleton;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary\Traits\Initializer;
 use WP_Term;
 
 abstract class Dictionary extends Singleton
 {
-    private static bool $loaded = false;
+    use Initializer;
+
     /**
      * @var array<int, WP_Term>
      */
@@ -35,23 +37,14 @@ abstract class Dictionary extends Singleton
 
     private static function init(string $taxonomy): void
     {
-        if (self::$loaded) {
+        self::initializeLoaded();
+
+        if (self::isTaxonomyLoaded($taxonomy)) {
             return;
         }
 
-        self::$taxonomy_terms_keyed_by_id = [];
-        self::$taxonomy_terms_keyed_by_name = [];
-        self::$taxonomy_terms_keyed_by_slug = [];
-
-        foreach (get_terms(['hide_empty' => false, 'taxonomy' => $taxonomy]) as $taxonomyTerm) {
-            /** @var WP_Term $taxonomyTerm */
-            self::$taxonomy_terms_keyed_by_id[$taxonomyTerm->term_id] = $taxonomyTerm;
-            self::$taxonomy_terms_keyed_by_name[$taxonomyTerm->name] =
-            self::$taxonomy_terms_keyed_by_slug[$taxonomyTerm->slug] =
-            &self::$taxonomy_terms_keyed_by_id[$taxonomyTerm->term_id];
-        }
-
-        self::$loaded = true;
+        self::initializeInternalDictionaries();
+        self::loadTaxonomyInitializedInternalDictionaries($taxonomy);
     }
 
     /**
