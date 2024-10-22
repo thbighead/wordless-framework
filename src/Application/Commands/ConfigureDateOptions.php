@@ -68,7 +68,7 @@ class ConfigureDateOptions extends ConsoleCommand
      */
     protected function runIt(): int
     {
-        $dateConfig = Config::wordpress()->ofKey(self::CONFIG_KEY_ADMIN_DATETIME);
+        $dateConfig = Config::wordpressAdmin()->ofKey(self::CONFIG_KEY_ADMIN_DATETIME);
 
         $this->runWpCliCommand(
             "option update date_format \"{$dateConfig->get(self::CONFIG_KEY_ADMIN_DATETIME_DATE_FORMAT, 'Y-m-d')}\""

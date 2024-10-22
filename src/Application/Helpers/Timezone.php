@@ -11,6 +11,7 @@ use Wordless\Infrastructure\Helper;
 class Timezone extends Helper
 {
     final public const CONFIG_KEY = 'timezone';
+    private const UTC_MARK = 'UTC';
 
     /**
      * @return string
@@ -32,7 +33,13 @@ class Timezone extends Helper
      */
     public static function forOptionGmtOffset(): string
     {
-        return (string)Str::of(static::raw())->upper()->after('UTC');
+        $gmtOffsetSubject = Str::of(static::raw());
+
+        if (!$gmtOffsetSubject->beginsWith(self::UTC_MARK)) {
+            return '';
+        }
+
+        return (string)$gmtOffsetSubject->upper()->after(self::UTC_MARK);
     }
 
     /**
