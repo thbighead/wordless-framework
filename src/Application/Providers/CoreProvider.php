@@ -26,6 +26,7 @@ use Wordless\Application\Listeners\EnableCsp;
 use Wordless\Application\Listeners\HideContentEditorForCustomFrontPageAtAdmin;
 use Wordless\Application\Listeners\HideDiagnosticsFromUserRoles;
 use Wordless\Application\Listeners\ManageRestResponseContentTypeHeader;
+use Wordless\Application\Listeners\PageBodyClass;
 use Wordless\Application\Listeners\RegisterEntities;
 use Wordless\Application\Listeners\RemoveAdditionalCssFromAdmin;
 use Wordless\Application\Listeners\RemoveGlobalCustomInlineStyles;
@@ -69,6 +70,7 @@ class CoreProvider extends Provider
             HideContentEditorForCustomFrontPageAtAdmin::class,
             HideDiagnosticsFromUserRoles::class,
             ManageRestResponseContentTypeHeader::class,
+            PageBodyClass::class,
             RegisterEntities::class,
             RemoveAdditionalCssFromAdmin::class,
             RemoveGlobalCustomInlineStyles::class,
