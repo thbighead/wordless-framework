@@ -24,6 +24,11 @@ class PageBodyClass extends FilterListener
         return $body_classes;
     }
 
+    protected static function functionNumberOfArgumentsAccepted(): int
+    {
+        return 1;
+    }
+
     protected static function hook(): FilterHook
     {
         return Filter::body_class;
