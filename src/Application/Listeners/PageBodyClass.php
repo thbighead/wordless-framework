@@ -5,6 +5,7 @@ namespace Wordless\Application\Listeners;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
 use Wordless\Wordpress\Hook\Enums\Filter;
+use WP_Post;
 
 class PageBodyClass extends FilterListener
 {
@@ -15,10 +16,14 @@ class PageBodyClass extends FilterListener
 
     public static function addPagesSlugBodyClass(array $body_classes): array
     {
-        global $slug;
+        global $post;
 
-        if (is_page() && !empty($slug)) {
-            $body_classes[] = "page-$slug";
+        if (!($post instanceof WP_Post)) {
+            return $body_classes;
+        }
+
+        if (is_page()) {
+            $body_classes[] = "page-$post->post_name";
         }
 
         return $body_classes;
