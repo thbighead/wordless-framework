@@ -2,26 +2,42 @@
 
 namespace Wordless\Wordpress\Models\Traits;
 
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Traits\Crud;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Traits\Loader;
+use Wordless\Application\Helpers\Arr;
+use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 
 trait WithAcfs
 {
-    use Crud;
-    use Loader;
+    private array $acfs = [];
 
     /**
-     * @param string $function_name
-     * @return string
-     * @throws InvalidAcfFunction
+     * @param string $field_key
+     * @param mixed|null $default
+     * @return mixed
+     * @throws FailedToParseArrayKey
      */
-    private function validateAcfFunction(string $function_name): string
+    public function getAcf(string $field_key, mixed $default = null): mixed
     {
-        if (!function_exists($function_name)) {
-            throw new InvalidAcfFunction($function_name);
+        return Arr::get($this->acfs, $field_key, $default);
+    }
+
+    public function getAcfs(): array
+    {
+        return $this->acfs;
+    }
+
+    /**
+     * @param int|string $from_id
+     * @return void
+     */
+    private function loadAcfs(int|string $from_id): void
+    {
+        if (!function_exists('get_fields')) {
+            return;
         }
 
-        return $function_name;
+        /** @noinspection PhpUndefinedFunctionInspection */
+        if (($acfs = get_fields($from_id)) !== false) {
+            $this->acfs = $acfs;
+        }
     }
 }
