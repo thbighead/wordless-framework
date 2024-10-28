@@ -14,6 +14,8 @@ use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
+use Wordless\Application\Helpers\Database;
+use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\Option;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -96,6 +98,7 @@ class Migrate extends ConsoleCommand
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
      * @throws PathNotFoundException
+     * @throws QueryError
      */
     protected function runIt(): int
     {
@@ -109,6 +112,7 @@ class Migrate extends ConsoleCommand
     /**
      * @return void
      * @throws FailedToUpdateOption
+     * @throws QueryError
      */
     final protected function executeFilteredMigrations(): void
     {
@@ -129,9 +133,16 @@ class Migrate extends ConsoleCommand
         }
     }
 
+    /**
+     * @param Migration $migration
+     * @return $this
+     * @throws QueryError
+     */
     final protected function executeMigration(Migration $migration): static
     {
-        $migration->{static::MIGRATION_METHOD_TO_EXECUTE}();
+        Database::smartTransaction(function () use ($migration) {
+            $migration->{static::MIGRATION_METHOD_TO_EXECUTE}();
+        });
 
         return $this;
     }

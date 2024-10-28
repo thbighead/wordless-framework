@@ -9,6 +9,7 @@ use Wordless\Application\Commands\Migrations\Migrate;
 use Wordless\Application\Commands\Migrations\Migrate\Exceptions\FailedToFindExecutedMigrationScript;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
+use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -73,6 +74,7 @@ class MigrateRollback extends Migrate
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
      * @throws PathNotFoundException
+     * @throws QueryError
      */
     protected function runIt(): int
     {
