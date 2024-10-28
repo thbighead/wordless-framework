@@ -1,10 +1,10 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace Wordless\Wordpress\Models\Post\Traits;
+namespace Wordless\Wordpress\Models\Post\Traits\Crud\Traits;
 
 use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 
-trait Repository
+trait Read
 {
     /**
      * @param int $quantity
