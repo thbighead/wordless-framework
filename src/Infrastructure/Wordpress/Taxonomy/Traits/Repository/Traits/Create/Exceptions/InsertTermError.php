@@ -2,20 +2,8 @@
 
 namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Create\Exceptions;
 
-use ErrorException;
-use Throwable;
-use Wordless\Infrastructure\Enums\ExceptionCode;
-use WP_Error;
+use Wordless\Exceptions\WpErrorException;
 
-class InsertTermError extends ErrorException
+class InsertTermError extends WpErrorException
 {
-    public function __construct(public readonly WP_Error $error, ?Throwable $previous = null)
-    {
-        parent::__construct($this->mountMessage(), ExceptionCode::development_error->value, previous: $previous);
-    }
-
-    private function mountMessage(): string
-    {
-        return implode('. ', $this->error->get_error_messages());
-    }
 }
