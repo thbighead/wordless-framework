@@ -11,7 +11,7 @@ use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType
 use Wordless\Wordpress\Models\Post\Traits\Categories;
 use Wordless\Wordpress\Models\Post\Traits\FeaturedImage;
 use Wordless\Wordpress\Models\Post\Traits\MixinWpPost;
-use Wordless\Wordpress\Models\Post\Traits\Repository;
+use Wordless\Wordpress\Models\Post\Traits\Crud;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
@@ -25,7 +25,7 @@ class Post implements IRelatedMetaData
     use Categories;
     use FeaturedImage;
     use MixinWpPost;
-    use Repository;
+    use Crud;
     use WithAcfs;
     use WithMetaData;
 
