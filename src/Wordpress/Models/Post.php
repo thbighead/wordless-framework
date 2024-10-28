@@ -15,7 +15,6 @@ use Wordless\Wordpress\Models\Post\Traits\Repository;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use WP_Post;
 
 /**
@@ -60,7 +59,6 @@ class Post implements IRelatedMetaData
      * @param bool $with_acfs
      * @return static
      * @throws InitializingModelWithWrongPostType
-     * @throws InvalidAcfFunction
      * @throws PostTypeNotRegistered
      */
     public static function get(WP_Post|int $post, bool $with_acfs = true): static
@@ -77,7 +75,6 @@ class Post implements IRelatedMetaData
      * @param WP_Post|int $post
      * @param bool $with_acfs
      * @throws InitializingModelWithWrongPostType
-     * @throws InvalidAcfFunction
      * @throws PostTypeNotRegistered
      */
     public function __construct(WP_Post|int $post, bool $with_acfs = true)

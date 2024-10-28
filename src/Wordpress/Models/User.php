@@ -6,7 +6,6 @@ use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 use WP_User;
 
@@ -23,7 +22,6 @@ class User extends WP_User implements IRelatedMetaData
     /**
      * @param WP_User|null $wp_user
      * @param bool $with_acfs
-     * @throws InvalidAcfFunction
      * @throws NoUserAuthenticated
      */
     public function __construct(?WP_User $wp_user = null, bool $with_acfs = true)
@@ -63,7 +61,6 @@ class User extends WP_User implements IRelatedMetaData
     /**
      * @param int $from_id
      * @return void
-     * @throws InvalidAcfFunction
      */
     private function loadUserAcfs(int $from_id): void
     {
