@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Wordpress\Models\Post\Traits\Crud\Traits;
 
@@ -8,13 +8,13 @@ use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder\Up
 
 trait CreateAndUpdate
 {
-    public static function buildEdit(int $post_id, string $title): Builder
-    {
-        return new UpdateBuilder($post_id, $title, static::TYPE_KEY);
-    }
-
     public static function buildNew(string $title): Builder
     {
         return new CreateBuilder($title, static::TYPE_KEY);
+    }
+
+    public function buildEdit(): Builder
+    {
+        return new UpdateBuilder($this->ID, $this->post_title, static::TYPE_KEY);
     }
 }
