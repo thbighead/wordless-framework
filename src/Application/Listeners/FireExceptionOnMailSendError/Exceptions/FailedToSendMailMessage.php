@@ -2,24 +2,24 @@
 
 namespace Wordless\Application\Listeners\FireExceptionOnMailSendError\Exceptions;
 
-use ErrorException;
 use Throwable;
-use Wordless\Infrastructure\Enums\ExceptionCode;
+use Wordless\Exceptions\WpErrorException;
 use WP_Error;
 
-class FailedToSendMailMessage extends ErrorException
+class FailedToSendMailMessage extends WpErrorException
 {
-    public function __construct(public readonly WP_Error $error, ?Throwable $previous = null)
+    public function __construct(public readonly WP_Error $requestError, ?Throwable $previous = null)
     {
-        parent::__construct(
-            "Failed to send e-mail message due to the following error: {$this->error->get_error_message()}",
-            ExceptionCode::intentional_interrupt->value,
-            previous: $previous
-        );
+        parent::__construct($requestError, $previous);
     }
 
-    public function getFailedMailData():array
+    protected function mountMessage(): string
     {
-        return $this->error->get_all_error_data();
+        return "Failed to send e-mail message due to the following errors: {$this->getErrorMessagesAsString()}";
+    }
+
+    public function getFailedMailData(): array
+    {
+        return $this->all_errors_data;
     }
 }
