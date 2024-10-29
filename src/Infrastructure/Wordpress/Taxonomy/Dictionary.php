@@ -71,7 +71,7 @@ abstract class Dictionary extends Singleton
 
     public function getByName(string $name): ?WP_Term
     {
-        return self::$taxonomy_terms_keyed_by_name[$name] ?? null;
+        return self::$taxonomy_terms_keyed_by_name[esc_html($name)] ?? null;
     }
 
     public function getBySlug(string $slug): ?WP_Term
