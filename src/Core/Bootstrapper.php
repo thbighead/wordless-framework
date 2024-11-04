@@ -51,6 +51,14 @@ final class Bootstrapper extends Singleton
     }
 
     /**
+     * @return Provider[]
+     */
+    public function getLoadedProviders(): array
+    {
+        return $this->loaded_providers ?? [];
+    }
+
+    /**
      * @return Bootstrapper
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
