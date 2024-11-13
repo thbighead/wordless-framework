@@ -3,12 +3,7 @@
 namespace Wordless\Infrastructure\Wordpress;
 
 use InvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Link;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Wordpress\Menu\Exceptions\MenuLocationHasNoMenuToRetrieveItems;
 use Wordless\Wordpress\Models\MenuItem;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
@@ -41,12 +36,9 @@ abstract class Menu
     }
 
     /**
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
      * @throws InitializingModelWithWrongPostType
      * @throws InvalidArgumentException
-     * @throws PathNotFoundException
+     * @throws MenuLocationHasNoMenuToRetrieveItems
      * @throws PostTypeNotRegistered
      */
     public function __construct()
@@ -58,6 +50,11 @@ abstract class Menu
     public function getNavigationHtml(): string
     {
         return $this->navigation_html;
+    }
+
+    protected function dropdownIcon(): string
+    {
+        return '';
     }
 
     /**
@@ -74,11 +71,7 @@ abstract class Menu
 
     /**
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws PathNotFoundException
      */
     protected function mountHtmlCodes(): void
     {
@@ -93,47 +86,10 @@ abstract class Menu
     }
 
     /**
-     * @param MenuItem $rootMenuItem
-     * @return string
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws PathNotFoundException
-     */
-    private function mountRootMenuItemNavigationListItemHtmlContent(MenuItem $rootMenuItem): string
-    {
-        if ($rootMenuItem->hasNoChildren()) {
-            return $rootMenuItem->mountLinkHtml();
-        }
-
-        return $rootMenuItem->mountLinkHtml("$rootMenuItem->menu_item_title<img src='"
-                . Link::img('navigation-menu-icon.svg')
-                . "' alt='Clique para mais sobre $rootMenuItem->menu_item_title'>")
-            . $this->mountNavigationItemBodyHtmlOfRootMenuItem($rootMenuItem);
-    }
-
-    /**
-     * @return MenuItem[]
-     * @throws InitializingModelWithWrongPostType
-     * @throws PostTypeNotRegistered
-     */
-    private function mountItemsHierarchy(): array
-    {
-        $items_hierarchy = [];
-
-        foreach ($this->getItemsList() as $menuItem) {
-            $menuItem = new MenuItem($menuItem);
-            $items_hierarchy[$menuItem->menu_item_parent_id][] = $menuItem;
-        }
-
-        return $this->mountTree($items_hierarchy, $items_hierarchy[0]);
-    }
-
-    /**
      * @param MenuItem[] $menu_items_to_list
      * @return string
      */
-    private function mountMenuItemUlHtml(array $menu_items_to_list): string
+    protected function mountMenuItemUlHtml(array $menu_items_to_list): string
     {
         $html = '';
 
@@ -153,15 +109,84 @@ abstract class Menu
         return "<ul>$html</ul>";
     }
 
-    private function mountNavigationItemBodyHtmlOfRootMenuItem(MenuItem $rootMenuItem): string
+    protected function mountNavigationItemBodyHtmlOfRootMenuItemAsideDescription(MenuItem $rootMenuItem): string
     {
-        $root_menu_item_children_body_html = "<aside><h1>$rootMenuItem->menu_item_title</h1>";
+        $root_menu_item_children_body_aside_html = "<aside><h1>$rootMenuItem->menu_item_title</h1>";
 
         if ($rootMenuItem->hasDescription()) {
-            $root_menu_item_children_body_html .= "<p>$rootMenuItem->menu_item_description</p>";
+            $root_menu_item_children_body_aside_html .= "<p>$rootMenuItem->menu_item_description</p>";
         }
 
-        $root_menu_item_children_body_html .= '</aside>';
+        return "$root_menu_item_children_body_aside_html</aside>";
+    }
+
+    protected function mountNonRootMenuItemsWithChildrenHtml(MenuItem $nonRootMenuItemWithChildren): string
+    {
+        return "<section><h2>$nonRootMenuItemWithChildren->menu_item_title</h2>{$this->mountMenuItemUlHtml($nonRootMenuItemWithChildren->menu_item_children)}</section>";
+    }
+
+    /**
+     * @param MenuItem[] $childless_non_root_menu_items
+     * @return string
+     */
+    protected function resolveChildlessNonRootMenuItemsHtml(array $childless_non_root_menu_items): string
+    {
+        if (empty($childless_non_root_menu_items)) {
+            return '';
+        }
+
+        $childless_non_root_menu_items_html = '';
+
+        foreach ($childless_non_root_menu_items as $nonRootMenuItem) {
+            $childless_non_root_menu_items_html .=
+                "<li{$nonRootMenuItem->mountLiClasses()}>{$nonRootMenuItem->mountLinkHtml()}</li>";
+        }
+
+        return "<ul>$childless_non_root_menu_items_html</ul>";
+    }
+
+    /**
+     * @param MenuItem $rootMenuItem
+     * @return string
+     */
+    private function mountRootMenuItemNavigationListItemHtmlContent(MenuItem $rootMenuItem): string
+    {
+        if ($rootMenuItem->hasNoChildren()) {
+            return $rootMenuItem->mountLinkHtml();
+        }
+
+        $dropdown_icon = empty($dropdown_icon = $this->dropdownIcon())
+            ? ''
+            : Str::startWith($dropdown_icon, ' ');
+
+        return $rootMenuItem->mountLinkHtml("$rootMenuItem->menu_item_title$dropdown_icon")
+            . $this->mountNavigationItemBodyHtmlOfRootMenuItem($rootMenuItem);
+    }
+
+    /**
+     * @return MenuItem[]
+     * @throws InitializingModelWithWrongPostType
+     * @throws MenuLocationHasNoMenuToRetrieveItems
+     * @throws PostTypeNotRegistered
+     */
+    private function mountItemsHierarchy(): array
+    {
+        $items_hierarchy = [];
+
+        foreach ($this->getItemsList() as $menuItem) {
+            $menuItem = new MenuItem($menuItem);
+            $items_hierarchy[$menuItem->menu_item_parent_id][] = $menuItem;
+        }
+
+        return $this->mountTree($items_hierarchy, $items_hierarchy[0]);
+    }
+
+    private function mountNavigationItemBodyHtmlOfRootMenuItem(MenuItem $rootMenuItem): string
+    {
+        $root_menu_item_children_body_html = $this->mountNavigationItemBodyHtmlOfRootMenuItemAsideDescription(
+            $rootMenuItem
+        );
+
         $childless_menu_items = [];
         $children_ul_html_codes = '';
 
@@ -177,11 +202,6 @@ abstract class Menu
         $root_menu_item_children_body_html .= $this->resolveChildlessNonRootMenuItemsHtml($childless_menu_items);
 
         return "<nav>$root_menu_item_children_body_html$children_ul_html_codes</nav>";
-    }
-
-    private function mountNonRootMenuItemsWithChildrenHtml(MenuItem $nonRootMenuItemWithChildren): string
-    {
-        return "<section><h2>$nonRootMenuItemWithChildren->menu_item_title</h2>{$this->mountMenuItemUlHtml($nonRootMenuItemWithChildren->menu_item_children)}</section>";
     }
 
     /**
@@ -202,25 +222,5 @@ abstract class Menu
         }
 
         return $tree;
-    }
-
-    /**
-     * @param MenuItem[] $childless_non_root_menu_items
-     * @return string
-     */
-    private function resolveChildlessNonRootMenuItemsHtml(array $childless_non_root_menu_items): string
-    {
-        if (empty($childless_non_root_menu_items)) {
-            return '';
-        }
-
-        $childless_non_root_menu_items_html = '';
-
-        foreach ($childless_non_root_menu_items as $nonRootMenuItem) {
-            $childless_non_root_menu_items_html .=
-                "<li{$nonRootMenuItem->mountLiClasses()}>{$nonRootMenuItem->mountLinkHtml()}</li>";
-        }
-
-        return "<ul>$childless_non_root_menu_items_html</ul>";
     }
 }
