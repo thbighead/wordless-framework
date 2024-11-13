@@ -59,7 +59,7 @@ class RemoveEmojiProvider extends Provider
                 ->setFunction(self::FUNCTION_PRINT_EMOJI_DETECTION_SCRIPT),
             RemoveHookDTO::make(Action::admin_print_styles)
                 ->setFunction(self::FUNCTION_PRINT_EMOJI_STYLES),
-            RemoveHookDTO::make(Action::admin_print_styles)
+            RemoveHookDTO::make(Action::wp_print_styles)
                 ->setFunction(self::FUNCTION_PRINT_EMOJI_STYLES),
         ];
     }
