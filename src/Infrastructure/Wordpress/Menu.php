@@ -178,7 +178,7 @@ abstract class Menu
             $items_hierarchy[$menuItem->menu_item_parent_id][] = $menuItem;
         }
 
-        return $this->mountTree($items_hierarchy, $items_hierarchy[0]);
+        return $this->mountTree($items_hierarchy, $items_hierarchy[0] ?? []);
     }
 
     private function mountNavigationItemBodyHtmlOfRootMenuItem(MenuItem $rootMenuItem): string
