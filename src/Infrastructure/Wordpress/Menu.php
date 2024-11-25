@@ -145,6 +145,11 @@ abstract class Menu
         return "<ul>$childless_non_root_menu_items_html</ul>";
     }
 
+    protected function wrapSubNavigationHtmlContent(string $sub_navigation_html_content): string
+    {
+        return "<nav>$sub_navigation_html_content</nav>";
+    }
+
     /**
      * @param MenuItem $rootMenuItem
      * @return string
@@ -201,7 +206,9 @@ abstract class Menu
 
         $root_menu_item_children_body_html .= $this->resolveChildlessNonRootMenuItemsHtml($childless_menu_items);
 
-        return "<nav>$root_menu_item_children_body_html$children_ul_html_codes</nav>";
+        return $this->wrapSubNavigationHtmlContent(
+            "$root_menu_item_children_body_html$children_ul_html_codes"
+        );
     }
 
     /**
