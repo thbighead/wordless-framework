@@ -20,7 +20,7 @@ abstract class Builder extends PostBuilder
         $post_array = parent::mountPostArrayArguments();
 
         if (!empty($this->template)) {
-            $post_array['page_template'] = $this->templatea;
+            $post_array['page_template'] = $this->template;
         }
 
         return $post_array;
