@@ -50,7 +50,7 @@ trait Labels
 
         if (!empty($singular_name)) {
             $labels['singular_name'] = __($singular_name = Str::titleCase($singular_name));
-            $labels['add_new_item'] = sprintf(__('Add New %s'), $singular_name);
+            $labels['add_new'] = $labels['add_new_item'] = sprintf(__('Add New %s'), $singular_name);
             $labels['edit_item'] = sprintf(__('Edit %s'), $singular_name);
             $labels['new_item'] = sprintf(__('New %s'), $singular_name);
             $labels['view_item'] = sprintf(__('View %s'), $singular_name);
