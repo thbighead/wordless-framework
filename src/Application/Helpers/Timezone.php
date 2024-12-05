@@ -69,6 +69,12 @@ class Timezone extends Helper
             return static::raw();
         }
 
+        $gmt_offset = ((int)$gmt_offset) * -1;
+
+        if ($gmt_offset >= 0) {
+            $gmt_offset = "+$gmt_offset";
+        }
+
         return "Etc/GMT$gmt_offset";
     }
 }
