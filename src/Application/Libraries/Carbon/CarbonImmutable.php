@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Libraries\Carbon;
 
 use Carbon\Carbonimmutable as OriginalCarbonImmutable;
 use Carbon\CarbonTimeZone;
+use Carbon\Exceptions\InvalidFormatException;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
@@ -20,6 +21,7 @@ class CarbonImmutable
     /**
      * @param DateTimeInterface|string|null $time
      * @param DateTimeZone|string|null $timezone
+     * @throws InvalidFormatException
      */
     public function __construct(DateTimeInterface|null|string $time = null, DateTimeZone|null|string $timezone = null)
     {

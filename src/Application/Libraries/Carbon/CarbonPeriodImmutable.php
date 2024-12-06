@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Libraries\Carbon;
 
@@ -7,6 +7,7 @@ use Carbon\CarbonPeriodImmutable as OriginalCarbonPeriodImmutable;
 use Carbon\CarbonTimeZone;
 use DateTimeZone;
 use Exception;
+use InvalidArgumentException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Timezone;
 
@@ -17,6 +18,11 @@ class CarbonPeriodImmutable
 {
     private OriginalCarbonPeriodImmutable $original;
 
+    /**
+     * @param DateTimeZone|null $timezone
+     * @param ...$arguments
+     * @throws InvalidArgumentException
+     */
     public function __construct(?DateTimeZone $timezone = null, ...$arguments)
     {
         $this->original = new OriginalCarbonPeriodImmutable(...$arguments, $timezone ?? wp_timezone());

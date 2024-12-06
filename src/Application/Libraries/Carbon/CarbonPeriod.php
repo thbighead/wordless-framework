@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Libraries\Carbon;
 
@@ -6,6 +6,7 @@ use Carbon\CarbonPeriod as OriginalCarbonPeriod;
 use Carbon\CarbonTimeZone;
 use DateTimeZone;
 use Exception;
+use InvalidArgumentException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Timezone;
 
@@ -16,6 +17,11 @@ class CarbonPeriod
 {
     private OriginalCarbonPeriod $original;
 
+    /**
+     * @param DateTimeZone|null $timezone
+     * @param ...$arguments
+     * @throws InvalidArgumentException
+     */
     public function __construct(?DateTimeZone $timezone = null, ...$arguments)
     {
         $this->original = new OriginalCarbonPeriod(...$arguments, $timezone ?? wp_timezone());
