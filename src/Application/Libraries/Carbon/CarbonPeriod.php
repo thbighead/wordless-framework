@@ -1,44 +1,40 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Libraries\Carbon;
 
 use Carbon\CarbonPeriod as OriginalCarbonPeriod;
-use Carbon\CarbonTimeZone;
 use DateTimeZone;
-use Exception;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Helpers\Timezone;
+use InvalidArgumentException;
+use Wordless\Application\Libraries\Carbon\Contracts\CarbonAdapter;
 
 /**
  * @mixin OriginalCarbonPeriod
  */
-class CarbonPeriod
+class CarbonPeriod extends CarbonAdapter
 {
-    private OriginalCarbonPeriod $original;
-
-    public function __construct(?DateTimeZone $timezone = null, ...$arguments)
+    protected static function originalClassNamespace(): string
     {
-        $this->original = new OriginalCarbonPeriod(...$arguments, $timezone ?? wp_timezone());
-    }
-
-    public function __call(string $name, array $arguments)
-    {
-        return $this->original->$name(...$arguments);
+        return OriginalCarbonPeriod::class;
     }
 
     /**
-     * @param string $name
-     * @param array $arguments
-     * @return mixed
-     * @throws PathNotFoundException
-     * @throws Exception
+     * @param OriginalCarbonPeriod|null $period
+     * @param DateTimeZone|null $timezone
+     * @param ...$arguments
+     * @throws InvalidArgumentException
      */
-    public static function __callStatic(string $name, array $arguments)
+    public function __construct(?OriginalCarbonPeriod $period = null, ?DateTimeZone $timezone = null, ...$arguments)
     {
-        if ((new CarbonTimeZone(Timezone::forPhpIni()))->getName() !== $timezone = wp_timezone_string()) {
-            date_default_timezone_set($timezone);
+        if ($period instanceof OriginalCarbonPeriod) {
+            $this->original = $period;
+
+            if ($timezone !== null) {
+                $this->original->setTimezone($timezone);
+            }
+
+            return;
         }
 
-        return OriginalCarbonPeriod::$name(...$arguments);
+        $this->original = new OriginalCarbonPeriod(...$arguments, $timezone ?? wp_timezone());
     }
 }
