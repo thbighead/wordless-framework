@@ -1,23 +1,26 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Libraries\Carbon;
 
 use Carbon\CarbonInterval as OriginalCarbonInterval;
-use Carbon\CarbonTimeZone;
 use Closure;
 use DateInterval;
+use DateTimeZone;
 use Exception;
-use Wordless\Application\Helpers\Timezone;
+use Wordless\Application\Libraries\Carbon\Contracts\CarbonAdapter;
 
 /**
  * @mixin OriginalCarbonInterval
  */
-class CarbonInterval
+class CarbonInterval extends CarbonAdapter
 {
-    private OriginalCarbonInterval $original;
+    protected static function originalClassNamespace(): string
+    {
+        return OriginalCarbonInterval::class;
+    }
 
     /**
-     * @param Closure|DateInterval|int|string|null $years
+     * @param OriginalCarbonInterval|Closure|DateInterval|int|string|null $years
      * @param float|int|null $months
      * @param float|int|null $weeks
      * @param float|int|null $days
@@ -25,19 +28,31 @@ class CarbonInterval
      * @param float|int|null $minutes
      * @param float|int|null $seconds
      * @param float|int|null $microseconds
+     * @param DateTimeZone|string|null $timezone
      * @throws Exception
      */
     public function __construct(
-        Closure|DateInterval|int|null|string $years,
-        float|int|null                       $months,
-        float|int|null                       $weeks,
-        float|int|null                       $days,
-        float|int|null                       $hours,
-        float|int|null                       $minutes,
-        float|int|null                       $seconds,
-        float|int|null                       $microseconds
+        OriginalCarbonInterval|Closure|DateInterval|int|null|string $years = 1,
+        float|int|null                                              $months = null,
+        float|int|null                                              $weeks = null,
+        float|int|null                                              $days = null,
+        float|int|null                                              $hours = null,
+        float|int|null                                              $minutes = null,
+        float|int|null                                              $seconds = null,
+        float|int|null                                              $microseconds = null,
+        DateTimeZone|null|string                                    $timezone = null
     )
     {
+        if ($years instanceof OriginalCarbonInterval) {
+            $this->original = $years;
+
+            if ($timezone !== null) {
+                $this->original->setTimezone($timezone);
+            }
+
+            return;
+        }
+
         $this->original = (new OriginalCarbonInterval(
             $years,
             $months,
@@ -47,26 +62,6 @@ class CarbonInterval
             $minutes,
             $seconds,
             $microseconds
-        ))->setTimezone(wp_timezone());
-    }
-
-    public function __call(string $name, array $arguments)
-    {
-        return $this->original->$name(...$arguments);
-    }
-
-    /**
-     * @param string $name
-     * @param array $arguments
-     * @return mixed
-     * @throws Exception
-     */
-    public static function __callStatic(string $name, array $arguments)
-    {
-        if ((new CarbonTimeZone(Timezone::forPhpIni()))->getName() !== $timezone = wp_timezone_string()) {
-            date_default_timezone_set($timezone);
-        }
-
-        return OriginalCarbonInterval::$name(...$arguments);
+        ))->setTimezone($timezone ?? wp_timezone());
     }
 }
