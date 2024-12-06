@@ -4,44 +4,37 @@ namespace Wordless\Application\Libraries\Carbon;
 
 use Carbon\CarbonTimeZone as OriginalCarbonTimeZone;
 use Exception;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
+use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Timezone;
+use Wordless\Application\Libraries\Carbon\Contracts\CarbonAdapter;
 
 /**
  * @mixin OriginalCarbonTimeZone
  */
-class CarbonTimeZone
+class CarbonTimeZone extends CarbonAdapter
 {
-    private OriginalCarbonTimeZone $original;
-
-    /**
-     * @param string|null $timezone
-     * @throws PathNotFoundException
-     * @throws Exception
-     */
-    public function __construct(?string $timezone = null)
+    protected static function originalClassNamespace(): string
     {
-        $this->original = new OriginalCarbonTimeZone($timezone ?? Timezone::forPhpIni());
-    }
-
-    public function __call(string $name, array $arguments)
-    {
-        return $this->original->$name(...$arguments);
+        return OriginalCarbonTimeZone::class;
     }
 
     /**
-     * @param string $name
-     * @param array $arguments
-     * @return mixed
+     * @param OriginalCarbonTimeZone|string|null $timezone
+     * @throws EmptyConfigKey
+     * @throws InvalidConfigKey
      * @throws PathNotFoundException
      * @throws Exception
      */
-    public static function __callStatic(string $name, array $arguments)
+    public function __construct(OriginalCarbonTimeZone|string|null $timezone = null)
     {
-        if ((new OriginalCarbonTimeZone(Timezone::forPhpIni()))->getName() !== $timezone = wp_timezone_string()) {
-            date_default_timezone_set($timezone);
+        if ($timezone instanceof OriginalCarbonTimeZone) {
+            $this->original = $timezone;
+
+            return;
         }
 
-        return OriginalCarbonTimeZone::$name(...$arguments);
+        $this->original = new OriginalCarbonTimeZone($timezone ?? Timezone::forPhpIni());
     }
 }

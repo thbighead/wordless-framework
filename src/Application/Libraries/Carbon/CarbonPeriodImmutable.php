@@ -2,50 +2,43 @@
 
 namespace Wordless\Application\Libraries\Carbon;
 
-use Carbon\CarbonPeriod as OriginalCarbonPeriod;
 use Carbon\CarbonPeriodImmutable as OriginalCarbonPeriodImmutable;
-use Carbon\CarbonTimeZone;
 use DateTimeZone;
-use Exception;
 use InvalidArgumentException;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Helpers\Timezone;
+use Wordless\Application\Libraries\Carbon\Contracts\CarbonAdapter;
 
 /**
  * @mixin OriginalCarbonPeriodImmutable
  */
-class CarbonPeriodImmutable
+class CarbonPeriodImmutable extends CarbonAdapter
 {
-    private OriginalCarbonPeriodImmutable $original;
+    protected static function originalClassNamespace(): string
+    {
+        return OriginalCarbonPeriodImmutable::class;
+    }
 
     /**
+     * @param OriginalCarbonPeriodImmutable|null $period
      * @param DateTimeZone|null $timezone
      * @param ...$arguments
      * @throws InvalidArgumentException
      */
-    public function __construct(?DateTimeZone $timezone = null, ...$arguments)
+    public function __construct(
+        ?OriginalCarbonPeriodImmutable $period = null,
+        ?DateTimeZone                  $timezone = null,
+                                       ...$arguments
+    )
     {
-        $this->original = new OriginalCarbonPeriodImmutable(...$arguments, $timezone ?? wp_timezone());
-    }
+        if ($period instanceof OriginalCarbonPeriodImmutable) {
+            $this->original = $period;
 
-    public function __call(string $name, array $arguments)
-    {
-        return $this->original->$name(...$arguments);
-    }
+            if ($timezone !== null) {
+                $this->original->setTimezone($timezone);
+            }
 
-    /**
-     * @param string $name
-     * @param array $arguments
-     * @return mixed
-     * @throws PathNotFoundException
-     * @throws Exception
-     */
-    public static function __callStatic(string $name, array $arguments)
-    {
-        if ((new CarbonTimeZone(Timezone::forPhpIni()))->getName() !== $timezone = wp_timezone_string()) {
-            date_default_timezone_set($timezone);
+            return;
         }
 
-        return OriginalCarbonPeriod::$name(...$arguments);
+        $this->original = new OriginalCarbonPeriodImmutable(...$arguments, $timezone ?? wp_timezone());
     }
 }
