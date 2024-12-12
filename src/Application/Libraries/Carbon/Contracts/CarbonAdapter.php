@@ -40,11 +40,13 @@ abstract class CarbonAdapter
      */
     public static function __callStatic(string $name, array $arguments): mixed
     {
-        if ((new OriginalCarbonTimeZone(Timezone::forPhpIni()))->getName() !== $timezone = wp_timezone_string()) {
+        if ((new OriginalCarbonTimeZone($timezone = Timezone::forPhpIni()))->toOffsetName() !== wp_timezone_string()) {
             date_default_timezone_set($timezone);
         }
 
-        return static::createFromOriginalCarbon(static::originalClassNamespace()::$name(...$arguments));
+        return static::createFromOriginalCarbon(
+            static::originalClassNamespace()::$name(...self::parseSelfArguments($arguments))
+        );
     }
 
     /**
@@ -78,6 +80,17 @@ abstract class CarbonAdapter
         };
     }
 
+    private static function parseSelfArguments(array $arguments): array
+    {
+        foreach ($arguments as &$argument) {
+            if ($argument instanceof self) {
+                $argument = $argument->original;
+            }
+        }
+
+        return $arguments;
+    }
+
     /**
      * @param string $name
      * @param array $arguments
@@ -90,7 +103,7 @@ abstract class CarbonAdapter
      */
     public function __call(string $name, array $arguments): mixed
     {
-        $originalResult = $this->original->$name(...$arguments);
+        $originalResult = $this->original->$name(...self::parseSelfArguments($arguments));
 
         if (!is_object($originalResult)) {
             return $originalResult;
