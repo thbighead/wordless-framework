@@ -34,12 +34,12 @@ trait Resolver
 
     /**
      * @param int $quantity
-     * @return WP_Post|null
+     * @return WP_Post|WP_Post[]|null
      * @throws EmptyQueryBuilderArguments
      */
-    public function first(int $quantity = 1): ?WP_Post
+    public function first(int $quantity = 1): WP_Post|array|null
     {
-        return Arr::first($this->get(), $quantity) ?? null;
+        return Arr::first($this->get(), $quantity);
     }
 
     /**
