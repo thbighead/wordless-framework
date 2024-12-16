@@ -30,7 +30,7 @@ abstract class EnqueueableStyle extends EnqueueableAsset
         wp_enqueue_style(
             $this->getId(),
             $this->getFileUrl(),
-            $this->getDependencies(),
+            $this->getDependenciesIds(),
             $this->getVersion(),
             $this->getMedia()
         );
