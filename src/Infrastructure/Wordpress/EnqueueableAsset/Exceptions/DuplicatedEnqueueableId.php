@@ -9,31 +9,16 @@ use Wordless\Infrastructure\Enums\ExceptionCode;
 class DuplicatedEnqueueableId extends DomainException
 {
     public function __construct(
-        private readonly string $enqueueableClass,
-        private readonly string $id,
-        private readonly string $enqueueableClassFound,
-        ?Throwable              $previous = null
+        public readonly string $type_enqueueable_class_namespace,
+        public readonly string $id,
+        public readonly string $enqueueable_class_namespace,
+        ?Throwable             $previous = null
     )
     {
         parent::__construct(
-            "Class $this->enqueueableClass duplicates id $this->id of $this->enqueueableClassFound.",
+            "Class $this->type_enqueueable_class_namespace duplicates id $this->id on $this->enqueueable_class_namespace.",
             ExceptionCode::development_error->value,
             $previous
         );
-    }
-
-    public function getEnqueueableClass(): string
-    {
-        return $this->enqueueableClass;
-    }
-
-    public function getEnqueueableClassFound(): string
-    {
-        return $this->enqueueableClassFound;
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
     }
 }

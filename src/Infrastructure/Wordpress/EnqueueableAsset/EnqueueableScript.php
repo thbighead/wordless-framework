@@ -24,7 +24,7 @@ abstract class EnqueueableScript extends EnqueueableAsset
         wp_enqueue_script(
             $this->getId(),
             $this->getFileUrl(),
-            $this->getDependencies(),
+            $this->getDependenciesIds(),
             $this->getVersion(),
             false
         );
