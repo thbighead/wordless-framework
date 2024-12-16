@@ -33,6 +33,11 @@ abstract class EnqueueableAsset
     private string $file_url;
     private string $id;
 
+    public static function id(): string
+    {
+        return (new EnqueueableAssetIdGuesser(static::class))->getValue();
+    }
+
     /**
      * @return static
      * @throws DuplicatedEnqueueableId
@@ -43,11 +48,6 @@ abstract class EnqueueableAsset
     public static function make(): static
     {
         return new static;
-    }
-
-    protected static function id(): string
-    {
-        return (new EnqueueableAssetIdGuesser(static::class))->getValue();
     }
 
     /**
