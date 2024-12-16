@@ -8,6 +8,8 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\EmptyEnqueueableId;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\InvalidTypeEnqueueableClass;
 
 abstract class EnqueueableAsset
 {
@@ -26,8 +28,8 @@ abstract class EnqueueableAsset
         EnqueueableScript::class => []
     ];
 
-    /** @var string[] $dependencies */
-    private array $dependencies = [];
+    /** @var string[] $dependencies_ids */
+    private array $dependencies_ids = [];
     private string $file_url;
     private string $id;
 
@@ -43,17 +45,17 @@ abstract class EnqueueableAsset
         return new static;
     }
 
-    /**
-     * @return string[]|EnqueueableAsset[]
-     */
-    protected static function dependencies(): array
-    {
-        return [];
-    }
-
     protected static function id(): string
     {
         return (new EnqueueableAssetIdGuesser(static::class))->getValue();
+    }
+
+    /**
+     * @return string[]|EnqueueableAsset[]
+     */
+    protected function dependencies(): array
+    {
+        return [];
     }
 
     protected function version(): ?string
@@ -64,9 +66,9 @@ abstract class EnqueueableAsset
     /**
      * @return string[]
      */
-    protected function getDependencies(): array
+    protected function getDependenciesIds(): array
     {
-        return $this->dependencies;
+        return $this->dependencies_ids;
     }
 
     protected function getFileUrl(): string
@@ -89,19 +91,20 @@ abstract class EnqueueableAsset
 
     /**
      * @throws DuplicatedEnqueueableId
-     * @throws InvalidArgumentException
+     * @throws EmptyEnqueueableId
+     * @throws InvalidTypeEnqueueableClass
      */
     private function __construct()
     {
         $this->setId()
             ->setFileUrl()
-            ->setDependencies();
+            ->setDependenciesIds();
     }
 
-    private function setDependencies(): void
+    private function setDependenciesIds(): void
     {
-        foreach (static::dependencies() as $enqueueable_asset_namespace) {
-            $this->dependencies[] = $enqueueable_asset_namespace::id();
+        foreach ($this->dependencies() as $enqueueable_asset_namespace) {
+            $this->dependencies_ids[] = $enqueueable_asset_namespace::id();
         }
     }
 
@@ -115,21 +118,32 @@ abstract class EnqueueableAsset
     /**
      * @return $this
      * @throws DuplicatedEnqueueableId
-     * @throws InvalidArgumentException
+     * @throws EmptyEnqueueableId
+     * @throws InvalidTypeEnqueueableClass
      */
     private function setId(): static
     {
         $id = static::id();
 
         if (empty($id)) {
-            throw new InvalidArgumentException(static::class . ' must have a non-empty id');
+            throw new EmptyEnqueueableId(static::class);
         }
 
-        if ($foundEnqueueableClass = static::$ids_pool[static::class][$id] ?? '') {
-            throw new DuplicatedEnqueueableId(static::class, $id, $foundEnqueueableClass);
+        $type_enqueueable_class_namespace = match (true) {
+            $this instanceof EnqueueableScript => EnqueueableScript::class,
+            $this instanceof EnqueueableStyle => EnqueueableStyle::class,
+            default => throw new InvalidTypeEnqueueableClass($this::class),
+        };
+
+        if (self::$ids_pool[static::class][$id] ?? false) {
+            throw new DuplicatedEnqueueableId(
+                $type_enqueueable_class_namespace,
+                $id,
+                static::class
+            );
         }
 
-        static::$ids_pool[static::class][$id] = true;
+        self::$ids_pool[static::class][$id] = true;
         $this->id = $id;
 
         return $this;
