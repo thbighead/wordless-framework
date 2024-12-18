@@ -19,6 +19,11 @@ trait OutputMessage
     use VerboseOption;
     use WrappedScript;
 
+    protected function isQuiet(): bool
+    {
+        return $this->output->isQuiet();
+    }
+
     protected function write(string $message, ?IDecoration $decoration = null): void
     {
         $this->output->write($this->decorateText($message, $decoration));
