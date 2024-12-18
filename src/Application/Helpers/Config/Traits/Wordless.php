@@ -12,6 +12,7 @@ trait Wordless
 {
     final public const FILE_WORDLESS = 'wordless';
     final public const KEY_DATABASE = 'database';
+    final public const KEY_PLUGINS_ORDER = 'plugins_order';
 
     /**
      * @param string|null $key
@@ -58,6 +59,16 @@ trait Wordless
     public static function wordlessDatabase(?string $key = null, mixed $default = null): mixed
     {
         return self::fromWordlessFile(self::KEY_DATABASE, $key, $default);
+    }
+
+    /**
+     * @return string[]
+     * @throws EmptyConfigKey
+     * @throws PathNotFoundException
+     */
+    public static function wordlessPluginsOrder(): array
+    {
+        return self::fromWordlessFile(self::KEY_PLUGINS_ORDER, default: []);
     }
 
     /**
