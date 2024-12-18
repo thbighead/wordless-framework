@@ -186,14 +186,25 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws CliReturnedNonZero
      * @throws CommandNotFoundException
+     * @throws EmptyConfigKey
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
+     * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
     private function activateWpPlugins(): static
     {
+        foreach (Config::wordlessPluginsOrder() as $plugin_name) {
+            try {
+                ProjectPath::wpPlugins($plugin_name);
+
+                $this->runWpCliCommand("plugin activate $plugin_name");
+            } catch (PathNotFoundException) {
+                continue;
+            }
+        }
+
         $this->runWpCliCommand('plugin activate --all');
 
         return $this;
