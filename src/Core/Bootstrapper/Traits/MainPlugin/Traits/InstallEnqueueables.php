@@ -11,6 +11,7 @@ use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqu
 
 trait InstallEnqueueables
 {
+    private static bool $already_enqueued = false;
     /** @var EnqueueableScript[] $loaded_enqueueable_scripts */
     private array $loaded_enqueueable_scripts = [];
     /** @var EnqueueableStyle[] $loaded_enqueueable_styles */
@@ -49,8 +50,14 @@ trait InstallEnqueueables
      */
     private function resolveEnqueues(bool $on_admin): static
     {
-        return $this->resolveScriptEnqueues($on_admin)
-            ->resolveStyleEnqueues($on_admin);
+        if (!self::$already_enqueued) {
+            $this->resolveScriptEnqueues($on_admin)
+                ->resolveStyleEnqueues($on_admin);
+
+            self::$already_enqueued = true;
+        }
+
+        return $this;
     }
 
     /**
