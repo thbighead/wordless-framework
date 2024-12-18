@@ -77,7 +77,9 @@ class WpCliCaller extends ConsoleCommand
         $this->writelnInfoWhenVerbose("Executing $full_command...");
 
         if ($this->output instanceof BufferedOutput) {
-            $commandResponse = $this->callExternalCommandSilently($full_command);
+            $commandResponse = $this->isQuiet()
+                ? $this->callExternalCommandSilentlyWithoutInterruption($full_command)
+                : $this->callExternalCommandSilently($full_command);
 
             $this->write($commandResponse->output);
 
@@ -85,7 +87,7 @@ class WpCliCaller extends ConsoleCommand
         }
 
         if ($this->isQuiet()) {
-            return $this->callExternalCommandSilently($full_command)->result_code;
+            return $this->callExternalCommandSilentlyWithoutInterruption($full_command)->result_code;
         }
 
         return $this->callExternalCommand($full_command, !$this->isNoTtyMode())->result_code;
