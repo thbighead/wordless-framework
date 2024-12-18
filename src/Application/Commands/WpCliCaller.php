@@ -79,9 +79,13 @@ class WpCliCaller extends ConsoleCommand
         if ($this->output instanceof BufferedOutput) {
             $commandResponse = $this->callExternalCommandSilently($full_command);
 
-            $this->output->write($commandResponse->output);
+            $this->write($commandResponse->output);
 
             return $commandResponse->result_code;
+        }
+
+        if ($this->isQuiet()) {
+            return $this->callExternalCommandSilently($full_command)->result_code;
         }
 
         return $this->callExternalCommand($full_command, !$this->isNoTtyMode())->result_code;
@@ -148,5 +152,9 @@ class WpCliCaller extends ConsoleCommand
     private function resolveWpCliCommand(string &$wp_cli_full_command_string): void
     {
         $this->resolveRewriteStructureOnWindows($wp_cli_full_command_string);
+
+        if ($this->isQuiet()) {
+            $wp_cli_full_command_string = "$wp_cli_full_command_string --quiet";
+        }
     }
 }
