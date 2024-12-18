@@ -2,6 +2,7 @@
 
 namespace Wordless\Infrastructure\ConsoleCommand\Traits;
 
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\DecoratedMessage;
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\DecoratedMessage\Enums\Decoration\Contracts\IDecoration;
 use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\OutputSection;
@@ -19,9 +20,13 @@ trait OutputMessage
     use VerboseOption;
     use WrappedScript;
 
+    /**
+     * @return bool
+     * @throws InvalidArgumentException
+     */
     protected function isQuiet(): bool
     {
-        return $this->output->isQuiet();
+        return $this->input->getOption('quiet');
     }
 
     protected function write(string $message, ?IDecoration $decoration = null): void
