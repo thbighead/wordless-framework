@@ -17,8 +17,8 @@ use Wordless\Core\Bootstrapper\Traits\MainPlugin;
 use Wordless\Core\Bootstrapper\Traits\Migrations;
 use Wordless\Core\Bootstrapper\Traits\PublishConfigs;
 use Wordless\Core\Bootstrapper\Traits\Schedules;
-use Wordless\Infrastructure\Provider;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Infrastructure\Provider;
 
 final class Bootstrapper extends Singleton
 {
@@ -33,7 +33,7 @@ final class Bootstrapper extends Singleton
 
     final public const CONFIG_KEY_ERROR_REPORTING = 'error_reporting';
 
-    /** @var Provider[] $loaded_providers */
+    /** @var array<string, Provider> $loaded_providers */
     private array $loaded_providers;
 
     /**
@@ -84,8 +84,10 @@ final class Bootstrapper extends Singleton
             throw new InvalidProviderClass($provider_class_namespace);
         }
 
-        foreach ($provider->registerProviders() as $provider_class_namespace) {
-            $this->loaded_providers[] = $this->loadProvider($provider_class_namespace);
+        foreach ($provider->registerProviders() as $registered_provider_class_namespace) {
+            if (!isset($this->loaded_providers[$registered_provider_class_namespace])) {
+                $this->loaded_providers[$registered_provider_class_namespace] = $this->loadProvider($registered_provider_class_namespace);
+            }
         }
 
         return $provider;
@@ -103,7 +105,9 @@ final class Bootstrapper extends Singleton
         }
 
         foreach (Config::wordless(Provider::CONFIG_KEY) as $provider_class_namespace) {
-            $this->loaded_providers[] = $this->loadProvider($provider_class_namespace);
+            if (!isset($this->loaded_providers[$provider_class_namespace])) {
+                $this->loaded_providers[$provider_class_namespace] = $this->loadProvider($provider_class_namespace);
+            }
         }
 
         return $this;
