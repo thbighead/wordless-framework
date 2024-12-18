@@ -68,7 +68,7 @@ trait Wordless
      */
     public static function wordlessPluginsOrder(): array
     {
-        return self::fromWordlessFile(self::KEY_PLUGINS_ORDER, default: []);
+        return self::fromWordlessFile(self::KEY_PLUGINS_ORDER)->get(default: []);
     }
 
     /**
