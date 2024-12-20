@@ -2,7 +2,7 @@
 
 namespace Wordless\Application\Libraries\Carbon;
 
-use Carbon\Carbonimmutable as OriginalCarbonImmutable;
+use Carbon\CarbonImmutable as OriginalCarbonImmutable;
 use Carbon\Exceptions\InvalidFormatException;
 use DateTimeInterface;
 use DateTimeZone;
