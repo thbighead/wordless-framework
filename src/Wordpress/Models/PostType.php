@@ -43,9 +43,9 @@ class PostType
         return (array)$this->cap;
     }
 
-    public function is(StandardType|string $type): bool
+    public function is(PostType|StandardType|string $type): bool
     {
-        if ($type instanceof StandardType) {
+        if (!is_string($type)) {
             $type = $type->name;
         }
 
