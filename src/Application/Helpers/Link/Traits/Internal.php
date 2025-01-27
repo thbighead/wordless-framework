@@ -77,4 +77,14 @@ trait Internal
 
         return "$base_assets_uri$assets_uri_path";
     }
+
+    /**
+     * @return string
+     * @throws DotEnvNotSetException
+     * @throws FormatException
+     */
+    private static function guessUploadsUri(): string
+    {
+        return self::getBaseUri() . "/wp-content/uploads";
+    }
 }

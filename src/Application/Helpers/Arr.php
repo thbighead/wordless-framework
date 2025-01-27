@@ -174,6 +174,23 @@ class Arr extends Subjectable
         return json_encode($array, JSON_THROW_ON_ERROR);
     }
 
+    /**
+     * @param array $array
+     * @param int|string|null $key
+     * @return mixed
+     * @throws FailedToParseArrayKey
+     */
+    public static function unwrap(array $array, int|string|null $key = null): mixed
+    {
+        $return = $key === null ? static::first($array) : static::get($array, $key);
+
+        while (is_array($return)) {
+            $return = static::first($return);
+        }
+
+        return $return;
+    }
+
     public static function wrap(mixed $something): array
     {
         if (is_array($something)) {

@@ -120,4 +120,14 @@ final class ArraySubjectDTO extends SubjectDTO
     {
         return Arr::toJson($this->subject);
     }
+
+    /**
+     * @param int|string|null $key
+     * @return mixed
+     * @throws FailedToParseArrayKey
+     */
+    public function unwrap(int|string|null $key = null): mixed
+    {
+        return Arr::unwrap($this->subject, $key);
+    }
 }
