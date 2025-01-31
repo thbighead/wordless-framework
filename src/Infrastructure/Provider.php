@@ -37,6 +37,14 @@ abstract class Provider
     }
 
     /**
+     * @return array<string, int|bool|string|float|array>
+     */
+    public function registerConstants(): array
+    {
+        return [];
+    }
+
+    /**
      * @return string[]|Cacher[]
      */
     public function registerInternalCachers(): array
