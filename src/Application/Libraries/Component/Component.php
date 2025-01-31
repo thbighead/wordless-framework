@@ -24,16 +24,9 @@ abstract class Component
     private static array $already_loaded_assets = [];
     private string $html;
 
-    /**
-     * @return void
-     * @throws EmptyConfigKey
-     * @throws TemplateNotFoundException
-     */
-    final public function display(): void
+    public function __construct()
     {
         $this->loadAssets();
-
-        echo $this->html();
     }
 
     /**
@@ -41,7 +34,7 @@ abstract class Component
      * @throws EmptyConfigKey
      * @throws TemplateNotFoundException
      */
-    final protected function html(): string
+    final public function html(): string
     {
         return $this->html ?? $this->html = $this->mountHtml();
     }
