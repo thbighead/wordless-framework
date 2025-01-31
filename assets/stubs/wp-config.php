@@ -36,6 +36,7 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Timezone;
 use Wordless\Application\Libraries\LogManager\Logger;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
+use Wordless\Core\Bootstrapper;
 use Wordless\Core\InternalCache;
 
 const WP_DEBUG = true;
@@ -171,6 +172,8 @@ if (!empty($allowed_hosts)) {
 if (!defined('ABSPATH')) {
     define('ABSPATH', __DIR__ . '/');
 }
+
+Bootstrapper::bootConstants();
 
 /** Sets up WordPress vars and included files. */
 require_once ABSPATH . 'wp-settings.php';
