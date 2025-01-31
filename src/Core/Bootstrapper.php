@@ -8,6 +8,7 @@ use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectD
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
+use Wordless\Core\Bootstrapper\Exceptions\ConstantAlreadyDefined;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\ApiControllers;
 use Wordless\Core\Bootstrapper\Traits\Console;
@@ -35,6 +36,28 @@ final class Bootstrapper extends Singleton
 
     /** @var array<string, Provider> $loaded_providers */
     private array $loaded_providers;
+
+    /**
+     * @return void
+     * @throws ConstantAlreadyDefined
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws FormatException
+     * @throws InvalidProviderClass
+     * @throws PathNotFoundException
+     */
+    public static function bootConstants(): void
+    {
+        foreach (self::getInstance()->getLoadedProviders() as $provider) {
+            foreach ($provider->registerConstants() as $constant_name => $constant_value) {
+                if (defined($constant_name)) {
+                    throw new ConstantAlreadyDefined($constant_name);
+                }
+
+                define($constant_name, $constant_value);
+            }
+        }
+    }
 
     /**
      * @return static
