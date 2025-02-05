@@ -5,11 +5,12 @@ namespace Wordless\Application\Commands\Migrations\Migrate;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Migrations\Migrate;
 use Wordless\Application\Commands\Migrations\Migrate\Exceptions\FailedToFindExecutedMigrationScript;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -70,9 +71,11 @@ class MigrateRollback extends Migrate
      * @throws FailedToUpdateOption
      * @throws FormatException
      * @throws InvalidArgumentException
+     * @throws InvalidDirectory
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
+     * @throws PathException
      * @throws PathNotFoundException
      * @throws QueryError
      */
@@ -87,14 +90,16 @@ class MigrateRollback extends Migrate
     /**
      * @param string $migration_filename
      * @return string
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
      * @throws FailedToFindExecutedMigrationScript
+     * @throws FormatException
+     * @throws InvalidDirectory
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
+     * @throws PathException
      * @throws PathNotFoundException
-     * @throws FormatException
-     * @throws EmptyConfigKey
-     * @throws DotEnvNotSetException
      */
     final protected function findLoadedMigrationFilepathByFilename(string $migration_filename): string
     {
@@ -110,9 +115,11 @@ class MigrateRollback extends Migrate
      * @throws FailedToFindExecutedMigrationScript
      * @throws FailedToUpdateOption
      * @throws FormatException
+     * @throws InvalidDirectory
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
+     * @throws PathException
      * @throws PathNotFoundException
      */
     final protected function registerMigrationExecution(string $migration_filename): void
@@ -149,9 +156,11 @@ class MigrateRollback extends Migrate
      * @throws FailedToFindExecutedMigrationScript
      * @throws FormatException
      * @throws InvalidArgumentException
+     * @throws InvalidDirectory
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
+     * @throws PathException
      * @throws PathNotFoundException
      */
     private function filterExecutedMigrationsToRollback(): static

@@ -3,8 +3,8 @@
 namespace Wordless\Application\Listeners;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
@@ -17,11 +17,12 @@ class BootApiControllers extends ActionListener
 {
     /**
      * @return void
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     * @throws FormatException
-     * @throws EmptyConfigKey
      * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws FormatException
+     * @throws InvalidProviderClass
+     * @throws PathException
+     * @throws PathNotFoundException
      */
     public static function register(): void
     {

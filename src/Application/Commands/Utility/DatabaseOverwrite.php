@@ -2,19 +2,21 @@
 
 namespace Wordless\Application\Commands\Utility;
 
+use OverflowException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO\Exceptions\InvalidRawUserData;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\Exceptions\FailedToOverwriteUser;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
@@ -34,8 +36,9 @@ class DatabaseOverwrite extends ConsoleCommand
 
     /**
      * @return bool
-     * @throws FormatException
      * @throws DotEnvNotSetException
+     * @throws FormatException
+     * @throws PathException
      */
     public function canRun(): bool
     {
@@ -70,7 +73,10 @@ class DatabaseOverwrite extends ConsoleCommand
      * @throws InvalidArgumentException
      * @throws InvalidRawUserData
      * @throws LogicException
+     * @throws OverflowException
+     * @throws PathException
      * @throws PathNotFoundException
+     * @throws RuntimeException
      */
     protected function runIt(): int
     {
@@ -89,6 +95,7 @@ class DatabaseOverwrite extends ConsoleCommand
     /**
      * @return UserDTO[]
      * @throws InvalidRawUserData
+     * @throws OverflowException
      */
     private function getUsers(): array
     {
@@ -106,6 +113,7 @@ class DatabaseOverwrite extends ConsoleCommand
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws FormatException
+     * @throws PathException
      * @throws PathNotFoundException
      */
     private function initializeConfigurations(): static
@@ -127,6 +135,8 @@ class DatabaseOverwrite extends ConsoleCommand
      * @throws InvalidArgumentException
      * @throws InvalidRawUserData
      * @throws LogicException
+     * @throws OverflowException
+     * @throws RuntimeException
      */
     private function overwriteAllUsers(): void
     {
@@ -179,12 +189,13 @@ class DatabaseOverwrite extends ConsoleCommand
     }
 
     /**
-     * @param $user
+     * @param UserDTO $user
      * @return void
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws RuntimeException
      */
-    private function tryUntilForfeit($user): void
+    private function tryUntilForfeit(UserDTO $user): void
     {
         while (true) {
             try {

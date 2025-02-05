@@ -2,7 +2,6 @@
 
 namespace Wordless\Application\Helpers\Config\Traits;
 
-use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
@@ -22,6 +21,7 @@ trait Internal
      * @param mixed $default
      * @return mixed|ConfigSubjectDTO
      * @throws PathNotFoundException
+     * @noinspection PhpUnusedPrivateMethodInspection
      */
     private static function fromConfigFile(string $filename, ?string $key = null, mixed $default = null): mixed
     {
@@ -42,6 +42,7 @@ trait Internal
      * @return mixed|ConfigSubjectDTO
      * @throws EmptyConfigKey
      * @throws PathNotFoundException
+     * @noinspection PhpUnusedPrivateMethodInspection
      */
     private static function fromDTO(
         ConfigSubjectDTO $dto,

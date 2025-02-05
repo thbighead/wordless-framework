@@ -1,10 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Helpers\Database\Traits;
 
 use Closure;
 use Exception;
-use Wordless\Application\Helpers\Database\DTO\QueryResultDTO;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\Str;
 

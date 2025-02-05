@@ -16,6 +16,7 @@ trait ArgumentMounter
      * @param string|null $key
      * @param Compare $compare
      * @return array
+     * @noinspection PhpUnusedPrivateMethodInspection
      */
     private function mountArgument(
         string|int|float|bool|array|null $value,

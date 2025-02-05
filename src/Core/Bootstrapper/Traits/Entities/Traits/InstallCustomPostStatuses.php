@@ -18,6 +18,7 @@ trait InstallCustomPostStatuses
         return array_keys($this->loaded_custom_post_statuses);
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function loadCustomPostStatuses(Provider $provider): static
     {
         foreach ($provider->registerPostStatuses() as $custom_post_type_namespace) {

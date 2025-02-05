@@ -3,7 +3,6 @@
 namespace Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\Contracts;
 
 use ErrorException;
-use Exception;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 

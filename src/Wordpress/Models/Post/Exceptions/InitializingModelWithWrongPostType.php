@@ -21,7 +21,7 @@ class InitializingModelWithWrongPostType extends InvalidArgumentException
     {
         $model_class_namespace = $this->model::class;
 
-        return "Tried to initialize a {$model_class_namespace} "
+        return "Tried to initialize a $model_class_namespace "
             . ($this->with_acfs ? 'with' : 'without')
             . " ACFs from a post of type '{$this->model->asWpPost()->post_type}'";
     }

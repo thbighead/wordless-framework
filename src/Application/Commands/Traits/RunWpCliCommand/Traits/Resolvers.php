@@ -37,6 +37,7 @@ trait Resolvers
      * @param string $wp_cli_command
      * @return $this
      * @throws InvalidArgumentException
+     * @noinspection PhpUnusedPrivateMethodInspection
      */
     private function resolveCommandModifiers(string &$wp_cli_command): static
     {

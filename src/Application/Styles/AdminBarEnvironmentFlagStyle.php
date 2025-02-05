@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Styles;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Link;
 use Wordless\Application\Helpers\ProjectPath;
@@ -17,6 +18,7 @@ class AdminBarEnvironmentFlagStyle extends GlobalEnqueueableStyle
      * @return string
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function mountSymlinkTargetRelativePath(): string
@@ -29,8 +31,9 @@ class AdminBarEnvironmentFlagStyle extends GlobalEnqueueableStyle
 
     /**
      * @return string
-     * @throws FormatException
      * @throws DotEnvNotSetException
+     * @throws FormatException
+     * @throws PathException
      */
     protected function filename(): string
     {
@@ -47,6 +50,7 @@ class AdminBarEnvironmentFlagStyle extends GlobalEnqueueableStyle
      * @return string
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     protected function mountFileUrl(): string
     {

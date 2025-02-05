@@ -3,6 +3,7 @@
 namespace Wordless\Core;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Environment;
@@ -44,6 +45,7 @@ final class Bootstrapper extends Singleton
      * @throws EmptyConfigKey
      * @throws FormatException
      * @throws InvalidProviderClass
+     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function bootConstants(): void
@@ -60,15 +62,15 @@ final class Bootstrapper extends Singleton
     }
 
     /**
-     * @return static
+     * @return self
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws FormatException
      * @throws InvalidProviderClass
+     * @throws PathException
      * @throws PathNotFoundException
-     * @noinspection PhpUnnecessaryStaticReferenceInspection
      */
-    public static function getInstance(): static
+    public static function getInstance(): self
     {
         return parent::getInstance()->load();
     }
@@ -87,6 +89,7 @@ final class Bootstrapper extends Singleton
      * @throws EmptyConfigKey
      * @throws FormatException
      * @throws InvalidProviderClass
+     * @throws PathException
      * @throws PathNotFoundException
      */
     private function load(): Bootstrapper
@@ -138,10 +141,11 @@ final class Bootstrapper extends Singleton
 
     /**
      * @return self
-     * @throws EmptyConfigKey
      * @throws DotEnvNotSetException
-     * @throws PathNotFoundException
+     * @throws EmptyConfigKey
      * @throws FormatException
+     * @throws PathException
+     * @throws PathNotFoundException
      */
     private function setErrorReporting(): self
     {

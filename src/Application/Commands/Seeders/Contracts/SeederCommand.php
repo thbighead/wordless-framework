@@ -6,6 +6,7 @@ use Faker\Factory;
 use Faker\Generator;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Helpers\Environment;
@@ -35,8 +36,9 @@ abstract class SeederCommand extends ConsoleCommand
 
     /**
      * @return bool
-     * @throws FormatException
      * @throws DotEnvNotSetException
+     * @throws FormatException
+     * @throws PathException
      */
     public function canRun(): bool
     {

@@ -5,6 +5,7 @@ namespace Wordless\Application\Commands;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\PublishConfigurationFiles\Exceptions\FailedToCopyConfig;
 use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
@@ -68,14 +69,15 @@ class PublishConfigurationFiles extends ConsoleCommand
 
     /**
      * @return int
-     * @throws InvalidProviderClass
+     * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
      * @throws FailedToCopyConfig
+     * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidDirectory
+     * @throws InvalidProviderClass
+     * @throws PathException
      * @throws PathNotFoundException
-     * @throws FormatException
-     * @throws EmptyConfigKey
-     * @throws DotEnvNotSetException
      */
     protected function runIt(): int
     {
