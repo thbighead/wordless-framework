@@ -2,10 +2,13 @@
 
 namespace Wordless\Wordpress\Models;
 
+use InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Database;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Wordpress\Models\Attachment\DTO\MediaDTO;
@@ -37,13 +40,23 @@ class Attachment extends Post
      * @param string $absolute_filepath
      * @param bool $secure_mode
      * @return int
+     * @throws FailedToCopyFile
      * @throws FailedToCreateAttachmentFromFile
+     * @throws InvalidArgumentException
+     * @throws PathNotFoundException
      * @throws QueryError
      * @noinspection PhpDocRedundantThrowsInspection
      */
     public static function createFromFile(string $absolute_filepath, bool $secure_mode = true): int
     {
-        return Database::smartTransaction(function () use ($absolute_filepath, $secure_mode): int {
+        /**
+         * @return int
+         * @throws FailedToCopyFile
+         * @throws FailedToCreateAttachmentFromFile
+         * @throws InvalidArgumentException
+         * @throws PathNotFoundException
+         */
+        $transaction = function () use ($absolute_filepath, $secure_mode): int {
             $result = wp_insert_attachment([
                 'post_mime_type' => mime_content_type($absolute_filepath),
                 'post_title' => (string)Str::of(basename($absolute_filepath))
@@ -61,14 +74,16 @@ class Attachment extends Post
             }
 
             if (wp_update_attachment_metadata(
-                abs($result),
-                wp_generate_attachment_metadata($result, $wp_uploads_new_filepath)
-            ) === false) {
+                    abs($result),
+                    wp_generate_attachment_metadata($result, $wp_uploads_new_filepath)
+                ) === false) {
                 throw new FailedToCreateAttachmentFromFile($result, $absolute_filepath, $wp_uploads_new_filepath, $secure_mode);
             }
 
             return $result;
-        });
+        };
+
+        return Database::smartTransaction($transaction);
     }
 
     /**
