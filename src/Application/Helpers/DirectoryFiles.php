@@ -82,6 +82,35 @@ class DirectoryFiles extends Helper
     }
 
     /**
+     * @param string $from
+     * @param string $date_subdirectory
+     * @param bool $secure_mode
+     * @return string
+     * @throws FailedToCopyFile
+     * @throws PathNotFoundException
+     */
+    public static function copyFileToWpUploads(
+        string $from,
+        string $date_subdirectory = '',
+        bool   $secure_mode = true
+    ): string
+    {
+        $wp_uploads_base_directory_target = empty($date_subdirectory)
+            ? wp_upload_dir()['path']
+            ?? throw new FailedToCopyFile($from, 'new uploads subdirectory', $secure_mode)
+            : ProjectPath::wpUploads() . "/$date_subdirectory";
+        $filename = basename($from);
+
+        static::copyFile(
+            $from,
+            $destiny = "$wp_uploads_base_directory_target/$filename",
+            $secure_mode
+        );
+
+        return $destiny;
+    }
+
+    /**
      * @param string $path
      * @param int|null $permissions
      * @return void

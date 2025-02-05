@@ -52,9 +52,9 @@ STRING;
                 );
             } catch (FailedToCopyFile $failedToCopyFileException) {
                 throw new FailedToCopyDotEnvExampleIntoNewDotEnv(
-                    $failedToCopyFileException->getFrom(),
-                    $failedToCopyFileException->getTo(),
-                    $failedToCopyFileException->getSecureMode()
+                    $failedToCopyFileException->from,
+                    $failedToCopyFileException->to,
+                    $failedToCopyFileException->secure_mode
                 );
             }
 
