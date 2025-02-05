@@ -100,7 +100,7 @@ class PublishConfigurationFiles extends ConsoleCommand
         try {
             DirectoryFiles::copyFile($from, $to, false);
         } catch (FailedToCopyFile $exception) {
-            throw new FailedToCopyConfig($from, $to, $exception->getSecureMode());
+            throw new FailedToCopyConfig($from, $to, $exception->secure_mode);
         }
     }
 
