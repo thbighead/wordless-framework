@@ -11,16 +11,11 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryP
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Application\Mounters\Stub\ActionListenerStubMounter;
-use Wordless\Application\Mounters\Stub\FilterListenerStubMounter;
-use Wordless\Application\Mounters\Stub\ListenerStubMounter;
 use Wordless\Application\Mounters\Stub\SchedulerStubMounter;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
-use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
-use Wordless\Infrastructure\Mounters\StubMounter;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
 class MakeScheduler extends ConsoleCommand

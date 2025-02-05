@@ -3,6 +3,7 @@
 namespace Wordless\Application\Commands\Utility\MediaSync\Traits;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToDeleteAttachment;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToRetrieveAttachmentUrl;
@@ -24,6 +25,7 @@ trait SyncFromUploadsDirectoryToDatabase
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     private function isApplicationUploadsFileUrlBroken(string $media_url): bool
     {
@@ -33,10 +35,11 @@ trait SyncFromUploadsDirectoryToDatabase
     /**
      * @param WP_Post[] $attachments
      * @return void
+     * @throws DotEnvNotSetException
      * @throws FailedToDeleteAttachment
      * @throws FailedToRetrieveAttachmentUrl
      * @throws FormatException
-     * @throws DotEnvNotSetException
+     * @throws PathException
      */
     private function processDatabaseAttachments(array $attachments): void
     {
@@ -72,6 +75,7 @@ trait SyncFromUploadsDirectoryToDatabase
      * @throws FailedToDeleteAttachment
      * @throws FailedToRetrieveAttachmentUrl
      * @throws FormatException
+     * @throws PathException
      */
     private function syncFromDatabaseToUploadsDirectory(): void
     {

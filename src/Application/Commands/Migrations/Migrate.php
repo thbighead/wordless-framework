@@ -7,15 +7,16 @@ use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Migrations\Migrate\Traits\ExecutionTimestamp;
 use Wordless\Application\Commands\Migrations\Migrate\Traits\ForceMode;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Database;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Option;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -94,9 +95,11 @@ class Migrate extends ConsoleCommand
      * @throws FailedToUpdateOption
      * @throws FormatException
      * @throws InvalidArgumentException
+     * @throws InvalidDirectory
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
+     * @throws PathException
      * @throws PathNotFoundException
      * @throws QueryError
      */
@@ -158,13 +161,15 @@ class Migrate extends ConsoleCommand
 
     /**
      * @return array<string, string>
+     * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
+     * @throws FormatException
+     * @throws InvalidDirectory
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
+     * @throws PathException
      * @throws PathNotFoundException
-     * @throws FormatException
-     * @throws DotEnvNotSetException
      */
     final protected function getLoadedMigrations(): array
     {
@@ -220,9 +225,11 @@ class Migrate extends ConsoleCommand
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws FormatException
+     * @throws InvalidDirectory
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
+     * @throws PathException
      * @throws PathNotFoundException
      */
     private function filterMigrationsMissingExecution(): static

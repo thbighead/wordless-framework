@@ -4,6 +4,7 @@ namespace Wordless\Application\Helpers;
 
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
@@ -68,6 +69,7 @@ STRING;
      * @return mixed
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     public static function get(string $key, mixed $default = null): mixed
     {
@@ -88,6 +90,7 @@ STRING;
      * @return mixed
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     public static function getWithoutCache(string $key, mixed $default = null): mixed
     {
@@ -132,6 +135,7 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     public static function isLocal(): bool
     {
@@ -147,6 +151,7 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     public static function isNotLocal(): bool
     {
@@ -162,6 +167,7 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     public static function isNotProduction(): bool
     {
@@ -172,6 +178,7 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     public static function isNotRemote(): bool
     {
@@ -182,6 +189,7 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     public static function isNotStaging(): bool
     {
@@ -192,6 +200,7 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     public static function isProduction(): bool
     {
@@ -202,6 +211,7 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     public static function isRemote(): bool
     {
@@ -212,6 +222,7 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     public static function isStaging(): bool
     {
@@ -222,6 +233,7 @@ STRING;
      * @return void
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     public static function loadDotEnv(): void
     {

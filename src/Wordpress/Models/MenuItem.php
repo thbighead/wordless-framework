@@ -8,6 +8,7 @@ use Wordless\Wordpress\Models\MenuItem\DTO\TypeDTO;
 use Wordless\Wordpress\Models\MenuItem\Enums\Type;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
+use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use WP_Post;
 
 class MenuItem extends Post
@@ -28,6 +29,7 @@ class MenuItem extends Post
      * @param WP_Post $menuItemPost
      * @param bool $with_acfs
      * @throws InitializingModelWithWrongPostType
+     * @throws InvalidAcfFunction
      * @throws PostTypeNotRegistered
      */
     public function __construct(WP_Post $menuItemPost, bool $with_acfs = false)

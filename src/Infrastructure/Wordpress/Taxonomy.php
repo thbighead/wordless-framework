@@ -14,6 +14,7 @@ use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
+use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 use WP_Taxonomy;
@@ -52,6 +53,7 @@ abstract class Taxonomy implements IRelatedMetaData
      * @throws EmptyQueryBuilderArguments
      * @throws EmptyStringParameter
      * @throws InitializingModelWithWrongTaxonomyName
+     * @throws InvalidAcfFunction
      * @throws InvalidArgumentException
      */
     public function __construct(WP_Term|int|string $term, bool $with_acfs = true)
@@ -108,6 +110,7 @@ abstract class Taxonomy implements IRelatedMetaData
     /**
      * @param int $from_id
      * @return void
+     * @throws InvalidAcfFunction
      * @throws InvalidArgumentException
      */
     private function loadTermAcfs(int $from_id): void

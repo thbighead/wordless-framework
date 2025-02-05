@@ -3,6 +3,7 @@
 namespace Wordless\Application\Helpers\Environment\Traits;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 trait Internal
@@ -42,8 +43,9 @@ trait Internal
     /**
      * @param string $value
      * @return string
-     * @throws FormatException
      * @throws DotEnvNotSetException
+     * @throws FormatException
+     * @throws PathException
      */
     private static function resolveReferences(string $value): string
     {
@@ -68,6 +70,7 @@ trait Internal
      * @return mixed
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     private static function retrieveValue(string $key, mixed $default = null): mixed
     {

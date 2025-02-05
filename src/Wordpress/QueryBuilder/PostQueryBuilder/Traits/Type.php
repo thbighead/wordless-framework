@@ -48,6 +48,7 @@ trait Type
         return Str::lower($this->retrieveTypeAsString($type)) === StandardType::ANY;
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function isTypeAttachment(StandardType|PostType|string $type): bool
     {
         if ($type instanceof StandardType) {
@@ -66,6 +67,7 @@ trait Type
         return ($this->arguments[PostType::QUERY_TYPE_KEY] ?? '') === StandardType::ANY;
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function isWhereTypePage(): bool
     {
         $where_type = $this->arguments[PostType::QUERY_TYPE_KEY] ?? [];
@@ -89,16 +91,19 @@ trait Type
         return is_array($where_type) && Arr::hasValue($where_type, $type->name);
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function isWhereTypeIncludingAttachment(): bool
     {
         return $this->isWhereTypeIncluding(StandardType::attachment);
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function isWhereTypeIncludingPage(): bool
     {
         return $this->isWhereTypeIncluding(StandardType::page);
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function isWhereTypeIncludingAnyPost(): bool
     {
         if ($this->isWhereTypeAny()) {

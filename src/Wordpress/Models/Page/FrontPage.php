@@ -8,6 +8,7 @@ use Wordless\Wordpress\Models\Page;
 use Wordless\Wordpress\Models\Page\FrontPage\Exceptions\FrontPageIsNotSet;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
+use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use WP_Post;
 
 class FrontPage extends Page
@@ -23,6 +24,7 @@ class FrontPage extends Page
      * @throws FailedToUpdateOption
      * @throws FrontPageIsNotSet
      * @throws InitializingModelWithWrongPostType
+     * @throws InvalidAcfFunction
      * @throws PostTypeNotRegistered
      */
     public static function setPageAsFrontPage(
@@ -58,6 +60,7 @@ class FrontPage extends Page
      * @param bool $with_acfs
      * @throws FrontPageIsNotSet
      * @throws InitializingModelWithWrongPostType
+     * @throws InvalidAcfFunction
      * @throws PostTypeNotRegistered
      */
     public function __construct(bool $with_acfs = true)

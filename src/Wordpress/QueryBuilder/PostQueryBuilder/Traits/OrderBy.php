@@ -56,6 +56,7 @@ trait OrderBy
         return $this->arguments[self::KEY_ORDER_BY][$first_ordering_column] === Direction::descending;
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function orderBySearchRelevance(): void
     {
         if ($this->isOrderedBySearchRelevance()) {

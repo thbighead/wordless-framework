@@ -4,9 +4,9 @@ namespace Wordless\Wordpress\Models\Role\Traits\Repository\Traits\FromDatabase\T
 
 use InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\SyncRoles;
 use Wordless\Application\Helpers\Config;
-use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
@@ -33,6 +33,7 @@ trait Sync
      * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidProviderClass
+     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function sync(): void
@@ -99,6 +100,7 @@ trait Sync
      * @throws FailedToFindRole
      * @throws FormatException
      * @throws InvalidProviderClass
+     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function syncPermissionsToAdminAsDefault(): void
@@ -116,6 +118,7 @@ trait Sync
      * @throws FormatException
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
+     * @throws PathException
      */
     public static function syncRestResourcesPermissionsToRole(Role $role): void
     {

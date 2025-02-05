@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Guessers;
 
@@ -8,7 +8,7 @@ use Wordless\Infrastructure\Guesser;
 
 class EnqueueableAssetIdGuesser extends Guesser
 {
-    public function __construct(private string $class_name)
+    public function __construct(readonly private string $class_name)
     {
     }
 

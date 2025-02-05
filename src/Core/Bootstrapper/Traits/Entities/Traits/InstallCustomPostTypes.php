@@ -21,6 +21,7 @@ trait InstallCustomPostTypes
         return array_keys($this->loaded_custom_post_types);
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function loadCustomPostTypes(Provider $provider): static
     {
         foreach ($provider->registerPostTypes() as $custom_post_type_namespace) {
