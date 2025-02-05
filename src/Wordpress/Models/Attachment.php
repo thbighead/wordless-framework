@@ -3,12 +3,14 @@
 namespace Wordless\Wordpress\Models;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Helpers\Database;
+use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\DirectoryFiles;
-use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Wordpress\Models\Attachment\DTO\MediaDTO;
 use Wordless\Wordpress\Models\Attachment\DTO\MediaDTO\DTO\SizeDTO;
+use Wordless\Wordpress\Models\Attachment\Exceptions\FailedToCreateAttachmentFromFile;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData\Traits\Crud\Traits\Read\Exceptions\InvalidMetaKey;
 use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\Post\Exceptions\FailedToGetPermalink;
@@ -31,34 +33,42 @@ class Attachment extends Post
     readonly public MediaDTO $media;
     readonly protected array $raw_metadata;
 
-    public static function createFromFile(string $absolute_filepath, bool $secure_mode = true)
+    /**
+     * @param string $absolute_filepath
+     * @param bool $secure_mode
+     * @return int
+     * @throws FailedToCreateAttachmentFromFile
+     * @throws QueryError
+     * @noinspection PhpDocRedundantThrowsInspection
+     */
+    public static function createFromFile(string $absolute_filepath, bool $secure_mode = true): int
     {
-        $filename = basename($absolute_filepath);
-
-        DirectoryFiles::copyFile(
-            $absolute_filepath,
-            $absolute_filepath_in_uploads = ProjectPath::wpUploads()
-                . DIRECTORY_SEPARATOR
-                . $filename,
-            $secure_mode
-        );
-
-        $result = wp_insert_attachment([
-                'post_mime_type' => mime_content_type($absolute_filepath_in_uploads),
-                'post_title' => (string)Str::of($filename)
+        return Database::smartTransaction(function () use ($absolute_filepath, $secure_mode): int {
+            $result = wp_insert_attachment([
+                'post_mime_type' => mime_content_type($absolute_filepath),
+                'post_title' => (string)Str::of(basename($absolute_filepath))
                     ->before('.')
                     ->replace(['-', '_'], ' ')
                     ->titleCase(),
                 'post_status' => StandardStatus::inherit->value,
-            ], $absolute_filepath_in_uploads);
+            ], $wp_uploads_new_filepath = DirectoryFiles::copyFileToWpUploads(
+                $absolute_filepath,
+                secure_mode: $secure_mode
+            ));
 
-        if ($result instanceof WP_Error || $result === 0) {
-            throw new RuntimeException("Failed to insert attachment \"$logo_filename\".");
-        }
+            if ($result instanceof WP_Error || $result === 0) {
+                throw new FailedToCreateAttachmentFromFile($result, $absolute_filepath, $wp_uploads_new_filepath, $secure_mode);
+            }
 
-        wp_update_attachment_metadata($result, wp_generate_attachment_metadata($result, $filepath));
+            if (wp_update_attachment_metadata(
+                abs($result),
+                wp_generate_attachment_metadata($result, $wp_uploads_new_filepath)
+            ) === false) {
+                throw new FailedToCreateAttachmentFromFile($result, $absolute_filepath, $wp_uploads_new_filepath, $secure_mode);
+            }
 
-        return $result;
+            return $result;
+        });
     }
 
     /**

@@ -375,7 +375,13 @@ class ProjectPath extends Helper
      */
     final public static function wpUploads(string $additional_path = ''): string
     {
-        return self::wpContent("uploads/$additional_path");
+        try {
+            $wordpress_try = wp_get_upload_dir()['basedir'] ?? self::wpContent('uploads');
+        } catch (PathNotFoundException $exception) {
+            throw new PathNotFoundException("$exception->path/$additional_path", $exception);
+        }
+
+        return self::realpath("$wordpress_try/$additional_path");
     }
 
     /**
