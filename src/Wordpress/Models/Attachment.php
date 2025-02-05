@@ -21,11 +21,14 @@ use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
+use Wordless\Wordpress\Models\Traits\WithAcfs\Traits\Validate;
 use WP_Error;
 use WP_Post;
 
 class Attachment extends Post
 {
+    use Validate;
+
     final public const KEY_ALTERNATIVE_TEXT = 'alt';
     final public const KEY_MIME_TYPE = 'mime-type';
     protected const TYPE_KEY = StandardType::attachment->name;
@@ -117,6 +120,15 @@ class Attachment extends Post
 
         $this->caption = empty($caption) ? $this->post_title : $caption;
         $this->description = empty($description) ? $this->post_title : $description;
+    }
+
+    /**
+     * @return array<string, mixed>
+     * @throws InvalidAcfFunction
+     */
+    public function fileAsAcfArray(): array
+    {
+        return $this->validateAcfFunction('acf_get_attachment')($this->asWpPost());
     }
 
     /**
