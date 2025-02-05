@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Wordpress\Models\Traits\WithAcfs\Traits;
 
@@ -6,6 +6,7 @@ use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 
 trait Loader
 {
+    /** @noinspection PhpPrivateFieldCanBeLocalVariableInspection */
     private int|string $acf_from_id;
     private array $acfs = [];
 

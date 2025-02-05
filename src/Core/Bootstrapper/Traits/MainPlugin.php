@@ -4,6 +4,7 @@ namespace Wordless\Core\Bootstrapper\Traits;
 
 use InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
@@ -24,13 +25,14 @@ trait MainPlugin
 
     /**
      * @return void
+     * @throws DotEnvNotSetException
      * @throws DuplicatedMenuId
      * @throws EmptyConfigKey
+     * @throws FormatException
      * @throws InvalidMenuClass
      * @throws InvalidProviderClass
+     * @throws PathException
      * @throws PathNotFoundException
-     * @throws FormatException
-     * @throws DotEnvNotSetException
      */
     public static function bootMainPlugin(): void
     {
@@ -46,6 +48,7 @@ trait MainPlugin
      * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidProviderClass
+     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function bootEnqueues(bool $on_admin = false): void

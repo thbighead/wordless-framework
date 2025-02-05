@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Libraries\JWT;
 
+use Lcobucci\JWT\Encoding\CannotEncodeContent;
 use Lcobucci\JWT\Encoding\ChainedFormatter;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer;
@@ -17,6 +18,8 @@ use Lcobucci\JWT\Token\Builder;
 use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Token\RegisteredClaimGiven;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\NoConstraintsGiven;
+use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use Lcobucci\JWT\Validation\Validator;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
@@ -99,6 +102,7 @@ class Token implements IPolymorphicConstructor
      * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
+     * @throws NoConstraintsGiven
      * @throws PathNotFoundException
      */
     public function isValid(): bool
@@ -116,7 +120,9 @@ class Token implements IPolymorphicConstructor
      * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
+     * @throws NoConstraintsGiven
      * @throws PathNotFoundException
+     * @throws RequiredConstraintsViolated
      */
     public function validateSignature(): void
     {
@@ -132,6 +138,7 @@ class Token implements IPolymorphicConstructor
      * @param array $payload
      * @param CryptoAlgorithm|null $crypto_strategy
      * @return void
+     * @throws CannotEncodeContent
      * @throws CannotSignPayload
      * @throws ConversionFailed
      * @throws EmptyConfigKey

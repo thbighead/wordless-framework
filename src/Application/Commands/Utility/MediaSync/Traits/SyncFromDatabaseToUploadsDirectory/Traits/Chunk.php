@@ -4,6 +4,7 @@ namespace Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabas
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\InvalidChunkValue;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\InvalidOptionsUsage;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\StopUploadsProcess;
@@ -104,8 +105,9 @@ trait Chunk
      * @return void
      * @throws InvalidArgumentException
      * @throws InvalidChunkValue
-     * @throws StopUploadsProcess
      * @throws LogicException
+     * @throws RuntimeException
+     * @throws StopUploadsProcess
      */
     private function resolveFinishedChunk(): void
     {

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Commands;
 
@@ -9,8 +9,13 @@ use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
+use Symfony\Component\Process\Exception\ProcessSignaledException;
+use Symfony\Component\Process\Exception\ProcessStartFailedException;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
+use Symfony\Component\Process\Exception\RuntimeException;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 use Wordless\Application\Helpers\DirectoryFiles;
@@ -104,7 +109,12 @@ class Diagnostics extends ConsoleCommand
      * @throws FormatException
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws PathException
      * @throws PathNotFoundException
+     * @throws ProcessSignaledException
+     * @throws ProcessStartFailedException
+     * @throws ProcessTimedOutException
+     * @throws RuntimeException
      * @throws SymfonyInvalidArgumentException
      * @throws SyntaxError
      */
@@ -135,6 +145,10 @@ class Diagnostics extends ConsoleCommand
      * @throws InvalidArgumentException
      * @throws LogicException
      * @throws PathNotFoundException
+     * @throws ProcessSignaledException
+     * @throws ProcessStartFailedException
+     * @throws ProcessTimedOutException
+     * @throws RuntimeException
      */
     private function composerInfo(): static
     {
@@ -163,6 +177,7 @@ class Diagnostics extends ConsoleCommand
      * @return $this
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      */
     private function dotEnvInfo(): static
     {
@@ -181,6 +196,7 @@ class Diagnostics extends ConsoleCommand
      * @return string[]
      * @throws DotEnvNotSetException
      * @throws FormatException
+     * @throws PathException
      * @throws SymfonyInvalidArgumentException
      */
     private function getTestUrls(): array
@@ -210,6 +226,10 @@ class Diagnostics extends ConsoleCommand
      * @return $this
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws ProcessSignaledException
+     * @throws ProcessStartFailedException
+     * @throws ProcessTimedOutException
+     * @throws RuntimeException
      */
     private function phpCliInfo(): static
     {
@@ -217,7 +237,7 @@ class Diagnostics extends ConsoleCommand
             $this->writeln(preg_replace(
                 '/^(\$_SERVER\[[\'"])?(DB_NAME|DB_USER|DB_PASSWORD|DB_HOST)([\'"]])? => .*$/m',
                 '',
-                $this->callExternalCommandSilentlyWithoutInterruption('php -i', false)->output
+                $this->callExternalCommandSilentlyWithoutInterruption('php -i')->output
             ));
         })->writeBlocksSeparator();
 
@@ -231,6 +251,7 @@ class Diagnostics extends ConsoleCommand
      * @throws Exception
      * @throws ExceptionInterface
      * @throws FormatException
+     * @throws PathException
      * @throws SyntaxError
      */
     private function wpCliDoctorAnalysis(): void
@@ -307,10 +328,11 @@ class Diagnostics extends ConsoleCommand
      * @return $this
      * @throws CommandNotFoundException
      * @throws DotEnvNotSetException
+     * @throws Exception
      * @throws ExceptionInterface
      * @throws FormatException
+     * @throws PathException
      * @throws SymfonyInvalidArgumentException
-     * @throws Exception
      * @throws SyntaxError
      */
     private function wpExecutionAnalysis(): static

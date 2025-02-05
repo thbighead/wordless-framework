@@ -6,9 +6,9 @@ use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
@@ -99,6 +99,7 @@ class MakeCustomPostType extends ConsoleCommand
      * @throws InvalidArgumentException
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidProviderClass
+     * @throws PathException
      * @throws PathNotFoundException
      * @throws ReservedCustomPostTypeKey
      * @throws SymfonyInvalidArgumentException
@@ -184,6 +185,7 @@ class MakeCustomPostType extends ConsoleCommand
      * @throws InvalidArgumentException
      * @throws InvalidCustomPostTypeKey
      * @throws InvalidProviderClass
+     * @throws PathException
      * @throws PathNotFoundException
      * @throws ReservedCustomPostTypeKey
      */

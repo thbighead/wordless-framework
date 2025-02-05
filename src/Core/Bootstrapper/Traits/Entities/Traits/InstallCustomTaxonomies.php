@@ -22,6 +22,7 @@ trait InstallCustomTaxonomies
         return array_keys($this->loaded_custom_taxonomies);
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function loadCustomTaxonomies(Provider $provider): static
     {
         foreach ($provider->registerTaxonomies() as $custom_taxonomy_namespace) {

@@ -57,6 +57,7 @@ trait Status
         };
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function isStatusAny(StandardStatus|PostStatus|string $status): bool
     {
         return (is_string($status) ? $status : $this->extractStatusString($status)) === StandardStatus::ANY;
@@ -67,6 +68,7 @@ trait Status
         return $status === StandardStatus::reallyAny();
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function isWhereStatusAny(): bool
     {
         return !is_null($this->arguments[self::KEY_POST_STATUS][StandardStatus::ANY] ?? null);
@@ -85,6 +87,7 @@ trait Status
         return ($this->arguments[self::KEY_POST_STATUS][$status] ?? null) === $status;
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function isWhereStatusIncludingPublish(): bool
     {
         return $this->isWhereStatusIncluding(StandardStatus::publish);

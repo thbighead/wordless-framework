@@ -5,6 +5,10 @@ namespace Wordless\Application\Commands\Utility;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyConsoleInvalidArgumentException;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
+use Symfony\Component\Process\Exception\ProcessSignaledException;
+use Symfony\Component\Process\Exception\ProcessStartFailedException;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
+use Symfony\Component\Process\Exception\RuntimeException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Utility\RunTests\Traits\CoverageOption;
 use Wordless\Application\Commands\Utility\RunTests\Traits\FilterOption;
@@ -56,6 +60,10 @@ class RunTests extends ConsoleCommand
      * @throws CliReturnedNonZero
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws ProcessSignaledException
+     * @throws ProcessStartFailedException
+     * @throws ProcessTimedOutException
+     * @throws RuntimeException
      * @throws SymfonyConsoleInvalidArgumentException
      */
     protected function runIt(): int

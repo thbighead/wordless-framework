@@ -82,7 +82,6 @@ trait External
 
     /**
      * @param string $full_command
-     * @param bool $set_tty
      * @return Response
      * @throws InvalidArgumentException
      * @throws LogicException
@@ -91,10 +90,10 @@ trait External
      * @throws ProcessTimedOutException
      * @throws RuntimeException
      */
-    protected function callExternalCommandSilentlyWithoutInterruption(string $full_command, bool $set_tty = true): Response
+    protected function callExternalCommandSilentlyWithoutInterruption(string $full_command): Response
     {
         try {
-            return $this->callExternalCommandSilently($full_command, $set_tty);
+            return $this->callExternalCommandSilently($full_command);
         } catch (CliReturnedNonZero $exception) {
             return $exception->commandResponse;
         }
