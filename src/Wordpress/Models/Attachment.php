@@ -3,8 +3,6 @@
 namespace Wordless\Wordpress\Models;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Helpers\Arr;
-use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Wordpress\Models\Attachment\DTO\MediaDTO;
@@ -33,7 +31,6 @@ class Attachment extends Post
      * @param int|WP_Post $post
      * @param bool $with_acfs
      * @throws DotEnvNotSetException
-     * @throws FailedToParseArrayKey
      * @throws FormatException
      * @throws InitializingModelWithWrongPostType
      * @throws InvalidAcfFunction
@@ -109,20 +106,18 @@ class Attachment extends Post
 
     /**
      * @return $this
-     * @throws FailedToParseArrayKey
      * @throws InvalidMetaKey
      */
     private function setRawMetadata(): static
     {
-        $raw_metadata_string = Arr::unwrap($this->getMetaField('_wp_attachment_metadata', []));
-        $raw_metadata = is_string($raw_metadata_string) ? unserialize($raw_metadata_string) : [];
+        $raw_metadata = $this->getMetaField('_wp_attachment_metadata', []);
 
         if (!empty($raw_metadata)) {
-            $raw_metadata[SizeDTO::KEY_FILE] ??= Arr::unwrap($this->getMetaField('_wp_attached_file', []));
-            $raw_metadata[self::KEY_ALTERNATIVE_TEXT] = Arr::unwrap($this->getMetaField(
+            $raw_metadata[SizeDTO::KEY_FILE] ??= $this->getMetaField('_wp_attached_file', []);
+            $raw_metadata[self::KEY_ALTERNATIVE_TEXT] = $this->getMetaField(
                 '_wp_attachment_image_alt',
                 ['']
-            ));
+            );
         }
 
         $this->raw_metadata = $raw_metadata;
