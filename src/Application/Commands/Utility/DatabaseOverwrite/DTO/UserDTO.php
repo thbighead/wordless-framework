@@ -4,6 +4,7 @@ namespace Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO;
 
 use Faker\Factory;
 use Faker\Generator;
+use OverflowException;
 use PasswordHash;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO\Exceptions\InvalidRawUserData;
 
@@ -25,6 +26,7 @@ final class UserDTO
     /**
      * @param object $rawUser
      * @throws InvalidRawUserData
+     * @throws OverflowException
      */
     public function __construct(private readonly object $rawUser)
     {
@@ -68,6 +70,10 @@ final class UserDTO
         return time() . ":{$wpBaseHash->HashPassword(wp_generate_password(20, false))}";
     }
 
+    /**
+     * @return string
+     * @throws OverflowException
+     */
     private function generateSafeEmail(): string
     {
         return self::$faker->unique()->safeEmail;

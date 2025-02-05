@@ -14,6 +14,7 @@ trait ConsoleCommandInstantiator
      * @param string $command_name
      * @return ConsoleCommand
      * @throws CommandNotFoundException
+     * @noinspection PhpUnusedPrivateMethodInspection
      */
     private function getConsoleCommandInstance(string $command_name): ConsoleCommand
     {

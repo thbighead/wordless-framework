@@ -206,6 +206,7 @@ trait Validation
      * @param array $arguments
      * @return $this
      * @throws EmptyDateArgument
+     * @noinspection PhpUnusedPrivateMethodInspection
      */
     private function validateEmptyArgument(array $arguments): static
     {

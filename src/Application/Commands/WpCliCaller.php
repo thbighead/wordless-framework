@@ -19,7 +19,6 @@ use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
-use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 
 class WpCliCaller extends ConsoleCommand
 {
@@ -151,6 +150,11 @@ class WpCliCaller extends ConsoleCommand
         }
     }
 
+    /**
+     * @param string $wp_cli_full_command_string
+     * @return void
+     * @throws InvalidArgumentException
+     */
     private function resolveWpCliCommand(string &$wp_cli_full_command_string): void
     {
         $this->resolveRewriteStructureOnWindows($wp_cli_full_command_string);

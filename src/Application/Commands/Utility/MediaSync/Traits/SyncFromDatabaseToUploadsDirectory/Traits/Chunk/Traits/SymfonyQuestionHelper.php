@@ -4,6 +4,7 @@ namespace Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabas
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
@@ -16,6 +17,7 @@ trait SymfonyQuestionHelper
      * @return bool
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws RuntimeException
      */
     private function askToContinueToNextChunk(): bool
     {

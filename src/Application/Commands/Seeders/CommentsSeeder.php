@@ -11,6 +11,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Seeders\Contracts\SeederCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Post;
 
 class CommentsSeeder extends SeederCommand
@@ -33,10 +34,11 @@ class CommentsSeeder extends SeederCommand
 
     /**
      * @return int
-     * @throws ExceptionInterface
-     * @throws CommandNotFoundException
-     * @throws InvalidArgumentException
      * @throws CliReturnedNonZero
+     * @throws CommandNotFoundException
+     * @throws EmptyQueryBuilderArguments
+     * @throws ExceptionInterface
+     * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
     protected function runIt(): int

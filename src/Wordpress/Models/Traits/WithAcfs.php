@@ -2,7 +2,6 @@
 
 namespace Wordless\Wordpress\Models\Traits;
 
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Traits\Crud;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Traits\Loader;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Traits\Validate;

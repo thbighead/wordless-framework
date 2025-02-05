@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Wordpress\Models\Post\Traits;
 
 use Wordless\Wordpress\Models\Attachment;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
+use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 
 trait FeaturedImage
 {
@@ -14,6 +15,7 @@ trait FeaturedImage
      * @param bool $with_acfs
      * @return Attachment|null
      * @throws InitializingModelWithWrongPostType
+     * @throws InvalidAcfFunction
      * @throws PostTypeNotRegistered
      */
     public function getFeaturedImage(bool $with_acfs = false): ?Attachment
@@ -32,6 +34,7 @@ trait FeaturedImage
      * @param bool $keep_featured_image_loaded
      * @return int|null
      * @throws InitializingModelWithWrongPostType
+     * @throws InvalidAcfFunction
      * @throws PostTypeNotRegistered
      */
     public function getFeaturedImageId(bool $keep_featured_image_loaded = false): ?int

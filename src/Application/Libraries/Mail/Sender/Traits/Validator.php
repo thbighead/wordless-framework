@@ -24,6 +24,7 @@ trait Validator
      * @param string[] $to
      * @return string[]
      * @throws EmptyReceiversList
+     * @noinspection PhpUnusedPrivateMethodInspection
      */
     private function validateTo(array $to): array
     {
