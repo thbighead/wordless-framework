@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+declare(strict_types=1);
 
 namespace Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage;
 
@@ -14,7 +15,6 @@ use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use function WP_CLI\Utils\is_json;
 
 trait TabledMessage
 {

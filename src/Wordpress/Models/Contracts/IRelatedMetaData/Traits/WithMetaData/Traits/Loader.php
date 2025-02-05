@@ -9,6 +9,7 @@ trait Loader
     /** @var array<string, mixed> $metaFields */
     private array $metaFields = [];
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function loadMetaFields(): void
     {
         foreach ($this->callGetAllMetaData() as $meta_key => $meta_value) {

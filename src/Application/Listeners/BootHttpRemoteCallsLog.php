@@ -3,6 +3,7 @@
 namespace Wordless\Application\Listeners;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
@@ -26,8 +27,9 @@ class BootHttpRemoteCallsLog extends ActionListener
      * @param array $request
      * @param string $url
      * @return void
-     * @throws FormatException
      * @throws DotEnvNotSetException
+     * @throws FormatException
+     * @throws PathException
      * @noinspection PhpUnusedParameterInspection
      */
     public static function debugWordPressRemoteRequest(

@@ -5,7 +5,9 @@ namespace Wordless\Application\Commands\Utility\MediaSync\Traits;
 use Generator;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachment;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachmentMetadata;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk;
@@ -135,6 +137,8 @@ trait SyncFromDatabaseToUploadsDirectory
      * @throws InvalidDirectory
      * @throws LogicException
      * @throws PathNotFoundException
+     * @throws RuntimeException
+     * @throws PathException
      */
     private function processUploadsFiles(): int
     {
@@ -187,7 +191,9 @@ trait SyncFromDatabaseToUploadsDirectory
      * @throws InvalidChunkValue
      * @throws InvalidDirectory
      * @throws LogicException
+     * @throws PathException
      * @throws PathNotFoundException
+     * @throws RuntimeException
      */
     private function syncFromUploadsDirectoryToDatabase(): void
     {

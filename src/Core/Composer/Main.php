@@ -14,6 +14,7 @@ use Composer\Package\CompletePackage;
 use Composer\Package\RootPackage;
 use Composer\Script\Event;
 use OutOfBoundsException;
+use RuntimeException;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -47,6 +48,7 @@ class Main
      * @param Event $composerEvent
      * @return void
      * @throws PathNotFoundException
+     * @throws RuntimeException
      */
     public static function saveInstalledVersion(Event $composerEvent): void
     {
@@ -72,6 +74,11 @@ class Main
         }
     }
 
+    /**
+     * @param Composer $composer
+     * @return void
+     * @throws RuntimeException
+     */
     final protected static function defineProjectPath(Composer $composer): void
     {
         $root_project_path_constant = 'ROOT_PROJECT_PATH';

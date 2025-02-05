@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData\Traits\Crud\Traits\Read\Traits;
 
 trait InternalGetters
 {
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     private function callGetAllMetaData(): array
     {
         return $this->callGetMetaData();

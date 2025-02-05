@@ -5,6 +5,7 @@ namespace Wordless\Infrastructure\ConsoleCommand\Traits;
 use LogicException;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException as SymfonyLogicException;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
@@ -18,6 +19,7 @@ trait Questions
      * @param Question $question
      * @return mixed
      * @throws InvalidArgumentException
+     * @throws RuntimeException
      * @throws SymfonyLogicException
      */
     protected function ask(Question $question): mixed
@@ -33,6 +35,7 @@ trait Questions
      * @return string|bool|int|float|null
      * @throws InvalidArgumentException
      * @throws LogicException
+     * @throws RuntimeException
      * @throws SymfonyLogicException
      */
     protected function choiceQuestion(
@@ -53,6 +56,7 @@ trait Questions
      * @param bool $default
      * @return bool
      * @throws InvalidArgumentException
+     * @throws RuntimeException
      * @throws SymfonyLogicException
      */
     protected function confirmationQuestion(string $question, bool $default = true): bool
@@ -75,6 +79,7 @@ trait Questions
      * @param string|bool|int|float|null $default
      * @return string|bool|int|float|null
      * @throws InvalidArgumentException
+     * @throws RuntimeException
      * @throws SymfonyLogicException
      */
     protected function question(

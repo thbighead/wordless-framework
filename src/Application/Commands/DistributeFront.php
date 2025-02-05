@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Commands;
 
@@ -7,8 +7,6 @@ use MatthiasMullie\Minify\CSS;
 use MatthiasMullie\Minify\Exceptions\IOException;
 use MatthiasMullie\Minify\JS;
 use Symfony\Component\Console\Command\Command;
-use TypeError;
-use ValueError;
 use Wordless\Application\Commands\DistributeFront\Enums\Type;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
@@ -67,8 +65,6 @@ class DistributeFront extends ConsoleCommand
      * @throws IOException
      * @throws InvalidDirectory
      * @throws PathNotFoundException
-     * @throws TypeError
-     * @throws ValueError
      */
     protected function runIt(): int
     {
@@ -109,15 +105,13 @@ class DistributeFront extends ConsoleCommand
      * @throws FailedToGetDirectoryPermissions
      * @throws FailedToPutFileContent
      * @throws PathNotFoundException
-     * @throws TypeError
-     * @throws ValueError
      */
     private function mountMinifiedAbsoluteFilepath(string $non_minified_filepath): string
     {
         $detectedFileType = Type::from(Str::afterLast($non_minified_filepath, '.'));
 
         try {
-            return ProjectPath::dist(Str::of($non_minified_filepath)
+            return ProjectPath::dist((string)Str::of($non_minified_filepath)
                 ->afterLast(DIRECTORY_SEPARATOR)
                 ->before('.')
                 ->wrap("$detectedFileType->name/",".min.$detectedFileType->name"));

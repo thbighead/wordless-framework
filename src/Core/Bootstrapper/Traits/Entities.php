@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Core\Bootstrapper\Traits;
 
 use InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper;
@@ -39,6 +40,7 @@ trait Entities
      * @throws InvalidCustomTaxonomyName
      * @throws InvalidObjectTypeAssociationToTaxonomy
      * @throws InvalidProviderClass
+     * @throws PathException
      * @throws PathNotFoundException
      * @throws ReservedCustomPostStatusKey
      * @throws ReservedCustomPostTypeKey

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Wordless\Application\Helpers\Http\Traits;
 
 use JsonException;
-use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Enums\MimeType;
 use WP_Http;

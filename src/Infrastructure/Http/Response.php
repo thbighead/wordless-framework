@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+declare(strict_types=1);
 
 namespace Wordless\Infrastructure\Http;
 

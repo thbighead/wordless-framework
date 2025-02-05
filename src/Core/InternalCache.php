@@ -3,8 +3,8 @@
 namespace Wordless\Core;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
@@ -55,14 +55,15 @@ final class InternalCache
 
     /**
      * @return void
-     * @throws EmptyConfigKey
      * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
      * @throws FailedToCopyStub
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
      * @throws FormatException
+     * @throws InvalidProviderClass
+     * @throws PathException
+     * @throws PathNotFoundException
      */
     public static function generate(): void
     {
@@ -120,6 +121,7 @@ final class InternalCache
      * @throws InvalidCache
      * @throws InvalidDirectory
      * @throws PathNotFoundException
+     * @throws PathException
      */
     public static function load(): void
     {

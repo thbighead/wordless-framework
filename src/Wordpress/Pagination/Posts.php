@@ -3,8 +3,6 @@
 namespace Wordless\Wordpress\Pagination;
 
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
-use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
-use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PaginationArgumentsBuilder;
 use WP_Post;
@@ -23,8 +21,6 @@ final class Posts
     /**
      * @param PostQueryBuilder $queryBuilder
      * @param PaginationArgumentsBuilder $paginationBuilder
-     * @throws InitializingModelWithWrongPostType
-     * @throws PostTypeNotRegistered
      * @throws EmptyQueryBuilderArguments
      */
     public function __construct(
@@ -56,8 +52,6 @@ final class Posts
      * @param int $page
      * @return $this
      * @throws EmptyQueryBuilderArguments
-     * @throws InitializingModelWithWrongPostType
-     * @throws PostTypeNotRegistered
      */
     public function goToPage(int $page): Posts
     {
@@ -72,8 +66,6 @@ final class Posts
     /**
      * @return $this
      * @throws EmptyQueryBuilderArguments
-     * @throws InitializingModelWithWrongPostType
-     * @throws PostTypeNotRegistered
      */
     public function nextPage(): Posts
     {
@@ -84,8 +76,6 @@ final class Posts
      * @param int $page
      * @return WP_Post[]
      * @throws EmptyQueryBuilderArguments
-     * @throws InitializingModelWithWrongPostType
-     * @throws PostTypeNotRegistered
      */
     public function retrievePageItems(int $page): array
     {
@@ -95,8 +85,6 @@ final class Posts
     /**
      * @return WP_Post[]
      * @throws EmptyQueryBuilderArguments
-     * @throws InitializingModelWithWrongPostType
-     * @throws PostTypeNotRegistered
      */
     public function retrieveNextPageItems(): array
     {

@@ -3,6 +3,7 @@
 namespace Wordless\Application\Listeners;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -28,6 +29,7 @@ class EnableCsp extends ActionListener
      * @throws EmptyConfigKey
      * @throws FailedToSentCspHeadersFromBuilder
      * @throws FormatException
+     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function enable(): void

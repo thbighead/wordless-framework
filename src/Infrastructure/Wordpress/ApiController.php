@@ -4,8 +4,8 @@ namespace Wordless\Infrastructure\Wordpress;
 
 use Generator;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
@@ -70,6 +70,7 @@ abstract class ApiController extends WP_REST_Controller
      * @throws EmptyConfigKey
      * @throws FormatException
      * @throws InvalidProviderClass
+     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function all(): Generator
@@ -88,12 +89,13 @@ abstract class ApiController extends WP_REST_Controller
     }
 
     /**
-     * @return class-string[]|ApiController[]
-     * @throws EmptyConfigKey
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     * @throws FormatException
+     * @return string[]|ApiController[]
      * @throws DotEnvNotSetException
+     * @throws EmptyConfigKey
+     * @throws FormatException
+     * @throws InvalidProviderClass
+     * @throws PathException
+     * @throws PathNotFoundException
      */
     public static function loadProvidedApiControllers(): array
     {

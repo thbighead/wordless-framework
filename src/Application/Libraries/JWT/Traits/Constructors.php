@@ -2,6 +2,8 @@
 
 namespace Wordless\Application\Libraries\JWT\Traits;
 
+use Lcobucci\JWT\Encoding\CannotDecodeContent;
+use Lcobucci\JWT\Encoding\CannotEncodeContent;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer\CannotSignPayload;
 use Lcobucci\JWT\Signer\Ecdsa\ConversionFailed;
@@ -36,6 +38,7 @@ trait Constructors
     /**
      * @param string $full_token
      * @return void
+     * @throws CannotDecodeContent
      * @throws InvalidTokenStructure
      * @throws UnsupportedHeaderFound
      */
@@ -50,14 +53,15 @@ trait Constructors
     /**
      * @param array $payload
      * @return void
+     * @throws CannotEncodeContent
      * @throws CannotSignPayload
      * @throws ConversionFailed
+     * @throws EmptyConfigKey
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws InvalidKeyProvided
      * @throws PathNotFoundException
      * @throws RegisteredClaimGiven
-     * @throws EmptyConfigKey
      */
     public function __constructWithPayloadUsingDefaultCrypto(array $payload): void
     {
@@ -68,6 +72,7 @@ trait Constructors
      * @param array $payload
      * @param CryptoAlgorithm $crypto_strategy
      * @return void
+     * @throws CannotEncodeContent
      * @throws CannotSignPayload
      * @throws ConversionFailed
      * @throws EmptyConfigKey
