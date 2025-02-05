@@ -9,6 +9,18 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 trait Read
 {
     /**
+     * @param string $slug
+     * @param bool $with_acfs
+     * @return static|null
+     */
+    public static function findBySlug(string $slug, bool $with_acfs = true): ?static
+    {
+        $post = get_page_by_path($slug, OBJECT, static::TYPE_KEY);
+
+        return $post === null ? null : new static($post, $with_acfs);
+    }
+
+    /**
      * @param int $quantity
      * @return static|static[]|null
      * @throws EmptyQueryBuilderArguments
