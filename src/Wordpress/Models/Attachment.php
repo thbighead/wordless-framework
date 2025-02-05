@@ -3,16 +3,20 @@
 namespace Wordless\Wordpress\Models;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Wordpress\Models\Attachment\DTO\MediaDTO;
 use Wordless\Wordpress\Models\Attachment\DTO\MediaDTO\DTO\SizeDTO;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData\Traits\Crud\Traits\Read\Exceptions\InvalidMetaKey;
+use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\Post\Exceptions\FailedToGetPermalink;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
+use WP_Error;
 use WP_Post;
 
 class Attachment extends Post
@@ -26,6 +30,36 @@ class Attachment extends Post
     readonly public string $description;
     readonly public MediaDTO $media;
     readonly protected array $raw_metadata;
+
+    public static function createFromFile(string $absolute_filepath, bool $secure_mode = true)
+    {
+        $filename = basename($absolute_filepath);
+
+        DirectoryFiles::copyFile(
+            $absolute_filepath,
+            $absolute_filepath_in_uploads = ProjectPath::wpUploads()
+                . DIRECTORY_SEPARATOR
+                . $filename,
+            $secure_mode
+        );
+
+        $result = wp_insert_attachment([
+                'post_mime_type' => mime_content_type($absolute_filepath_in_uploads),
+                'post_title' => (string)Str::of($filename)
+                    ->before('.')
+                    ->replace(['-', '_'], ' ')
+                    ->titleCase(),
+                'post_status' => StandardStatus::inherit->value,
+            ], $absolute_filepath_in_uploads);
+
+        if ($result instanceof WP_Error || $result === 0) {
+            throw new RuntimeException("Failed to insert attachment \"$logo_filename\".");
+        }
+
+        wp_update_attachment_metadata($result, wp_generate_attachment_metadata($result, $filepath));
+
+        return $result;
+    }
 
     /**
      * @param int|WP_Post $post
