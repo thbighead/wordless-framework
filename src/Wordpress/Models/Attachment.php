@@ -70,14 +70,24 @@ class Attachment extends Post
             ));
 
             if ($result instanceof WP_Error || $result === 0) {
-                throw new FailedToCreateAttachmentFromFile($result, $absolute_filepath, $wp_uploads_new_filepath, $secure_mode);
+                throw new FailedToCreateAttachmentFromFile(
+                    $result,
+                    $absolute_filepath,
+                    $wp_uploads_new_filepath,
+                    $secure_mode
+                );
             }
 
             if (wp_update_attachment_metadata(
                     abs($result),
                     wp_generate_attachment_metadata($result, $wp_uploads_new_filepath)
                 ) === false) {
-                throw new FailedToCreateAttachmentFromFile($result, $absolute_filepath, $wp_uploads_new_filepath, $secure_mode);
+                throw new FailedToCreateAttachmentFromFile(
+                    $result,
+                    $absolute_filepath,
+                    $wp_uploads_new_filepath,
+                    $secure_mode
+                );
             }
 
             return $result;
@@ -144,6 +154,66 @@ class Attachment extends Post
         }
 
         return "$picture<img src='$originalSize->url' alt='$this->alt' /></picture>";
+    }
+
+    /**
+     * @param string $absolute_filepath
+     * @param bool $secure_mode
+     * @return string
+     * @throws FailedToCopyFile
+     * @throws FailedToCreateAttachmentFromFile
+     * @throws InvalidArgumentException
+     * @throws PathNotFoundException
+     * @throws QueryError
+     * @noinspection PhpDocRedundantThrowsInspection
+     */
+    public function updateFile(string $absolute_filepath, bool $secure_mode = true): string
+    {
+        /**
+         * @return string
+         * @throws FailedToCopyFile
+         * @throws FailedToCreateAttachmentFromFile
+         * @throws InvalidArgumentException
+         * @throws PathNotFoundException
+         */
+        $transaction = function () use ($absolute_filepath, $secure_mode): string {
+            $result = wp_insert_attachment([
+                'ID' => $this->id(),
+                'post_mime_type' => mime_content_type($absolute_filepath),
+                'post_title' => (string)Str::of(basename($absolute_filepath))
+                    ->before('.')
+                    ->replace(['-', '_'], ' ')
+                    ->titleCase(),
+            ], $wp_uploads_new_filepath = DirectoryFiles::copyFileToWpUploads(
+                $absolute_filepath,
+                secure_mode: $secure_mode
+            ));
+
+            if ($result instanceof WP_Error || $result === 0) {
+                throw new FailedToCreateAttachmentFromFile(
+                    $result,
+                    $absolute_filepath,
+                    $wp_uploads_new_filepath,
+                    $secure_mode
+                );
+            }
+
+            if (wp_update_attachment_metadata(
+                    abs($result),
+                    wp_generate_attachment_metadata($result, $wp_uploads_new_filepath)
+                ) === false) {
+                throw new FailedToCreateAttachmentFromFile(
+                    $result,
+                    $absolute_filepath,
+                    $wp_uploads_new_filepath,
+                    $secure_mode
+                );
+            }
+
+            return $wp_uploads_new_filepath;
+        };
+
+        return Database::smartTransaction($transaction);
     }
 
     private function setAltText(): static
