@@ -7,5 +7,5 @@ interface TemplateFile
     /**
      * @return array<string, mixed>
      */
-    public function templateVariables(): array;
+    public function componentInstanceFields(): array;
 }
