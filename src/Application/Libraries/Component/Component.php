@@ -78,7 +78,10 @@ abstract class Component
         }
 
         ob_start();
-        Template::includeTemplate($this->validateTemplateRelativePath(), $this->templateVariables());
+        Template::includeTemplate(
+            $this->validateTemplateRelativePath(),
+            ['fields' => $this->componentInstanceFields()]
+        );
         $template = ob_get_contents();
         ob_end_clean();
 
