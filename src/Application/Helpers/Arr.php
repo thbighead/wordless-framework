@@ -11,9 +11,9 @@ use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 
 class Arr extends Subjectable
 {
-    public static function append(array $array, mixed $value): array
+    public static function append(array $array, mixed $value, string|int|null $with_key = null): array
     {
-        $array[] = $value;
+        $with_key !== null && !static::hasKey($array, $with_key) ? $array[$with_key] = $value : $array[] = $value;
 
         return $array;
     }
@@ -37,7 +37,7 @@ class Arr extends Subjectable
     {
         array_splice($array, max(1, abs($quantity)));
 
-        return match (sizeof($array)) {
+        return match (static::size($array)) {
             0 => null,
             1 => $array[static::getFirstKey($array) ?? 0],
             default => $array
@@ -101,6 +101,11 @@ class Arr extends Subjectable
         return false;
     }
 
+    public static function hasKey(array $array, string|int|null $key): bool
+    {
+        return key_exists($key, $array);
+    }
+
     public static function hasValue(array $array, mixed $value): bool
     {
         return in_array($value, $array, true);
@@ -108,7 +113,17 @@ class Arr extends Subjectable
 
     public static function isAssociative(array $array): bool
     {
-        return array_keys($array) !== range(0, count($array) - 1);
+        return array_keys($array) !== range(0, static::lastIndex($array));
+    }
+
+    public static function isEmpty(array $array): bool
+    {
+        return empty($array);
+    }
+
+    public static function lastIndex(array $array): int
+    {
+        return static::size($array) - 1;
     }
 
     /**
@@ -132,11 +147,65 @@ class Arr extends Subjectable
         return $filtered_array;
     }
 
-    public static function prepend(array $array, mixed $value): array
+    public static function prepend(array $array, mixed $value, string|int|bool|null $with_key = null): array
     {
-        array_unshift($array, $value);
+        if (!static::isAssociative($array) && $with_key === null) {
+            $clone = $array;
 
-        return $array;
+            array_unshift($clone, $value);
+
+            return $clone;
+        }
+
+        $new_array = $with_key === null || static::hasKey($array, $with_key) ? [$value] : [$with_key => $value];
+
+        foreach ($array as $item_key => $item_value) {
+            $new_array[$item_key] = $item_value;
+        }
+
+        return $new_array;
+    }
+
+    public static function pushValueIntoIndex(
+        array $array,
+        int $index,
+        mixed $value,
+        string|int|bool|null $with_key = null
+    ): array
+    {
+        if (($index = abs($index)) === 0) {
+            return static::prepend($array, $value, $with_key);
+        }
+
+        if ($index >= static::lastIndex($array)) {
+            return static::append($array, $value, $with_key);
+        }
+
+        $preserve_keys = static::isAssociative($array);
+        $new_array = array_slice($array, 0, $index + 1, $preserve_keys);
+        $second_part = array_slice($array, 0, $index + 1, true);
+
+        if (static::hasKey($array, $with_key)) {
+            $with_key = null;
+        }
+
+        if (!$preserve_keys) {
+            $value = $with_key === null ? [$value] : [$with_key => $value];
+
+            return array_merge(
+                $new_array,
+                $with_key === null ? [$value] : [$with_key => $value],
+                $second_part
+            );
+        }
+
+        $with_key === null ? $new_array[] = $value : $new_array[$with_key] = $value;
+
+        foreach ($second_part as $second_part_key => $second_part_value) {
+            $new_array[$second_part_key] = $second_part_value;
+        }
+
+        return $new_array;
     }
 
     public static function recursiveJoin(array $array_1, array $array_2, array ...$arrays): array
@@ -162,6 +231,11 @@ class Arr extends Subjectable
         }
 
         return null;
+    }
+
+    public static function size(array $array): int
+    {
+        return count($array);
     }
 
     /**

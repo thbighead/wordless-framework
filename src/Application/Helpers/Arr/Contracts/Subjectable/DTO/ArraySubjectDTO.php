@@ -8,25 +8,25 @@ use JsonException;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Arr\Contracts\Subjectable\DTO\ArraySubjectDTO\Traits\Internal;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
-use Wordless\Infrastructure\Helper\Contracts\Subjectable\DTO\SubjectDTO;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
+use Wordless\Infrastructure\Helper\Contracts\Subjectable\DTO\SubjectDTO;
 
 final class ArraySubjectDTO extends SubjectDTO
 {
     use Internal;
 
-    public function append(mixed $value): self
+    public function append(mixed $value, string|int|null $with_key = null): self
     {
-        $this->subject = Arr::append($this->subject, $value);
+        $this->subject = Arr::append($this->subject, $value, $with_key);
 
-        return $this;
+        return $this->incrementSize()->recalculateAssociativeAfterAddition();
     }
 
     public function except(array $except_keys): self
     {
         $this->subject = Arr::except($this->subject, $except_keys);
 
-        return $this;
+        return $this->updateSize()->recalculateAssociative();
     }
 
     public function first(int $quantity = 1): mixed
@@ -66,6 +66,11 @@ final class ArraySubjectDTO extends SubjectDTO
         return Arr::hasAnyOtherValueThan($this->subject, $forbidden_value);
     }
 
+    public function hasKey(string|int|null $key): bool
+    {
+        return Arr::hasKey($this->subject, $key);
+    }
+
     public function hasValue(mixed $value): bool
     {
         return Arr::hasValue($this->subject, $value);
@@ -73,7 +78,17 @@ final class ArraySubjectDTO extends SubjectDTO
 
     public function isAssociative(): bool
     {
-        return Arr::isAssociative($this->subject);
+        return $this->associative ?? $this->associative = Arr::isAssociative($this->subject);
+    }
+
+    public function isEmpty(): bool
+    {
+        return isset($this->size) ? $this->size === 0 : Arr::isEmpty($this->subject);
+    }
+
+    public function lastIndex(): int
+    {
+        return isset($this->size) ? $this->size - 1 : Arr::lastIndex($this->subject);
     }
 
     /**
@@ -85,31 +100,38 @@ final class ArraySubjectDTO extends SubjectDTO
     {
         $this->subject = Arr::only($this->subject, $only_keys);
 
-        return $this;
+        return $this->updateSize()->recalculateAssociative();
     }
 
-    /**
-     * @param mixed $value
-     * @return $this
-     * @throws FailedToParseArrayKey
-     */
-    public function prepend(mixed $value): self
+    public function prepend(mixed $value, string|int|null $with_key = null): self
     {
-        $this->subject = Arr::only($this->subject, $value);
+        $this->subject = Arr::prepend($this->subject, $value, $with_key);
 
-        return $this;
+        return $this->incrementSize()->recalculateAssociativeAfterAddition();
+    }
+
+    public function pushValueIntoIndex(int $index, mixed $value, string|int|null $with_key = null): self
+    {
+        $this->subject = Arr::pushValueIntoIndex($this->subject, $index, $value, $with_key);
+
+        return $this->incrementSize()->recalculateAssociativeAfterAddition();
     }
 
     public function recursiveJoin(array $array, array ...$arrays): self
     {
         $this->subject = Arr::recursiveJoin($this->subject, $array, ...$arrays);
 
-        return $this;
+        return $this->updateSize()->recalculateAssociative();
     }
 
     public function searchValueKey(mixed $value): int|string|null
     {
         return Arr::searchValueKey($this->subject, $value);
+    }
+
+    public function size(): int
+    {
+        return $this->size ?? $this->size = Arr::size($this->subject);
     }
 
     /**
