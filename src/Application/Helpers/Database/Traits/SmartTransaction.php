@@ -83,7 +83,7 @@ trait SmartTransaction
     public static function startSmartTransaction(): void
     {
         if (self::isSmartTransactionOpened()) {
-            $save_point_id = Str::uuid();
+            $save_point_id = Str::uuid(with_dashes: false);
 
             self::query("SAVEPOINT $save_point_id");
 
