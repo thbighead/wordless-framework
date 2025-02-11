@@ -32,7 +32,10 @@ trait WordCase
 
     public function lower(?Encoding $encoding = null): static
     {
-        $this->subject = Str::lower($this->subject, $encoding);
+        $this->subject = Str::lower(
+            $this->subject,
+            $this->resolveEncoding($encoding, func_get_args(), get_defined_vars())
+        );
 
         return $this;
     }
@@ -72,7 +75,12 @@ trait WordCase
         ?Encoding $encoding = null
     ): static
     {
-        $this->subject = Str::snakeCase($this->subject, $delimiter, $upper_cased, $encoding);
+        $this->subject = Str::snakeCase(
+            $this->subject,
+            $delimiter,
+            $upper_cased,
+            $this->resolveEncoding($encoding, func_get_args(), get_defined_vars())
+        );
 
         return $this;
     }
@@ -83,14 +91,20 @@ trait WordCase
      */
     public function titleCase(?Encoding $encoding = Encoding::UTF_8): static
     {
-        $this->subject = Str::titleCase($this->subject, $encoding);
+        $this->subject = Str::titleCase(
+            $this->subject,
+            $this->resolveEncoding($encoding, func_get_args(), get_defined_vars())
+        );
 
         return $this;
     }
 
     public function upper(?Encoding $encoding = null): static
     {
-        $this->subject = Str::upper($this->subject, $encoding);
+        $this->subject = Str::upper(
+            $this->subject,
+            $this->resolveEncoding($encoding, func_get_args(), get_defined_vars())
+        );
 
         return $this;
     }

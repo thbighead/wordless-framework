@@ -20,7 +20,12 @@ trait Boolean
      */
     public function contains(string|array $needles, bool $any = true, ?Encoding $encoding = null): bool
     {
-        return Str::contains($this->subject, $needles, $any);
+        return Str::contains(
+            $this->subject,
+            $needles,
+            $any,
+            $this->resolveEncoding($encoding, func_get_args(), get_defined_vars())
+        );
     }
 
     public function endsWith(string $substring): bool

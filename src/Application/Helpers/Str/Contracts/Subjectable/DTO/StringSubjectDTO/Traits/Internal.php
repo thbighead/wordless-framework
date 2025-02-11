@@ -2,10 +2,12 @@
 
 namespace Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\Traits;
 
+use Wordless\Application\Helpers\Str\Enums\Encoding;
 use Wordless\Application\Helpers\Str\Enums\Language;
 
 trait Internal
 {
+    private ?Encoding $encoding;
     private ?Language $language;
 
     public function __construct(string $subject)
@@ -34,9 +36,23 @@ trait Internal
         return parent::getSubject();
     }
 
+    public function setEncoding(?Encoding $encoding): static
+    {
+        $this->encoding = $encoding;
+
+        return $this;
+    }
+
     public function setLanguage(?Language $language): static
     {
         $this->language = $language;
+
+        return $this;
+    }
+
+    public function unsetEncoding(): static
+    {
+        unset($this->encoding);
 
         return $this;
     }
@@ -48,12 +64,25 @@ trait Internal
         return $this;
     }
 
-    private function resolveLanguage(?Language $language, array $func_get_args): ?Language
+    private function resolveEncoding(?Encoding $encoding, array $func_get_args, array $get_defined_vars): ?Encoding
     {
-        if (isset($this->language) && empty($func_get_args)) {
-            return $this->language;
-        }
+        return $this->resolveArgumentValueByProperty(
+            'encoding',
+            $encoding,
+            'encoding',
+            $func_get_args,
+            $get_defined_vars
+        );
+    }
 
-        return $language;
+    private function resolveLanguage(?Language $language, array $func_get_args, array $get_defined_vars): ?Language
+    {
+        return $this->resolveArgumentValueByProperty(
+            'language',
+            $language,
+            'language',
+            $func_get_args,
+            $get_defined_vars
+        );
     }
 }
