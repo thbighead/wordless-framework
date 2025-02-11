@@ -16,7 +16,7 @@ trait WordCase
     {
         $this->subject = Str::camelCase($this->subject);
 
-        return $this;
+        return $this->recalculateLength();
     }
 
     /**
@@ -27,7 +27,7 @@ trait WordCase
     {
         $this->subject = Str::kebabCase($this->subject);
 
-        return $this;
+        return $this->recalculateLength();
     }
 
     public function lower(?Encoding $encoding = null): static
@@ -48,7 +48,7 @@ trait WordCase
     {
         $this->subject = Str::pascalCase($this->subject);
 
-        return $this;
+        return $this->recalculateLength();
     }
 
     /**
@@ -59,7 +59,7 @@ trait WordCase
     {
         $this->subject = Str::slugCase($this->subject);
 
-        return $this;
+        return $this->recalculateLength();
     }
 
     /**
@@ -82,7 +82,7 @@ trait WordCase
             $this->resolveEncoding($encoding, func_get_args(), get_defined_vars())
         );
 
-        return $this;
+        return $this->recalculateLength();
     }
 
     /**
@@ -96,7 +96,7 @@ trait WordCase
             $this->resolveEncoding($encoding, func_get_args(), get_defined_vars())
         );
 
-        return $this;
+        return $this->recalculateLength();
     }
 
     public function upper(?Encoding $encoding = null): static

@@ -20,7 +20,7 @@ trait HelperMethods
 
     public function length(?Encoding $encoding = null): int
     {
-        return Str::length(
+        return $this->length ?? $this->length = Str::length(
             $this->getOriginalSubject(),
             $this->resolveEncoding($encoding, func_get_args(), get_defined_vars())
         );
@@ -38,7 +38,7 @@ trait HelperMethods
             $this->resolveLanguage($language, func_get_args(), get_defined_vars())
         );
 
-        return $this;
+        return $this->recalculateLength();
     }
 
     /**
@@ -53,6 +53,6 @@ trait HelperMethods
             $this->resolveLanguage($language, func_get_args(), get_defined_vars())
         );
 
-        return $this;
+        return $this->recalculateLength();
     }
 }
