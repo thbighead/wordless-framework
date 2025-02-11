@@ -66,6 +66,22 @@ trait Read
     }
 
     /**
+     * @param bool $with_acfs
+     * @return array<string, static>
+     * @throws EmptyQueryBuilderArguments
+     */
+    public static function getAllKeyedBySlug(bool $with_acfs = true): array
+    {
+        $all = [];
+
+        foreach (static::getAll($with_acfs) as $post) {
+            $all[$post->post_name] = $post;
+        }
+
+        return $all;
+    }
+
+    /**
      * @return bool
      * @throws EmptyQueryBuilderArguments
      */
