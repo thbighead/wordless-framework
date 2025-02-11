@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Wordless\Application\Helpers;
 
-use Doctrine\Inflector\Language;
 use InvalidArgumentException;
 use JsonException;
 use Ramsey\Uuid\Uuid;
 use Wordless\Application\Helpers\Str\Contracts\Subjectable;
 use Wordless\Application\Helpers\Str\Enums\Encoding;
+use Wordless\Application\Helpers\Str\Enums\Language;
 use Wordless\Application\Helpers\Str\Enums\UuidVersion;
 use Wordless\Application\Helpers\Str\Traits\Boolean;
 use Wordless\Application\Helpers\Str\Traits\Internal;
@@ -44,11 +44,11 @@ class Str extends Subjectable
 
     /**
      * @param string $string
-     * @param string $language
+     * @param Language|null $language
      * @return string
      * @throws InvalidArgumentException
      */
-    public static function plural(string $string, string $language = Language::ENGLISH): string
+    public static function plural(string $string, ?Language $language = Language::english): string
     {
         return self::getInflector($language)->pluralize($string);
     }
@@ -60,11 +60,11 @@ class Str extends Subjectable
 
     /**
      * @param string $string
-     * @param string $language
+     * @param Language|null $language
      * @return string
      * @throws InvalidArgumentException
      */
-    public static function singular(string $string, string $language = Language::ENGLISH): string
+    public static function singular(string $string, ?Language $language = Language::english): string
     {
         return self::getInflector($language)->singularize($string);
     }
