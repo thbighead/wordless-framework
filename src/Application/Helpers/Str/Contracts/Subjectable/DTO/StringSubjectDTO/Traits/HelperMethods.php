@@ -9,6 +9,7 @@ use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\
 use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\Traits\HelperMethods\Traits\Mutators;
 use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\Traits\HelperMethods\Traits\Substring;
 use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\Traits\HelperMethods\Traits\WordCase;
+use Wordless\Application\Helpers\Str\Enums\Encoding;
 
 trait HelperMethods
 {
@@ -16,6 +17,11 @@ trait HelperMethods
     use Mutators;
     use Substring;
     use WordCase;
+
+    public function length(?Encoding $encoding = null): int
+    {
+        return Str::length($this->getOriginalSubject(), $encoding);
+    }
 
     /**
      * @param string $language

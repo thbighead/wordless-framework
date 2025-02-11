@@ -4,6 +4,7 @@ namespace Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubje
 
 use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Enums\Encoding;
 
 trait WordCase
 {
@@ -29,9 +30,9 @@ trait WordCase
         return $this;
     }
 
-    public function lower(): static
+    public function lower(?Encoding $encoding = null): static
     {
-        $this->subject = Str::lower($this->subject);
+        $this->subject = Str::lower($this->subject, $encoding);
 
         return $this;
     }
@@ -60,12 +61,18 @@ trait WordCase
 
     /**
      * @param string $delimiter
+     * @param bool $upper_cased
+     * @param Encoding|null $encoding
      * @return $this
      * @throws InvalidArgumentException
      */
-    public function snakeCase(string $delimiter = '_'): static
+    public function snakeCase(
+        string    $delimiter = Str::UNDERSCORE,
+        bool      $upper_cased = false,
+        ?Encoding $encoding = null
+    ): static
     {
-        $this->subject = Str::snakeCase($this->subject, $delimiter);
+        $this->subject = Str::snakeCase($this->subject, $delimiter, $upper_cased, $encoding);
 
         return $this;
     }
@@ -74,16 +81,16 @@ trait WordCase
      * @return $this
      * @throws InvalidArgumentException
      */
-    public function titleCase(): static
+    public function titleCase(?Encoding $encoding = Encoding::UTF_8): static
     {
-        $this->subject = Str::titleCase($this->subject);
+        $this->subject = Str::titleCase($this->subject, $encoding);
 
         return $this;
     }
 
-    public function upper(): static
+    public function upper(?Encoding $encoding = null): static
     {
-        $this->subject = Str::upper($this->subject);
+        $this->subject = Str::upper($this->subject, $encoding);
 
         return $this;
     }

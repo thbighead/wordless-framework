@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use JsonException;
 use Ramsey\Uuid\Uuid;
 use Wordless\Application\Helpers\Str\Contracts\Subjectable;
+use Wordless\Application\Helpers\Str\Enums\Encoding;
 use Wordless\Application\Helpers\Str\Enums\UuidVersion;
 use Wordless\Application\Helpers\Str\Traits\Boolean;
 use Wordless\Application\Helpers\Str\Traits\Internal;
@@ -34,6 +35,11 @@ class Str extends Subjectable
     public static function jsonDecode(string $json): array
     {
         return json_decode($json, true, flags: JSON_THROW_ON_ERROR);
+    }
+
+    public static function length(string $string, ?Encoding $encoding = null): int
+    {
+        return mb_strlen($string, $encoding?->value);
     }
 
     /**
