@@ -11,7 +11,7 @@ trait Mutators
     {
         $this->subject = Str::finishWith($this->subject, $finish_with);
 
-        return $this;
+        return $this->recalculateLength();
     }
 
     /**
@@ -22,14 +22,14 @@ trait Mutators
     {
         $this->subject = Str::remove($this->subject, $search_to_remove);
 
-        return $this;
+        return $this->recalculateLength();
     }
 
     public function removeSuffix(string $suffix): static
     {
         $this->subject = Str::removeSuffix($this->subject, $suffix);
 
-        return $this;
+        return $this->recalculateLength();
     }
 
     /**
@@ -41,14 +41,14 @@ trait Mutators
     {
         $this->subject = Str::replace($this->subject, $search, $replace);
 
-        return $this;
+        return $this->recalculateLength();
     }
 
     public function startWith(string $start_with): static
     {
         $this->subject = Str::startWith($this->subject, $start_with);
 
-        return $this;
+        return $this->recalculateLength();
     }
 
     /**
@@ -66,6 +66,6 @@ trait Mutators
     {
         $this->subject = Str::wrap($this->subject, $prefix, $suffix);
 
-        return $this;
+        return $this->recalculateLength();
     }
 }
