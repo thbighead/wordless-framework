@@ -50,6 +50,11 @@ final class ArraySubjectDTO extends SubjectDTO
         return Arr::getFirstKey($this->subject);
     }
 
+    public function getIndexOfKey(string|int|null $key): ?int
+    {
+        return Arr::getIndexOfKey($this->subject, $key);
+    }
+
     /**
      * @param int|string $key
      * @return mixed
