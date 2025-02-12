@@ -3,6 +3,7 @@
 namespace Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\Traits\HelperMethods\Traits;
 
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Enums\Encoding;
 
 trait Boolean
 {
@@ -14,16 +15,27 @@ trait Boolean
     /**
      * @param string|string[] $needles
      * @param bool $any
+     * @param Encoding|null $encoding
      * @return bool
      */
-    public function contains(string|array $needles, bool $any = true): bool
+    public function contains(string|array $needles, bool $any = true, ?Encoding $encoding = null): bool
     {
-        return Str::contains($this->subject, $needles, $any);
+        return Str::contains(
+            $this->subject,
+            $needles,
+            $any,
+            $this->resolveEncoding($encoding, func_get_args(), get_defined_vars())
+        );
     }
 
     public function endsWith(string $substring): bool
     {
         return Str::endsWith($this->subject, $substring);
+    }
+
+    public function isEmpty(): bool
+    {
+        return Str::isEmpty($this->subject);
     }
 
     public function isJson(): bool

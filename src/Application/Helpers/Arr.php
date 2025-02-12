@@ -65,6 +65,11 @@ class Arr extends Subjectable
         return array_key_first($array);
     }
 
+    public static function getIndexOfKey(array $array, string|int|null $key): ?int
+    {
+        return array_flip(array_keys($array))[$key] ?? null;
+    }
+
     /**
      * @param array $array
      * @param int|string $key

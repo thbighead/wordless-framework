@@ -3,10 +3,11 @@
 namespace Wordless\Application\Helpers\Str\Traits;
 
 use InvalidArgumentException;
+use Wordless\Application\Helpers\Str\Enums\Encoding;
 
 trait WordCase
 {
-    private const UNDERSCORE = '_';
+    final public const UNDERSCORE = '_';
 
     /**
      * @param string $string
@@ -34,11 +35,12 @@ trait WordCase
 
     /**
      * @param string $string
+     * @param Encoding|null $encoding
      * @return string
      */
-    public static function lower(string $string): string
+    public static function lower(string $string, ?Encoding $encoding = null): string
     {
-        return mb_strtolower($string);
+        return mb_strtolower($string, $encoding?->value);
     }
 
     /**
@@ -97,13 +99,15 @@ trait WordCase
      * @param string $string
      * @param string $delimiter
      * @param bool $upper_cased
+     * @param Encoding|null $encoding
      * @return string
      * @throws InvalidArgumentException
      */
     public static function snakeCase(
         string $string,
         string $delimiter = self::UNDERSCORE,
-        bool   $upper_cased = false
+        bool   $upper_cased = false,
+        ?Encoding $encoding = null
     ): string
     {
         $string = preg_replace('/[^a-zA-Z0-9]/', $delimiter, static::unaccented($string));
@@ -116,28 +120,30 @@ trait WordCase
             );
         }
 
-        return $upper_cased ? mb_strtoupper($string) : mb_strtolower($string);
+        return $upper_cased ? static::upper($string, $encoding) : static::lower($string, $encoding);
     }
 
     /**
      * @param string $string
+     * @param Encoding|null $encoding
      * @return string
      * @throws InvalidArgumentException
      */
-    public static function titleCase(string $string): string
+    public static function titleCase(string $string, ?Encoding $encoding = Encoding::UTF_8): string
     {
         preg_match_all('/(\p{Lu}\p{Ll}*|\d)/u', static::pascalCase($string), $words);
 
-        return mb_convert_case(implode(' ', $words[0]), MB_CASE_TITLE, 'UTF-8');
+        return mb_convert_case(implode(' ', $words[0]), MB_CASE_TITLE, $encoding?->value);
     }
 
     /**
      * @param string $string
+     * @param Encoding|null $encoding
      * @return string
      */
-    public static function upper(string $string): string
+    public static function upper(string $string, ?Encoding $encoding = null): string
     {
-        return mb_strtoupper($string);
+        return mb_strtoupper($string, $encoding?->value);
     }
 
     /**
