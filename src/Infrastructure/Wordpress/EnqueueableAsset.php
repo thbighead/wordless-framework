@@ -135,7 +135,7 @@ abstract class EnqueueableAsset
             default => throw new InvalidTypeEnqueueableClass($this::class),
         };
 
-        if (self::$ids_pool[static::class][$id] ?? false) {
+        if (self::$ids_pool[$type_enqueueable_class_namespace][$id] ?? false) {
             throw new DuplicatedEnqueueableId(
                 $type_enqueueable_class_namespace,
                 $id,
@@ -143,7 +143,7 @@ abstract class EnqueueableAsset
             );
         }
 
-        self::$ids_pool[static::class][$id] = true;
+        self::$ids_pool[$type_enqueueable_class_namespace][$id] = true;
         $this->id = $id;
 
         return $this;
