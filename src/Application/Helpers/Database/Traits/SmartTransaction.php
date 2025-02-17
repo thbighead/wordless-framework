@@ -109,7 +109,7 @@ trait SmartTransaction
      */
     private static function isTransactionOpened(): bool
     {
-        return self::query('SHOW VARIABLES LIKE "in_transaction"')->results?->Value ?? false;
+        return (bool)(self::query('SHOW VARIABLES LIKE "in_transaction"')->results?->Value ?? false);
     }
 
     private static function anySavePointsExists(): bool
