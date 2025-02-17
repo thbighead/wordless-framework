@@ -62,7 +62,7 @@ trait SmartTransaction
         if (self::anySavePointsExists()) {
             $save_point_id = array_pop(self::$transaction_save_points);
 
-            self::query("ROLLBACK TO $save_point_id");
+            self::query("ROLLBACK TO `$save_point_id`");
 
             return true;
         }
@@ -85,7 +85,7 @@ trait SmartTransaction
         if (self::isSmartTransactionOpened()) {
             $save_point_id = Str::uuid(with_dashes: false);
 
-            self::query("SAVEPOINT $save_point_id");
+            self::query("SAVEPOINT `$save_point_id`");
 
             self::$transaction_save_points[] = $save_point_id;
             return;
