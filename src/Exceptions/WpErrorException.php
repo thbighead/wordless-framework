@@ -27,7 +27,7 @@ abstract class WpErrorException extends ErrorException
 
     protected function mountMessage(): string
     {
-        return  $this->getErrorMessagesAsString();
+        return "{$this->getErrorMessagesAsString()}.";
     }
 
     private function mountAllErrorsData(): array
