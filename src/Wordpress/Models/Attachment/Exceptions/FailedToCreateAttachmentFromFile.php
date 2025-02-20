@@ -32,6 +32,10 @@ class FailedToCreateAttachmentFromFile extends RuntimeException
             return 'the following errors: ' . implode('. ', $this->insertResult->get_error_messages());
         }
 
-        return 'zero';
+        if ($this->insertResult === 0) {
+            return 'zero';
+        }
+
+        return "a new post with id $this->insertResult but failed to update its metadata.";
     }
 }
