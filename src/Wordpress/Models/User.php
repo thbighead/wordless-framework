@@ -8,10 +8,12 @@ use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
+use Wordless\Wordpress\Models\User\Traits\Crud;
 use WP_User;
 
 class User extends WP_User implements IRelatedMetaData
 {
+    use Crud;
     use WithAcfs;
     use WithMetaData;
 
