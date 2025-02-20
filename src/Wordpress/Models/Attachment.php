@@ -9,12 +9,15 @@ use Wordless\Application\Helpers\Database;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
+use Wordless\Application\Helpers\GetType;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Wordpress\Models\Attachment\DTO\MediaDTO;
 use Wordless\Wordpress\Models\Attachment\DTO\MediaDTO\DTO\SizeDTO;
+use Wordless\Wordpress\Models\Attachment\DTO\WpInsertAttachmentResultDTO;
 use Wordless\Wordpress\Models\Attachment\Exceptions\FailedToCreateAttachmentFromFile;
+use Wordless\Wordpress\Models\Attachment\Exceptions\NewMetadataEqualsToOldMetadata;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData\Traits\Crud\Traits\Read\Exceptions\InvalidMetaKey;
 use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\Post\Exceptions\FailedToGetPermalink;
@@ -43,7 +46,7 @@ class Attachment extends Post
     /**
      * @param string $absolute_filepath
      * @param bool $secure_mode
-     * @return int
+     * @return WpInsertAttachmentResultDTO
      * @throws FailedToCopyFile
      * @throws FailedToCreateAttachmentFromFile
      * @throws InvalidArgumentException
@@ -51,53 +54,122 @@ class Attachment extends Post
      * @throws QueryError
      * @noinspection PhpDocRedundantThrowsInspection
      */
-    public static function createFromFile(string $absolute_filepath, bool $secure_mode = true): int
+    public static function createFromFile(
+        string $absolute_filepath,
+        bool   $secure_mode = true
+    ): WpInsertAttachmentResultDTO
     {
         /**
-         * @return int
+         * @return WpInsertAttachmentResultDTO
          * @throws FailedToCopyFile
          * @throws FailedToCreateAttachmentFromFile
          * @throws InvalidArgumentException
          * @throws PathNotFoundException
          */
-        $transaction = function () use ($absolute_filepath, $secure_mode): int {
-            $result = wp_insert_attachment([
-                'post_mime_type' => mime_content_type($absolute_filepath),
-                'post_title' => (string)Str::of(basename($absolute_filepath))
-                    ->before('.')
-                    ->replace(['-', '_'], ' ')
-                    ->titleCase(),
-                'post_status' => StandardStatus::inherit->value,
-            ], $wp_uploads_new_filepath = DirectoryFiles::copyFileToWpUploads(
+        $transaction = function () use ($absolute_filepath, $secure_mode): WpInsertAttachmentResultDTO {
+            $result = self::callWpInsertAttachmentByFile(
                 $absolute_filepath,
-                secure_mode: $secure_mode
-            ));
+                StandardStatus::inherit,
+                $secure_mode
+            );
 
-            if ($result instanceof WP_Error || $result === 0) {
-                throw new FailedToCreateAttachmentFromFile(
-                    $result,
-                    $absolute_filepath,
-                    $wp_uploads_new_filepath,
-                    $secure_mode
-                );
-            }
-
-            if (wp_update_attachment_metadata(
-                    abs($result),
-                    wp_generate_attachment_metadata($result, $wp_uploads_new_filepath)
-                ) === false) {
-                throw new FailedToCreateAttachmentFromFile(
-                    $result,
-                    $absolute_filepath,
-                    $wp_uploads_new_filepath,
-                    $secure_mode
-                );
+            try {
+                if (wp_update_attachment_metadata(
+                        abs($result->attachment_id),
+                        self::validateNewMetadata($result)
+                    ) === false) {
+                    throw new FailedToCreateAttachmentFromFile(
+                        $result->attachment_id,
+                        $absolute_filepath,
+                        $result->wp_uploads_filepath,
+                        $secure_mode
+                    );
+                }
+            } catch (NewMetadataEqualsToOldMetadata) {
             }
 
             return $result;
         };
 
         return Database::smartTransaction($transaction);
+    }
+
+    /**
+     * @param string $absolute_filepath
+     * @param int|PostStatus|StandardStatus $attachment_reference
+     * @param bool $secure_mode
+     * @return WpInsertAttachmentResultDTO
+     * @throws FailedToCopyFile
+     * @throws FailedToCreateAttachmentFromFile
+     * @throws InvalidArgumentException
+     * @throws PathNotFoundException
+     */
+    private static function callWpInsertAttachmentByFile(
+        string                        $absolute_filepath,
+        int|PostStatus|StandardStatus $attachment_reference,
+        bool                          $secure_mode = true
+    ): WpInsertAttachmentResultDTO
+    {
+        $insert_arguments = [
+            'ID' => null,
+            'post_mime_type' => mime_content_type($absolute_filepath),
+            'post_title' => (string)Str::of(basename($absolute_filepath))
+                ->before('.')
+                ->replace(['-', '_'], ' ')
+                ->titleCase(),
+        ];
+
+        switch (GetType::of($attachment_reference)) {
+            case PostStatus::class:
+            case StandardStatus::class:
+                $insert_arguments['post_status'] = $attachment_reference->value ?? $attachment_reference->name;
+                unset($insert_arguments['ID']);
+                break;
+            case 'integer':
+            default:
+                $insert_arguments['ID'] = $attachment_reference;
+                break;
+        }
+
+        $result = wp_insert_attachment(
+            $insert_arguments,
+            $wp_uploads_new_filepath = DirectoryFiles::copyFileToWpUploads(
+                $absolute_filepath,
+                secure_mode: $secure_mode
+            )
+        );
+
+        if ($result instanceof WP_Error || $result === 0) {
+            throw new FailedToCreateAttachmentFromFile(
+                $result,
+                $absolute_filepath,
+                $wp_uploads_new_filepath,
+                $secure_mode
+            );
+        }
+
+        return new WpInsertAttachmentResultDTO($result, $wp_uploads_new_filepath);
+    }
+
+    /**
+     * @param WpInsertAttachmentResultDTO $result
+     * @return array
+     * @throws NewMetadataEqualsToOldMetadata
+     */
+    private static function validateNewMetadata(WpInsertAttachmentResultDTO $result): array
+    {
+        $new_metadata = wp_generate_attachment_metadata($result->attachment_id, $result->wp_uploads_filepath);
+        $old_metadata = get_metadata_raw(
+            'post',
+            $result->attachment_id,
+            '_wp_attachment_metadata'
+        );
+
+        if (is_countable($old_metadata) && count($old_metadata) === 1 && $old_metadata[0] === $new_metadata) {
+            throw new NewMetadataEqualsToOldMetadata($result->attachment_id, $new_metadata);
+        }
+
+        return $new_metadata;
     }
 
     /**
@@ -173,7 +245,7 @@ class Attachment extends Post
     /**
      * @param string $absolute_filepath
      * @param bool $secure_mode
-     * @return string
+     * @return WpInsertAttachmentResultDTO
      * @throws FailedToCopyFile
      * @throws FailedToCreateAttachmentFromFile
      * @throws InvalidArgumentException
@@ -181,50 +253,38 @@ class Attachment extends Post
      * @throws QueryError
      * @noinspection PhpDocRedundantThrowsInspection
      */
-    public function updateFile(string $absolute_filepath, bool $secure_mode = true): string
+    public function updateFile(string $absolute_filepath, bool $secure_mode = true): WpInsertAttachmentResultDTO
     {
         /**
-         * @return string
+         * @return WpInsertAttachmentResultDTO
          * @throws FailedToCopyFile
          * @throws FailedToCreateAttachmentFromFile
          * @throws InvalidArgumentException
          * @throws PathNotFoundException
          */
-        $transaction = function () use ($absolute_filepath, $secure_mode): string {
-            $result = wp_insert_attachment([
-                'ID' => $this->id(),
-                'post_mime_type' => mime_content_type($absolute_filepath),
-                'post_title' => (string)Str::of(basename($absolute_filepath))
-                    ->before('.')
-                    ->replace(['-', '_'], ' ')
-                    ->titleCase(),
-            ], $wp_uploads_new_filepath = DirectoryFiles::copyFileToWpUploads(
+        $transaction = function () use ($absolute_filepath, $secure_mode): WpInsertAttachmentResultDTO {
+            $result = self::callWpInsertAttachmentByFile(
                 $absolute_filepath,
-                secure_mode: $secure_mode
-            ));
+                $this->id(),
+                $secure_mode
+            );
 
-            if ($result instanceof WP_Error || $result === 0) {
-                throw new FailedToCreateAttachmentFromFile(
-                    $result,
-                    $absolute_filepath,
-                    $wp_uploads_new_filepath,
-                    $secure_mode
-                );
+            try {
+                if (wp_update_attachment_metadata(
+                        abs($result->attachment_id),
+                        self::validateNewMetadata($result)
+                    ) === false) {
+                    throw new FailedToCreateAttachmentFromFile(
+                        $result->attachment_id,
+                        $absolute_filepath,
+                        $result->wp_uploads_filepath,
+                        $secure_mode
+                    );
+                }
+            } catch (NewMetadataEqualsToOldMetadata) {
             }
 
-            if (wp_update_attachment_metadata(
-                    abs($result),
-                    wp_generate_attachment_metadata($result, $wp_uploads_new_filepath)
-                ) === false) {
-                throw new FailedToCreateAttachmentFromFile(
-                    $result,
-                    $absolute_filepath,
-                    $wp_uploads_new_filepath,
-                    $secure_mode
-                );
-            }
-
-            return $wp_uploads_new_filepath;
+            return $result;
         };
 
         return Database::smartTransaction($transaction);
