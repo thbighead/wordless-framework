@@ -8,18 +8,8 @@ use WP_Error;
 
 class FailedToSendMailMessage extends WpErrorException
 {
-    public function __construct(public readonly WP_Error $requestError, ?Throwable $previous = null)
-    {
-        parent::__construct($requestError, $previous);
-    }
-
     protected function mountMessage(): string
     {
         return "Failed to send e-mail message due to the following errors: {$this->getErrorMessagesAsString()}";
-    }
-
-    public function getFailedMailData(): array
-    {
-        return $this->all_errors_data;
     }
 }
