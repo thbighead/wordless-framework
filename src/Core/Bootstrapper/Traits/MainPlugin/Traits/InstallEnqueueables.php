@@ -5,8 +5,10 @@ namespace Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits;
 use InvalidArgumentException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Provider;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Enums\StandardContext;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
 
 trait InstallEnqueueables
@@ -41,6 +43,18 @@ trait InstallEnqueueables
             ->loadEnqueueableStyles($provider);
     }
 
+    private function resolveEnqueue(EnqueueableAsset $enqueuableAsset, bool $loading_on_admin): void
+    {
+        if (
+            ($loading_on_admin && $enqueuableAsset->loadOnAdmin())
+            || (!$loading_on_admin && $enqueuableAsset->loadOnFrontend())
+        ) {
+            $enqueuableAsset->enqueue(
+                $loading_on_admin ? StandardContext::admin : StandardContext::frontend
+            );
+        }
+    }
+
     /**
      * @param bool $on_admin
      * @return $this
@@ -71,14 +85,7 @@ trait InstallEnqueueables
     {
         /** @var EnqueueableScript $enqueueable_script_namespace */
         foreach ($this->loaded_enqueueable_scripts as $enqueueable_script_namespace => $can_enqueue) {
-            $enqueuableScript = $enqueueable_script_namespace::make();
-
-            if (
-                ($loading_on_admin && $enqueuableScript->loadOnAdmin())
-                || (!$loading_on_admin && $enqueuableScript->loadOnFrontend())
-            ) {
-                $enqueuableScript->enqueue();
-            }
+            $this->resolveEnqueue($enqueueable_script_namespace::make(), $loading_on_admin);
         }
 
         return $this;
@@ -95,14 +102,7 @@ trait InstallEnqueueables
     {
         /** @var EnqueueableStyle $enqueueable_style_namespace */
         foreach ($this->loaded_enqueueable_styles as $enqueueable_style_namespace => $can_enqueue) {
-            $enqueuableStyle = $enqueueable_style_namespace::make();
-
-            if (
-                ($loading_on_admin && $enqueuableStyle->loadOnAdmin())
-                || (!$loading_on_admin && $enqueuableStyle->loadOnFrontend())
-            ) {
-                $enqueuableStyle->enqueue();
-            }
+            $this->resolveEnqueue($enqueueable_style_namespace::make(), $loading_on_admin);
         }
 
         return $this;
