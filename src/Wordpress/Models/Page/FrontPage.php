@@ -49,8 +49,8 @@ class FrontPage extends Page
             }
         } catch (FrontPageIsNotSet) {
         } finally {
-            Option::updateOrFail(self::OPTION_KEY_FRONT_PAGE_ID, $page->ID);
-            Option::updateOrFail(self::OPTION_KEY_SHOW_ON_FRONT, 'page');
+            Option::createUpdateOrFail(self::OPTION_KEY_FRONT_PAGE_ID, $page->ID);
+            Option::createUpdateOrFail(self::OPTION_KEY_SHOW_ON_FRONT, 'page');
 
             return new FrontPage($load_acfs);
         }

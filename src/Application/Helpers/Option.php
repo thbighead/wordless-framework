@@ -9,6 +9,17 @@ use Wordless\Infrastructure\Helper;
 
 class Option extends Helper
 {
+    public static function create(string $option_key, mixed $option_value, bool $autoload = true): bool
+    {
+        try {
+            static::createOrFail($option_key, $option_value, $autoload);
+
+            return true;
+        } catch (FailedToCreateOption) {
+            return false;
+        }
+    }
+
     /**
      * @param string $option_key
      * @param mixed $option_value
@@ -16,10 +27,37 @@ class Option extends Helper
      * @return void
      * @throws FailedToCreateOption
      */
-    public static function create(string $option_key, mixed $option_value, bool $autoload = true): void
+    public static function createOrFail(string $option_key, mixed $option_value, bool $autoload = true): void
     {
         if (!add_option($option_key, $option_value, autoload: $autoload)) {
             throw new FailedToCreateOption($option_key, $option_value, $autoload);
+        }
+    }
+
+    public static function createOrUpdate(string $option_key, mixed $option_value, ?bool $autoload = null): bool
+    {
+        try {
+            static::createUpdateOrFail($option_key, $option_value, $autoload ?? true);
+
+            return true;
+        } catch (FailedToUpdateOption) {
+            return false;
+        }
+    }
+
+    /**
+     * @param string $option_key
+     * @param mixed $option_value
+     * @param bool|null $autoload
+     * @return void
+     * @throws FailedToUpdateOption
+     */
+    public static function createUpdateOrFail(string $option_key, mixed $option_value, ?bool $autoload = null): void
+    {
+        try {
+            static::createOrFail($option_key, $option_value, $autoload ?? true);
+        } catch (FailedToCreateOption) {
+            static::updateOrFail($option_key, $option_value, $autoload);
         }
     }
 
