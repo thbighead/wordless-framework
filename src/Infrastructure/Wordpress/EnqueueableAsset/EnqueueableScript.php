@@ -12,17 +12,6 @@ use Wordless\Infrastructure\Wordpress\EnqueueableAsset;
 
 abstract class EnqueueableScript extends EnqueueableAsset
 {
-    public function enqueue(): void
-    {
-        wp_enqueue_script(
-            $this->getId(),
-            $this->getFileUrl(),
-            $this->getDependenciesIds(),
-            $this->getVersion(),
-            false
-        );
-    }
-
     /**
      * @return string[]|EnqueueableScript[]
      */
@@ -42,5 +31,16 @@ abstract class EnqueueableScript extends EnqueueableAsset
     protected function mountFileUrl(): string
     {
         return Link::js($this->filename());
+    }
+
+    final protected function callWpEnqueueFunction(): void
+    {
+        wp_enqueue_script(
+            $this->getId(),
+            $this->getFileUrl(),
+            $this->getDependenciesIds(),
+            $this->getVersion(),
+            false
+        );
     }
 }
