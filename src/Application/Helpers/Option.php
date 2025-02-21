@@ -112,6 +112,14 @@ class Option extends Helper
      */
     public static function updateOrFail(string $option_key, mixed $option_value, ?bool $autoload = null): void
     {
+        try {
+            if (static::getOrFail($option_key) === $option_value) {
+                return;
+            }
+        } catch (FailedToFindOption) {
+            throw new FailedToUpdateOption($option_key, $option_value, $autoload);
+        }
+
         if (!update_option($option_key, $option_value, $autoload)) {
             throw new FailedToUpdateOption($option_key, $option_value, $autoload);
         }
