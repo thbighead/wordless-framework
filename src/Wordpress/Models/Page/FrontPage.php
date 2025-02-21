@@ -34,11 +34,11 @@ class FrontPage extends Page
     ): static
     {
         if (is_int($page)) {
-            $page = new Page($page);
+            $page = new Page($page, false);
         }
 
         try {
-            $frontPage = new FrontPage($load_acfs);
+            $frontPage = new static($load_acfs);
 
             if (!$override) {
                 return $frontPage;
@@ -52,7 +52,7 @@ class FrontPage extends Page
             Option::createUpdateOrFail(self::OPTION_KEY_FRONT_PAGE_ID, $page->ID);
             Option::createUpdateOrFail(self::OPTION_KEY_SHOW_ON_FRONT, 'page');
 
-            return new FrontPage($load_acfs);
+            return new static($load_acfs);
         }
     }
 
