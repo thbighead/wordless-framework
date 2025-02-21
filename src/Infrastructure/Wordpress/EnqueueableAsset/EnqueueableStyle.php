@@ -13,16 +13,6 @@ use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle\Enums\Me
 
 abstract class EnqueueableStyle extends EnqueueableAsset
 {
-    public function enqueue(): void
-    {
-        wp_enqueue_style(
-            $this->getId(),
-            $this->getFileUrl(),
-            $this->getDependenciesIds(),
-            $this->getVersion(),
-            $this->getMedia()
-        );
-    }
     /**
      * @return string[]|EnqueueableStyle[]
      */
@@ -30,6 +20,7 @@ abstract class EnqueueableStyle extends EnqueueableAsset
     {
         return parent::dependencies();
     }
+
     protected function media(): MediaOption
     {
         return MediaOption::all;
@@ -46,6 +37,17 @@ abstract class EnqueueableStyle extends EnqueueableAsset
     protected function mountFileUrl(): string
     {
         return Link::css($this->filename());
+    }
+
+    final protected function callWpEnqueueFunction(): void
+    {
+        wp_enqueue_style(
+            $this->getId(),
+            $this->getFileUrl(),
+            $this->getDependenciesIds(),
+            $this->getVersion(),
+            $this->getMedia()
+        );
     }
 
     private function getMedia(): string

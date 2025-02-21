@@ -12,11 +12,12 @@ class DuplicatedEnqueueableId extends DomainException
         public readonly string $type_enqueueable_class_namespace,
         public readonly string $id,
         public readonly string $enqueueable_class_namespace,
+        public readonly string $found_enqueueable_class_namespace,
         ?Throwable             $previous = null
     )
     {
         parent::__construct(
-            "Class $this->type_enqueueable_class_namespace duplicates id $this->id on $this->enqueueable_class_namespace.",
+            "Class $this->enqueueable_class_namespace duplicates id $this->id of class $this->found_enqueueable_class_namespace on $this->type_enqueueable_class_namespace.",
             ExceptionCode::development_error->value,
             $previous
         );
