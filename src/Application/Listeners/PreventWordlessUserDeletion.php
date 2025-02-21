@@ -27,7 +27,7 @@ class PreventWordlessUserDeletion extends ActionListener
      */
     public static function preventWordlessUserDeletion(int $user_id): void
     {
-        if ($user_id === WordlessUser::make()->id()) {
+        if ($user_id === WordlessUser::find()?->id()) {
             throw new TryingToDeleteWordlessUser;
         }
     }
