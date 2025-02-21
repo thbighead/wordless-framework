@@ -32,7 +32,7 @@ abstract class EnqueueableAsset
         EnqueueableScript::class => [],
     ];
 
-    /** @var string[] $dependencies_ids */
+    /** @var array<string|static, string> $dependencies_ids */
     private array $dependencies_ids = [];
     private string $file_url;
     private string $id;
@@ -59,12 +59,23 @@ abstract class EnqueueableAsset
         return Arr::hasKey(self::$already_enqueued[static::class] ?? [], $context->name);
     }
 
-    final public function enqueue(Context $context = StandardContext::no_context): void
+    final public function enqueue(Context $context = StandardContext::no_context): bool
     {
         if ($this->notEnqueuedYet($context)) {
             $this->callWpEnqueueFunction();
 
-            self::$already_enqueued[static::class][$context->name] = true;
+            return self::$already_enqueued[static::class][$context->name] = true;
+        }
+
+        return false;
+    }
+
+    final public function enqueueDependenciesRecursively(Context $context = StandardContext::no_context): void
+    {
+        foreach ($this->dependencies_ids as $dependency_class_namespace => $dependency_id) {
+            if (($dependency = $dependency_class_namespace::make())->enqueue($context)) {
+                $dependency->enqueueDependenciesRecursively($context);
+            }
         }
     }
 
@@ -91,7 +102,7 @@ abstract class EnqueueableAsset
      */
     protected function getDependenciesIds(): array
     {
-        return $this->dependencies_ids;
+        return array_values($this->dependencies_ids);
     }
 
     protected function getFileUrl(): string
@@ -127,7 +138,7 @@ abstract class EnqueueableAsset
     private function setDependenciesIds(): void
     {
         foreach ($this->dependencies() as $enqueueable_asset_namespace) {
-            $this->dependencies_ids[] = $enqueueable_asset_namespace::id();
+            $this->dependencies_ids[$enqueueable_asset_namespace] = $enqueueable_asset_namespace::id();
         }
     }
 
