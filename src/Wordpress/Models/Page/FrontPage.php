@@ -34,11 +34,11 @@ class FrontPage extends Page
     ): static
     {
         if (is_int($page)) {
-            $page = new Page($page);
+            $page = new Page($page, false);
         }
 
         try {
-            $frontPage = new FrontPage($load_acfs);
+            $frontPage = new static($load_acfs);
 
             if (!$override) {
                 return $frontPage;
@@ -48,12 +48,12 @@ class FrontPage extends Page
                 return $frontPage;
             }
         } catch (FrontPageIsNotSet) {
-        } finally {
-            Option::createUpdateOrFail(self::OPTION_KEY_FRONT_PAGE_ID, $page->ID);
-            Option::createUpdateOrFail(self::OPTION_KEY_SHOW_ON_FRONT, 'page');
-
-            return new FrontPage($load_acfs);
         }
+
+        Option::createUpdateOrFail(self::OPTION_KEY_FRONT_PAGE_ID, $page->ID);
+        Option::createUpdateOrFail(self::OPTION_KEY_SHOW_ON_FRONT, 'page');
+
+        return new static($load_acfs);
     }
 
     /**
@@ -65,9 +65,10 @@ class FrontPage extends Page
      */
     public function __construct(bool $with_acfs = true)
     {
-        if (!is_null($front_page_id = Option::get(self::OPTION_KEY_FRONT_PAGE_ID))
-            && is_numeric($front_page_id)) {
-            parent::__construct((int)$front_page_id, $with_acfs);
+        if (!empty($front_page_id = Option::get(self::OPTION_KEY_FRONT_PAGE_ID))
+            && is_numeric($front_page_id)
+            && !is_null($frontPage = get_post((int)$front_page_id))) {
+            parent::__construct($frontPage, $with_acfs);
 
             return;
         }
