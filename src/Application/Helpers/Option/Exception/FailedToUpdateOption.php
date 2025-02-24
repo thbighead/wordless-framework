@@ -4,6 +4,7 @@ namespace Wordless\Application\Helpers\Option\Exception;
 
 use Exception;
 use Throwable;
+use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToUpdateOption extends Exception
 {
@@ -14,6 +15,10 @@ class FailedToUpdateOption extends Exception
         ?Throwable             $previous = null
     )
     {
-        parent::__construct("Failed to update option with key $this->option_key", 0, $previous);
+        parent::__construct(
+            "Failed to update option with key $this->option_key",
+            ExceptionCode::intentional_interrupt->value,
+            $previous
+        );
     }
 }

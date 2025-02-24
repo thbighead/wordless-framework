@@ -17,6 +17,7 @@ use Wordless\Application\Commands\WpCliCaller;
 use Wordless\Application\Listeners\BootApiControllers;
 use Wordless\Application\Listeners\BootHttpRemoteCallsLog;
 use Wordless\Application\Listeners\ChooseImageEditor;
+use Wordless\Application\Listeners\ClearFrontPageOptionsWhenPageDeleted;
 use Wordless\Application\Listeners\ConfigureUrlGuessing;
 use Wordless\Application\Listeners\DeferEnqueuedScripts;
 use Wordless\Application\Listeners\DisableXmlrpc;
@@ -63,6 +64,7 @@ class CoreProvider extends Provider
             BootApiControllers::class,
             BootHttpRemoteCallsLog::class,
             ChooseImageEditor::class,
+            ClearFrontPageOptionsWhenPageDeleted::class,
             ConfigureUrlGuessing::class,
             DeferEnqueuedScripts::class,
             DisableXmlrpc::class,
