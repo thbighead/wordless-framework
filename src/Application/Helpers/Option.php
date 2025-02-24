@@ -3,6 +3,7 @@
 namespace Wordless\Application\Helpers;
 
 use Wordless\Application\Helpers\Option\Exception\FailedToCreateOption;
+use Wordless\Application\Helpers\Option\Exception\FailedToDeleteOption;
 use Wordless\Application\Helpers\Option\Exception\FailedToFindOption;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
 use Wordless\Infrastructure\Helper;
@@ -61,6 +62,29 @@ class Option extends Helper
         }
     }
 
+    public static function delete(string $option_key): bool
+    {
+        try {
+            static::deleteOrFail($option_key);
+
+            return true;
+        } catch (FailedToDeleteOption) {
+            return false;
+        }
+    }
+
+    /**
+     * @param string $option_key
+     * @return void
+     * @throws FailedToDeleteOption
+     */
+    public static function deleteOrFail(string $option_key): void
+    {
+        if (!delete_option($option_key)) {
+            throw new FailedToDeleteOption($option_key);
+        }
+    }
+
     public static function get(string $option_key, mixed $default = null): mixed
     {
         try {
@@ -112,6 +136,14 @@ class Option extends Helper
      */
     public static function updateOrFail(string $option_key, mixed $option_value, ?bool $autoload = null): void
     {
+        try {
+            if (static::getOrFail($option_key) === $option_value) {
+                return;
+            }
+        } catch (FailedToFindOption) {
+            throw new FailedToUpdateOption($option_key, $option_value, $autoload);
+        }
+
         if (!update_option($option_key, $option_value, $autoload)) {
             throw new FailedToUpdateOption($option_key, $option_value, $autoload);
         }
