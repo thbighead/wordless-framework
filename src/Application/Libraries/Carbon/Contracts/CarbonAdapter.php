@@ -117,4 +117,30 @@ abstract class CarbonAdapter
 
         return static::createFromOriginalCarbon($originalResult);
     }
+
+    /**
+     * @param string $name
+     * @return mixed
+     * @throws EmptyConfigKey
+     * @throws InvalidArgumentException
+     * @throws InvalidConfigKey
+     * @throws InvalidFormatException
+     * @throws PathNotFoundException
+     */
+    public function __get(string $name): mixed
+    {
+        $originalProperty = $this->original->$name;
+
+        if (!is_object($originalProperty)) {
+            return $originalProperty;
+        }
+
+        if ($originalProperty instanceof $this->original) {
+            $this->original = $originalProperty;
+
+            return $this;
+        }
+
+        return static::createFromOriginalCarbon($originalProperty);
+    }
 }
