@@ -217,7 +217,10 @@ class Migrate extends ConsoleCommand
      */
     final protected function updateExecutedMigrationsListOption(): void
     {
-        Option::updateOrFail(self::MIGRATIONS_WP_OPTION_NAME, $this->getExecutedMigrationsChunksList());
+        Option::createUpdateOrFail(
+            self::MIGRATIONS_WP_OPTION_NAME,
+            $this->getExecutedMigrationsChunksList()
+        );
     }
 
     /**
