@@ -140,8 +140,8 @@ class Option extends Helper
             if (static::getOrFail($option_key) === $option_value) {
                 return;
             }
-        } catch (FailedToFindOption) {
-            throw new FailedToUpdateOption($option_key, $option_value, $autoload);
+        } catch (FailedToFindOption $exception) {
+            throw new FailedToUpdateOption($option_key, $option_value, $autoload, $exception);
         }
 
         if (!update_option($option_key, $option_value, $autoload)) {
