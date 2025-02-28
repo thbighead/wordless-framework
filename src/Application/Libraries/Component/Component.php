@@ -12,6 +12,7 @@ use Wordless\Application\Libraries\Component\Exceptions\TemplateNotFoundExceptio
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Enums\StandardContext;
 
 abstract class Component
 {
@@ -24,7 +25,7 @@ abstract class Component
     private static array $already_loaded_assets = [];
     private string $html;
 
-    public function __construct()
+    public function __construct(readonly private StandardContext $context = StandardContext::no_context)
     {
         $this->loadAssets();
     }
@@ -42,7 +43,7 @@ abstract class Component
     private function enqueueAsset(?EnqueueableAsset $asset): void
     {
         if (!is_null($asset) && !isset(self::$already_loaded_assets[$asset::class])) {
-            $asset->enqueue();
+            $asset->enqueue($this->context);
             self::$already_loaded_assets[$asset::class] = $asset::class;
         }
     }
