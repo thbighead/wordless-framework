@@ -4,12 +4,27 @@ namespace Wordless\Wordpress\Models\Post\Traits;
 
 use Wordless\Wordpress\Models\Attachment;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
+use Wordless\Wordpress\Models\Post\Traits\Crud\FeaturedImage\Exceptions\FailedToSetPostFeaturedImage;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 
 trait FeaturedImage
 {
     protected Attachment|false|null $featuredImage = false;
+
+    /**
+     * @param int $attachment_id
+     * @return $this
+     * @throws FailedToSetPostFeaturedImage
+     */
+    public function createOrUpdateFeaturedImage(int $attachment_id): static
+    {
+        if (set_post_thumbnail($this->id(), $attachment_id) === false) {
+            throw new FailedToSetPostFeaturedImage($this, $attachment_id);
+        }
+
+        return $this;
+    }
 
     /**
      * @param bool $with_acfs
