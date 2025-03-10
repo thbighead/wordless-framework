@@ -4,8 +4,8 @@ namespace Wordless\Wordpress\Models\Post\Traits;
 
 use Wordless\Wordpress\Models\Attachment;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
+use Wordless\Wordpress\Models\Post\Traits\Crud\FeaturedImage\Exceptions\FailedToGetPostFeaturedImage;
 use Wordless\Wordpress\Models\Post\Traits\Crud\FeaturedImage\Exceptions\FailedToSetPostFeaturedImage;
-use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 
@@ -30,6 +30,7 @@ trait FeaturedImage
     /**
      * @param bool $with_acfs
      * @return Attachment|null
+     * @throws FailedToGetPostFeaturedImage
      * @throws InitializingModelWithWrongPostType
      * @throws InvalidAcfFunction
      * @throws PostTypeNotRegistered
@@ -40,18 +41,12 @@ trait FeaturedImage
             return $this->featuredImage;
         }
 
-        $featured_image_id = get_post_thumbnail_id($this->asWpPost());
-
-        try {
-            return $this->featuredImage =
-                ($featured_image_id === false ? null : Attachment::get($featured_image_id, $with_acfs));
-        } catch (InitializingModelWithWrongPostType $exception) {
-            if ($exception->model->getType()->is(StandardType::revision)) {
-                return null;
-            }
-
-            throw $exception;
+        if (($featured_image_id = get_post_thumbnail_id($this->asWpPost())) === false) {
+            throw new FailedToGetPostFeaturedImage($this);
         }
+
+        return $this->featuredImage =
+            ($featured_image_id === 0 ? null : Attachment::get($featured_image_id, $with_acfs));
     }
 
     /**
