@@ -2,9 +2,11 @@
 
 namespace Wordless\Wordpress\Enums;
 
+use Wordless\Application\Helpers\Str;
+
 enum DashIcon: string
 {
-    private const DASHICON_PREFIX = 'dashicons-';
+    final public const DASHICON_PREFIX = 'dashicons-';
 
     /** @var string https://developer.wordpress.org/resource/dashicons/#menu */
     case menu_1 = self::DASHICON_PREFIX . 'menu';
@@ -668,4 +670,9 @@ enum DashIcon: string
     case superhero_1 = self::DASHICON_PREFIX . 'superhero';
     /** @var string https://developer.wordpress.org/resource/dashicons/#superhero-alt */
     case superhero_2 = self::DASHICON_PREFIX . 'superhero-alt';
+
+    public function notPrefixed(): string
+    {
+        return Str::after($this->value, self::DASHICON_PREFIX);
+    }
 }
