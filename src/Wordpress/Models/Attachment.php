@@ -10,6 +10,7 @@ use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
 use Wordless\Application\Helpers\GetType;
+use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
@@ -155,9 +156,12 @@ class Attachment extends Post
      * @param WpInsertAttachmentResultDTO $result
      * @return array
      * @throws NewMetadataEqualsToOldMetadata
+     * @throws PathNotFoundException
      */
     private static function validateNewMetadata(WpInsertAttachmentResultDTO $result): array
     {
+        require_once ProjectPath::wpCore('wp-admin/includes/image.php');
+
         $new_metadata = wp_generate_attachment_metadata($result->attachment_id, $result->wp_uploads_filepath);
         $old_metadata = get_metadata_raw(
             'post',

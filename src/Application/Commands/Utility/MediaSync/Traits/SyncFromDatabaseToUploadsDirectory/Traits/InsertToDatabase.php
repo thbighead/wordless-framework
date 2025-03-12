@@ -6,6 +6,7 @@ use Symfony\Component\Dotenv\Exception\FormatException;
 use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachment;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachmentMetadata;
+use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
@@ -50,12 +51,15 @@ trait InsertToDatabase
      * @param string $uploaded_file_absolute_path
      * @return void
      * @throws FailedToCreateWordpressAttachmentMetadata
+     * @throws PathNotFoundException
      */
     private function createAttachmentMetadataForUploadedFilepath(
         int    $attachment_id,
         string $uploaded_file_absolute_path
     ): void
     {
+        require_once ProjectPath::wpCore('wp-admin/includes/image.php');
+
         if (!is_array(wp_generate_attachment_metadata($attachment_id, $uploaded_file_absolute_path))) {
             throw new FailedToCreateWordpressAttachmentMetadata($attachment_id, $uploaded_file_absolute_path);
         }
