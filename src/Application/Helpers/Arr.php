@@ -152,6 +152,22 @@ class Arr extends Subjectable
         return $filtered_array;
     }
 
+    public static function packBy(array $array, int $by): array
+    {
+        $result = [];
+        $preserve_keys = static::isAssociative($array);
+        $by = max(1, abs($by));
+        $number_of_packs = (int)(
+            floor(($array_size = static::size($array)) / $by) + ($array_size % $by > 0 ? 1 : 0)
+        );
+
+        for ($i = 0; $i < $number_of_packs; $i++) {
+            $result[] = array_slice($array, $i * $by, $by, $preserve_keys);
+        }
+
+        return $result;
+    }
+
     public static function prepend(array $array, mixed $value, string|int|bool|null $with_key = null): array
     {
         if (!static::isAssociative($array) && $with_key === null) {
@@ -172,9 +188,9 @@ class Arr extends Subjectable
     }
 
     public static function pushValueIntoIndex(
-        array $array,
-        int $index,
-        mixed $value,
+        array                $array,
+        int                  $index,
+        mixed                $value,
         string|int|bool|null $with_key = null
     ): array
     {
