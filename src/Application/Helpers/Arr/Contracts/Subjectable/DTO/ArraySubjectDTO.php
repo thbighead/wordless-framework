@@ -115,6 +115,14 @@ final class ArraySubjectDTO extends SubjectDTO
         return $this->incrementSize()->recalculateAssociativeAfterAddition();
     }
 
+    public function packBy(int $by): self
+    {
+        $this->subject = Arr::packBy($this->subject, $by);
+        $this->associative = false;
+
+        return $this->updateSize();
+    }
+
     public function pushValueIntoIndex(int $index, mixed $value, string|int|null $with_key = null): self
     {
         $this->subject = Arr::pushValueIntoIndex($this->subject, $index, $value, $with_key);
