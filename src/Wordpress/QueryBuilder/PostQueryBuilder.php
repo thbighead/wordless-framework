@@ -41,6 +41,11 @@ class PostQueryBuilder extends WpQueryBuilder
 
     private const KEY_IGNORE_STICKY_POSTS = 'ignore_sticky_posts';
 
+    public static function make(StandardType|PostType|null $postType = null): static
+    {
+        return new static($postType);
+    }
+
     public function __construct(StandardType|PostType|null $postType = null)
     {
         $this->whereType($postType ?? StandardType::ANY)
