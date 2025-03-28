@@ -25,6 +25,6 @@ trait Create
             throw new FailedToCreateUser($email, $password, $username, $new_user_id);
         }
 
-        return new static(get_user_by('id', $new_user_id));
+        return static::findById($new_user_id);
     }
 }
