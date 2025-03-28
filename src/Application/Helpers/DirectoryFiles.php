@@ -82,7 +82,7 @@ class DirectoryFiles extends Helper
         }
 
         try {
-            static::createDirectoryAt(basename($to));
+            static::createDirectoryAt(dirname($to));
         } catch (Exception $exception) {
             throw new FailedToCopyFile($from, $to, $secure_mode, $exception);
         }
