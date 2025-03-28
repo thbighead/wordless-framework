@@ -41,7 +41,7 @@ class TaxonomyTermsSeeder extends SeederCommand
     protected function runIt(): int
     {
         /** @var string[] $taxonomies */
-        $taxonomies = TaxonomyQueryBuilder::getInstance(ResultFormat::names)->get();
+        $taxonomies = TaxonomyQueryBuilder::make(ResultFormat::names)->get();
 
         $progressBar = $this->progressBar($taxinomy_terms_total = count($taxonomies) * $this->getQuantity());
         $progressBar->setMessage('Creating Taxonomy Terms...');

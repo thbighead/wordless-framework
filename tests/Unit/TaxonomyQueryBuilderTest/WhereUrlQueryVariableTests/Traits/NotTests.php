@@ -16,7 +16,7 @@ trait NotTests
      */
     public function testNotWhereUrlQueryVariable(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereUrlQueryVariable('string_query_var');
 
         $this->assertNotOperator($taxonomyQueryBuilder);
@@ -34,7 +34,7 @@ trait NotTests
      */
     public function testNotWhereUrlQueryVariableWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereUrlQueryVariable('string_query_var_1')
             ->whereUrlQueryVariable('string_query_var_2');
 
@@ -53,7 +53,7 @@ trait NotTests
      */
     public function testNotWhereUrlQueryVariableWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->onlyDefault()
             ->whereUrlQueryVariable('string_query_var');
 
@@ -77,7 +77,7 @@ trait NotTests
     {
         $string = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereUrlQueryVariable($string);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)->whereUrlQueryVariable($string);
 
         $this->assertNotOperator($taxonomyQueryBuilder);
 
@@ -92,6 +92,6 @@ trait NotTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereUrlQueryVariable('');
+        TaxonomyQueryBuilder::make(operator: Operator::not)->whereUrlQueryVariable('');
     }
 }

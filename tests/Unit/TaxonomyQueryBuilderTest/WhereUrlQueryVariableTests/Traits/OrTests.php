@@ -16,7 +16,7 @@ trait OrTests
      */
     public function testOrWhereUrlQueryVariable(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereUrlQueryVariable('string_query_var');
 
         $this->assertOrOperator($taxonomyQueryBuilder);
@@ -34,7 +34,7 @@ trait OrTests
      */
     public function testOrWhereUrlQueryVariableWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereUrlQueryVariable('string_query_var_1')
             ->whereUrlQueryVariable('string_query_var_2');
 
@@ -53,7 +53,7 @@ trait OrTests
      */
     public function testOrWhereUrlQueryVariableWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->onlyDefault()
             ->whereUrlQueryVariable('string_query_var');
 
@@ -77,7 +77,7 @@ trait OrTests
     {
         $string = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereUrlQueryVariable($string);
 
         $this->assertOrOperator($taxonomyQueryBuilder);
@@ -93,6 +93,6 @@ trait OrTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance(operator: Operator::or)->whereUrlQueryVariable('');
+        TaxonomyQueryBuilder::make(operator: Operator::or)->whereUrlQueryVariable('');
     }
 }

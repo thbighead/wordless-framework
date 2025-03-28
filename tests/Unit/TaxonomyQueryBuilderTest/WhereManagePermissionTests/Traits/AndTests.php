@@ -15,7 +15,7 @@ trait AndTests
      */
     public function testAndWhereManagePermission(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereManagePermission('capability');
 
         $this->assertAndOperator($taxonomyQueryBuilder);
@@ -33,7 +33,7 @@ trait AndTests
      */
     public function testAndWhereManagePermissionWhereSameAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereManagePermission('capability')
             ->whereManagePermission('capability');
 
@@ -52,7 +52,7 @@ trait AndTests
      */
     public function testAndWhereManagePermissionWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereManagePermission('capability_1')
             ->whereManagePermission('capability_2');
 
@@ -71,7 +71,7 @@ trait AndTests
      */
     public function testAndWhereManagePermissionWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereName('name')
             ->onlyDefault()
             ->whereManagePermission('capability');
@@ -96,6 +96,6 @@ trait AndTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->whereManagePermission('');
+        TaxonomyQueryBuilder::make()->whereManagePermission('');
     }
 }

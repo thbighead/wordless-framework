@@ -16,7 +16,7 @@ trait NotTests
      */
     public function testNotWhereEditPermission(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereEditPermission('capability');
 
         $this->assertNotOperator($taxonomyQueryBuilder);
@@ -34,7 +34,7 @@ trait NotTests
      */
     public function testNotWhereEditPermissionWhereSameAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereEditPermission('capability')
             ->whereEditPermission('capability');
 
@@ -53,7 +53,7 @@ trait NotTests
      */
     public function testNotWhereEditPermissionWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereEditPermission('capability_1')
             ->whereEditPermission('capability_2');
 
@@ -72,7 +72,7 @@ trait NotTests
      */
     public function testNotWhereEditPermissionWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereName('name')
             ->onlyDefault()
             ->whereEditPermission('capability');
@@ -97,6 +97,6 @@ trait NotTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereEditPermission('');
+        TaxonomyQueryBuilder::make(operator: Operator::not)->whereEditPermission('');
     }
 }

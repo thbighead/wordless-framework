@@ -15,7 +15,7 @@ trait AndTests
      */
     public function testAndWhereCanOnlyBeUsedBy(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereCanOnlyBeUsedBy(ObjectType::post);
 
         $this->assertAndOperator($taxonomyQueryBuilder);
@@ -32,7 +32,7 @@ trait AndTests
      */
     public function testAndWhereCanOnlyBeUsedByWhereSameAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereCanOnlyBeUsedBy(ObjectType::post)
             ->whereCanOnlyBeUsedBy(ObjectType::post);
 
@@ -50,7 +50,7 @@ trait AndTests
      */
     public function testAndWhereCanOnlyBeUsedByWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereCanOnlyBeUsedBy(ObjectType::post)
             ->whereCanOnlyBeUsedBy(ObjectType::comment);
 
@@ -69,7 +69,7 @@ trait AndTests
      */
     public function testAndWhereCanOnlyBeUsedByWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereName('name')
             ->onlyDefault()
             ->whereCanOnlyBeUsedBy(ObjectType::post);

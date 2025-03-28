@@ -15,7 +15,7 @@ trait AndTests
      */
     public function testAndWhereAssignPermissionTest(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->whereAssignPermission('capability');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->whereAssignPermission('capability');
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -32,7 +32,7 @@ trait AndTests
      */
     public function testAndWhereAssignPermissionWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereAssignPermission('capability')
             ->whereAssignPermission('capability');
 
@@ -51,7 +51,7 @@ trait AndTests
      */
     public function testAndWhereAssignPermissionWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereName('name')
             ->onlyDefault()
             ->whereAssignPermission('capability');
@@ -77,7 +77,7 @@ trait AndTests
     {
         $capability = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->whereAssignPermission($capability);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->whereAssignPermission($capability);
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -92,6 +92,6 @@ trait AndTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->whereAssignPermission('');
+        TaxonomyQueryBuilder::make()->whereAssignPermission('');
     }
 }
