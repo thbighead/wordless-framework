@@ -16,7 +16,7 @@ trait NotTests
      */
     public function testNotWhereName(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereName('name_1');
 
         $this->assertNotOperator($taxonomyQueryBuilder);
@@ -34,7 +34,7 @@ trait NotTests
      */
     public function testNotWhereNameWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereName('name_1')
             ->whereName('name_2');
 
@@ -53,7 +53,7 @@ trait NotTests
      */
     public function testNotWhereNameWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->onlyDefault()
             ->whereName('name_1');
 
@@ -77,7 +77,7 @@ trait NotTests
     {
         $string = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereName($string);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)->whereName($string);
 
         $this->assertNotOperator($taxonomyQueryBuilder);
 
@@ -92,6 +92,6 @@ trait NotTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereName('');
+        TaxonomyQueryBuilder::make(operator: Operator::not)->whereName('');
     }
 }

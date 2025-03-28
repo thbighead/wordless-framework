@@ -15,7 +15,7 @@ trait AndTests
      */
     public function testAndWhereDeletePermission(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereDeletePermission('capability');
 
         $this->assertAndOperator($taxonomyQueryBuilder);
@@ -33,7 +33,7 @@ trait AndTests
      */
     public function testAndWhereDeletePermissionWhereSameAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereDeletePermission('capability')
             ->whereDeletePermission('capability');
 
@@ -52,7 +52,7 @@ trait AndTests
      */
     public function testAndWhereDeletePermissionWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereDeletePermission('capability_1')
             ->whereDeletePermission('capability_2');
 
@@ -71,7 +71,7 @@ trait AndTests
      */
     public function testAndWhereDeletePermissionWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereName('name')
             ->onlyDefault()
             ->whereDeletePermission('capability');
@@ -96,6 +96,6 @@ trait AndTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->whereDeletePermission('');
+        TaxonomyQueryBuilder::make()->whereDeletePermission('');
     }
 }

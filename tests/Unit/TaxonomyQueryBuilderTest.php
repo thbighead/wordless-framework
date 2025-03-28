@@ -58,7 +58,7 @@ class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
     {
         $this->assertEquals(
             ResultFormat::objects,
-            $this->getFormatPropertyFromTaxonomyQueryBuilder(TaxonomyQueryBuilder::getInstance())
+            $this->getFormatPropertyFromTaxonomyQueryBuilder(TaxonomyQueryBuilder::make())
         );
     }
 
@@ -71,7 +71,7 @@ class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
         $this->assertEquals(
             ResultFormat::names,
             $this->getFormatPropertyFromTaxonomyQueryBuilder(
-                TaxonomyQueryBuilder::getInstance(ResultFormat::names)
+                TaxonomyQueryBuilder::make(ResultFormat::names)
             )
         );
     }

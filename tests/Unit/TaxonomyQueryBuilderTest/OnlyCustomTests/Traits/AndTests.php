@@ -14,7 +14,7 @@ trait AndTests
      */
     public function testAndOnlyCustom(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->onlyCustom();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->onlyCustom();
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -30,7 +30,7 @@ trait AndTests
      */
     public function testAndOnlyCustomWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->onlyDefault()
             ->onlyCustom();
 
@@ -49,7 +49,7 @@ trait AndTests
      */
     public function testAndOnlyCustomWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereName('name')
             ->onlyCustom();
 
