@@ -6,7 +6,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Symfony\Component\Dotenv\Exception\PathException;
-use Wordless\Application\Commands\PublishConfigurationFiles\Exceptions\FailedToCopyConfig;
 use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
@@ -71,7 +70,7 @@ class PublishConfigurationFiles extends ConsoleCommand
      * @return int
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
-     * @throws FailedToCopyConfig
+     * @throws FailedToCopyFile
      * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidDirectory
@@ -93,23 +92,9 @@ class PublishConfigurationFiles extends ConsoleCommand
     }
 
     /**
-     * @param string $from
-     * @param string $to
-     * @throws FailedToCopyConfig
-     */
-    private function copyConfig(string $from, string $to): void
-    {
-        try {
-            DirectoryFiles::copyFile($from, $to, false);
-        } catch (FailedToCopyFile $exception) {
-            throw new FailedToCopyConfig($from, $to, $exception->secure_mode);
-        }
-    }
-
-    /**
      * @param array $config_filenames
      * @return void
-     * @throws FailedToCopyConfig
+     * @throws FailedToCopyFile
      * @throws InvalidArgumentException
      * @throws PathNotFoundException
      */
@@ -132,7 +117,7 @@ class PublishConfigurationFiles extends ConsoleCommand
     /**
      * @param string $config_filename
      * @return bool
-     * @throws FailedToCopyConfig
+     * @throws FailedToCopyFile
      * @throws InvalidArgumentException
      */
     private function resolveFromPackageProvider(string $config_filename): bool
@@ -148,7 +133,7 @@ class PublishConfigurationFiles extends ConsoleCommand
 
     /**
      * @return void
-     * @throws FailedToCopyConfig
+     * @throws FailedToCopyFile
      * @throws InvalidArgumentException
      * @throws InvalidDirectory
      * @throws PathNotFoundException
@@ -167,7 +152,7 @@ class PublishConfigurationFiles extends ConsoleCommand
     /**
      * @param string $config_filepath_from
      * @return void
-     * @throws FailedToCopyConfig
+     * @throws FailedToCopyFile
      * @throws InvalidArgumentException
      */
     private function skipOrCopyConfigFile(string $config_filepath_from): void
@@ -192,7 +177,7 @@ class PublishConfigurationFiles extends ConsoleCommand
         $this->wrapScriptWithMessages(
             "Let's copy file from $config_filepath_from to $config_filepath_to.",
             function () use ($config_filepath_from, $config_filepath_to) {
-                $this->copyConfig($config_filepath_from, $config_filepath_to);
+                DirectoryFiles::copyFile($config_filepath_from, $config_filepath_to, false);
             }
         );
     }
