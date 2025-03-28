@@ -302,11 +302,13 @@ class DirectoryFiles extends Helper
 
     /**
      * @param string $directory
-     * @param array $except
-     * @return array
+     * @param string[] $except
+     * @param bool $absolute_paths
+     * @return string[]
      * @throws InvalidDirectory
+     * @throws PathNotFoundException
      */
-    public static function listFromDirectory(string $directory, array $except = []): array
+    public static function listFromDirectory(string $directory, array $except = [], bool $absolute_paths = false): array
     {
         $raw_list = scandir($directory);
 
@@ -314,7 +316,15 @@ class DirectoryFiles extends Helper
             throw new InvalidDirectory($directory);
         }
 
-        return array_diff($raw_list, ['.', '..'], $except);
+        $list = array_diff($raw_list, ['.', '..'], $except);
+
+        if ($absolute_paths) {
+            foreach ($list as &$path) {
+                $path = ProjectPath::realpath("$directory/$path");
+            }
+        }
+
+        return $list;
     }
 
     /**
