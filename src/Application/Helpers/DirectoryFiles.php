@@ -81,10 +81,12 @@ class DirectoryFiles extends Helper
             throw new FailedToCopyFile($from, $to, $secure_mode);
         }
 
-        try {
-            static::createDirectoryAt(dirname($to));
-        } catch (Exception $exception) {
-            throw new FailedToCopyFile($from, $to, $secure_mode, $exception);
+        if (!is_dir($parent_target_directory_path = dirname($to))) {
+            try {
+                static::createDirectoryAt($parent_target_directory_path);
+            } catch (Exception $exception) {
+                throw new FailedToCopyFile($from, $to, $secure_mode, $exception);
+            }
         }
 
         if (!copy($from, $to)) {
