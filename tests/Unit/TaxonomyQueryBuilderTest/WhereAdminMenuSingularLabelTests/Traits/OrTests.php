@@ -16,7 +16,7 @@ trait OrTests
      */
     public function testOrWhereAdminMenuSingularLabelTest(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)->whereAdminMenuSingularLabel('test_label');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)->whereAdminMenuSingularLabel('test_label');
 
         $this->assertOrOperator($taxonomyQueryBuilder);
 
@@ -33,7 +33,7 @@ trait OrTests
      */
     public function testOrWhereAdminMenuSingularLabelWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereAdminMenuSingularLabel('test_label')
             ->whereAdminMenuSingularLabel('test_label');
 
@@ -52,7 +52,7 @@ trait OrTests
      */
     public function testOrWhereAdminMenuSingularLabelWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereName('name')
             ->onlyDefault()
             ->whereAdminMenuSingularLabel('test_label');
@@ -78,7 +78,7 @@ trait OrTests
     {
         $string = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereAdminMenuSingularLabel($string);
 
         $this->assertOrOperator($taxonomyQueryBuilder);
@@ -94,6 +94,6 @@ trait OrTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance(operator: Operator::or)->whereAdminMenuSingularLabel('');
+        TaxonomyQueryBuilder::make(operator: Operator::or)->whereAdminMenuSingularLabel('');
     }
 }

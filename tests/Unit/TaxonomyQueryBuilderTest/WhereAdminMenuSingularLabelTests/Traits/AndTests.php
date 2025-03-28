@@ -15,7 +15,7 @@ trait AndTests
      */
     public function testAndWhereAdminMenuSingularLabelTest(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->whereAdminMenuSingularLabel('test_label');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->whereAdminMenuSingularLabel('test_label');
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -32,7 +32,7 @@ trait AndTests
      */
     public function testAndWhereAdminMenuSingularLabelWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereAdminMenuSingularLabel('test_label')
             ->whereAdminMenuSingularLabel('test_label');
 
@@ -51,7 +51,7 @@ trait AndTests
      */
     public function testAndWhereAdminMenuSingularLabelWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereName('name')
             ->onlyDefault()
             ->whereAdminMenuSingularLabel('test_label');
@@ -77,7 +77,7 @@ trait AndTests
     {
         $string = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->whereAdminMenuSingularLabel($string);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->whereAdminMenuSingularLabel($string);
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -92,6 +92,6 @@ trait AndTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->whereAdminMenuSingularLabel('');
+        TaxonomyQueryBuilder::make()->whereAdminMenuSingularLabel('');
     }
 }

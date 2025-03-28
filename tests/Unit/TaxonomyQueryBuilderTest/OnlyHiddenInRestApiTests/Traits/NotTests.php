@@ -15,7 +15,7 @@ trait NotTests
      */
     public function testNotOnlyHiddenInRestApi(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->onlyHiddenFromRestApi();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)->onlyHiddenFromRestApi();
 
         $this->assertNotOperator($taxonomyQueryBuilder);
 
@@ -31,7 +31,7 @@ trait NotTests
      */
     public function testNotOnlyHiddenInRestApiWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->onlyAvailableInRestApi()
             ->onlyHiddenFromRestApi();
 
@@ -50,7 +50,7 @@ trait NotTests
      */
     public function testNotOnlyHiddenInRestApiWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereName('name')
             ->onlyDefault()
             ->onlyHiddenFromRestApi();

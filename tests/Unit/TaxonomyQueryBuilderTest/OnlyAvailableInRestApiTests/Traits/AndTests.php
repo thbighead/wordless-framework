@@ -14,7 +14,7 @@ trait AndTests
      */
     public function testAndOnlyAvailableInRestApi(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->onlyAvailableInRestApi();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->onlyAvailableInRestApi();
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -30,7 +30,7 @@ trait AndTests
      */
     public function testAndOnlyAvailableInRestApiWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->onlyHiddenFromRestApi()
             ->onlyAvailableInRestApi();
 
@@ -49,7 +49,7 @@ trait AndTests
      */
     public function testAndOnlyAvailableInRestApiWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereName('name')
             ->onlyDefault()
             ->onlyAvailableInRestApi();
