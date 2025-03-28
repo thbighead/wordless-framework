@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Helpers;
 
+use Exception;
 use Generator;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangePathPermissions;
@@ -76,7 +77,17 @@ class DirectoryFiles extends Helper
      */
     public static function copyFile(string $from, string $to, bool $secure_mode = true): void
     {
-        if (($secure_mode && file_exists($to)) || !copy($from, $to)) {
+        if ($secure_mode && file_exists($to)) {
+            throw new FailedToCopyFile($from, $to, $secure_mode);
+        }
+
+        try {
+            static::createDirectoryAt(basename($to));
+        } catch (Exception $exception) {
+            throw new FailedToCopyFile($from, $to, $secure_mode, $exception);
+        }
+
+        if (!copy($from, $to)) {
             throw new FailedToCopyFile($from, $to, $secure_mode);
         }
     }
