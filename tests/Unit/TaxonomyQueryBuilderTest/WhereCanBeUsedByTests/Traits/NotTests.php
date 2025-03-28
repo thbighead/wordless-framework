@@ -16,7 +16,7 @@ trait NotTests
      */
     public function testNotWhereCanBeUsedBy(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereCanBeUsedBy(ObjectType::post);
 
         $this->assertNotOperator($taxonomyQueryBuilder);
@@ -33,7 +33,7 @@ trait NotTests
      */
     public function testNotWhereCanBeUsedByWhereSameAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereCanBeUsedBy(ObjectType::post)
             ->whereCanBeUsedBy(ObjectType::post);
 
@@ -51,7 +51,7 @@ trait NotTests
      */
     public function testNotWhereCanBeUsedByWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereCanBeUsedBy(ObjectType::post)
             ->whereCanBeUsedBy(ObjectType::comment);
 
@@ -70,7 +70,7 @@ trait NotTests
      */
     public function testNotWhereCanBeUsedByWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereName('name')
             ->onlyDefault()
             ->whereCanBeUsedBy(ObjectType::post);

@@ -14,7 +14,7 @@ trait AndTests
      */
     public function testAndOnlyDefault(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->onlyDefault();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->onlyDefault();
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -30,7 +30,7 @@ trait AndTests
      */
     public function testAndOnlyDefaultWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->onlyCustom()
             ->onlyDefault();
 
@@ -49,7 +49,7 @@ trait AndTests
      */
     public function testAndOnlyDefaultWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereName('name')
             ->onlyDefault();
 

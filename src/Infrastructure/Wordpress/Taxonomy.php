@@ -65,7 +65,7 @@ abstract class Taxonomy implements IRelatedMetaData
             throw new InitializingModelWithWrongTaxonomyName($this, $with_acfs);
         }
 
-        $this->wpTaxonomy = TaxonomyQueryBuilder::getInstance()->whereName($this->name())->first();
+        $this->wpTaxonomy = TaxonomyQueryBuilder::make()->whereName($this->name())->first();
 
         if ($with_acfs) {
             $this->loadTermAcfs($this->wpTerm->term_id);

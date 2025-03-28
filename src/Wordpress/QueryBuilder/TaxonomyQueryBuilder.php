@@ -17,14 +17,16 @@ final class TaxonomyQueryBuilder extends QueryBuilder
     use ArgumentsBuilder;
 
     private const ARGUMENT_KEY_BUILT_IN = '_builtin';
-
     private const ARGUMENT_KEY_OBJECT_TYPE = 'object_type';
     private const ARGUMENT_KEY_PUBLIC = 'public';
     private const ARGUMENT_KEY_SHOW_IN_REST = 'show_in_rest';
     private const ARGUMENT_KEY_SHOW_TAG_CLOUD = 'show_tagcloud';
     private const ARGUMENT_KEY_SHOW_UI = 'show_ui';
 
-    public static function getInstance(ResultFormat $format = ResultFormat::objects, Operator $operator = Operator::and): TaxonomyQueryBuilder
+    public static function make(
+        ResultFormat $format = ResultFormat::objects,
+        Operator     $operator = Operator::and
+    ): TaxonomyQueryBuilder
     {
         return new self($format, $operator);
     }
