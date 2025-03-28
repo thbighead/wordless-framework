@@ -45,6 +45,7 @@ use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
+use Wordless\Wordpress\Models\User\WordlessUser;
 
 class WordlessInstall extends ConsoleCommand
 {
@@ -53,7 +54,6 @@ class WordlessInstall extends ConsoleCommand
     use RunWpCliCommand;
 
     public const COMMAND_NAME = 'wordless:install';
-    final public const TEMP_MAIL = 'temp@mail.not.real';
     private const MU_PLUGIN_FILE_NAME = 'wordless-plugin.php';
     private const WORDPRESS_SALT_URL_GETTER = 'https://api.wordpress.org/secret-key/1.1/salt/';
 
@@ -582,7 +582,7 @@ class WordlessInstall extends ConsoleCommand
 
             $this->runWpCliCommand(
                 "core install --url=$app_url_with_final_slash --locale={$this->getWpLanguages()[0]} --title=\"$app_name\" --skip-email --admin_user=temp --admin_email="
-                . self::TEMP_MAIL
+                . WordlessUser::FIRST_EMAIL
             );
         }
 

@@ -3,13 +3,18 @@
 namespace Wordless\Wordpress\Models\User;
 
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Create\Exceptions\FailedToCreateUser;
+use Wordless\Wordpress\Models\User\Traits\TempUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToDeleteWordlessUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToUpdateWordlessUser;
 
 final class WordlessUser extends User
 {
+    use Constructors;
+    use TempUser;
+
     public const EMAIL = 'wordless@wordless.wordless';
 
     private static WordlessUser $wordlessUser;
@@ -36,9 +41,29 @@ final class WordlessUser extends User
         return self::findByEmail(self::EMAIL);
     }
 
+    public static function findByEmail(string $user_email = ''): null
+    {
+        return null;
+    }
+
+    public static function findById(int $user_id = 0): null
+    {
+        return null;
+    }
+
+    public static function findBySlug(string $user_slug = ''): null
+    {
+        return null;
+    }
+
+    public static function findByUsername(string $username = ''): null
+    {
+        return null;
+    }
+
     public static function make(): self
     {
-        return self::$wordlessUser ?? self::$wordlessUser = new self;
+        return self::getInstance();
     }
 
     /**
