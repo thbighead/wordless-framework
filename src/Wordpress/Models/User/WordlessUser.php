@@ -6,9 +6,9 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Create\Exceptions\FailedToCreateUser;
-use Wordless\Wordpress\Models\User\Traits\TempUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToDeleteWordlessUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToUpdateWordlessUser;
+use Wordless\Wordpress\Models\User\WordlessUser\Traits\TempUser;
 
 final class WordlessUser extends User
 {
