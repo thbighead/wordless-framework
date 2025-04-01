@@ -53,6 +53,7 @@ class WordlessInstall extends ConsoleCommand
     use RunWpCliCommand;
 
     public const COMMAND_NAME = 'wordless:install';
+    final public const TEMP_MAIL = 'temp@mail.not.real';
     private const MU_PLUGIN_FILE_NAME = 'wordless-plugin.php';
     private const WORDPRESS_SALT_URL_GETTER = 'https://api.wordpress.org/secret-key/1.1/salt/';
 
@@ -573,10 +574,8 @@ class WordlessInstall extends ConsoleCommand
             $app_url_with_final_slash = Str::finishWith($app_url, '/');
 
             $this->runWpCliCommand(
-                "core install --url=$app_url_with_final_slash --locale={$this->getWpLanguages()[0]} --title=\"$app_name\" --skip-email --admin_user="
-                . WordlessUser::USERNAME
-                . ' --admin_email='
-                . WordlessUser::email()
+                "core install --url=$app_url_with_final_slash --locale={$this->getWpLanguages()[0]} --title=\"$app_name\" --skip-email --admin_user=temp --admin_email="
+                . self::TEMP_MAIL
             );
         }
 
