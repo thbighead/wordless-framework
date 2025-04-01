@@ -5,7 +5,6 @@ namespace Wordless\Application\Commands;
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -62,7 +61,6 @@ class SyncRoles extends ConsoleCommand
      * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidProviderClass
-     * @throws PathException
      * @throws PathNotFoundException
      */
     protected function runIt(): int

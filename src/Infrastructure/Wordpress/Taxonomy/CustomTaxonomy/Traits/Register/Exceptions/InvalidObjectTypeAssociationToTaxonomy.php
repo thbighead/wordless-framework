@@ -10,9 +10,9 @@ use Wordless\Infrastructure\Enums\ExceptionCode;
 class InvalidObjectTypeAssociationToTaxonomy extends InvalidArgumentException
 {
     public function __construct(
-        public readonly mixed $objectType,
+        public readonly mixed  $objectType,
         public readonly string $taxonomy_name_key,
-        ?Throwable $previous = null
+        ?Throwable             $previous = null
     )
     {
         parent::__construct($this->mountMessage(), ExceptionCode::development_error->value, $previous);

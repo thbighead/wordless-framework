@@ -6,10 +6,10 @@ use Doctrine\Inflector\Language as DoctrineLanguage;
 
 enum Language: string
 {
-    case english          = DoctrineLanguage::ENGLISH;
-    case french           = DoctrineLanguage::FRENCH;
+    case english = DoctrineLanguage::ENGLISH;
+    case french = DoctrineLanguage::FRENCH;
     case norwegian_bokmal = DoctrineLanguage::NORWEGIAN_BOKMAL;
-    case portuguese       = DoctrineLanguage::PORTUGUESE;
-    case spanish          = DoctrineLanguage::SPANISH;
-    case turkish          = DoctrineLanguage::TURKISH;
+    case portuguese = DoctrineLanguage::PORTUGUESE;
+    case spanish = DoctrineLanguage::SPANISH;
+    case turkish = DoctrineLanguage::TURKISH;
 }

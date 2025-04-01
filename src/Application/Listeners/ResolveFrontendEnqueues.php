@@ -4,7 +4,6 @@ namespace Wordless\Application\Listeners;
 
 use InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper;
@@ -30,7 +29,6 @@ class ResolveFrontendEnqueues extends ActionListener
      * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidProviderClass
-     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function runEnqueues(): void

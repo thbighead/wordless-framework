@@ -3,7 +3,6 @@
 namespace Wordless\Application\Helpers;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Link\Traits\Internal;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -20,7 +19,6 @@ class Link extends Helper
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws FormatException
-     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function css(string $css_filename): string
@@ -34,7 +32,6 @@ class Link extends Helper
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws FormatException
-     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function img(string $img_filename): string
@@ -48,7 +45,6 @@ class Link extends Helper
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws FormatException
-     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function js(string $js_filename): string
@@ -61,7 +57,6 @@ class Link extends Helper
      * @return string
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function raw(string $additional_path = ''): string
     {
@@ -74,7 +69,6 @@ class Link extends Helper
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws FormatException
-     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function themePublic(string $additional_path = ''): string
@@ -87,7 +81,6 @@ class Link extends Helper
      * @return string
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function uploads(string $additional_path = ''): string
     {

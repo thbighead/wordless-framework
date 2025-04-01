@@ -114,7 +114,7 @@ class DistributeFront extends ConsoleCommand
             return ProjectPath::dist((string)Str::of($non_minified_filepath)
                 ->afterLast(DIRECTORY_SEPARATOR)
                 ->before('.')
-                ->wrap("$detectedFileType->name/",".min.$detectedFileType->name"));
+                ->wrap("$detectedFileType->name/", ".min.$detectedFileType->name"));
         } catch (PathNotFoundException $exception) {
             DirectoryFiles::createFileAt($exception->path);
 

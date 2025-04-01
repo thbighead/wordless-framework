@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Commands;
 
@@ -23,7 +23,6 @@ class DummyCommand extends ConsoleCommand
     {
         return '';
     }
-
 
     protected function help(): string
     {

@@ -3,7 +3,6 @@
 namespace Wordless\Application\Cachers;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
@@ -24,7 +23,6 @@ class ApiControllerCacher extends Cacher
      * @throws EmptyConfigKey
      * @throws FormatException
      * @throws InvalidProviderClass
-     * @throws PathException
      * @throws PathNotFoundException
      */
     protected function mountCacheArray(): array

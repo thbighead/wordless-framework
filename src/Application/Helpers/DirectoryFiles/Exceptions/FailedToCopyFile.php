@@ -12,7 +12,7 @@ class FailedToCopyFile extends ErrorException
         readonly public string $from,
         readonly public string $to,
         readonly public bool   $secure_mode,
-        ?Throwable              $previous = null
+        ?Throwable             $previous = null
     )
     {
         $security_word_mode = $this->secure_mode ? 'secure' : 'insecure';
