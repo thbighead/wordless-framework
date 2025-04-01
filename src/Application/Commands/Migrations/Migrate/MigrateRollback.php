@@ -5,7 +5,6 @@ namespace Wordless\Application\Commands\Migrations\Migrate;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Migrations\Migrate;
 use Wordless\Application\Commands\Migrations\Migrate\Exceptions\FailedToFindExecutedMigrationScript;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
@@ -75,7 +74,6 @@ class MigrateRollback extends Migrate
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
-     * @throws PathException
      * @throws PathNotFoundException
      * @throws QueryError
      */
@@ -98,7 +96,6 @@ class MigrateRollback extends Migrate
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
-     * @throws PathException
      * @throws PathNotFoundException
      */
     final protected function findLoadedMigrationFilepathByFilename(string $migration_filename): string
@@ -119,7 +116,6 @@ class MigrateRollback extends Migrate
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
-     * @throws PathException
      * @throws PathNotFoundException
      */
     final protected function registerMigrationExecution(string $migration_filename): void
@@ -160,7 +156,6 @@ class MigrateRollback extends Migrate
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
-     * @throws PathException
      * @throws PathNotFoundException
      */
     private function filterExecutedMigrationsToRollback(): static

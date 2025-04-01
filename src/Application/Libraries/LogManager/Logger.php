@@ -9,6 +9,8 @@ use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectD
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
 use Wordless\Application\Libraries\LogManager\Logger\RotatingFileHandler;
+use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
+use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 
 class Logger extends Singleton
 {
@@ -32,6 +34,8 @@ class Logger extends Singleton
 
     /**
      * @throws EmptyConfigKey
+     * @throws InvalidAcfFunction
+     * @throws NoUserAuthenticated
      * @throws PathNotFoundException
      */
     protected function __construct()

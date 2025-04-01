@@ -4,7 +4,6 @@ namespace Wordless\Wordpress\Models;
 
 use InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Database;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\DirectoryFiles;
@@ -184,7 +183,6 @@ class Attachment extends Post
      * @throws InitializingModelWithWrongPostType
      * @throws InvalidAcfFunction
      * @throws InvalidMetaKey
-     * @throws PathException
      * @throws PostTypeNotRegistered
      */
     public function __construct(int|WP_Post $post, bool $with_acfs = true)
@@ -305,7 +303,6 @@ class Attachment extends Post
      * @return void
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     private function setMedia(): void
     {

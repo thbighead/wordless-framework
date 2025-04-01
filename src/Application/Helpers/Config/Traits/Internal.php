@@ -46,9 +46,9 @@ trait Internal
      */
     private static function fromDTO(
         ConfigSubjectDTO $dto,
-        string $ofKey,
-        ?string $key = null,
-        mixed $default = null
+        string           $ofKey,
+        ?string          $key = null,
+        mixed            $default = null
     ): mixed
     {
         $config = $dto->ofKey($ofKey);

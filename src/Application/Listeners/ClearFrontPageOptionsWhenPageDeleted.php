@@ -25,7 +25,7 @@ class ClearFrontPageOptionsWhenPageDeleted extends ActionListener
      */
     public static function clearFrontPageOptionsIfPageIsDeleted(int $post_id, WP_Post $post): void
     {
-        if ($post->post_type === FrontPage::postType()->name && $post_id === Option::get(FrontPage::OPTION_KEY_FRONT_PAGE_ID)){
+        if ($post->post_type === FrontPage::postType()->name && $post_id === Option::get(FrontPage::OPTION_KEY_FRONT_PAGE_ID)) {
             Option::delete(FrontPage::OPTION_KEY_FRONT_PAGE_ID);
             Option::createUpdateOrFail(FrontPage::OPTION_KEY_SHOW_ON_FRONT, 'posts');
         }

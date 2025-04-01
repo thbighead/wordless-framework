@@ -60,6 +60,7 @@ final class PublicSymlink
     /**
      * @return PublicSymlink[]
      * @throws InvalidDirectory
+     * @throws PathNotFoundException
      */
     public function exportGeneratedSymlinksParsedFromExceptions(): array
     {

@@ -4,7 +4,6 @@ namespace Wordless\Application\Listeners;
 
 use InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
@@ -26,7 +25,6 @@ class EnvironmentOnAdminBar extends ActionListener
      * @throws DotEnvNotSetException
      * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws PathException
      */
     public static function addEnvironmentFlagToAdminBarMenu(WP_Admin_Bar $wpAdminBar): void
     {

@@ -2,9 +2,7 @@
 
 namespace Wordless\Application\Listeners\FireExceptionOnMailSendError\Exceptions;
 
-use Throwable;
 use Wordless\Exceptions\WpErrorException;
-use WP_Error;
 
 class FailedToSendMailMessage extends WpErrorException
 {

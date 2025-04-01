@@ -4,7 +4,6 @@ namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
@@ -58,7 +57,6 @@ class CreateInternalCache extends ConsoleCommand
      * @throws FailedToGetDirectoryPermissions
      * @throws FormatException
      * @throws InvalidProviderClass
-     * @throws PathException
      */
     protected function runIt(): int
     {

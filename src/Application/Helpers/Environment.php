@@ -69,7 +69,6 @@ STRING;
      * @return mixed
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function get(string $key, mixed $default = null): mixed
     {
@@ -90,7 +89,6 @@ STRING;
      * @return mixed
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function getWithoutCache(string $key, mixed $default = null): mixed
     {
@@ -135,7 +133,6 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function isLocal(): bool
     {
@@ -151,7 +148,6 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function isNotLocal(): bool
     {
@@ -167,7 +163,6 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function isNotProduction(): bool
     {
@@ -178,7 +173,6 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function isNotRemote(): bool
     {
@@ -189,7 +183,6 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function isNotStaging(): bool
     {
@@ -200,7 +193,6 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function isProduction(): bool
     {
@@ -211,7 +203,6 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function isRemote(): bool
     {
@@ -222,7 +213,6 @@ STRING;
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function isStaging(): bool
     {
@@ -233,7 +223,6 @@ STRING;
      * @return void
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function loadDotEnv(): void
     {
@@ -245,7 +234,9 @@ STRING;
             (new Dotenv)->load(ProjectPath::root('.env'));
             define(self::DOT_ENV_LOADED_CONSTANT_NAME, true);
         } catch (PathNotFoundException $exception) {
-            throw new DotEnvNotSetException(".env file not found at $exception->path");
+            throw new DotEnvNotSetException(".env file not found at $exception->path", $exception);
+        } catch (PathException $exception) {
+            throw new DotEnvNotSetException($exception->getMessage(), $exception);
         }
     }
 

@@ -7,7 +7,6 @@ use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Helpers\Config;
@@ -69,7 +68,6 @@ class ConfigureDateOptions extends ConsoleCommand
      * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidConfigKey
-     * @throws PathException
      * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
@@ -101,7 +99,6 @@ class ConfigureDateOptions extends ConsoleCommand
      * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidConfigKey
-     * @throws PathException
      * @throws PathNotFoundException
      */
     private function setTimezone(): void

@@ -3,7 +3,6 @@
 namespace Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachment;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachmentMetadata;
 use Wordless\Application\Helpers\ProjectPath;
@@ -21,7 +20,6 @@ trait InsertToDatabase
      * @throws FailedToCreateWordpressAttachment
      * @throws FailedToCreateWordpressAttachmentMetadata
      * @throws FormatException
-     * @throws PathException
      * @throws PathNotFoundException
      */
     private function createAttachmentForUploadedFilepath(string $uploaded_file_absolute_path): void

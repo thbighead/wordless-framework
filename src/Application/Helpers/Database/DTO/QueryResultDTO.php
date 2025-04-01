@@ -10,8 +10,8 @@ readonly class QueryResultDTO
     public array|object $results;
 
     public function __construct(
-        public int|true     $affected_rows,
-        array|object $results
+        public int|true $affected_rows,
+        array|object    $results
     )
     {
         if (is_array($results) && count($results) === 1) {

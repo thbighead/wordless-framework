@@ -3,7 +3,6 @@
 namespace Wordless\Application\Libraries\LogManager\Logger;
 
 use Monolog\Handler\RotatingFileHandler as MonologRotatingFileHandler;
-use RuntimeException;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
@@ -27,7 +26,6 @@ class RotatingFileHandler extends MonologRotatingFileHandler
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
      * @throws PathNotFoundException
-     * @throws RuntimeException
      */
     public function __construct()
     {

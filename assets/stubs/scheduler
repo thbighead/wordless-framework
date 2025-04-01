@@ -1,10 +1,11 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Schedulers;
 
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Schedule;
 use Wordless\Infrastructure\Wordpress\Schedule\Enums\Recurrence;
+use Wordless\Wordpress\Hook\Enums\Action;
 
 class DummyScheduler extends Schedule
 {
@@ -15,11 +16,11 @@ class DummyScheduler extends Schedule
 
     protected static function hook(): ActionHook
     {
-        // TODO: Implement hook() method.
+        return Action::init;
     }
 
     protected static function recurrence(): Recurrence
     {
-        // TODO: Implement recurrence() method.
+        return Recurrence::weekly;
     }
 }

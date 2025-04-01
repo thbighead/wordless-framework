@@ -3,7 +3,6 @@
 namespace Wordless\Application\Helpers;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Crypto\Traits\Base64;
 use Wordless\Application\Helpers\Crypto\Traits\Base64\Exceptions\FailedToDecode;
 use Wordless\Application\Helpers\Crypto\Traits\Internal;
@@ -25,7 +24,6 @@ class Crypto extends Helper
      * @throws DotEnvNotSetException
      * @throws FailedToDecode
      * @throws FormatException
-     * @throws PathException
      */
     public static function decrypt(string $string_to_decrypt): bool|string
     {
@@ -43,7 +41,6 @@ class Crypto extends Helper
      * @return string
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public static function encrypt(string $string_to_encrypt): string
     {

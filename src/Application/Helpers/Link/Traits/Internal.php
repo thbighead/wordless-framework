@@ -3,7 +3,6 @@
 namespace Wordless\Application\Helpers\Link\Traits;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath;
@@ -20,7 +19,6 @@ trait Internal
      * @return string
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     private static function getBaseUri(): string
     {
@@ -39,7 +37,6 @@ trait Internal
      * @return string
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     private static function guessBaseUri(): string
     {
@@ -51,7 +48,6 @@ trait Internal
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws FormatException
-     * @throws PathException
      * @throws PathNotFoundException
      */
     private static function getBaseAssetsUri(): string
@@ -72,7 +68,6 @@ trait Internal
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws FormatException
-     * @throws PathException
      * @throws PathNotFoundException
      */
     private static function guessBaseAssetsUri(): string
@@ -87,10 +82,9 @@ trait Internal
      * @return string
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     private static function guessUploadsUri(): string
     {
-        return self::getBaseUri() . "/wp-content/uploads";
+        return self::getBaseUri() . '/wp-content/uploads';
     }
 }

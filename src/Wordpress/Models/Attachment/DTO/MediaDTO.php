@@ -3,7 +3,6 @@
 namespace Wordless\Wordpress\Models\Attachment\DTO;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Link;
 use Wordless\Application\Helpers\Str;
@@ -26,7 +25,6 @@ readonly class MediaDTO
      * @param array $raw_data
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public function __construct(public array $raw_data)
     {
@@ -67,7 +65,6 @@ readonly class MediaDTO
      * @return void
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     private function setSizes(): void
     {

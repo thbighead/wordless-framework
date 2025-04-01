@@ -2,22 +2,32 @@
 
 namespace Wordless\Wordpress\Models\User;
 
-use Wordless\Application\Helpers\Str;
+use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Create\Exceptions\FailedToCreateUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToDeleteWordlessUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToUpdateWordlessUser;
-use Wordless\Wordpress\Models\User\WordlessUser\Traits\TempUser;
 
 final class WordlessUser extends User
 {
     use Constructors;
-    use TempUser;
 
-    public const EMAIL = 'wordless@wordless.wordless';
+    public const USERNAME = 'wordless';
+    public const FIRST_PASSWORD = 'wordless_admin';
 
-    private static WordlessUser $wordlessUser;
+    public static function email(): string
+    {
+        try {
+            $app_host = Environment::get('APP_HOST', 'wordless.wordless');
+        } catch (FormatException|DotEnvNotSetException) {
+            $app_host = 'wordless.wordless';
+        }
+
+        return self::USERNAME . "@$app_host";
+    }
 
     /**
      * @param string $email
@@ -30,7 +40,7 @@ final class WordlessUser extends User
     public static function create(string $email = '', string $password = '', ?string $username = null): static
     {
         if (self::find() === null) {
-            return parent::create(self::EMAIL, Str::random());
+            return parent::create(self::email(), self::FIRST_PASSWORD);
         }
 
         return self::make();
@@ -38,7 +48,7 @@ final class WordlessUser extends User
 
     public static function find(): ?self
     {
-        return self::findByEmail(self::EMAIL);
+        return parent::findByEmail(self::email());
     }
 
     public static function findByEmail(string $user_email = ''): null
@@ -87,6 +97,6 @@ final class WordlessUser extends User
 
     private function __construct()
     {
-        parent::__construct(get_user_by('email', self::EMAIL), false);
+        parent::__construct(get_user_by('email', self::email()), false);
     }
 }

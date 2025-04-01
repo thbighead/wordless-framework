@@ -198,10 +198,10 @@ abstract class Builder
     final protected function callWpInsertPost(bool $firing_after_events = true): int
     {
         if (($result = wp_insert_post(
-            $this->mountPostArrayArguments(),
-            true,
-            $firing_after_events
-        )) instanceof WP_Error) {
+                $this->mountPostArrayArguments(),
+                true,
+                $firing_after_events
+            )) instanceof WP_Error) {
             throw new WpInsertPostError($result);
         }
 

@@ -173,7 +173,9 @@ if (!defined('ABSPATH')) {
     define('ABSPATH', __DIR__ . '/');
 }
 
+/** @noinspection PhpUnhandledExceptionInspection */
 Bootstrapper::bootConstants();
 
 /** Sets up WordPress vars and included files. */
+/** @noinspection PhpIncludeInspection */
 require_once ABSPATH . 'wp-settings.php';
