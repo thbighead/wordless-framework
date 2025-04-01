@@ -9,12 +9,12 @@ use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToSentCspHeadersFromBuilder extends ErrorException
 {
-     public function __construct(public readonly Exception $originalException, ?Throwable $previous = null)
-     {
-         parent::__construct(
-             $originalException->getMessage(),
-             ExceptionCode::development_error->value,
-             previous: $previous
-         );
-     }
+    public function __construct(public readonly Exception $originalException, ?Throwable $previous = null)
+    {
+        parent::__construct(
+            $originalException->getMessage(),
+            ExceptionCode::development_error->value,
+            previous: $previous
+        );
+    }
 }

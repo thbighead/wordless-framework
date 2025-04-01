@@ -1,9 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 use Wordless\Infrastructure\Migration;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         // TODO: Implement up() method.

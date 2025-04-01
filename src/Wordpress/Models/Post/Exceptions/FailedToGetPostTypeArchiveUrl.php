@@ -11,7 +11,7 @@ class FailedToGetPostTypeArchiveUrl extends DomainException
     public function __construct(
         public readonly string $modelClassNamespace,
         public readonly string $post_type_key,
-        ?Throwable $previous = null
+        ?Throwable             $previous = null
     )
     {
         parent::__construct(

@@ -9,7 +9,6 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Helpers\Environment;
@@ -34,7 +33,6 @@ class ReplaceBaseUrls extends ConsoleCommand
      * @return ArgumentDTO[]
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     protected function arguments(): array
     {
@@ -92,7 +90,6 @@ class ReplaceBaseUrls extends ConsoleCommand
      * @throws DotEnvNotSetException
      * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws PathException
      */
     protected function setup(InputInterface $input, OutputInterface $output): void
     {

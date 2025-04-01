@@ -10,7 +10,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -54,6 +53,7 @@ class WordlessInstall extends ConsoleCommand
     use RunWpCliCommand;
 
     public const COMMAND_NAME = 'wordless:install';
+    final public const TEMP_MAIL = 'temp@mail.not.real';
     private const MU_PLUGIN_FILE_NAME = 'wordless-plugin.php';
     private const WORDPRESS_SALT_URL_GETTER = 'https://api.wordpress.org/secret-key/1.1/salt/';
 
@@ -107,7 +107,6 @@ class WordlessInstall extends ConsoleCommand
      * @throws FailedToRewriteDotEnvFile
      * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws PathException
      * @throws PathNotFoundException
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
@@ -250,7 +249,6 @@ class WordlessInstall extends ConsoleCommand
      * @throws FailedToPutFileContent
      * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws PathException
      * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
@@ -282,7 +280,6 @@ class WordlessInstall extends ConsoleCommand
      * @throws DotEnvNotSetException
      * @throws ExceptionInterface
      * @throws FormatException
-     * @throws PathException
      */
     private function createCache(): static
     {
@@ -300,7 +297,6 @@ class WordlessInstall extends ConsoleCommand
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
      * @throws FormatException
-     * @throws PathException
      * @throws PathNotFoundException
      */
     private function createRobotsTxtFromStub(): static
@@ -342,7 +338,6 @@ class WordlessInstall extends ConsoleCommand
      * @throws ExceptionInterface
      * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws PathException
      * @throws WpCliCommandReturnedNonZero
      */
     private function createWpDatabase(): static
@@ -505,13 +500,12 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @param string $key
-     * @param $default
+     * @param mixed|null $default
      * @return mixed
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
-    private function getEnvVariableByKey(string $key, $default = null): mixed
+    private function getEnvVariableByKey(string $key, mixed $default = null): mixed
     {
         return $this->fresh_new_env_content[$key] ?? Environment::get($key, $default);
     }
@@ -567,7 +561,6 @@ class WordlessInstall extends ConsoleCommand
      * @throws ExceptionInterface
      * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws PathException
      * @throws WpCliCommandReturnedNonZero
      */
     private function installWpDatabaseCore(): static
@@ -582,7 +575,7 @@ class WordlessInstall extends ConsoleCommand
 
             $this->runWpCliCommand(
                 "core install --url=$app_url_with_final_slash --locale={$this->getWpLanguages()[0]} --title=\"$app_name\" --skip-email --admin_user=temp --admin_email="
-                . WordlessUser::FIRST_EMAIL
+                . self::TEMP_MAIL
             );
         }
 
@@ -675,7 +668,6 @@ class WordlessInstall extends ConsoleCommand
      * @throws ExceptionInterface
      * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws PathException
      * @throws WpCliCommandReturnedNonZero
      */
     private function makeWpBlogPublic(): static
@@ -695,7 +687,6 @@ class WordlessInstall extends ConsoleCommand
      * @throws ExceptionInterface
      * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws PathException
      * @throws PathNotFoundException
      * @throws WpCliCommandReturnedNonZero
      */
@@ -786,7 +777,6 @@ class WordlessInstall extends ConsoleCommand
      * @throws DotEnvNotSetException
      * @throws FailedToChangePathPermissions
      * @throws FormatException
-     * @throws PathException
      * @throws PathNotFoundException
      */
     private function resolveWpConfigChmod(): static

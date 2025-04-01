@@ -11,8 +11,8 @@ class FailedToSetPostFeaturedImage extends ErrorException
 {
     public function __construct(
         public readonly Post $post,
-        public readonly int $supposed_featured_image_attachment_id,
-        ?Throwable $previous = null
+        public readonly int  $supposed_featured_image_attachment_id,
+        ?Throwable           $previous = null
     )
     {
         parent::__construct(

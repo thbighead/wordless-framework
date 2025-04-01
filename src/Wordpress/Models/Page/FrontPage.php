@@ -29,8 +29,8 @@ class FrontPage extends Page
      */
     public static function setPageAsFrontPage(
         int|WP_Post|Page $page,
-        bool $load_acfs = true,
-        bool $override = false
+        bool             $load_acfs = true,
+        bool             $override = false
     ): static
     {
         if (is_int($page)) {

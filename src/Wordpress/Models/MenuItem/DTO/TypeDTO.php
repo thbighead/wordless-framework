@@ -7,7 +7,7 @@ use Wordless\Wordpress\Models\MenuItem\Enums\Type;
 readonly class TypeDTO
 {
     public function __construct(
-        public Type $type,
+        public Type   $type,
         public string $label
     )
     {

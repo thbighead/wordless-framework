@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\CustomPostTypes;
 
@@ -17,12 +17,12 @@ class DummyCustomPostTypeClass extends CustomPost
         return true;
     }
 
-    public static function pluralName(): ?string
+    public static function pluralName(): string
     {
         return 'Title Cased Cpt Plural Name';
     }
 
-    public static function singularName(): ?string
+    public static function singularName(): string
     {
         return 'Title Cased Cpt Singular Name';
     }

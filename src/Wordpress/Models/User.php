@@ -2,6 +2,8 @@
 
 namespace Wordless\Wordpress\Models;
 
+use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
@@ -20,6 +22,15 @@ class User extends WP_User implements IRelatedMetaData
     public static function objectType(): ObjectType
     {
         return ObjectType::user;
+    }
+
+    /**
+     * @return void
+     * @throws PathNotFoundException
+     */
+    private static function requireWordpressUserScript(): void
+    {
+        require_once ProjectPath::wpCore('wp-admin/includes/user.php');
     }
 
     /**

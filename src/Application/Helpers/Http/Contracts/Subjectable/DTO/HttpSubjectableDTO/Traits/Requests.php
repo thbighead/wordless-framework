@@ -6,7 +6,6 @@ namespace Wordless\Application\Helpers\Http\Contracts\Subjectable\DTO\HttpSubjec
 
 use JsonException;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Http;
 use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
@@ -23,7 +22,6 @@ trait Requests
      * @throws DotEnvNotSetException
      * @throws FormatException
      * @throws JsonException
-     * @throws PathException
      * @throws RequestFailed
      */
     public function delete(
@@ -43,7 +41,6 @@ trait Requests
      * @throws DotEnvNotSetException
      * @throws FormatException
      * @throws JsonException
-     * @throws PathException
      * @throws RequestFailed
      */
     public function get(
@@ -63,7 +60,6 @@ trait Requests
      * @throws DotEnvNotSetException
      * @throws FormatException
      * @throws JsonException
-     * @throws PathException
      * @throws RequestFailed
      */
     public function patch(
@@ -83,7 +79,6 @@ trait Requests
      * @throws DotEnvNotSetException
      * @throws FormatException
      * @throws JsonException
-     * @throws PathException
      * @throws RequestFailed
      */
     public function post(
@@ -103,7 +98,6 @@ trait Requests
      * @throws DotEnvNotSetException
      * @throws FormatException
      * @throws JsonException
-     * @throws PathException
      * @throws RequestFailed
      */
     public function put(
@@ -124,7 +118,6 @@ trait Requests
      * @throws DotEnvNotSetException
      * @throws FormatException
      * @throws JsonException
-     * @throws PathException
      * @throws RequestFailed
      */
     public function request(
