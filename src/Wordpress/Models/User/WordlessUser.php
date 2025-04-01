@@ -74,7 +74,7 @@ final class WordlessUser extends User
         throw new TryingToUpdateWordlessUser;
     }
 
-    private function __construct()
+    protected function __construct()
     {
         parent::__construct(get_user_by('email', self::email()), false);
     }
