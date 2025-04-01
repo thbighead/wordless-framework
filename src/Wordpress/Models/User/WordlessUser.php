@@ -50,26 +50,6 @@ final class WordlessUser extends User
         return parent::findByEmail(self::email());
     }
 
-    public static function findByEmail(string $user_email = ''): null
-    {
-        return null;
-    }
-
-    public static function findById(int $user_id = 0): null
-    {
-        return null;
-    }
-
-    public static function findBySlug(string $user_slug = ''): null
-    {
-        return null;
-    }
-
-    public static function findByUsername(string $username = ''): null
-    {
-        return null;
-    }
-
     public static function make(): self
     {
         return self::getInstance();
