@@ -21,9 +21,8 @@ final class WordlessUser extends User
     public static function email(): string
     {
         try {
-            $app_host = Environment::get('APP_HOST', 'wordless.wordless');
+            $app_host = Environment::get('APP_HOST', $app_host = 'wordless.wordless');
         } catch (FormatException|DotEnvNotSetException) {
-            $app_host = 'wordless.wordless';
         }
 
         return self::USERNAME . "@$app_host";
