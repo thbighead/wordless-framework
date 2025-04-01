@@ -8,12 +8,12 @@ use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class TryingToDeleteWordlessUser extends ErrorException
 {
-     public function __construct(?Throwable $previous = null)
-     {
-         parent::__construct(
-             'Can\'t delete Wordless User.',
-             ExceptionCode::development_error->value,
-             previous: $previous
-         );
-     }
+    public function __construct(?Throwable $previous = null)
+    {
+        parent::__construct(
+            'Can\'t delete Wordless User.',
+            ExceptionCode::development_error->value,
+            previous: $previous
+        );
+    }
 }

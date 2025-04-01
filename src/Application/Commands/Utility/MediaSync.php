@@ -94,7 +94,6 @@ class MediaSync extends ConsoleCommand implements SignalableCommandInterface
      * @return string
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     private function getUploadsBaseUrl(): string
     {

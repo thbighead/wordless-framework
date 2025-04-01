@@ -92,8 +92,9 @@ final class Wlsymlink
     }
 
     /**
-     * @return $this
+     * @return Wlsymlink
      * @throws InvalidDirectory
+     * @throws PathNotFoundException
      */
     private function extractRelativePathsExceptionsFromFile(): Wlsymlink
     {

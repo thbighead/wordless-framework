@@ -104,9 +104,9 @@ trait WordCase
      * @throws InvalidArgumentException
      */
     public static function snakeCase(
-        string $string,
-        string $delimiter = self::UNDERSCORE,
-        bool   $upper_cased = false,
+        string    $string,
+        string    $delimiter = self::UNDERSCORE,
+        bool      $upper_cased = false,
         ?Encoding $encoding = null
     ): string
     {

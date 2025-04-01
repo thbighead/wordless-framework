@@ -68,11 +68,7 @@ trait Internal
 
     private function recalculateLength(): static
     {
-        if (is_int($this->length ?? false)) {
-            $this->length = Str::length($this->subject);
-        }
-
-        return $this;
+        return $this->setLength(Str::length($this->subject));
     }
 
     private function resolveEncoding(?Encoding $encoding, array $func_get_args, array $get_defined_vars): ?Encoding

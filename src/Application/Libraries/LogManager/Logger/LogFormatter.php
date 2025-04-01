@@ -4,7 +4,6 @@ namespace Wordless\Application\Libraries\LogManager\Logger;
 
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
-use RuntimeException;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -21,7 +20,6 @@ class LogFormatter extends StreamHandler
      * @return LineFormatter
      * @throws EmptyConfigKey
      * @throws PathNotFoundException
-     * @throws RuntimeException
      */
     public static function mountOutputFormatter(): LineFormatter
     {

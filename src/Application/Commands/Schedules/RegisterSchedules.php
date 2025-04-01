@@ -4,7 +4,6 @@ namespace Wordless\Application\Commands\Schedules;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -46,7 +45,6 @@ class RegisterSchedules extends ConsoleCommand
      * @throws EmptyConfigKey
      * @throws FormatException
      * @throws InvalidProviderClass
-     * @throws PathException
      * @throws PathNotFoundException
      */
     protected function runIt(): int

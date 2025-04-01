@@ -75,7 +75,7 @@ trait TabledMessage
      * @throws PathNotFoundException
      */
     protected function mountTableFromJson(
-        string $json_reference,
+        string  $json_reference,
         ?string $root_reference = null,
         ?string $table_title = null
     ): ?Table
@@ -90,7 +90,7 @@ trait TabledMessage
                 true,
                 flags: JSON_THROW_ON_ERROR
             );
-        } catch (JsonException)  {
+        } catch (JsonException) {
             return null;
         }
 
@@ -162,9 +162,9 @@ trait TabledMessage
      * @throws SyntaxError
      */
     protected function writeTableFromCsv(
-        string $csv_reference,
+        string  $csv_reference,
         ?string $table_title = null,
-        bool $without_decoration = false
+        bool    $without_decoration = false
     ): void
     {
         $table = $this->mountTableFromCsv($csv_reference, $table_title);

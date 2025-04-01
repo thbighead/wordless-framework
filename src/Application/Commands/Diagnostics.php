@@ -9,7 +9,6 @@ use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
 use Symfony\Component\Process\Exception\ProcessSignaledException;
@@ -109,7 +108,6 @@ class Diagnostics extends ConsoleCommand
      * @throws FormatException
      * @throws InvalidArgumentException
      * @throws LogicException
-     * @throws PathException
      * @throws PathNotFoundException
      * @throws ProcessSignaledException
      * @throws ProcessStartFailedException
@@ -177,7 +175,6 @@ class Diagnostics extends ConsoleCommand
      * @return $this
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     private function dotEnvInfo(): static
     {
@@ -196,7 +193,6 @@ class Diagnostics extends ConsoleCommand
      * @return string[]
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      * @throws SymfonyInvalidArgumentException
      */
     private function getTestUrls(): array
@@ -251,7 +247,6 @@ class Diagnostics extends ConsoleCommand
      * @throws Exception
      * @throws ExceptionInterface
      * @throws FormatException
-     * @throws PathException
      * @throws SyntaxError
      */
     private function wpCliDoctorAnalysis(): void
@@ -331,7 +326,6 @@ class Diagnostics extends ConsoleCommand
      * @throws Exception
      * @throws ExceptionInterface
      * @throws FormatException
-     * @throws PathException
      * @throws SymfonyInvalidArgumentException
      * @throws SyntaxError
      */
