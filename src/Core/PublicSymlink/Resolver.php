@@ -3,6 +3,7 @@
 namespace Wordless\Core\PublicSymlink;
 
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\PublicSymlink;
 
@@ -15,6 +16,7 @@ final class Resolver
      * @param PublicSymlink $symlink
      * @return void
      * @throws InvalidDirectory
+     * @throws PathNotFoundException
      */
     public function addSymlink(PublicSymlink $symlink): void
     {
@@ -43,6 +45,7 @@ final class Resolver
      * @param PublicSymlink $symlink
      * @return void
      * @throws InvalidDirectory
+     * @throws PathNotFoundException
      */
     private function extractSymlinksAndExceptionsFrom(PublicSymlink $symlink): void
     {

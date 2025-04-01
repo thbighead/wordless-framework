@@ -6,7 +6,6 @@ use Exception;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -23,7 +22,6 @@ trait Console
      * @throws FormatException
      * @throws InvalidProviderClass
      * @throws LogicException
-     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function bootConsole(Application $application): void

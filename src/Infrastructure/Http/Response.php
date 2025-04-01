@@ -6,12 +6,12 @@ namespace Wordless\Infrastructure\Http;
 use JsonException;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
+use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 use Wordless\Application\Helpers\Http;
 use Wordless\Infrastructure\Http\Response\Exceptions\FailedToPrepareResponseBodyToSend;
 use Wordless\Infrastructure\Http\Response\Traits\Cookies;
 use Wordless\Infrastructure\Http\Response\Traits\Header;
 use Wordless\Infrastructure\Http\Response\Traits\StatusCode;
-use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 
 class Response implements ImmutableHeaderBag
 {

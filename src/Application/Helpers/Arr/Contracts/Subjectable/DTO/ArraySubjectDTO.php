@@ -118,9 +118,8 @@ final class ArraySubjectDTO extends SubjectDTO
     public function packBy(int $by): self
     {
         $this->subject = Arr::packBy($this->subject, $by);
-        $this->associative = false;
 
-        return $this->updateSize();
+        return $this->resetAssociative()->updateSize();
     }
 
     public function pushValueIntoIndex(int $index, mixed $value, string|int|null $with_key = null): self

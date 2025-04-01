@@ -8,7 +8,7 @@ readonly class ObjectDTO
 
     public function __construct(
         public string $type,
-        ?string $id
+        ?string       $id
     )
     {
         $this->id = $this->type === 'custom' || $id === null ? null : (int)$id;

@@ -3,7 +3,6 @@
 namespace Wordless\Infrastructure\Wordpress\EnqueueableAsset;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Link;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -25,7 +24,6 @@ abstract class EnqueueableScript extends EnqueueableAsset
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws FormatException
-     * @throws PathException
      * @throws PathNotFoundException
      */
     protected function mountFileUrl(): string

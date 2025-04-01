@@ -138,7 +138,6 @@ trait SyncFromDatabaseToUploadsDirectory
      * @throws LogicException
      * @throws PathNotFoundException
      * @throws RuntimeException
-     * @throws PathException
      */
     private function processUploadsFiles(): int
     {

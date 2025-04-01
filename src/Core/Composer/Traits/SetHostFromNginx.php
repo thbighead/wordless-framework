@@ -5,7 +5,6 @@ namespace Wordless\Core\Composer\Traits;
 use Composer\Script\Event;
 use RuntimeException;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
@@ -115,7 +114,6 @@ trait SetHostFromNginx
      * @throws FailedToRewriteDotEnvFile
      * @throws FormatException
      * @throws PathNotFoundException
-     * @throws PathException
      */
     private static function setAppHostValueAtDotEnv(string $app_host): void
     {

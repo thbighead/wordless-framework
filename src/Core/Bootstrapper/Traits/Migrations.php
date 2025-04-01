@@ -4,7 +4,6 @@ namespace Wordless\Core\Bootstrapper\Traits;
 
 use Generator;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
@@ -21,7 +20,7 @@ trait Migrations
     private array $loaded_migrations_filepath = [];
 
     /**
-     * @return array<string, string>
+     * @return array
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws FormatException
@@ -29,7 +28,6 @@ trait Migrations
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
-     * @throws PathException
      * @throws PathNotFoundException
      */
     public static function bootIntoMigrationCommand(): array

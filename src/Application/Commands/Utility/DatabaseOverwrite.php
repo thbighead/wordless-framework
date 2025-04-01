@@ -10,7 +10,6 @@ use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO\Exceptions\InvalidRawUserData;
@@ -38,7 +37,6 @@ class DatabaseOverwrite extends ConsoleCommand
      * @return bool
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathException
      */
     public function canRun(): bool
     {
@@ -74,7 +72,6 @@ class DatabaseOverwrite extends ConsoleCommand
      * @throws InvalidRawUserData
      * @throws LogicException
      * @throws OverflowException
-     * @throws PathException
      * @throws PathNotFoundException
      * @throws RuntimeException
      */
@@ -113,7 +110,6 @@ class DatabaseOverwrite extends ConsoleCommand
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
      * @throws FormatException
-     * @throws PathException
      * @throws PathNotFoundException
      */
     private function initializeConfigurations(): static

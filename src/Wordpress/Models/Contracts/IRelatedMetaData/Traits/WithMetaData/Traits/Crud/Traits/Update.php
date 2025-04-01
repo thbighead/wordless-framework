@@ -29,8 +29,8 @@ trait Update
      */
     public function updateOrCreateMetaFieldIfValueIs(
         string $meta_key,
-        mixed $meta_value,
-        mixed $actual_value
+        mixed  $meta_value,
+        mixed  $actual_value
     ): int|true
     {
         return $this->callUpdateMetaData($meta_key, $meta_value, $actual_value);

@@ -70,6 +70,13 @@ abstract class EnqueueableAsset
         return false;
     }
 
+    /**
+     * @param Context $context
+     * @return void
+     * @throws DuplicatedEnqueueableId
+     * @throws InvalidArgumentException
+     * @throws PathNotFoundException
+     */
     final public function enqueueDependenciesRecursively(Context $context = StandardContext::no_context): void
     {
         foreach ($this->dependencies_ids as $dependency_class_namespace => $dependency_id) {

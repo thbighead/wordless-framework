@@ -7,7 +7,6 @@ use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Migrations\Migrate\Traits\ExecutionTimestamp;
 use Wordless\Application\Commands\Migrations\Migrate\Traits\ForceMode;
@@ -99,7 +98,6 @@ class Migrate extends ConsoleCommand
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
-     * @throws PathException
      * @throws PathNotFoundException
      * @throws QueryError
      */
@@ -168,7 +166,6 @@ class Migrate extends ConsoleCommand
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
-     * @throws PathException
      * @throws PathNotFoundException
      */
     final protected function getLoadedMigrations(): array
@@ -232,7 +229,6 @@ class Migrate extends ConsoleCommand
      * @throws InvalidMigrationFilename
      * @throws InvalidProviderClass
      * @throws MigrationFileNotFound
-     * @throws PathException
      * @throws PathNotFoundException
      */
     private function filterMigrationsMissingExecution(): static
