@@ -28,7 +28,7 @@ class User extends WP_User implements IRelatedMetaData
      * @return void
      * @throws PathNotFoundException
      */
-    private static function requireWordpressUserScript(): void
+    private static function requireWordpressAdminUserScript(): void
     {
         require_once ProjectPath::wpCore('wp-admin/includes/user.php');
     }
