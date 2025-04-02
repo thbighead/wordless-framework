@@ -159,6 +159,7 @@ class Attachment extends Post
      */
     private static function validateNewMetadata(WpInsertAttachmentResultDTO $result): array
     {
+        require_once ProjectPath::wpCore('wp-admin/includes/media.php');
         require_once ProjectPath::wpCore('wp-admin/includes/image.php');
 
         $new_metadata = wp_generate_attachment_metadata($result->attachment_id, $result->wp_uploads_filepath);
