@@ -143,4 +143,16 @@ abstract class CarbonAdapter
 
         return static::createFromOriginalCarbon($originalProperty);
     }
+
+    protected function setOriginal(object $original, DateTimeZone|null|string $timezone): void
+    {
+        $this->original = $original;
+
+        $this->original->setTimezone($this->resolveTimezone($timezone));
+    }
+
+    final protected function resolveTimezone(DateTimeZone|null|string $timezone): DateTimeZone|string
+    {
+        return $timezone ?? wp_timezone();
+    }
 }
