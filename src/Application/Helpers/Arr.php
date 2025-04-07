@@ -168,6 +168,11 @@ class Arr extends Subjectable
         return $result;
     }
 
+    public static function print(array $array): string
+    {
+        return rtrim(var_export($array, true));
+    }
+
     public static function prepend(array $array, mixed $value, string|int|bool|null $with_key = null): array
     {
         if (!static::isAssociative($array) && $with_key === null) {
