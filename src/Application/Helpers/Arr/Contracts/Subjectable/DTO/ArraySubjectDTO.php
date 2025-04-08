@@ -15,6 +15,11 @@ final class ArraySubjectDTO extends SubjectDTO
 {
     use Internal;
 
+    public function __toString(): string
+    {
+        return $this->print();
+    }
+
     public function append(mixed $value, string|int|null $with_key = null): self
     {
         $this->subject = Arr::append($this->subject, $value, $with_key);
@@ -120,6 +125,11 @@ final class ArraySubjectDTO extends SubjectDTO
         $this->subject = Arr::packBy($this->subject, $by);
 
         return $this->resetAssociative()->updateSize();
+    }
+
+    public function print(): string
+    {
+        return rtrim(var_export($this->subject, true));
     }
 
     public function pushValueIntoIndex(int $index, mixed $value, string|int|null $with_key = null): self
