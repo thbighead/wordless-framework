@@ -11,6 +11,7 @@ class GetType extends Helper
     final public const BOOLEAN = 'boolean';
     final public const DOUBLE = 'double';
     final public const INTEGER = 'integer';
+    final public const OBJECT = 'object';
     final public const STRING = 'string';
 
     public static function isDateable($value): bool
@@ -43,7 +44,11 @@ class GetType extends Helper
     {
         $type = gettype($variable);
 
-        if ($type === 'object') {
+        if ($type === self::ARRAY) {
+            return Arr::isAssociative($variable) ? "associative $type" : "list $type";
+        }
+
+        if ($type === self::OBJECT) {
             return $variable::class;
         }
 
