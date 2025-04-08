@@ -37,6 +37,15 @@ final class TaxonomyQueryBuilder extends QueryBuilder
     }
 
     /**
+     * @return bool
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function exists(): bool
+    {
+        return !empty($this->get());
+    }
+
+    /**
      * @param int $quantity
      * @param ResultFormat|null $format
      * @return WP_Taxonomy|array|string|null
