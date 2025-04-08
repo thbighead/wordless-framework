@@ -3,6 +3,7 @@
 namespace Wordless\Application\Helpers;
 
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\ProjectPath\Traits\Internal;
 use Wordless\Infrastructure\Helper;
@@ -196,6 +197,44 @@ class ProjectPath extends Helper
         }
 
         return self::path($full_path);
+    }
+
+    /**
+     * @param string $to_absolute_path
+     * @param string|null $from_absolute_path
+     * @return string
+     * @throws FailedToGetCurrentWorkingDirectory
+     * @throws PathNotFoundException
+     */
+    final public static function relativeTo(string $to_absolute_path, ?string $from_absolute_path = null): string
+    {
+        $to_absolute_path = self::realpath($to_absolute_path);
+        $from_absolute_path = $from_absolute_path
+            ? self::realpath($from_absolute_path)
+            : DirectoryFiles::getCurrentWorkingDirectory();
+
+        $exploded_to_path = explode(
+            DIRECTORY_SEPARATOR,
+            rtrim($to_absolute_path, DIRECTORY_SEPARATOR)
+        );
+
+        $exploded_from_path = explode(
+            DIRECTORY_SEPARATOR,
+            rtrim($from_absolute_path, DIRECTORY_SEPARATOR)
+        );
+
+        $match_count = 0;
+
+        for ($i = 0; $i < min(count($exploded_from_path), count($exploded_to_path)); $i++) {
+            if ($exploded_from_path[$i] === $exploded_to_path[$i]) {
+                $match_count++;
+            }
+        }
+
+        $relativePath = str_repeat('..' . DIRECTORY_SEPARATOR, count($exploded_from_path) - $match_count)
+            . implode(DIRECTORY_SEPARATOR, array_slice($exploded_to_path, $match_count));
+
+        return $relativePath === '' ? '.' : $relativePath;
     }
 
     /**

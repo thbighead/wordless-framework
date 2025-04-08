@@ -33,6 +33,15 @@ trait Resolver
     }
 
     /**
+     * @return bool
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function exists(): bool
+    {
+        return !empty($this->get());
+    }
+
+    /**
      * @param int $quantity
      * @return WP_Post|WP_Post[]|null
      * @throws EmptyQueryBuilderArguments
