@@ -29,15 +29,11 @@ class Carbon extends CarbonAdapter
     )
     {
         if ($time instanceof OriginalCarbon) {
-            $this->original = $time;
-
-            if ($timezone !== null) {
-                $this->original->setTimezone($timezone);
-            }
+            $this->setOriginal($time, $timezone);
 
             return;
         }
 
-        $this->original = new OriginalCarbon($time, $timezone ?? wp_timezone());
+        $this->original = new OriginalCarbon($time, $this->resolveTimezone($timezone));
     }
 }
