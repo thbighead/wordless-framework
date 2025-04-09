@@ -61,7 +61,7 @@ enum StatusCode: int
     case request_header_fields_too_large_431 = Response::HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE; // RFC6585
     case unavailable_for_legal_reasons_451 = Response::HTTP_UNAVAILABLE_FOR_LEGAL_REASONS; // RFC7725
     case internal_server_error_500 = Response::HTTP_INTERNAL_SERVER_ERROR;
-    case unot_implemented_501 = Response::HTTP_NOT_IMPLEMENTED;
+    case not_implemented_501 = Response::HTTP_NOT_IMPLEMENTED;
     case bad_gateway_502 = Response::HTTP_BAD_GATEWAY;
     case service_unavailable_503 = Response::HTTP_SERVICE_UNAVAILABLE;
     case gateway_timeout_504 = Response::HTTP_GATEWAY_TIMEOUT;
