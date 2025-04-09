@@ -29,15 +29,11 @@ class CarbonImmutable extends CarbonAdapter
     )
     {
         if ($time instanceof OriginalCarbonImmutable) {
-            $this->original = $time;
-
-            if ($timezone !== null) {
-                $this->original->setTimezone($timezone);
-            }
+            $this->setOriginal($time, $timezone);
 
             return;
         }
 
-        $this->original = new OriginalCarbonImmutable($time, $timezone ?? wp_timezone());
+        $this->original = new OriginalCarbonImmutable($time, $this->resolveTimezone($timezone));
     }
 }

@@ -26,15 +26,11 @@ class CarbonPeriod extends CarbonAdapter
     public function __construct(?OriginalCarbonPeriod $period = null, ?DateTimeZone $timezone = null, ...$arguments)
     {
         if ($period instanceof OriginalCarbonPeriod) {
-            $this->original = $period;
-
-            if ($timezone !== null) {
-                $this->original->setTimezone($timezone);
-            }
+            $this->setOriginal($period, $timezone);
 
             return;
         }
 
-        $this->original = new OriginalCarbonPeriod(...$arguments, $timezone ?? wp_timezone());
+        $this->original = new OriginalCarbonPeriod(...$arguments, $this->resolveTimezone($timezone));
     }
 }
