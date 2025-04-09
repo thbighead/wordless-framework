@@ -13,6 +13,7 @@ use Wordless\Application\Commands\PublishConfigurationFiles;
 use Wordless\Application\Commands\PublishWpConfigPhp;
 use Wordless\Application\Commands\SyncRoles;
 use Wordless\Application\Commands\WordlessInstall;
+use Wordless\Application\Commands\WordlessLanguages;
 use Wordless\Application\Commands\WpCliCaller;
 use Wordless\Application\Listeners\BootApiControllers;
 use Wordless\Application\Listeners\BootHttpRemoteCallsLog;
@@ -54,6 +55,7 @@ class CoreProvider extends Provider
             PublishWpConfigPhp::class,
             SyncRoles::class,
             WordlessInstall::class,
+            WordlessLanguages::class,
             WpCliCaller::class,
         ];
     }
