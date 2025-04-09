@@ -44,11 +44,7 @@ class CarbonInterval extends CarbonAdapter
     )
     {
         if ($years instanceof OriginalCarbonInterval) {
-            $this->original = $years;
-
-            if ($timezone !== null) {
-                $this->original->setTimezone($timezone);
-            }
+            $this->setOriginal($years, $timezone);
 
             return;
         }
@@ -62,6 +58,6 @@ class CarbonInterval extends CarbonAdapter
             $minutes,
             $seconds,
             $microseconds
-        ))->setTimezone($timezone ?? wp_timezone());
+        ))->setTimezone($this->resolveTimezone($timezone));
     }
 }
