@@ -76,9 +76,14 @@ class WordlessLanguages extends ConsoleCommand
                 $translationDiscover = new TranslationsDiscover($custom_absolute_filepath, $language);
 
                 foreach ($translationDiscover->discover() as $wp_absolute_filepath) {
-                    $this->buildFactory($wp_absolute_filepath)
-                        ->addCustomTranslations($custom_absolute_filepath)
-                        ->rewrite();
+                    $this->wrapScriptWithMessages(
+                        "Rewriting $wp_absolute_filepath...",
+                        function () use ($wp_absolute_filepath, $custom_absolute_filepath) {
+                            $this->buildFactory($wp_absolute_filepath)
+                                ->addCustomTranslations($custom_absolute_filepath)
+                                ->rewrite();
+                        }
+                    );
                 }
             }
         }
