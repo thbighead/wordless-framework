@@ -5,6 +5,8 @@ namespace Wordless\Wordpress\Models\Attachment\DTO;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Link;
+use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Wordpress\Models\Attachment;
@@ -16,6 +18,7 @@ readonly class MediaDTO
 
     public string $file_extension;
     public string $mimetype;
+    public string $relative_upload_filepath;
     public string $relative_upload_filepath_without_extension;
     /** @var SizeDTO[] $sizes */
     public array $sizes;
@@ -29,19 +32,26 @@ readonly class MediaDTO
     public function __construct(public array $raw_data)
     {
         $this->mimetype = $this->raw_data[Attachment::KEY_MIME_TYPE] ?? null;
-
-        $relative_upload_filepath = $this->raw_data[SizeDTO::KEY_FILE] ?? null;
-
+        $this->relative_upload_filepath = $this->raw_data[SizeDTO::KEY_FILE] ?? null;
         $this->relative_upload_filepath_without_extension = Str::beforeLast(
-            $relative_upload_filepath,
+            $this->relative_upload_filepath,
             self::EXTENSION_DELIMITER
         );
         $this->file_extension = self::EXTENSION_DELIMITER . Str::afterLast(
-                $relative_upload_filepath,
+                $this->relative_upload_filepath,
                 self::EXTENSION_DELIMITER
             );
 
         $this->setSizes();
+    }
+
+    /**
+     * @return string
+     * @throws PathNotFoundException
+     */
+    final public function absolutePath(): string
+    {
+        return ProjectPath::wpUploads($this->relative_upload_filepath);
     }
 
     final public function hasSizes(array|string $sizes = []): bool
