@@ -643,6 +643,8 @@ class WordlessInstall extends ConsoleCommand
             $this->installWpPluginsLanguage($language);
         }
 
+        $this->callConsoleCommand(WordlessLanguages::COMMAND_NAME);
+
         return $this;
     }
 
