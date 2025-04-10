@@ -23,22 +23,11 @@
     "preferred-install": "dist",
     "sort-packages": true,
     "allow-plugins": {
-      "composer/installers": true,
       "roots/wordpress-core-installer": true
     }
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://wpackagist.org"
-    },
-    {
-      "type": "composer",
-      "url": "https://packagist.org"
-    }
-  ],
   "require": {
     "php": "^8.2",
     "ext-apcu": "*",
@@ -99,11 +88,6 @@
     ]
   },
   "extra": {
-    "wordpress-install-dir": "wp/wp-core",
-    "installer-paths": {
-      "wp/wp-content/plugins/{$name}/": [
-        "type:wordpress-plugin"
-      ]
-    }
+    "wordpress-install-dir": "wp/wp-core"
   }
 }
