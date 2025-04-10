@@ -155,6 +155,7 @@ class DirectoryFiles extends Helper
     /**
      * @param string $filepath
      * @param string $file_content
+     * @param bool $secure_mode
      * @param int|null $permissions
      * @return void
      * @throws FailedToCreateDirectory
@@ -162,10 +163,19 @@ class DirectoryFiles extends Helper
      * @throws FailedToPutFileContent
      * @throws PathNotFoundException
      */
-    public static function createFileAt(string $filepath, string $file_content = '', ?int $permissions = null): void
+    public static function createFileAt(
+        string $filepath,
+        string $file_content = '',
+        bool $secure_mode = true,
+        ?int $permissions = null
+    ): void
     {
         if (!is_dir($file_directory_path = dirname($filepath))) {
             static::createDirectoryAt($file_directory_path, $permissions);
+        }
+
+        if ($secure_mode && file_exists($filepath)) {
+            return;
         }
 
         if (file_put_contents($filepath, $file_content) === false) {
