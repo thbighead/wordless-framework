@@ -22,7 +22,11 @@ class JsonFileWriter extends FileWriter
     public function write(array $translations): void
     {
         try {
-            DirectoryFiles::createFileAt($this->wp_translation_absolute_filepath, Arr::toJson($translations));
+            DirectoryFiles::createFileAt(
+                $this->wp_translation_absolute_filepath,
+                Arr::toJson($translations),
+                false
+            );
         } catch (JsonException|FailedToCreateDirectory|FailedToGetDirectoryPermissions|FailedToPutFileContent|PathNotFoundException $exception) {
             throw new FileWritingError($exception);
         }

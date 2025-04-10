@@ -22,7 +22,8 @@ class PhpFileWriter extends FileWriter
         try {
             DirectoryFiles::createFileAt(
                 $this->wp_translation_absolute_filepath,
-                '<?php return ' . rtrim(var_export($translations, true)) . ';'
+                '<?php return ' . rtrim(var_export($translations, true)) . ';',
+                false
             );
         } catch (FailedToCreateDirectory|FailedToGetDirectoryPermissions|FailedToPutFileContent|PathNotFoundException $exception) {
             throw new FileWritingError($exception);
