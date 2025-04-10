@@ -11,10 +11,12 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileConten
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\NotAPhpFile;
 use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Str;
 
 final class FilePathSubjectDTO extends ProjectPathSubjectDTO
 {
     private string $content;
+    private string $extension;
     private string $php_echo;
 
     /**
@@ -25,6 +27,11 @@ final class FilePathSubjectDTO extends ProjectPathSubjectDTO
     public function getContent(): string
     {
         return $this->content ?? $this->content = DirectoryFiles::getFileContent($this->subject);
+    }
+
+    public function getExtension(): string
+    {
+        return $this->extension ?? $this->extension = Str::afterLast($this->subject, '.');
     }
 
     /**
