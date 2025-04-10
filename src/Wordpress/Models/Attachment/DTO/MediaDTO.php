@@ -6,6 +6,7 @@ use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Link;
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
@@ -23,6 +24,7 @@ readonly class MediaDTO
     /** @var SizeDTO[] $sizes */
     public array $sizes;
     public string $url;
+    public ProjectPathSubjectDTO $filepath;
 
     /**
      * @param array $raw_data
@@ -32,6 +34,7 @@ readonly class MediaDTO
     public function __construct(public array $raw_data)
     {
         $this->mimetype = $this->raw_data[Attachment::KEY_MIME_TYPE] ?? null;
+        $this->filepath = new ProjectPathSubjectDTO();
         $this->relative_upload_filepath = $this->raw_data[SizeDTO::KEY_FILE] ?? null;
         $this->relative_upload_filepath_without_extension = Str::beforeLast(
             $this->relative_upload_filepath,
