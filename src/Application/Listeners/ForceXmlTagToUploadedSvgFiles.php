@@ -42,7 +42,8 @@ class ForceXmlTagToUploadedSvgFiles extends FilterListener
         if (!Str::contains($contents, '<?xml')) {
             DirectoryFiles::createFileAt(
                 $upload[self::UPLOAD_TEMP_PATH_KEY],
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>$contents"
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>$contents",
+                false
             );
         }
 
