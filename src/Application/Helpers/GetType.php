@@ -11,6 +11,7 @@ class GetType extends Helper
     final public const BOOLEAN = 'boolean';
     final public const DOUBLE = 'double';
     final public const INTEGER = 'integer';
+    final public const NULL = 'NULL';
     final public const OBJECT = 'object';
     final public const STRING = 'string';
 
