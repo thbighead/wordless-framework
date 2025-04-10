@@ -31,6 +31,7 @@ if (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? null) === 'https') {
 
 require_once ROOT_PROJECT_PATH . '/vendor/autoload.php';
 
+use Wordless\Application\Helpers\Database;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Timezone;
@@ -59,24 +60,8 @@ InternalCache::load();
 /** @noinspection PhpUnhandledExceptionInspection */
 date_default_timezone_set(Timezone::forPhpIni());
 
-// ** MySQL settings - You can get this info from your web host ** //
-/** The name of the database for WordPress */
-define('DB_NAME', Environment::get('DB_NAME'));
-
-/** MySQL database username */
-define('DB_USER', Environment::get('DB_USER'));
-
-/** MySQL database password */
-define('DB_PASSWORD', Environment::get('DB_PASSWORD'));
-
-/** MySQL hostname */
-define('DB_HOST', Environment::get('DB_HOST'));
-
-/** Database Charset to use in creating database tables. */
-define('DB_CHARSET', Environment::get('DB_CHARSET', 'utf8'));
-
-/** The Database Collate type. Don't change this if in doubt. */
-define('DB_COLLATE', Environment::get('DB_COLLATE', 'utf8_general_ci'));
+/** @noinspection PhpUnhandledExceptionInspection */
+Database::defineWpConnectionConstants();
 
 /**#@+
  * Authentication Unique Keys and Salts.
