@@ -2,7 +2,7 @@
 
 namespace Wordless\Wordpress\Models;
 
-use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
+use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 
 readonly class PostStatus
 {
