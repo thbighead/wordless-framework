@@ -3,8 +3,8 @@
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
 use Wordless\Application\Helpers\Arr;
-use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostStatus;
+use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 
 trait Status
 {
