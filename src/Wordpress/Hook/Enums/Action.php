@@ -655,4 +655,9 @@ enum Action: string implements ActionHook
     case xmlrpc_call_success_wp_newComment = 'xmlrpc_call_success_wp_newComment';
     case xmlrpc_publish_post = 'xmlrpc_publish_post';
     case xmlrpc_rsd_apis = 'xmlrpc_rsd_apis';
+
+    public function dispatch(...$arguments): void
+    {
+        do_action($this->value, ...$arguments);
+    }
 }
