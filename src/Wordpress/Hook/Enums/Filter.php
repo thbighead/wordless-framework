@@ -1702,4 +1702,9 @@ enum Filter: string implements FilterHook
     case xmlrpc_text_filters = 'xmlrpc_text_filters';
     case xmlrpc_wp_insert_post_data = 'xmlrpc_wp_insert_post_data';
     case year_link = 'year_link';
+
+    public function dispatch(...$arguments): mixed
+    {
+        return apply_filters($this->value, ...$arguments);
+    }
 }
