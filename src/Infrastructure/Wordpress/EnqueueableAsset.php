@@ -54,6 +54,11 @@ abstract class EnqueueableAsset
         return new static;
     }
 
+    public function getFileUrl(): string
+    {
+        return $this->file_url;
+    }
+
     final public function alreadyEnqueued(Context $context = StandardContext::no_context): bool
     {
         return Arr::hasKey(self::$already_enqueued[static::class] ?? [], $context->name);
@@ -110,11 +115,6 @@ abstract class EnqueueableAsset
     protected function getDependenciesIds(): array
     {
         return array_values($this->dependencies_ids);
-    }
-
-    protected function getFileUrl(): string
-    {
-        return $this->file_url;
     }
 
     protected function getId(): string
