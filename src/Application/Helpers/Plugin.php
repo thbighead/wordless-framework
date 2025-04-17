@@ -48,7 +48,7 @@ class Plugin extends Subjectable
 
     public static function isActive(string $plugin): bool
     {
-        return static::isMustUse($plugin) || static::data($plugin)[];
+        return static::isMustUse($plugin) || static::data($plugin);
     }
 
     public static function isMustUse(string $plugin): bool
