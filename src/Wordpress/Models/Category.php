@@ -11,7 +11,7 @@ class Category extends Taxonomy
 {
     use Repository;
 
-    final protected const NAME_KEY = StandardTaxonomy::category->name;
+    final protected const NAME_KEY = StandardTaxonomy::category->value;
 
     protected static function getDictionary(): Dictionary
     {
