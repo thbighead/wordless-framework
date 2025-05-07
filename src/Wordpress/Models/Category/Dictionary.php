@@ -9,6 +9,6 @@ class Dictionary extends BaseDictionary
 {
     protected function __construct()
     {
-        parent::__construct(StandardTaxonomy::category->name);
+        parent::__construct(StandardTaxonomy::category->value);
     }
 }
