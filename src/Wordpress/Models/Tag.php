@@ -8,7 +8,7 @@ use Wordless\Wordpress\Models\Tag\Dictionary;
 
 class Tag extends Taxonomy
 {
-    final protected const NAME_KEY = StandardTaxonomy::tag->name;
+    final protected const NAME_KEY = StandardTaxonomy::tag->value;
 
     protected static function getDictionary(): Dictionary
     {
