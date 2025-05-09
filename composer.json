@@ -23,6 +23,7 @@
     "preferred-install": "dist",
     "sort-packages": true,
     "allow-plugins": {
+      "composer/installers": true,
       "roots/wordpress-core-installer": true
     }
   },
@@ -41,8 +42,8 @@
     "ext-iconv": "*",
     "ext-intl": "*",
     "ext-json": "*",
-    "ext-memcached": "*",
     "ext-mbstring": "*",
+    "ext-memcached": "*",
     "ext-mysqli": "*",
     "ext-openssl": "*",
     "ext-pcntl": "*",
@@ -55,30 +56,30 @@
     "ext-xml": "*",
     "ext-xmlreader": "*",
     "doctrine/inflector": "^2.0",
-    "fakerphp/faker": "~1.23.0",
+    "fakerphp/faker": "^1.23",
     "fruitcake/php-cors": "^1.3",
     "lcobucci/jwt": "^5.2",
     "league/csv": "^9.16",
     "monolog/monolog": "^3.5",
-    "nesbot/carbon": "^2.72",
+    "nesbot/carbon": "^3.9",
     "paragonie/csp-builder": "^3.0",
     "ramsey/uuid": "^4.7",
     "roots/wordpress": "^6",
-    "symfony/console": "^6.3",
-    "symfony/dotenv": "^6.3",
-    "symfony/http-client": "^6.3",
-    "symfony/http-foundation": "^6.3",
-    "symfony/validator": "^6.3",
+    "symfony/console": "^7.2",
+    "symfony/dotenv": "^7.2",
+    "symfony/http-client": "^7.2",
+    "symfony/http-foundation": "^7.2",
+    "symfony/validator": "^7.2",
     "wp-cli/doctor-command": "^2.1",
     "wp-cli/profile-command": "^2.1",
-    "wp-cli/wp-cli": "^2.10",
-    "wp-cli/wp-cli-bundle": "^2.10"
+    "wp-cli/wp-cli": "^2.12",
+    "wp-cli/wp-cli-bundle": "^2.11"
   },
   "require-dev": {
     "matthiasmullie/minify": "^1.3",
-    "phpunit/phpunit": "~10.5.3",
-    "psy/psysh": "^0.11.22",
-    "symfony/var-dumper": "^6.3"
+    "phpunit/phpunit": "^11.5",
+    "psy/psysh": "^0.12",
+    "symfony/var-dumper": "^7.2"
   },
   "scripts": {
     "post-autoload-dump": [
