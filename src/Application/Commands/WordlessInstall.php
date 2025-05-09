@@ -63,17 +63,20 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @param int $signal
-     * @return void
+     * @param int|false $previousExitCode
+     * @return int|false
      * @throws CommandNotFoundException
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
      * @throws WpCliCommandReturnedNonZero
      */
-    public function handleSignal(int $signal): void
+    public function handleSignal(int $signal, int|false $previousExitCode = 0): int|false
     {
-        parent::handleSignal($signal);
+        parent::handleSignal($signal, $previousExitCode);
 
         $this->switchingMaintenanceMode(false);
+
+        return $previousExitCode;
     }
 
     /**
