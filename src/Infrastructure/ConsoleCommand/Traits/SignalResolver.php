@@ -14,10 +14,12 @@ trait SignalResolver
         return [SIGINT, SIGTERM];
     }
 
-    public function handleSignal(int $signal): void
+    public function handleSignal(int $signal, int|false $previousExitCode = 0): int|false
     {
         $this->writelnWarning("\nAborted by user, exiting safely...");
         $this->has_been_interrupted = true;
+
+        return $previousExitCode;
     }
 
     protected function hasBeenInterrupted(): bool
