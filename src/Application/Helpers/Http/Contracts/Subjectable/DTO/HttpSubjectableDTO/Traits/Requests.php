@@ -8,6 +8,7 @@ use JsonException;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Http;
 use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
+use Wordless\Application\Helpers\Str;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Http\Request\Enums\Verb;
 use Wordless\Infrastructure\Http\Response;
@@ -129,7 +130,7 @@ trait Requests
     {
         return Http::request(
             $httpVerb,
-            $endpoint,
+            $this->base_url . Str::startWith($endpoint, '/'),
             $body,
             $this->default_headers + $additional_headers,
             $this->only_with_ssl,
