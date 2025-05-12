@@ -3,6 +3,7 @@
 namespace Wordless\Application\Helpers\Http\Contracts\Subjectable\DTO\HttpSubjectableDTO\Traits;
 
 use Wordless\Application\Helpers\Http\Enums\Version;
+use Wordless\Application\Helpers\Str;
 
 trait Setters
 {
@@ -16,6 +17,19 @@ trait Setters
     public function setAutomaticSslUsage(): self
     {
         $this->only_with_ssl = null;
+
+        return $this;
+    }
+
+    public function setBaseUrl(string $new_base_url): self
+    {
+        $newBaseUrl = Str::of($new_base_url);
+
+        while ($newBaseUrl->endsWith('/')) {
+            $newBaseUrl->substring(-1);
+        }
+
+        $this->base_url = (string)$newBaseUrl;
 
         return $this;
     }
