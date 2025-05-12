@@ -5,6 +5,7 @@ namespace Wordless\Infrastructure\Http\Response\Enums;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response;
 use Wordless\Application\Helpers\Str;
+use Wordless\Infrastructure\Http\Response\Enums\StatusCode\Enums\Category;
 
 enum StatusCode: int
 {
@@ -79,5 +80,57 @@ enum StatusCode: int
     public function asText(): string
     {
         return (string)Str::of($this->name)->beforeLast('_')->titleCase();
+    }
+
+    public function category(): ?Category
+    {
+        return match (intdiv($this->value, 100)) {
+            1 => Category::informational,
+            2 => Category::success,
+            3 => Category::redirection,
+            4 => Category::client_error,
+            5 => Category::server_error,
+            default => null,
+        };
+    }
+
+    public function isClientError(): bool
+    {
+        return $this->category() === Category::client_error;
+    }
+
+    public function isError(): bool
+    {
+        return $this->isClientError() || $this->isServerError();
+    }
+
+    public function isInformational(): bool
+    {
+        return $this->category() === Category::informational;
+    }
+
+    public function isNotFound(): bool
+    {
+        return $this === self::not_found_404;
+    }
+
+    public function isOk(): bool
+    {
+        return $this === self::ok_200;
+    }
+
+    public function isRedirection(): bool
+    {
+        return $this->category() === Category::redirection;
+    }
+
+    public function isServerError(): bool
+    {
+        return $this->category() === Category::server_error;
+    }
+
+    public function isSuccess(): bool
+    {
+        return $this->category() === Category::success;
     }
 }
