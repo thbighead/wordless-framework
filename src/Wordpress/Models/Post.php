@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\Models;
 
+use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
@@ -97,6 +98,13 @@ class Post implements IRelatedMetaData
         if ($with_acfs) {
             $this->loadAcfs($this->wpPost->ID);
         }
+    }
+
+    public function appendTaxonomy(Taxonomy $taxonomyTerm): static
+    {
+        wp_set_object_terms($this->id(), $taxonomyTerm->id(), $taxonomyTerm->taxonomy, true);
+
+        return $this;
     }
 
     public function getStatus(): PostStatus
