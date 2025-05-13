@@ -71,6 +71,18 @@ abstract class Taxonomy implements IRelatedMetaData
         }
     }
 
+    public function appendToObject(IRelatedMetaData|int $object): static
+    {
+        wp_set_object_terms(
+            is_int($object) ? $object : $object->id(),
+            $this->id(),
+            $this->taxonomy,
+            true
+        );
+
+        return $this;
+    }
+
     public function is(string $name): bool
     {
         return $this->taxonomy === $name;
