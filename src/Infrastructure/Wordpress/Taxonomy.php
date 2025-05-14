@@ -58,7 +58,8 @@ abstract class Taxonomy implements IRelatedMetaData
      */
     public function __construct(WP_Term|int|string $term, bool $with_acfs = true)
     {
-        $this->wpTerm = $term instanceof WP_Term ? $term : static::find($term);
+        $this->wpTerm = ($term instanceof WP_Term ? $term : static::find($term))
+            ?? static::getDictionary()->reload()->find($term);
 
         if (!$this->is($this->name())) {
             throw new InitializingModelWithWrongTaxonomyName($this, $with_acfs);
