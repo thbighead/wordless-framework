@@ -28,11 +28,11 @@ abstract class Dictionary extends Singleton
         return parent::getInstance();
     }
 
-    protected function __construct(string $taxonomy)
+    protected function __construct(readonly private string $taxonomy)
     {
         parent::__construct();
 
-        self::init($taxonomy);
+        self::init($this->taxonomy);
     }
 
     private static function init(string $taxonomy): void
@@ -77,5 +77,12 @@ abstract class Dictionary extends Singleton
     public function getBySlug(string $slug): ?WP_Term
     {
         return self::$taxonomy_terms_keyed_by_slug[$slug] ?? null;
+    }
+
+    public function reload(): static
+    {
+        self::loadTaxonomyInitializedInternalDictionaries($this->taxonomy);
+
+        return $this;
     }
 }
