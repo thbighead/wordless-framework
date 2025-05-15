@@ -2,7 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\Schedule\Enums;
 
-enum Recurrence: string
+enum StandardRecurrence: string
 {
     case daily = 'daily';
     case hourly = 'hourly';
