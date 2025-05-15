@@ -9,7 +9,7 @@ use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Post\Exceptions\FailedToGetPermalink;
 use Wordless\Wordpress\Models\Post\Exceptions\FailedToGetPostTypeArchiveUrl;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
-use Wordless\Wordpress\Models\Post\Traits\Categories;
+use Wordless\Wordpress\Models\Post\Traits\Taxonomies;
 use Wordless\Wordpress\Models\Post\Traits\Crud;
 use Wordless\Wordpress\Models\Post\Traits\FeaturedImage;
 use Wordless\Wordpress\Models\Post\Traits\MixinWpPost;
@@ -24,7 +24,7 @@ use WP_Post;
  */
 class Post implements IRelatedMetaData
 {
-    use Categories;
+    use Taxonomies;
     use FeaturedImage;
     use MixinWpPost;
     use Crud;
