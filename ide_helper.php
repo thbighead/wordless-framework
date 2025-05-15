@@ -12,7 +12,7 @@ use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener\AjaxListener;
 use Wordless\Infrastructure\Wordpress\Menu;
 use Wordless\Infrastructure\Wordpress\Schedule;
-use Wordless\Infrastructure\Wordpress\Schedule\Enums\Recurrence;
+use Wordless\Infrastructure\Wordpress\Schedule\Enums\StandardRecurrence;
 use Wordless\Wordpress\Hook\Enums\Action;
 use Wordless\Wordpress\Hook\Enums\Type;
 
@@ -60,9 +60,9 @@ final class ExampleSchedule extends Schedule
         return Action::init;
     }
 
-    protected static function recurrence(): Recurrence
+    public static function recurrence(): StandardRecurrence
     {
-        return Recurrence::daily;
+        return StandardRecurrence::daily;
     }
 }
 
