@@ -3,15 +3,16 @@
 namespace Wordless\Infrastructure\Wordpress;
 
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
-use Wordless\Infrastructure\Wordpress\Schedule\Enums\Recurrence;
+use Wordless\Infrastructure\Wordpress\Schedule\Contracts\RecurrenceInSeconds;
+use Wordless\Infrastructure\Wordpress\Schedule\Enums\StandardRecurrence;
 
 abstract class Schedule
 {
+    abstract public static function recurrence(): StandardRecurrence|RecurrenceInSeconds;
+
     abstract public static function run(): void;
 
     abstract protected static function hook(): ActionHook;
-
-    abstract protected static function recurrence(): Recurrence;
 
     public static function priority(): int
     {

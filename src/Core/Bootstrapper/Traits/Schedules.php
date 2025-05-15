@@ -26,7 +26,7 @@ trait Schedules
         }
     }
 
-    private function getProvidedSchedules(): Generator
+    public function getProvidedSchedules(): Generator
     {
         foreach ($this->loaded_providers as $provider) {
             foreach ($provider->registerSchedules() as $scheduleClassName) {
