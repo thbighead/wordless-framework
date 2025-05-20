@@ -11,15 +11,15 @@ abstract class Dictionary extends Singleton
     use Initializer;
 
     /**
-     * @var array<int, WP_Term>
+     * @var array<string, array<int, WP_Term>>
      */
     private static array $taxonomy_terms_keyed_by_id;
     /**
-     * @var array<string, WP_Term>
+     * @var array<string, array<string, WP_Term>>
      */
     private static array $taxonomy_terms_keyed_by_name;
     /**
-     * @var array<string, WP_Term>
+     * @var array<string, array<string, WP_Term>>
      */
     private static array $taxonomy_terms_keyed_by_slug;
 
@@ -52,7 +52,7 @@ abstract class Dictionary extends Singleton
      */
     public function all(): array
     {
-        return self::$taxonomy_terms_keyed_by_id;
+        return self::$taxonomy_terms_keyed_by_id[$this->taxonomy];
     }
 
     public function find(int|string $category): ?WP_Term
@@ -66,21 +66,25 @@ abstract class Dictionary extends Singleton
 
     public function getById(int $id): ?WP_Term
     {
-        return self::$taxonomy_terms_keyed_by_id[$id] ?? null;
+        return self::$taxonomy_terms_keyed_by_id[$this->taxonomy][$id] ?? null;
     }
 
     public function getByName(string $name): ?WP_Term
     {
-        return self::$taxonomy_terms_keyed_by_name[esc_html($name)] ?? null;
+        return self::$taxonomy_terms_keyed_by_name[$this->taxonomy][esc_html($name)] ?? null;
     }
 
     public function getBySlug(string $slug): ?WP_Term
     {
-        return self::$taxonomy_terms_keyed_by_slug[$slug] ?? null;
+        return self::$taxonomy_terms_keyed_by_slug[$this->taxonomy][$slug] ?? null;
     }
 
     public function reload(): static
     {
+        unset(self::$taxonomy_terms_keyed_by_id[$this->taxonomy]);
+        unset(self::$taxonomy_terms_keyed_by_name[$this->taxonomy]);
+        unset(self::$taxonomy_terms_keyed_by_slug[$this->taxonomy]);
+
         self::loadTaxonomyInitializedInternalDictionaries($this->taxonomy);
 
         return $this;
