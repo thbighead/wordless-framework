@@ -52,7 +52,7 @@ abstract class Dictionary extends Singleton
      */
     public function all(): array
     {
-        return self::$taxonomy_terms_keyed_by_id[$this->taxonomy];
+        return self::$taxonomy_terms_keyed_by_id[$this->taxonomy] ?? [];
     }
 
     public function find(int|string $category): ?WP_Term
