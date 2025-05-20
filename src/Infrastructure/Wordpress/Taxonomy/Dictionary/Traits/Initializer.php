@@ -52,10 +52,10 @@ trait Initializer
     private static function loadTaxonomyInitializedInternalDictionaries(string $taxonomy): void
     {
         foreach (self::searchTaxonomyTerms($taxonomy) as $taxonomyTerm) {
-            self::$taxonomy_terms_keyed_by_id[$taxonomyTerm->term_id] = $taxonomyTerm;
-            self::$taxonomy_terms_keyed_by_name[$taxonomyTerm->name] =
-            self::$taxonomy_terms_keyed_by_slug[$taxonomyTerm->slug] =
-            &self::$taxonomy_terms_keyed_by_id[$taxonomyTerm->term_id];
+            self::$taxonomy_terms_keyed_by_id[$taxonomy][$taxonomyTerm->term_id] = $taxonomyTerm;
+            self::$taxonomy_terms_keyed_by_name[$taxonomy][$taxonomyTerm->name] =
+            self::$taxonomy_terms_keyed_by_slug[$taxonomy][$taxonomyTerm->slug] =
+            &self::$taxonomy_terms_keyed_by_id[$taxonomy][$taxonomyTerm->term_id];
         }
 
         self::markTaxonomyAsLoaded($taxonomy);
