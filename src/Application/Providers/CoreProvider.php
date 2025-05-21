@@ -18,6 +18,7 @@ use Wordless\Application\Commands\WordlessLanguages;
 use Wordless\Application\Commands\WpCliCaller;
 use Wordless\Application\Listeners\BootApiControllers;
 use Wordless\Application\Listeners\BootHttpRemoteCallsLog;
+use Wordless\Application\Listeners\ChangeAdminParentTermPostCounts;
 use Wordless\Application\Listeners\ChooseImageEditor;
 use Wordless\Application\Listeners\ClearFrontPageOptionsWhenPageDeleted;
 use Wordless\Application\Listeners\ConfigureUrlGuessing;
@@ -67,6 +68,7 @@ class CoreProvider extends Provider
         return [
             BootApiControllers::class,
             BootHttpRemoteCallsLog::class,
+            ChangeAdminParentTermPostCounts::class,
             ChooseImageEditor::class,
             ClearFrontPageOptionsWhenPageDeleted::class,
             ConfigureUrlGuessing::class,
