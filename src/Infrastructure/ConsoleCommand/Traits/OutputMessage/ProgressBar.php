@@ -10,7 +10,11 @@ trait ProgressBar
 
     protected function progressBar(int $max_steps = 0, ?string $format = null): SymfonyProgressBar
     {
-        return $this->setProgressBarFormat(new SymfonyProgressBar($this->output, $max_steps), $format);
+        $progressBar = $this->setProgressBarFormat(new SymfonyProgressBar($this->output, $max_steps), $format);
+
+        $progressBar->setMessage('');
+
+        return $progressBar;
     }
 
     private function setProgressBarFormat(SymfonyProgressBar $progressBar, ?string $format = null): SymfonyProgressBar
