@@ -12,10 +12,11 @@ trait Read
      * @param string $slug
      * @param bool $with_acfs
      * @return static|null
+     * @throws EmptyQueryBuilderArguments
      */
     public static function findBySlug(string $slug, bool $with_acfs = true): ?static
     {
-        $post = get_page_by_path($slug, OBJECT, static::TYPE_KEY);
+        $post = self::query()->whereSlug($slug)->first();
 
         return $post === null ? null : new static($post, $with_acfs);
     }
@@ -27,9 +28,7 @@ trait Read
      */
     public static function firstPublished(int $quantity = 1): static|array|null
     {
-        $queryBuilder = new PostQueryBuilder(static::postType());
-
-        $result = $queryBuilder->whereStatus(StandardStatus::publish)->first($quantity);
+        $result = self::query()->whereStatus(StandardStatus::publish)->first($quantity);
 
         if ($result === null) {
             return null;
@@ -55,10 +54,9 @@ trait Read
      */
     public static function getAll(bool $with_acfs = true): array
     {
-        $queryBuilder = new PostQueryBuilder(static::postType());
         $all = [];
 
-        foreach ($queryBuilder->get() as $post) {
+        foreach (self::query()->get() as $post) {
             $all[] = new static($post, $with_acfs);
         }
 
