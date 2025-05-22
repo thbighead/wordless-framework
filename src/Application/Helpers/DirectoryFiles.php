@@ -240,6 +240,29 @@ class DirectoryFiles extends Helper
     }
 
     /**
+     * @param string $download_file_url
+     * @param string $absolute_file_path
+     * @return string
+     * @throws FailedToPutFileContent
+     */
+    public static function downloadFileAt(string $download_file_url, string $absolute_file_path): string
+    {
+        if (is_dir($absolute_file_path)) {
+            $absolute_file_path = Str::finishWith($absolute_file_path, DIRECTORY_SEPARATOR)
+                . Str::afterLast($download_file_url, '/');
+        }
+
+        if (file_put_contents($absolute_file_path, fopen($download_file_url, 'r')) === false) {
+            throw new FailedToPutFileContent(
+                $absolute_file_path,
+                "Content downloaded from $download_file_url."
+            );
+        }
+
+        return $absolute_file_path;
+    }
+
+    /**
      * @return string
      * @throws FailedToGetCurrentWorkingDirectory
      * @throws PathNotFoundException
