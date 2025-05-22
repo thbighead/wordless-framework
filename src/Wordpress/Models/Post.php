@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\Models;
 
+use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
@@ -115,6 +116,35 @@ class Post implements IRelatedMetaData
     public function getType(): PostType
     {
         return $this->type;
+    }
+
+    public function resetTaxonomies(string $taxonomy_key): static
+    {
+        wp_set_object_terms($this->id(), [], $taxonomy_key);
+
+        return $this;
+    }
+
+    public function setTaxonomies(Taxonomy $taxonomyTerm, Taxonomy ...$taxonomyTerms): static
+    {
+        $terms_ids_grouped_by_taxonomy_key = [];
+
+        /** @var Taxonomy $term */
+        foreach (Arr::prepend($taxonomyTerms, $taxonomyTerm) as $term) {
+            $terms_ids_grouped_by_taxonomy_key[$term->taxonomy][] = $term->id();
+        }
+
+        foreach ($terms_ids_grouped_by_taxonomy_key as $taxonomy_key => $terms) {
+            $taxonomy_terms_ids = [];
+
+            foreach ($terms as $term_id) {
+                $taxonomy_terms_ids[] = $term_id;
+            }
+
+            wp_set_object_terms($this->id(), $taxonomy_terms_ids, $taxonomy_key);
+        }
+
+        return $this;
     }
 
     /**
