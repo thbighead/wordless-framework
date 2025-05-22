@@ -14,7 +14,7 @@ trait Delete
      * @return void
      * @throws DeleteTermError
      */
-    public static function delete(Taxonomy|WP_Term|int $term): void
+    public static function deleteTerm(Taxonomy|WP_Term|int $term): void
     {
         if (!is_int($term)) {
             $term = $term->term_id;
@@ -37,7 +37,16 @@ trait Delete
     {
         foreach (static::all() as $term) {
             /** @var WP_Term $term */
-            static::delete($term->term_id);
+            static::deleteTerm($term->term_id);
         }
+    }
+
+    /**
+     * @return void
+     * @throws DeleteTermError
+     */
+    public function delete(): void
+    {
+        static::deleteTerm($this);
     }
 }
