@@ -5,6 +5,7 @@ namespace Wordless\Application\Providers;
 use Wordless\Application\Commands\Diagnostics;
 use Wordless\Application\Commands\HelixShell;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite;
+use Wordless\Application\Commands\Utility\MediaSync;
 use Wordless\Application\Commands\Utility\ReplaceBaseUrls;
 use Wordless\Application\Commands\Utility\RunTests;
 use Wordless\Application\Commands\Utility\WpHooksList;
@@ -17,6 +18,7 @@ class UtilityProvider extends Provider
         return [
             DatabaseOverwrite::class,
             Diagnostics::class,
+            MediaSync::class,
             ReplaceBaseUrls::class,
             RunTests::class,
             HelixShell::class,
