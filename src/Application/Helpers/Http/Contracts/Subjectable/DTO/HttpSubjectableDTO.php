@@ -5,7 +5,6 @@ namespace Wordless\Application\Helpers\Http\Contracts\Subjectable\DTO;
 use Wordless\Application\Helpers\Http\Contracts\Subjectable\DTO\HttpSubjectableDTO\Traits\Requests;
 use Wordless\Application\Helpers\Http\Contracts\Subjectable\DTO\HttpSubjectableDTO\Traits\Setters;
 use Wordless\Application\Helpers\Http\Enums\Version;
-use Wordless\Application\Helpers\Str;
 
 final class HttpSubjectableDTO
 {
@@ -22,7 +21,7 @@ final class HttpSubjectableDTO
      * @noinspection PhpPropertyCanBeReadonlyInspection
      */
     public function __construct(
-        string $base_url,
+        string          $base_url,
         private Version $version = Version::http_1_1,
         private array   $default_headers = [],
         private ?bool   $only_with_ssl = null

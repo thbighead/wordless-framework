@@ -83,8 +83,8 @@ final class DirectoryPathSubjectDTO extends ProjectPathSubjectDTO
      * @throws PathNotFoundException
      */
     public function createSymlink(
-        string $symbolic_link_name,
-        string $symbolic_link_target,
+        string  $symbolic_link_name,
+        string  $symbolic_link_target,
         ?string $from_absolute_path = null
     ): SymlinkPathSubjectDTO
     {

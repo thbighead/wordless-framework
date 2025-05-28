@@ -8,7 +8,7 @@ use Wordless\Application\Helpers\Http\Enums\Version;
 abstract class Subjectable
 {
     final public static function of(
-        string $base_url,
+        string  $base_url,
         Version $version = Version::http_1_1,
         array   $default_headers = [],
         ?bool   $only_with_ssl = null
