@@ -166,8 +166,8 @@ class DirectoryFiles extends Helper
     public static function createFileAt(
         string $filepath,
         string $file_content = '',
-        bool $secure_mode = true,
-        ?int $permissions = null
+        bool   $secure_mode = true,
+        ?int   $permissions = null
     ): void
     {
         if (!is_dir($file_directory_path = dirname($filepath))) {

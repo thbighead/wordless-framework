@@ -7,7 +7,6 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWor
 use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\ProjectPath\Traits\Internal;
-use Wordless\Infrastructure\Helper;
 
 class ProjectPath extends Subjectable
 {
