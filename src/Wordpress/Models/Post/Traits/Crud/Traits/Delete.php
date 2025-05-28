@@ -8,6 +8,38 @@ use WP_Post;
 trait Delete
 {
     /**
+     * @return WP_Post[]
+     * @throws WpDeletePostFailed
+     */
+    public static function trashAll(): array
+    {
+        $trashed_posts = [];
+
+        /** @var static $post */
+        foreach (static::getAll(false) as $post) {
+            $trashed_posts[] = $post->trash();
+        }
+
+        return $trashed_posts;
+    }
+
+    /**
+     * @return WP_Post[]
+     * @throws WpDeletePostFailed
+     */
+    public static function truncate(): array
+    {
+        $removed_posts = [];
+
+        /** @var static $post */
+        foreach (static::getAll(false) as $post) {
+            $removed_posts[] = $post->delete();
+        }
+
+        return $removed_posts;
+    }
+
+    /**
      * @return WP_Post
      * @throws WpDeletePostFailed
      */
