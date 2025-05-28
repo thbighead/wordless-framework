@@ -2,10 +2,7 @@
 
 namespace Wordless\Wordpress\Models\Post\Traits;
 
-use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Expect;
-use Wordless\Infrastructure\Wordpress\Taxonomy;
-use Wordless\Wordpress\Models\Category;
 use WP_Term;
 
 trait Taxonomies

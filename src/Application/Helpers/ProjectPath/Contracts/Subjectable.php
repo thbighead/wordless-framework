@@ -3,12 +3,12 @@
 namespace Wordless\Application\Helpers\ProjectPath\Contracts;
 
 use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO;
+use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO\DirectoryPathSubjectDTO;
+use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO\FilePathSubjectDTO;
+use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO\SymlinkPathSubjectDTO;
 use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\Exceptions\PathTypeNotSupported;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Helper\Contracts\Subjectable as BaseSubjectable;
-use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO\FilePathSubjectDTO;
-use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO\DirectoryPathSubjectDTO;
-use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO\SymlinkPathSubjectDTO;
 
 abstract class Subjectable extends BaseSubjectable
 {

@@ -2,8 +2,8 @@
 
 namespace Wordless\Application\Commands\WordlessLanguages;
 
-use Wordless\Application\Commands\WordlessLanguages\TranslationsDiscover\Exceptions\DiscoverFailed;
 use Generator;
+use Wordless\Application\Commands\WordlessLanguages\TranslationsDiscover\Exceptions\DiscoverFailed;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
