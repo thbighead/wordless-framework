@@ -4,7 +4,6 @@ namespace Wordless\Wordpress\Models\Attachment\DTO;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Arr;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\Link;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO\FilePathSubjectDTO;
@@ -27,7 +26,6 @@ readonly class MediaDTO
     /**
      * @param array $raw_data
      * @throws DotEnvNotSetException
-     * @throws FailedToGetCurrentWorkingDirectory
      * @throws FormatException
      * @throws PathNotFoundException
      */

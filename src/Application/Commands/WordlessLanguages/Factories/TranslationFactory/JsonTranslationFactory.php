@@ -2,10 +2,10 @@
 
 namespace Wordless\Application\Commands\WordlessLanguages\Factories\TranslationFactory;
 
+use JsonException;
 use Wordless\Application\Commands\WordlessLanguages\Factories\TranslationFactory;
 use Wordless\Application\Commands\WordlessLanguages\Factories\TranslationFactory\FileWriter\JsonFileWriter;
 use Wordless\Application\Commands\WordlessLanguages\Factories\TranslationFactory\JsonTranslationFactory\Exceptions\WpTranslationsReadingFail;
-use JsonException;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;

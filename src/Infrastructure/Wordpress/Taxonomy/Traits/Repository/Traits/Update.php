@@ -6,7 +6,7 @@ use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Update\U
 
 trait Update
 {
-    public function buildEdit()
+    public function buildEdit(): UpdateBuilder
     {
         return new UpdateBuilder($this->id(), $this->taxonomy);
     }
