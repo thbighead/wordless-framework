@@ -8,7 +8,6 @@ use Wordless\Application\Helpers\Database;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\GetType;
 use Wordless\Application\Helpers\Log;
 use Wordless\Application\Helpers\ProjectPath;
@@ -181,8 +180,6 @@ class Attachment extends Post
     /**
      * @param int|WP_Post $post
      * @param bool $with_acfs
-     * @throws DotEnvNotSetException
-     * @throws FormatException
      * @throws InitializingModelWithWrongPostType
      * @throws InvalidAcfFunction
      * @throws InvalidMetaKey
@@ -307,7 +304,7 @@ class Attachment extends Post
         try {
             $this->media = new MediaDTO($this->raw_metadata + [self::KEY_MIME_TYPE => $this->post_mime_type]);
         } catch (
-            FormatException|FailedToGetCurrentWorkingDirectory|PathNotFoundException|DotEnvNotSetException $exception
+        FormatException|PathNotFoundException|DotEnvNotSetException $exception
         ) {
             Log::info(
                 "Trying to set media to attachment '$this->post_title' resulted in: {$exception->getMessage()}"
