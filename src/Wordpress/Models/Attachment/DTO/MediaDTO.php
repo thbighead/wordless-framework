@@ -7,7 +7,6 @@ use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\Link;
 use Wordless\Application\Helpers\ProjectPath;
-use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO;
 use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO\FilePathSubjectDTO;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -75,8 +74,6 @@ readonly class MediaDTO
      * @return void
      * @throws DotEnvNotSetException
      * @throws FormatException
-     * @throws PathNotFoundException
-     * @throws FailedToGetCurrentWorkingDirectory
      */
     private function setSizes(): void
     {
