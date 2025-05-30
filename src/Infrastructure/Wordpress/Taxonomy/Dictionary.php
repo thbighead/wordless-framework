@@ -89,4 +89,15 @@ abstract class Dictionary extends Singleton
 
         return $this;
     }
+
+    public function unsetById(int $term_id): static
+    {
+        if(!is_null($term = static::getById($term_id))) {
+            unset(self::$taxonomy_terms_keyed_by_id[$this->taxonomy][$term_id]);
+            unset(self::$taxonomy_terms_keyed_by_name[$this->taxonomy][$term->name]);
+            unset(self::$taxonomy_terms_keyed_by_slug[$this->taxonomy][$term->slug]);
+        }
+
+        return $this;
+    }
 }
