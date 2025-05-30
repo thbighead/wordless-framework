@@ -3,6 +3,7 @@
 namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits;
 
 use Wordless\Infrastructure\Wordpress\Taxonomy;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Delete\Exceptions\DeleteTermError;
 use WP_Error;
 use WP_Term;
@@ -27,6 +28,11 @@ trait Delete
         if (($result = wp_delete_term($term, static::getNameKey())) instanceof WP_Error) {
             throw new DeleteTermError($result);
         }
+
+        /** @var Dictionary $dictionary */
+        $dictionary = static::getDictionary();
+
+        $dictionary->unsetById($term);
     }
 
     /**
