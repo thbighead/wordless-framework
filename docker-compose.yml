@@ -9,8 +9,6 @@ networks:
 volumes:
   mariadb:
     driver: local
-  adminer:
-    driver: local
 
 services:
   ### Workspace Utilities ##################################
@@ -182,19 +180,4 @@ services:
       - MYSQL_PASSWORD=root
       - MYSQL_ROOT_PASSWORD=root
     networks:
-      - backend
-  ### Adminer ###########################################
-  adminer:
-    build:
-      context: ./docker/adminer
-      args:
-        - INSTALL_MSSQL=false
-    environment:
-      - ADMINER_PLUGINS=
-      - ADMINER_DESIGN=pepa-linha
-      - ADMINER_DEFAULT_SERVER=mariadb
-    ports:
-      - "8081:8080"
-    networks:
-      - frontend
       - backend
