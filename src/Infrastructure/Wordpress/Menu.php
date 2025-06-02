@@ -3,6 +3,7 @@
 namespace Wordless\Infrastructure\Wordpress;
 
 use InvalidArgumentException;
+use Wordless\Application\Helpers\Expect;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Wordpress\Menu\Exceptions\MenuLocationHasNoMenuToRetrieveItems;
 use Wordless\Wordpress\Models\MenuItem;
@@ -65,10 +66,12 @@ abstract class Menu
      */
     protected function getItemsList(): array
     {
-        return wp_get_nav_menu_items(
+        $menu = wp_get_nav_menu_items(
             static::getLocalizedMenuId() ?? throw new MenuLocationHasNoMenuToRetrieveItems($this),
             ['output' => OBJECT]
         );
+
+        return Expect::array($menu);
     }
 
     /**
