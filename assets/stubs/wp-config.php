@@ -118,7 +118,7 @@ define('WP_DEBUG_LOG', Logger::getFullTimedPathName());
 // Enabled only when WP_DEBUG_DISPLAY is on in non-production environments and WP_DEBUG_LOG is off, otherwise check logs files.
 define(
     'WP_DEBUG_DISPLAY',
-    WP_DEBUG && Environment::get('WP_DEBUG_DISPLAY', false) && (WP_ENVIRONMENT_TYPE !== Environment::PRODUCTION)
+    WP_DEBUG && Environment::get('WP_DEBUG_DISPLAY', false) && ($environment === Environment::LOCAL)
 );
 
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-wordpress-auto-updates
@@ -136,7 +136,7 @@ define('WP_CONTENT_DIR', realpath(__DIR__ . '/../wp-content'));
 define('WP_CONTENT_URL', "{$site_url}wp-content");
 
 // https://wordpress.org/support/article/editing-wp-config-php/#require-ssl-for-admin-and-logins
-define('FORCE_SSL_ADMIN', $environment === Environment::PRODUCTION);
+define('FORCE_SSL_ADMIN', $environment !== Environment::LOCAL);
 
 /** @noinspection PhpUnhandledExceptionInspection */
 $allowed_hosts = Environment::get('WP_ACCESSIBLE_HOSTS', '*.wordpress.org');
