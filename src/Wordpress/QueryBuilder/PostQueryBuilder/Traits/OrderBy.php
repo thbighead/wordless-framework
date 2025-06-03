@@ -3,9 +3,9 @@
 namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 
 use Wordless\Application\Helpers\Arr;
+use Wordless\Wordpress\QueryBuilder\Enums\Direction;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\ColumnReference;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\Direction;
 
 trait OrderBy
 {
