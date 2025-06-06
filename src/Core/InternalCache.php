@@ -11,11 +11,11 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 use Wordless\Core\InternalCache\Exceptions\InvalidCache;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Core\Exceptions;
+namespace Wordless\Application\Helpers\Environment\Exceptions;
 
 use ErrorException;
 use Throwable;

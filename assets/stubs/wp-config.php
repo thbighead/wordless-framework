@@ -108,17 +108,17 @@ $table_prefix = Environment::get('DB_TABLE_PREFIX', 'wp_');
 define('WP_ENVIRONMENT_TYPE', $environment = Environment::get('APP_ENV', Environment::LOCAL));
 
 // https://wordpress.stackexchange.com/a/340067
-const WP_DISABLE_FATAL_ERROR_HANDLER = WP_ENVIRONMENT_TYPE === Environment::LOCAL;
+define('WP_DISABLE_FATAL_ERROR_HANDLER', $environment === Environment::LOCAL || Environment::isCli());
 // https://wordpress.org/support/article/editing-wp-config-php/#empty-trash
 const EMPTY_TRASH_DAYS = WP_ENVIRONMENT_TYPE === Environment::LOCAL ? 0 : 30;
 
 // https://wordpress.org/support/article/editing-wp-config-php/#configure-error-logging
 define('WP_DEBUG_LOG', Logger::getFullTimedPathName());
 // https://wordpress.org/support/article/debugging-in-wordpress/#wp_debug_display
-// Enabled only when WP_DEBUG_DISPLAY is on in non-production environments and WP_DEBUG_LOG is off, otherwise check logs files.
+// Enabled only when WP_DEBUG_DISPLAY is on in non-production environments, otherwise check logs files.
 define(
     'WP_DEBUG_DISPLAY',
-    WP_DEBUG && Environment::get('WP_DEBUG_DISPLAY', false) && ($environment === Environment::LOCAL)
+    WP_DEBUG && ($environment === Environment::LOCAL) && Environment::get('WP_DEBUG_DISPLAY', false)
 );
 
 // https://wordpress.org/support/article/editing-wp-config-php/#disable-wordpress-auto-updates
