@@ -15,7 +15,7 @@ trait OrTests
      */
     public function testOrOnlyHiddenInTagCloud(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)->onlyHiddenFromTagCloud();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)->onlyHiddenFromTagCloud();
 
         $this->assertOrOperator($taxonomyQueryBuilder);
 
@@ -31,7 +31,7 @@ trait OrTests
      */
     public function testOrOnlyHiddenInTagCloudWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->onlyAvailableInTagCloud()
             ->onlyHiddenFromTagCloud();
 
@@ -50,7 +50,7 @@ trait OrTests
      */
     public function testOrOnlyHiddenInTagCloudWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereName('name')
             ->onlyDefault()
             ->onlyHiddenFromTagCloud();

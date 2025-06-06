@@ -16,7 +16,7 @@ trait OrTests
      */
     public function testOrWhereDeletePermission(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereDeletePermission('capability');
 
         $this->assertOrOperator($taxonomyQueryBuilder);
@@ -34,7 +34,7 @@ trait OrTests
      */
     public function testOrWhereDeletePermissionWhereSameAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereDeletePermission('capability')
             ->whereDeletePermission('capability');
 
@@ -53,7 +53,7 @@ trait OrTests
      */
     public function testOrWhereDeletePermissionWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereDeletePermission('capability_1')
             ->whereDeletePermission('capability_2');
 
@@ -72,7 +72,7 @@ trait OrTests
      */
     public function testOrWhereDeletePermissionWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereName('name')
             ->onlyDefault()
             ->whereDeletePermission('capability');
@@ -97,6 +97,6 @@ trait OrTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance(operator: Operator::or)->whereDeletePermission('');
+        TaxonomyQueryBuilder::make(operator: Operator::or)->whereDeletePermission('');
     }
 }

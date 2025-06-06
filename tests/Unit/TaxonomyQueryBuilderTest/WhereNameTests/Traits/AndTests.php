@@ -15,7 +15,7 @@ trait AndTests
      */
     public function testAndWhereName(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->whereName('name_1');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->whereName('name_1');
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -32,7 +32,7 @@ trait AndTests
      */
     public function testAndWhereNameWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereName('name_1')
             ->whereName('name_2');
 
@@ -51,7 +51,7 @@ trait AndTests
      */
     public function testAndWhereNameWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->onlyDefault()
             ->whereName('name_1');
 
@@ -75,7 +75,7 @@ trait AndTests
     {
         $string = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->whereName($string);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->whereName($string);
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -90,6 +90,6 @@ trait AndTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->whereName('');
+        TaxonomyQueryBuilder::make()->whereName('');
     }
 }

@@ -14,7 +14,7 @@ trait AndTests
      */
     public function testAndOnlyHiddenInAdminMenu(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->onlyHiddenFromAdminMenu();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->onlyHiddenFromAdminMenu();
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -30,7 +30,7 @@ trait AndTests
      */
     public function testAndOnlyHiddenInAdminMenuWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->onlyAvailableInAdminMenu()
             ->onlyHiddenFromAdminMenu();
 
@@ -49,7 +49,7 @@ trait AndTests
      */
     public function testAndOnlyHiddenInAdminMenuWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereName('name')
             ->onlyDefault()
             ->onlyHiddenFromAdminMenu();

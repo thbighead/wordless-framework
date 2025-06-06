@@ -15,7 +15,7 @@ trait OrTests
      */
     public function testOrOnlyHiddenInAdminMenu(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)->onlyHiddenFromAdminMenu();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)->onlyHiddenFromAdminMenu();
 
         $this->assertOrOperator($taxonomyQueryBuilder);
 
@@ -31,7 +31,7 @@ trait OrTests
      */
     public function testOrOnlyHiddenInAdminMenuWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->onlyAvailableInAdminMenu()
             ->onlyHiddenFromAdminMenu();
 
@@ -50,7 +50,7 @@ trait OrTests
      */
     public function testOrOnlyHiddenInAdminMenuWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereName('name')
             ->onlyDefault()
             ->onlyHiddenFromAdminMenu();
