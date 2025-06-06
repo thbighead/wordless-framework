@@ -4,12 +4,12 @@ namespace Wordless\Wordpress\Models\Attachment\DTO;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Arr;
+use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Link;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO\FilePathSubjectDTO;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Wordpress\Models\Attachment;
 use Wordless\Wordpress\Models\Attachment\DTO\MediaDTO\DTO\SizeDTO;
 

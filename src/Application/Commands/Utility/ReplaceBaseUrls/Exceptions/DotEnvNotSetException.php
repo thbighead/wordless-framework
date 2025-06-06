@@ -3,7 +3,7 @@
 namespace Wordless\Application\Commands\Utility\ReplaceBaseUrls\Exceptions;
 
 use Throwable;
-use Wordless\Core\Exceptions\DotEnvNotSetException as BaseDotEnvNotSetException;
+use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException as BaseDotEnvNotSetException;
 
 class DotEnvNotSetException extends BaseDotEnvNotSetException
 {

@@ -5,9 +5,9 @@ namespace Wordless\Core\Bootstrapper\Traits;
 use Generator;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
+use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 trait Schedules
 {

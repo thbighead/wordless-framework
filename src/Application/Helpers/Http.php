@@ -6,11 +6,11 @@ namespace Wordless\Application\Helpers;
 
 use JsonException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Http\Contracts\Subjectable;
 use Wordless\Application\Helpers\Http\Enums\Version;
 use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
 use Wordless\Application\Helpers\Http\Traits\Internal;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Http\Request\Enums\Verb;
 use Wordless\Infrastructure\Http\Response;
 use WP_Error;

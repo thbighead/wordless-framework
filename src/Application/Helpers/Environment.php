@@ -7,12 +7,13 @@ use Symfony\Component\Dotenv\Exception\FormatException;
 use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
+use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToFindPackagesMarkerInsideEnvFile;
+use Wordless\Application\Helpers\Environment\Exceptions\FailedToLoadDotEnv;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Application\Helpers\Environment\Traits\Internal;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Core\InternalCache;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 use Wordless\Infrastructure\Helper;
@@ -68,7 +69,7 @@ STRING;
      * @param mixed|null $default
      * @return mixed
      * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws FailedToLoadDotEnv
      */
     public static function get(string $key, mixed $default = null): mixed
     {
@@ -88,7 +89,7 @@ STRING;
      * @param mixed|null $default
      * @return mixed
      * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws FailedToLoadDotEnv
      */
     public static function getWithoutCache(string $key, mixed $default = null): mixed
     {
@@ -132,7 +133,7 @@ STRING;
     /**
      * @return bool
      * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws FailedToLoadDotEnv
      */
     public static function isLocal(): bool
     {
@@ -147,7 +148,7 @@ STRING;
     /**
      * @return bool
      * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws FailedToLoadDotEnv
      */
     public static function isNotLocal(): bool
     {
@@ -222,7 +223,7 @@ STRING;
     /**
      * @return void
      * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws FailedToLoadDotEnv
      */
     public static function loadDotEnv(): void
     {
@@ -231,12 +232,18 @@ STRING;
         }
 
         try {
-            (new Dotenv)->load(ProjectPath::root('.env'));
-            define(self::DOT_ENV_LOADED_CONSTANT_NAME, true);
+            $env_file_path = ProjectPath::root('.env');
         } catch (PathNotFoundException $exception) {
             throw new DotEnvNotSetException(".env file not found at $exception->path", $exception);
+        }
+
+        try {
+            (new Dotenv)->load($env_file_path);
+            define(self::DOT_ENV_LOADED_CONSTANT_NAME, true);
         } catch (PathException $exception) {
             throw new DotEnvNotSetException($exception->getMessage(), $exception);
+        } catch (FormatException $exception) {
+            throw new FailedToLoadDotEnv($env_file_path, $exception);
         }
     }
 

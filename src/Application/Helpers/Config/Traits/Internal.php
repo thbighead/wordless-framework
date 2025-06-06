@@ -5,6 +5,7 @@ namespace Wordless\Application\Helpers\Config\Traits;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 
@@ -20,7 +21,6 @@ trait Internal
      * @param string|null $key
      * @param mixed $default
      * @return mixed|ConfigSubjectDTO
-     * @throws PathNotFoundException
      * @noinspection PhpUnusedPrivateMethodInspection
      */
     private static function fromConfigFile(string $filename, ?string $key = null, mixed $default = null): mixed
@@ -41,7 +41,7 @@ trait Internal
      * @param mixed|null $default
      * @return mixed|ConfigSubjectDTO
      * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToLoadConfigFile
      * @noinspection PhpUnusedPrivateMethodInspection
      */
     private static function fromDTO(
@@ -63,11 +63,15 @@ trait Internal
     /**
      * @param string $config_filename_without_extension
      * @return mixed
-     * @throws PathNotFoundException
+     * @throws FailedToLoadConfigFile
      */
     private static function loadConfigFile(string $config_filename_without_extension): mixed
     {
-        return require ProjectPath::config("$config_filename_without_extension.php");
+        try {
+            return require ProjectPath::config("$config_filename_without_extension.php");
+        } catch (PathNotFoundException $exception) {
+            throw new FailedToLoadConfigFile($exception);
+        }
     }
 
     /**
@@ -89,7 +93,7 @@ trait Internal
     /**
      * @param array $keys
      * @return mixed
-     * @throws PathNotFoundException
+     * @throws FailedToLoadConfigFile
      */
     private static function retrieveConfig(array &$keys): mixed
     {
