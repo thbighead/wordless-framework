@@ -6,14 +6,15 @@ use Composer\Script\Event;
 use RuntimeException;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
+use Wordless\Application\Helpers\Environment\Exceptions\FailedToLoadDotEnv;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Composer\Exceptions\AppHostAlreadySetOnDotEnv;
 use Wordless\Core\Composer\Traits\SetHostFromNginx\Exceptions\UnavailableNginxServerName;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 trait SetHostFromNginx
 {
@@ -111,8 +112,8 @@ trait SetHostFromNginx
      * @return void
      * @throws AppHostAlreadySetOnDotEnv
      * @throws DotEnvNotSetException
+     * @throws FailedToLoadDotEnv
      * @throws FailedToRewriteDotEnvFile
-     * @throws FormatException
      * @throws PathNotFoundException
      */
     private static function setAppHostValueAtDotEnv(string $app_host): void

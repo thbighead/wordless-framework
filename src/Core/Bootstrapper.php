@@ -6,6 +6,8 @@ use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
+use Wordless\Application\Helpers\Environment\Exceptions\FailedToLoadDotEnv;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
 use Wordless\Core\Bootstrapper\Exceptions\ConstantAlreadyDefined;
@@ -18,7 +20,6 @@ use Wordless\Core\Bootstrapper\Traits\MainPlugin;
 use Wordless\Core\Bootstrapper\Traits\Migrations;
 use Wordless\Core\Bootstrapper\Traits\PublishConfigs;
 use Wordless\Core\Bootstrapper\Traits\Schedules;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Provider;
 
 final class Bootstrapper extends Singleton
@@ -140,14 +141,16 @@ final class Bootstrapper extends Singleton
      * @return self
      * @throws DotEnvNotSetException
      * @throws EmptyConfigKey
-     * @throws FormatException
+     * @throws FailedToLoadDotEnv
      * @throws PathNotFoundException
      */
     private function setErrorReporting(): self
     {
         error_reporting(Config::wordpressAdmin(
             self::CONFIG_KEY_ERROR_REPORTING,
-            Environment::isProduction() ? E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED : E_ALL
+            Environment::isNotLocal()
+                ? E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED
+                : E_ALL
         ));
 
         return $this;

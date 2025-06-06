@@ -4,8 +4,8 @@ namespace Wordless\Wordpress\Models\User;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Create\Exceptions\FailedToCreateUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToDeleteWordlessUser;
