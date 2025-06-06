@@ -10,6 +10,7 @@ trait Resolver
 {
     /**
      * @return WP_Term[]
+     * @throws EmptyQueryBuilderArguments
      */
     public function get(array $extra_arguments = []): array
     {
@@ -31,6 +32,7 @@ trait Resolver
     /**
      * @param array $extra_arguments
      * @return int[]
+     * @throws EmptyQueryBuilderArguments
      */
     public function getIds(array $extra_arguments = []): array
     {
@@ -42,6 +44,7 @@ trait Resolver
     /**
      * @param array $extra_arguments
      * @return string[]
+     * @throws EmptyQueryBuilderArguments
      */
     public function getNames(array $extra_arguments = []): array
     {
@@ -53,6 +56,7 @@ trait Resolver
     /**
      * @param array $extra_arguments
      * @return array<int, string>
+     * @throws EmptyQueryBuilderArguments
      */
     public function getNamesKeyedById(array $extra_arguments = []): array
     {
@@ -64,6 +68,7 @@ trait Resolver
     /**
      * @param array $extra_arguments
      * @return int[]
+     * @throws EmptyQueryBuilderArguments
      */
     public function getNumberOfAssociatedObjects(array $extra_arguments = []): array
     {
@@ -75,6 +80,7 @@ trait Resolver
     /**
      * @param array $extra_arguments
      * @return array<int, int>
+     * @throws EmptyQueryBuilderArguments
      */
     public function getParentIdsKeyedById(array $extra_arguments = []): array
     {
@@ -86,6 +92,7 @@ trait Resolver
     /**
      * @param array $extra_arguments
      * @return string[]
+     * @throws EmptyQueryBuilderArguments
      */
     public function getSlugs(array $extra_arguments = []): array
     {
@@ -97,6 +104,7 @@ trait Resolver
     /**
      * @param array $extra_arguments
      * @return array<int, string>
+     * @throws EmptyQueryBuilderArguments
      */
     public function getSlugsKeyedById(array $extra_arguments = []): array
     {
@@ -108,6 +116,7 @@ trait Resolver
     /**
      * @param array $extra_arguments
      * @return int[]
+     * @throws EmptyQueryBuilderArguments
      */
     public function getTaxonomyTermIds(array $extra_arguments = []): array
     {
@@ -128,6 +137,7 @@ trait Resolver
         $this->resolveExceptArguments($arguments)
             ->resolveOnlyAssociatedToArgument($arguments)
             ->resolveOnlyTaxonomiesArgument($arguments)
+            ->resolveMetaSubQuery($arguments)
             ->resolveExtraArguments($arguments, $extra_arguments);
 
         return $arguments;

@@ -145,22 +145,6 @@ trait Resolver
         return $this;
     }
 
-    /**
-     * @param array $arguments
-     * @return $this
-     * @throws EmptyQueryBuilderArguments
-     */
-    private function resolveMetaSubQuery(array &$arguments): static
-    {
-        $metaSubQueryBuilder = $arguments[MetaSubQueryBuilder::ARGUMENT_KEY] ?? null;
-
-        if ($metaSubQueryBuilder instanceof MetaSubQueryBuilder) {
-            $arguments[MetaSubQueryBuilder::ARGUMENT_KEY] = $metaSubQueryBuilder->buildArguments();
-        }
-
-        return $this;
-    }
-
     private function resolveMimeTypeArgument(array &$arguments): static
     {
         if (!isset($arguments[self::KEY_ATTACHMENT_MIME_TYPE])) {

@@ -10,10 +10,12 @@ use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Enums\TermsListFormat;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\OrderBy;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\Resolver;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\WhereClauses;
+use Wordless\Wordpress\QueryBuilder\Traits\HasMetaSubQuery;
 use WP_Term_Query;
 
 class TermQueryBuilder extends WpQueryBuilder
 {
+    use HasMetaSubQuery;
     use OrderBy;
     use Resolver;
     use WhereClauses;

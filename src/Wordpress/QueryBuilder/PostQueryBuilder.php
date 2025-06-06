@@ -22,6 +22,7 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Slug;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Status;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Tag;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Type;
+use Wordless\Wordpress\QueryBuilder\Traits\HasMetaSubQuery;
 use WP_Query;
 
 class PostQueryBuilder extends WpQueryBuilder
@@ -29,6 +30,7 @@ class PostQueryBuilder extends WpQueryBuilder
     use Author;
     use Category;
     use Comment;
+    use HasMetaSubQuery;
     use Id;
     use OrderBy;
     use Password;
@@ -60,13 +62,6 @@ class PostQueryBuilder extends WpQueryBuilder
     public function whereDate(DateSubQueryBuilder $subQuery): static
     {
         $this->arguments[DateSubQueryBuilder::ARGUMENT_KEY] = $subQuery;
-
-        return $this;
-    }
-
-    public function whereMeta(MetaSubQueryBuilder $subQuery): static
-    {
-        $this->arguments[MetaSubQueryBuilder::ARGUMENT_KEY] = $subQuery;
 
         return $this;
     }
