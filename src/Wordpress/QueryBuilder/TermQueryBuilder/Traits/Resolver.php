@@ -30,6 +30,94 @@ trait Resolver
 
     /**
      * @param array $extra_arguments
+     * @return int[]
+     */
+    public function getIds(array $extra_arguments = []): array
+    {
+        $this->arguments[TermsListFormat::FIELDS_KEY] = TermsListFormat::only_term_ids->value;
+
+        return $this->query($extra_arguments);
+    }
+
+    /**
+     * @param array $extra_arguments
+     * @return string[]
+     */
+    public function getNames(array $extra_arguments = []): array
+    {
+        $this->arguments[TermsListFormat::FIELDS_KEY] = TermsListFormat::only_term_names->value;
+
+        return $this->query($extra_arguments);
+    }
+
+    /**
+     * @param array $extra_arguments
+     * @return array<int, string>
+     */
+    public function getNamesKeyedById(array $extra_arguments = []): array
+    {
+        $this->arguments[TermsListFormat::FIELDS_KEY] = TermsListFormat::only_term_names_keyed_by_term_ids->value;
+
+        return $this->query($extra_arguments);
+    }
+
+    /**
+     * @param array $extra_arguments
+     * @return int[]
+     */
+    public function getNumberOfAssociatedObjects(array $extra_arguments = []): array
+    {
+        $this->arguments[TermsListFormat::FIELDS_KEY] = TermsListFormat::number_of_associated_objects->value;
+
+        return $this->query($extra_arguments);
+    }
+
+    /**
+     * @param array $extra_arguments
+     * @return array<int, int>
+     */
+    public function getParentIdsKeyedById(array $extra_arguments = []): array
+    {
+        $this->arguments[TermsListFormat::FIELDS_KEY] = TermsListFormat::only_parent_ids_keyed_by_term_ids->value;
+
+        return $this->query($extra_arguments);
+    }
+
+    /**
+     * @param array $extra_arguments
+     * @return string[]
+     */
+    public function getSlugs(array $extra_arguments = []): array
+    {
+        $this->arguments[TermsListFormat::FIELDS_KEY] = TermsListFormat::only_term_slugs->value;
+
+        return $this->query($extra_arguments);
+    }
+
+    /**
+     * @param array $extra_arguments
+     * @return array<int, string>
+     */
+    public function getSlugsKeyedById(array $extra_arguments = []): array
+    {
+        $this->arguments[TermsListFormat::FIELDS_KEY] = TermsListFormat::only_term_slugs_keyed_by_term_ids->value;
+
+        return $this->query($extra_arguments);
+    }
+
+    /**
+     * @param array $extra_arguments
+     * @return int[]
+     */
+    public function getTaxonomyTermIds(array $extra_arguments = []): array
+    {
+        $this->arguments[TermsListFormat::FIELDS_KEY] = TermsListFormat::only_taxonomy_term_ids->value;
+
+        return $this->query($extra_arguments);
+    }
+
+    /**
+     * @param array $extra_arguments
      * @return array<string, string|int|bool|array>
      * @throws EmptyQueryBuilderArguments
      */
@@ -39,7 +127,8 @@ trait Resolver
 
         $this->resolveExceptArguments($arguments)
             ->resolveOnlyAssociatedToArgument($arguments)
-            ->resolveOnlyTaxonomiesArgument($arguments);
+            ->resolveOnlyTaxonomiesArgument($arguments)
+            ->resolveExtraArguments($arguments, $extra_arguments);
 
         return $arguments;
     }
@@ -58,6 +147,15 @@ trait Resolver
     {
         return $this->resolveUniqueKeyedArgumentArray($arguments, self::EXCLUDE_KEY)
             ->resolveUniqueKeyedArgumentArray($arguments, self::EXCLUDE_TREE_KEY);
+    }
+
+    private function resolveExtraArguments(array &$arguments, array $extra_arguments): static
+    {
+        foreach ($extra_arguments as $extra_argument_key => $extra_argument_value) {
+            $arguments[$extra_argument_key] = $extra_argument_value;
+        }
+
+        return $this;
     }
 
     private function resolveOnlyAssociatedToArgument(array &$arguments): static

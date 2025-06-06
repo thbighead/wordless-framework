@@ -9,12 +9,14 @@ use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Enums\TermsListFormat;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\OrderBy;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\Resolver;
+use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\WhereClauses;
 use WP_Term_Query;
 
 class TermQueryBuilder extends WpQueryBuilder
 {
     use OrderBy;
     use Resolver;
+    use WhereClauses;
 
     private const EXCLUDE_KEY = 'exclude';
     private const EXCLUDE_TREE_KEY = 'exclude_tree';
@@ -66,6 +68,13 @@ class TermQueryBuilder extends WpQueryBuilder
         return $this;
     }
 
+    public function haveNoChildren(): static
+    {
+        $this->arguments['childless'] = true;
+
+        return $this;
+    }
+
     public function onlyAssociatedTo(IRelatedMetaData|int $object, IRelatedMetaData|int ...$objects): static
     {
         foreach (Arr::prepend($objects, $object) as $object) {
@@ -77,6 +86,13 @@ class TermQueryBuilder extends WpQueryBuilder
                 $this->arguments[self::OBJECT_IDS_KEY][$object] = $object;
             }
         }
+
+        return $this;
+    }
+
+    public function onlyDescendentOf(int $ascendant_id): static
+    {
+        $this->arguments['child_of'] = $ascendant_id;
 
         return $this;
     }
