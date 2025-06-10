@@ -2,9 +2,10 @@
 
 namespace Wordless\Application\Cachers;
 
-use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Cachers\Exceptions\FailedToMountCacheArray;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
+use Wordless\Application\Helpers\Environment\Exceptions\FailedToLoadDotEnv;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -19,9 +20,7 @@ class EnvironmentCacher extends Cacher
 
     /**
      * @return array
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws PathNotFoundException
+     * @throws FailedToMountCacheArray
      */
     protected function mountCacheArray(): array
     {
@@ -30,24 +29,27 @@ class EnvironmentCacher extends Cacher
 
     /**
      * @return array
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws PathNotFoundException
+     * @throws FailedToMountCacheArray
      */
     private function parseDotEnvFileContent(): array
     {
         $parsed_dot_env_content = [];
-        $dot_env_content = file_get_contents(ProjectPath::root('.env'));
 
-        preg_match_all('/^([^=]+)=.*$/m', $dot_env_content, $regex_parser_result);
+        try {
+            $dot_env_content = file_get_contents(ProjectPath::root('.env'));
 
-        foreach ($regex_parser_result[1] as $env_key) {
-            $env_key = trim($env_key);
-            if (Str::beginsWith($env_key, Environment::DOT_ENV_COMMENT_MARK)) {
-                continue;
+            preg_match_all('/^([^=]+)=.*$/m', $dot_env_content, $regex_parser_result);
+
+            foreach ($regex_parser_result[1] as $env_key) {
+                $env_key = trim($env_key);
+                if (Str::beginsWith($env_key, Environment::DOT_ENV_COMMENT_MARK)) {
+                    continue;
+                }
+
+                $parsed_dot_env_content[$env_key] = Environment::getWithoutCache($env_key);
             }
-
-            $parsed_dot_env_content[$env_key] = Environment::getWithoutCache($env_key);
+        } catch (DotEnvNotSetException|FailedToLoadDotEnv|PathNotFoundException $exception) {
+            throw new FailedToMountCacheArray($exception);
         }
 
         return $parsed_dot_env_content;

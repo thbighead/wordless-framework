@@ -11,6 +11,8 @@ use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Process\Process;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Response;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\External\Exceptions\CallExternalCommandException;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\External\Exceptions\FailedToMountCommandProcessException;
 
 trait External
 {
@@ -18,30 +20,29 @@ trait External
      * @param string $full_command
      * @param bool $set_tty
      * @return Response
+     * @throws CallExternalCommandException
      * @throws CliReturnedNonZero
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws ProcessSignaledException
-     * @throws ProcessStartFailedException
-     * @throws ProcessTimedOutException
-     * @throws RuntimeException
      */
     protected function callExternalCommand(string $full_command, bool $set_tty = true): Response
     {
-        $process = $this->mountCommandProcess($full_command, $set_tty);
+        try {
+            $process = $this->mountCommandProcess($full_command, $set_tty);
 
-        $commandResponse = new Response($process->run(
-            function ($type, $buffer): void {
-                if (empty($buffer)) {
-                    return;
+            $commandResponse = new Response($process->run(
+                function ($type, $buffer): void {
+                    if (empty($buffer)) {
+                        return;
+                    }
+
+                    echo $buffer;
                 }
+            ));
 
-                echo $buffer;
+            if ($commandResponse->failed()) {
+                throw new CliReturnedNonZero($process->getCommandLine(), $commandResponse);
             }
-        ));
-
-        if ($commandResponse->failed()) {
-            throw new CliReturnedNonZero($process->getCommandLine(), $commandResponse);
+        } catch (FailedToMountCommandProcessException|LogicException|ProcessSignaledException|ProcessStartFailedException|ProcessTimedOutException|RuntimeException $exception) {
+            throw new CallExternalCommandException($exception);
         }
 
         return $commandResponse;
@@ -50,45 +51,39 @@ trait External
     /**
      * @param string $full_command
      * @return Response
+     * @throws CallExternalCommandException
      * @throws CliReturnedNonZero
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws ProcessSignaledException
-     * @throws ProcessStartFailedException
-     * @throws ProcessTimedOutException
-     * @throws RuntimeException
      */
     protected function callExternalCommandSilently(string $full_command): Response
     {
-        $process = $this->mountCommandProcess($full_command, false);
-        $command_output = '';
+        try {
+            $process = $this->mountCommandProcess($full_command, false);
+            $command_output = '';
 
-        $commandResponse = new Response($process->run(
-            function ($type, $buffer) use (&$command_output): void {
-                if (empty($buffer)) {
-                    return;
+            $commandResponse = new Response($process->run(
+                function ($type, $buffer) use (&$command_output): void {
+                    if (empty($buffer)) {
+                        return;
+                    }
+
+                    $command_output .= $buffer;
                 }
+            ), $command_output);
 
-                $command_output .= $buffer;
+            if ($commandResponse->failed()) {
+                throw new CliReturnedNonZero($process->getCommandLine(), $commandResponse);
             }
-        ), $command_output);
 
-        if ($commandResponse->failed()) {
-            throw new CliReturnedNonZero($process->getCommandLine(), $commandResponse);
+            return $commandResponse;
+        } catch (FailedToMountCommandProcessException|LogicException|ProcessSignaledException|ProcessStartFailedException|ProcessTimedOutException|RuntimeException $exception) {
+            throw new CallExternalCommandException($exception);
         }
-
-        return $commandResponse;
     }
 
     /**
      * @param string $full_command
      * @return Response
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws ProcessSignaledException
-     * @throws ProcessStartFailedException
-     * @throws ProcessTimedOutException
-     * @throws RuntimeException
+     * @throws CallExternalCommandException
      */
     protected function callExternalCommandSilentlyWithoutInterruption(string $full_command): Response
     {
@@ -103,12 +98,7 @@ trait External
      * @param string $full_command
      * @param bool $set_tty
      * @return Response
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws ProcessSignaledException
-     * @throws ProcessStartFailedException
-     * @throws ProcessTimedOutException
-     * @throws RuntimeException
+     * @throws CallExternalCommandException
      */
     protected function callExternalCommandWithoutInterruption(string $full_command, bool $set_tty = true): Response
     {
@@ -123,14 +113,16 @@ trait External
      * @param string $full_command
      * @param bool $set_tty
      * @return Process
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws RuntimeException
+     * @throws FailedToMountCommandProcessException
      */
     private function mountCommandProcess(string $full_command, bool $set_tty = true): Process
     {
-        return Process::fromShellCommandline($full_command)
-            ->setTimeout(null)
-            ->setTty($set_tty);
+        try {
+            return Process::fromShellCommandline($full_command)
+                ->setTimeout(null)
+                ->setTty($set_tty);
+        } catch (InvalidArgumentException|LogicException|RuntimeException $exception) {
+            throw new FailedToMountCommandProcessException($exception);
+        }
     }
 }

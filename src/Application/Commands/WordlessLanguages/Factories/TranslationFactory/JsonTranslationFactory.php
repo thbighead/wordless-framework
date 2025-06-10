@@ -15,8 +15,8 @@ class JsonTranslationFactory extends TranslationFactory
 {
     /**
      * @return array
-     * @throws WpTranslationsReadingFail
      * @throws JsonException
+     * @throws WpTranslationsReadingFail
      */
     public function readWpTranslations(): array
     {

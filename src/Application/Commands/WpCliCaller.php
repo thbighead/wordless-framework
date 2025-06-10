@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Commands;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Process\Exception\InvalidArgumentException as SymfonyProcessInvalidArgumentException;
@@ -11,6 +12,7 @@ use Symfony\Component\Process\Exception\ProcessStartFailedException;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Exception\RuntimeException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Traits\NoTtyMode;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -54,42 +56,39 @@ class WpCliCaller extends ConsoleCommand
 
     /**
      * @return int
-     * @throws CliReturnedNonZero
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws PathNotFoundException
-     * @throws ProcessSignaledException
-     * @throws ProcessStartFailedException
-     * @throws ProcessTimedOutException
-     * @throws RuntimeException
-     * @throws SymfonyProcessInvalidArgumentException
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
-        $wp_cli_filepath = $this->chooseWpCliScriptByOperationalSystem();
-        $wp_cli_full_command_string = $this->input->getArgument(self::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME);
+        try {
 
-        $this->resolveWpCliCommand($wp_cli_full_command_string);
+            $wp_cli_filepath = $this->chooseWpCliScriptByOperationalSystem();
+            $wp_cli_full_command_string = $this->input->getArgument(self::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME);
 
-        $full_command = "$wp_cli_filepath $wp_cli_full_command_string";
+            $this->resolveWpCliCommand($wp_cli_full_command_string);
 
-        $this->writelnInfoWhenVerbose("Executing $full_command...");
+            $full_command = "$wp_cli_filepath $wp_cli_full_command_string";
 
-        if ($this->output instanceof BufferedOutput) {
-            $commandResponse = $this->isQuiet()
-                ? $this->callExternalCommandSilentlyWithoutInterruption($full_command)
-                : $this->callExternalCommandSilently($full_command);
+            $this->writelnInfoWhenVerbose("Executing $full_command...");
 
-            $this->write($commandResponse->output);
+            if ($this->output instanceof BufferedOutput) {
+                $commandResponse = $this->isQuiet()
+                    ? $this->callExternalCommandSilentlyWithoutInterruption($full_command)
+                    : $this->callExternalCommandSilently($full_command);
 
-            return $commandResponse->result_code;
+                $this->write($commandResponse->output);
+
+                return $commandResponse->result_code;
+            }
+
+            if ($this->isQuiet()) {
+                return $this->callExternalCommandSilentlyWithoutInterruption($full_command)->result_code;
+            }
+
+            return $this->callExternalCommand($full_command, !$this->isNoTtyMode())->result_code;
+        } catch (CliReturnedNonZero|InvalidArgumentException|LogicException|PathNotFoundException|ProcessSignaledException|ProcessStartFailedException|ProcessTimedOutException|RuntimeException|SymfonyProcessInvalidArgumentException $exception) {
+            throw new FailedToRunCommand(self::COMMAND_NAME, $exception);
         }
-
-        if ($this->isQuiet()) {
-            return $this->callExternalCommandSilentlyWithoutInterruption($full_command)->result_code;
-        }
-
-        return $this->callExternalCommand($full_command, !$this->isNoTtyMode())->result_code;
     }
 
     protected function help(): string
