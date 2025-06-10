@@ -10,6 +10,7 @@ use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Enums\StandardContext;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\InvalidEnqueueableId;
 
 trait InstallEnqueueables
 {
@@ -58,9 +59,7 @@ trait InstallEnqueueables
     /**
      * @param bool $on_admin
      * @return $this
-     * @throws DuplicatedEnqueueableId
-     * @throws InvalidArgumentException
-     * @throws PathNotFoundException
+     * @throws InvalidEnqueueableId
      */
     private function resolveEnqueues(bool $on_admin): static
     {
@@ -77,9 +76,7 @@ trait InstallEnqueueables
     /**
      * @param bool $loading_on_admin
      * @return $this
-     * @throws DuplicatedEnqueueableId
-     * @throws InvalidArgumentException
-     * @throws PathNotFoundException
+     * @throws InvalidEnqueueableId
      */
     private function resolveScriptEnqueues(bool $loading_on_admin): static
     {
@@ -94,9 +91,7 @@ trait InstallEnqueueables
     /**
      * @param bool $loading_on_admin
      * @return $this
-     * @throws DuplicatedEnqueueableId
-     * @throws InvalidArgumentException
-     * @throws PathNotFoundException
+     * @throws InvalidEnqueueableId
      */
     private function resolveStyleEnqueues(bool $loading_on_admin): static
     {
