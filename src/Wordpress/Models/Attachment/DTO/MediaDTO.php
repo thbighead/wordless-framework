@@ -80,15 +80,15 @@ readonly class MediaDTO
             $this->relative_upload_filepath_without_extension,
             '/'
         ));
+        $raw_sizes = $this->raw_data['sizes'] ?? [];
 
-        if (!empty($raw_sizes = $this->raw_data['sizes'] ?? [])) {
-            $raw_sizes = array_merge([SizeDTO::TYPE_ORIGINAL => [
-                SizeDTO::KEY_FILE => Str::afterLast($this->filepath->getSubject(), DIRECTORY_SEPARATOR),
-                SizeDTO::KEY_FILESIZE => $this->raw_data[SizeDTO::KEY_FILESIZE] ?? null,
-                SizeDTO::KEY_HEIGHT => $this->raw_data[SizeDTO::KEY_HEIGHT] ?? null,
-                SizeDTO::KEY_WIDTH => $this->raw_data[SizeDTO::KEY_WIDTH] ?? null,
-            ]], $raw_sizes);
-        }
+        /** @var array<string, array<string, mixed>> $raw_sizes */
+        $raw_sizes = array_merge([SizeDTO::TYPE_ORIGINAL => [
+            SizeDTO::KEY_FILE => Str::afterLast($this->filepath->getSubject(), DIRECTORY_SEPARATOR),
+            SizeDTO::KEY_FILESIZE => $this->raw_data[SizeDTO::KEY_FILESIZE] ?? null,
+            SizeDTO::KEY_HEIGHT => $this->raw_data[SizeDTO::KEY_HEIGHT] ?? null,
+            SizeDTO::KEY_WIDTH => $this->raw_data[SizeDTO::KEY_WIDTH] ?? null,
+        ]], $raw_sizes);
 
         foreach ($raw_sizes as $raw_size_type => $raw_size_data) {
             $sizes[$raw_size_type] = new SizeDTO(
