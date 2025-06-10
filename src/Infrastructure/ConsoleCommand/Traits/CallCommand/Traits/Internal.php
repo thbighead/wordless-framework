@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Response;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\Internal\Exceptions\CallInternalCommandException;
 
 trait Internal
 {
@@ -17,53 +18,58 @@ trait Internal
      * @param string $command_name
      * @param array $inputs
      * @return Response
+     * @throws CallInternalCommandException
      * @throws CliReturnedNonZero
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
      */
     protected function callConsoleCommand(string $command_name, array $inputs = []): Response
     {
-        $consoleResponse = new Response($this->runConsoleCommand(
-            $command = $this->getConsoleCommandInstance($command_name),
-            $inputs
-        ));
+        try {
+            $consoleResponse = new Response($this->runConsoleCommand(
+                $command = $this->getConsoleCommandInstance($command_name),
+                $inputs
+            ));
 
-        if ($consoleResponse->failed()) {
-            throw new CliReturnedNonZero((string)$command, $consoleResponse);
+            if ($consoleResponse->failed()) {
+                throw new CliReturnedNonZero((string)$command, $consoleResponse);
+            }
+
+            return $consoleResponse;
+        } catch (CommandNotFoundException|ExceptionInterface $exception) {
+            throw new CallInternalCommandException($exception);
         }
-
-        return $consoleResponse;
     }
 
     /**
      * @param string $command_name
      * @param array $inputs
      * @return Response
+     * @throws CallInternalCommandException
      * @throws CliReturnedNonZero
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
      */
     protected function callConsoleCommandSilently(string $command_name, array $inputs = []): Response
     {
-        $consoleResponse = new Response($this->runConsoleCommand(
-            $command = $this->getConsoleCommandInstance($command_name),
-            $inputs,
-            $bufferedOutput = $this->mountBufferedOutput()
-        ), $bufferedOutput->fetch());
+        try {
+            $consoleResponse = new Response($this->runConsoleCommand(
+                $command = $this->getConsoleCommandInstance($command_name),
+                $inputs,
+                $bufferedOutput = $this->mountBufferedOutput()
+            ), $bufferedOutput->fetch());
 
-        if ($consoleResponse->failed()) {
-            throw new CliReturnedNonZero((string)$command, $consoleResponse);
+            if ($consoleResponse->failed()) {
+                throw new CliReturnedNonZero((string)$command, $consoleResponse);
+            }
+
+            return $consoleResponse;
+        } catch (CommandNotFoundException|ExceptionInterface $exception) {
+            throw new CallInternalCommandException($exception);
         }
-
-        return $consoleResponse;
     }
 
     /**
      * @param string $command_name
      * @param array $inputs
      * @return Response
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
+     * @throws CallInternalCommandException
      */
     protected function callConsoleCommandSilentlyWithoutInterrupt(string $command_name, array $inputs = []): Response
     {
@@ -78,8 +84,7 @@ trait Internal
      * @param string $command_name
      * @param array $inputs
      * @return Response
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
+     * @throws CallInternalCommandException
      */
     protected function callConsoleCommandWithoutInterrupt(string $command_name, array $inputs = []): Response
     {
