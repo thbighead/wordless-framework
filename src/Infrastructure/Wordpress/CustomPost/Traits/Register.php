@@ -5,14 +5,15 @@ namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits;
 use InvalidArgumentException;
 use Wordless\Application\Guessers\CustomPostTypeKeyGuesser;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Enums\MenuPosition;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Labels;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Rewrite;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKeyFormat;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKeyFormat;
 use WP_Error;
 
 trait Register
@@ -27,19 +28,24 @@ trait Register
     /**
      * @return void
      * @throws CustomPostTypeRegistrationFailed
-     * @throws InvalidArgumentException
-     * @throws InvalidCustomPostTypeKey
-     * @throws ReservedCustomPostTypeKey
      */
     public static function register(): void
     {
         self::validateTypeKey();
 
-        if (($registrationResult = register_post_type(
-                static::getTypeKey(),
-                static::mountArguments()
-            )) instanceof WP_Error) {
-            throw new CustomPostTypeRegistrationFailed($registrationResult);
+        try {
+            if (($registrationResult = register_post_type(
+                    static::getTypeKey(),
+                    static::mountArguments()
+                )) instanceof WP_Error) {
+                throw new CustomPostTypeRegistrationFailed($registrationResult);
+            }
+        } catch (FailedToCreateInflector $exception) {
+            throw new CustomPostTypeRegistrationFailed(new WP_Error(
+                $exception->getCode(),
+                'Failed to mount arguments for CPT registration',
+                $exception->getTrace()
+            ), $exception);
         }
     }
 
@@ -108,7 +114,6 @@ trait Register
     /**
      * https://developer.wordpress.org/reference/functions/register_post_type/#capability_type
      * @return string[]|null
-     * @throws InvalidArgumentException
      */
     protected static function getCapabilityType(): ?array
     {
@@ -223,7 +228,7 @@ trait Register
 
     /**
      * @return array
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     protected static function mountArguments(): array
     {

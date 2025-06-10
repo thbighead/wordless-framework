@@ -2,7 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions;
 
-class ReservedCustomPostTypeKey extends InvalidCustomPostTypeKey
+class ReservedCustomPostTypeKeyFormat extends InvalidCustomPostTypeKeyFormat
 {
     protected function justification(): string
     {

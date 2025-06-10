@@ -6,6 +6,7 @@ use Doctrine\Inflector\Inflector;
 use Doctrine\Inflector\InflectorFactory;
 use InvalidArgumentException;
 use Wordless\Application\Helpers\Str\Enums\Language;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 
 trait Internal
 {
@@ -15,12 +16,16 @@ trait Internal
     /**
      * @param Language|null $language
      * @return Inflector
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     private static function getInflector(?Language $language = null): Inflector
     {
-        return self::$inflectors[$language?->name] ?? self::$inflectors[$language?->name] = $language === null ?
-            InflectorFactory::create()->build() :
-            InflectorFactory::createForLanguage($language->value)->build();
+        try {
+            return self::$inflectors[$language?->name] ?? self::$inflectors[$language?->name] = $language === null ?
+                InflectorFactory::create()->build() :
+                InflectorFactory::createForLanguage($language->value)->build();
+        } catch (InvalidArgumentException $exception) {
+            throw new FailedToCreateInflector($language, $exception);
+        }
     }
 }

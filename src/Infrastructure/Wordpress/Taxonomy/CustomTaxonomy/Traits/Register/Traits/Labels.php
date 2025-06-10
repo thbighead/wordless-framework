@@ -25,7 +25,6 @@ trait Labels
      * https://developer.wordpress.org/reference/functions/register_taxonomy/#arguments
      *
      * @return string[]
-     * @throws InvalidArgumentException
      */
     private static function mountDefaultLabels(): array
     {

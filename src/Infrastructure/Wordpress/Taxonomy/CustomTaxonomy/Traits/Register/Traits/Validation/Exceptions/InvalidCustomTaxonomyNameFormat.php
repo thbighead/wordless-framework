@@ -7,7 +7,7 @@ use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
 
-class InvalidCustomTaxonomyName extends InvalidArgumentException
+class InvalidCustomTaxonomyNameFormat extends InvalidArgumentException
 {
     public function __construct(private readonly string $invalid_taxonomy_name, ?Throwable $previous = null)
     {
