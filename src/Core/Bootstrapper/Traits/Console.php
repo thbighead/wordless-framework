@@ -10,29 +10,31 @@ use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectD
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Traits\Console\Exceptions\FailedToAddConsoleCommand;
+use Wordless\Core\Bootstrapper\Traits\Console\Exceptions\FailedToBootApplication;
 
 trait Console
 {
     /**
      * @param Application $application
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidProviderClass
-     * @throws LogicException
-     * @throws PathNotFoundException
+     * @throws FailedToBootApplication
      */
     public static function bootConsole(Application $application): void
     {
-        self::getInstance()->bootIntoSymfonyApplication($application);
+        try {
+            self::getInstance()->bootIntoSymfonyApplication($application);
+        } catch (FailedToLoadErrorReportingConfiguration|FailedToAddConsoleCommand $exception) {
+            throw new FailedToBootApplication($application, $exception);
+        }
     }
 
     /**
      * @param Application $application
      * @return void
-     * @throws LogicException
+     * @throws FailedToAddConsoleCommand
      */
     private function bootIntoSymfonyApplication(Application $application): void
     {
@@ -41,7 +43,11 @@ trait Console
                 $command = new $command_namespace($command_namespace::COMMAND_NAME);
 
                 if ($command->canRun()) {
-                    $application->add($command);
+                    try {
+                        $application->add($command);
+                    } catch (LogicException $exception) {
+                        throw new FailedToAddConsoleCommand($command, $exception);
+                    }
                 }
             }
         }
