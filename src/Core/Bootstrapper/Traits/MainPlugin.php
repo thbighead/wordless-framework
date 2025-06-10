@@ -11,6 +11,8 @@ use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
 use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Traits\MainPlugin\Exceptions\FailedToBootMainPlugin;
+use Wordless\Core\Bootstrapper\Traits\MainPlugin\Exceptions\FailedToResolveMenu;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallEnqueueables;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallListeners;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallMenus;
@@ -25,23 +27,17 @@ trait MainPlugin
 
     /**
      * @return void
-     * @throws DuplicatedMenuId
-     * @throws InvalidMenuClass
-     * @throws FailedToLoadErrorReportingConfiguration
+     * @throws FailedToBootMainPlugin
      */
     public static function bootMainPlugin(): void
     {
-        self::getInstance()->bootIntoWordpress();
+        try {
+            self::getInstance()->bootIntoWordpress();
+        } catch (FailedToLoadErrorReportingConfiguration|FailedToResolveMenu $exception) {
+            throw new FailedToBootMainPlugin($exception);
+        }
     }
 
-    /**
-     * @param bool $on_admin
-     * @return void
-     * @throws DuplicatedEnqueueableId
-     * @throws FailedToLoadErrorReportingConfiguration
-     * @throws InvalidArgumentException
-     * @throws PathNotFoundException
-     */
     public static function bootEnqueues(bool $on_admin = false): void
     {
         self::getInstance()->resolveEnqueues($on_admin);
@@ -49,8 +45,7 @@ trait MainPlugin
 
     /**
      * @return void
-     * @throws DuplicatedMenuId
-     * @throws InvalidMenuClass
+     * @throws FailedToResolveMenu
      */
     private function bootIntoWordpress(): void
     {
@@ -79,12 +74,15 @@ trait MainPlugin
 
     /**
      * @return void
-     * @throws DuplicatedMenuId
-     * @throws InvalidMenuClass
+     * @throws FailedToResolveMenu
      */
     private function finishWordpressServicesBoot(): void
     {
-        $this->resolveListeners()
-            ->resolveMenus();
+        try {
+            $this->resolveListeners()
+                ->resolveMenus();
+        } catch (DuplicatedMenuId|InvalidMenuClass $exception) {
+            throw new FailedToResolveMenu($exception);
+        }
     }
 }
