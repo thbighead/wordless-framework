@@ -5,12 +5,14 @@ namespace Wordless\Core;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToLoadDotEnv;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
 use Wordless\Core\Bootstrapper\Exceptions\ConstantAlreadyDefined;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\ApiControllers;
 use Wordless\Core\Bootstrapper\Traits\Console;
@@ -41,11 +43,7 @@ final class Bootstrapper extends Singleton
     /**
      * @return void
      * @throws ConstantAlreadyDefined
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @throws FailedToLoadErrorReportingConfiguration
      */
     public static function bootConstants(): void
     {
@@ -61,15 +59,10 @@ final class Bootstrapper extends Singleton
     }
 
     /**
-     * @return static
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     * @noinspection PhpUnnecessaryStaticReferenceInspection
+     * @return Bootstrapper
+     * @throws FailedToLoadErrorReportingConfiguration
      */
-    public static function getInstance(): static
+    public static function getInstance(): Bootstrapper
     {
         return parent::getInstance()->load();
     }
@@ -84,11 +77,7 @@ final class Bootstrapper extends Singleton
 
     /**
      * @return Bootstrapper
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @throws FailedToLoadErrorReportingConfiguration
      */
     private function load(): Bootstrapper
     {
@@ -117,11 +106,6 @@ final class Bootstrapper extends Singleton
         return $provider;
     }
 
-    /**
-     * @return Bootstrapper
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     */
     private function loadProviders(): Bootstrapper
     {
         if (!empty($this->loaded_providers)) {
@@ -138,20 +122,29 @@ final class Bootstrapper extends Singleton
     }
 
     /**
-     * @return self
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FailedToLoadDotEnv
-     * @throws PathNotFoundException
+     * @return Bootstrapper
+     * @throws FailedToLoadErrorReportingConfiguration
      */
-    private function setErrorReporting(): self
+    private function setErrorReporting(): Bootstrapper
     {
-        error_reporting(Config::wordpressAdmin(
-            self::CONFIG_KEY_ERROR_REPORTING,
-            Environment::isNotLocal()
-                ? E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED
-                : E_ALL
-        ));
+        try {
+            error_reporting(Config::wordpressAdmin(
+                self::CONFIG_KEY_ERROR_REPORTING,
+                Environment::isNotLocal()
+                    ? E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED & ~E_USER_DEPRECATED
+                    : E_ALL
+            ));
+        } catch (EmptyConfigKey|FailedToLoadConfigFile $exception) {
+            throw new FailedToLoadErrorReportingConfiguration(
+                'Failed to load ' . self::CONFIG_KEY_ERROR_REPORTING . ' from configuration files.',
+                $exception
+            );
+        } catch (DotEnvNotSetException|FailedToLoadDotEnv $exception) {
+            throw new FailedToLoadErrorReportingConfiguration(
+                'Failed to load if environment is not local.',
+                $exception
+            );
+        }
 
         return $this;
     }
