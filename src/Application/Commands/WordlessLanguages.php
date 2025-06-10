@@ -3,6 +3,7 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\WordlessLanguages\Factories\TranslationFactory;
 use Wordless\Application\Commands\WordlessLanguages\Factories\TranslationFactory\JsonTranslationFactory;
 use Wordless\Application\Commands\WordlessLanguages\Factories\TranslationFactory\PhpTranslationFactory;
@@ -50,42 +51,44 @@ class WordlessLanguages extends ConsoleCommand
 
     /**
      * @return int
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
-     * @throws DiscoverFailed
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
-        if (empty($languages = Config::wordpress(Config::KEY_LANGUAGES))) {
-            $this->writelnDanger(
-                'Missing config key ' . Config::KEY_LANGUAGES . ' in wordpress.php configuration file.'
-            );
+        try {
+            if (empty($languages = Config::wordpress(Config::KEY_LANGUAGES))) {
+                $this->writelnDanger(
+                    'Missing config key ' . Config::KEY_LANGUAGES . ' in wordpress.php configuration file.'
+                );
 
-            return Command::FAILURE;
-        }
-
-        foreach ($languages as $language) {
-            try {
-                $custom_absolute_directory_path = ProjectPath::root("languages/$language");
-            } catch (PathNotFoundException) {
-                $this->writelnInfo("No custom translations found for $language, skipping.");
-                continue;
+                return Command::FAILURE;
             }
 
-            foreach (DirectoryFiles::recursiveRead($custom_absolute_directory_path) as $custom_absolute_filepath) {
-                $translationDiscover = new TranslationsDiscover($custom_absolute_filepath, $language);
+            foreach ($languages as $language) {
+                try {
+                    $custom_absolute_directory_path = ProjectPath::root("languages/$language");
+                } catch (PathNotFoundException) {
+                    $this->writelnInfo("No custom translations found for $language, skipping.");
+                    continue;
+                }
 
-                foreach ($translationDiscover->discover() as $wp_absolute_filepath) {
-                    $this->wrapScriptWithMessages(
-                        "Rewriting $wp_absolute_filepath...",
-                        function () use ($wp_absolute_filepath, $custom_absolute_filepath) {
-                            $this->buildFactory($wp_absolute_filepath)
-                                ->addCustomTranslations($custom_absolute_filepath)
-                                ->rewrite();
-                        }
-                    );
+                foreach (DirectoryFiles::recursiveRead($custom_absolute_directory_path) as $custom_absolute_filepath) {
+                    $translationDiscover = new TranslationsDiscover($custom_absolute_filepath, $language);
+
+                    foreach ($translationDiscover->discover() as $wp_absolute_filepath) {
+                        $this->wrapScriptWithMessages(
+                            "Rewriting $wp_absolute_filepath...",
+                            function () use ($wp_absolute_filepath, $custom_absolute_filepath) {
+                                $this->buildFactory($wp_absolute_filepath)
+                                    ->addCustomTranslations($custom_absolute_filepath)
+                                    ->rewrite();
+                            }
+                        );
+                    }
                 }
             }
+        } catch (InvalidDirectory|PathNotFoundException|DiscoverFailed $exception) {
+            throw new FailedToRunCommand(self::COMMAND_NAME, $exception);
         }
 
         return Command::SUCCESS;

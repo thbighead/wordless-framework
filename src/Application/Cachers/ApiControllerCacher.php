@@ -3,6 +3,7 @@
 namespace Wordless\Application\Cachers;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Cachers\Exceptions\FailedToMountCacheArray;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -19,18 +20,18 @@ class ApiControllerCacher extends Cacher
 
     /**
      * @return string[]|ApiController[]
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @throws FailedToMountCacheArray
      */
     protected function mountCacheArray(): array
     {
         $api_controllers_cache_array = [];
 
-        foreach (ApiController::loadProvidedApiControllers() as $api_controller_namespace) {
-            $api_controllers_cache_array[$api_controller_namespace] = $api_controller_namespace;
+        try {
+            foreach (ApiController::loadProvidedApiControllers() as $api_controller_namespace) {
+                $api_controllers_cache_array[$api_controller_namespace] = $api_controller_namespace;
+            }
+        } catch (DotEnvNotSetException|EmptyConfigKey|FormatException|InvalidProviderClass|PathNotFoundException $exception) {
+            throw new FailedToMountCacheArray($exception);
         }
 
         return $api_controllers_cache_array;
