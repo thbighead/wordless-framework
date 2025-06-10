@@ -3,7 +3,7 @@
 namespace Wordless\Application\Helpers\Database\Traits;
 
 use Closure;
-use Exception;
+use Throwable;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\Str;
 
@@ -22,7 +22,7 @@ trait SmartTransaction
 
         try {
             $script_return = $script();
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             self::rollbackSmartTransaction();
             throw $exception;
         }
