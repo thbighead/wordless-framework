@@ -6,8 +6,8 @@ use InvalidArgumentException;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKeyFormat;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKeyFormat;
 
 trait InstallCustomPostTypes
 {
@@ -34,9 +34,6 @@ trait InstallCustomPostTypes
     /**
      * @return $this
      * @throws CustomPostTypeRegistrationFailed
-     * @throws InvalidCustomPostTypeKey
-     * @throws ReservedCustomPostTypeKey
-     * @throws InvalidArgumentException
      */
     private function resolveCustomPostTypes(): static
     {

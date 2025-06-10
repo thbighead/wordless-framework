@@ -2,7 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Traits\Validation\Exceptions;
 
-class ReservedCustomTaxonomyName extends InvalidCustomTaxonomyName
+class ReservedCustomTaxonomyNameFormat extends InvalidCustomTaxonomyNameFormat
 {
     protected function justification(): string
     {

@@ -7,7 +7,7 @@ use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 use Wordless\Wordpress\Models\PostType;
 
-class InvalidCustomPostTypeKey extends InvalidArgumentException
+class InvalidCustomPostTypeKeyFormat extends InvalidArgumentException
 {
     public function __construct(public readonly string $invalid_type_key, ?Throwable $previous = null)
     {

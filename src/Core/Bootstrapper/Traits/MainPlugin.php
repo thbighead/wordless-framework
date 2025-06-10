@@ -8,6 +8,7 @@ use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectD
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallEnqueueables;
@@ -24,13 +25,9 @@ trait MainPlugin
 
     /**
      * @return void
-     * @throws DotEnvNotSetException
      * @throws DuplicatedMenuId
-     * @throws EmptyConfigKey
-     * @throws FormatException
      * @throws InvalidMenuClass
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @throws FailedToLoadErrorReportingConfiguration
      */
     public static function bootMainPlugin(): void
     {
@@ -40,12 +37,9 @@ trait MainPlugin
     /**
      * @param bool $on_admin
      * @return void
-     * @throws DotEnvNotSetException
      * @throws DuplicatedEnqueueableId
-     * @throws EmptyConfigKey
-     * @throws FormatException
+     * @throws FailedToLoadErrorReportingConfiguration
      * @throws InvalidArgumentException
-     * @throws InvalidProviderClass
      * @throws PathNotFoundException
      */
     public static function bootEnqueues(bool $on_admin = false): void

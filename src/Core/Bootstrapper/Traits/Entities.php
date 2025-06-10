@@ -2,24 +2,15 @@
 
 namespace Wordless\Core\Bootstrapper\Traits;
 
-use InvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
+use Wordless\Core\Bootstrapper\Traits\Entities\Exceptions\FailedToRegisterWordlessEntity;
 use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomPostStatuses;
 use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomPostTypes;
 use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomTaxonomies;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
 use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\CustomTaxonomyRegistrationFailed;
-use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\InvalidObjectTypeAssociationToTaxonomy;
-use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Traits\Validation\Exceptions\InvalidCustomTaxonomyName;
-use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Traits\Validation\Exceptions\ReservedCustomTaxonomyName;
 
 trait Entities
 {
@@ -29,26 +20,17 @@ trait Entities
 
     /**
      * @return void
-     * @throws CustomPostTypeRegistrationFailed
-     * @throws CustomTaxonomyRegistrationFailed
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidCustomPostTypeKey
-     * @throws InvalidCustomTaxonomyName
-     * @throws InvalidObjectTypeAssociationToTaxonomy
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     * @throws ReservedCustomPostStatusKey
-     * @throws ReservedCustomPostTypeKey
-     * @throws ReservedCustomTaxonomyName
+     * @throws FailedToRegisterWordlessEntity
      */
     public static function registerEntities(): void
     {
-        Bootstrapper::getInstance()
-            ->resolveCustomTaxonomies()
-            ->resolveCustomPostStatuses()
-            ->resolveCustomPostTypes();
+        try {
+            Bootstrapper::getInstance()
+                ->resolveCustomTaxonomies()
+                ->resolveCustomPostStatuses()
+                ->resolveCustomPostTypes();
+        } catch (FailedToLoadErrorReportingConfiguration|ReservedCustomPostStatusKey|CustomPostTypeRegistrationFailed|CustomTaxonomyRegistrationFailed $exception) {
+            throw new FailedToRegisterWordlessEntity($exception);
+        }
     }
 }

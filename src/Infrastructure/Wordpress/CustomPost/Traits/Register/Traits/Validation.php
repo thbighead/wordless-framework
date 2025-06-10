@@ -3,15 +3,15 @@
 namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits;
 
 use Wordless\Application\Helpers\Reserved;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKeyFormat;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKeyFormat;
 use Wordless\Wordpress\Models\PostType;
 
 trait Validation
 {
     /**
      * @return void
-     * @throws InvalidCustomPostTypeKey
+     * @throws InvalidCustomPostTypeKeyFormat
      */
     private static function validateFormat(): void
     {
@@ -19,25 +19,23 @@ trait Validation
                 '/^[\w-]{1,' . PostType::KEY_MAX_LENGTH . '}$/',
                 $type_key = static::getTypeKey()
             ) !== 1) {
-            throw new InvalidCustomPostTypeKey($type_key);
+            throw new InvalidCustomPostTypeKeyFormat($type_key);
         }
     }
 
     /**
      * @return void
-     * @throws ReservedCustomPostTypeKey
+     * @throws ReservedCustomPostTypeKeyFormat
      */
     private static function validateNotReserved(): void
     {
         if (Reserved::isPostTypeUsedByWordPress($type_key = static::getTypeKey())) {
-            throw new ReservedCustomPostTypeKey($type_key);
+            throw new ReservedCustomPostTypeKeyFormat($type_key);
         }
     }
 
     /**
      * @return void
-     * @throws InvalidCustomPostTypeKey
-     * @throws ReservedCustomPostTypeKey
      */
     private static function validateTypeKey(): void
     {

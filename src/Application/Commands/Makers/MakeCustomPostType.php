@@ -24,8 +24,8 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMo
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKeyFormat;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKeyFormat;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
@@ -96,10 +96,10 @@ class MakeCustomPostType extends ConsoleCommand
      * @throws FailedToGetDirectoryPermissions
      * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws InvalidCustomPostTypeKey
+     * @throws InvalidCustomPostTypeKeyFormat
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
-     * @throws ReservedCustomPostTypeKey
+     * @throws ReservedCustomPostTypeKeyFormat
      * @throws SymfonyInvalidArgumentException
      */
     protected function runIt(): int
@@ -181,10 +181,10 @@ class MakeCustomPostType extends ConsoleCommand
      * @throws FailedToFindRole
      * @throws FormatException
      * @throws InvalidArgumentException
-     * @throws InvalidCustomPostTypeKey
+     * @throws InvalidCustomPostTypeKeyFormat
      * @throws InvalidProviderClass
      * @throws PathNotFoundException
-     * @throws ReservedCustomPostTypeKey
+     * @throws ReservedCustomPostTypeKeyFormat
      */
     private function resolveNoPermissionsMode(string $custom_post_type_class_name): void
     {
