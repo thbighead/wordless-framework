@@ -75,34 +75,39 @@ readonly class MediaDTO
      */
     private function setSizes(): void
     {
+        $original_width = $this->raw_data[SizeDTO::KEY_WIDTH] ?? null;
+        $original_height = $this->raw_data[SizeDTO::KEY_HEIGHT] ?? null;
         $sizes = [];
-        $base_original_uploads_url = Link::uploads(Str::beforeLast(
-            $this->relative_upload_filepath_without_extension,
-            '/'
-        ));
-        $raw_sizes = $this->raw_data['sizes'] ?? [];
 
-        $raw_sizes[SizeDTO::TYPE_ORIGINAL] = [
-            SizeDTO::KEY_FILE => Str::afterLast($this->filepath->getSubject(), DIRECTORY_SEPARATOR),
-            SizeDTO::KEY_FILESIZE => $this->raw_data[SizeDTO::KEY_FILESIZE] ?? null,
-            SizeDTO::KEY_HEIGHT => $this->raw_data[SizeDTO::KEY_HEIGHT] ?? null,
-            SizeDTO::KEY_WIDTH => $this->raw_data[SizeDTO::KEY_WIDTH] ?? null,
-        ];
+        if (is_int($original_width) && is_int($original_height)) {
+            $base_original_uploads_url = Link::uploads(Str::beforeLast(
+                $this->relative_upload_filepath_without_extension,
+                '/'
+            ));
+            $raw_sizes = $this->raw_data['sizes'] ?? [];
 
-        foreach ($raw_sizes as $raw_size_type => $raw_size_data) {
-            $sizes[$raw_size_type] = new SizeDTO(
-                $raw_size_type,
-                $filename = $raw_size_data[SizeDTO::KEY_FILE] ?? null,
-                "$base_original_uploads_url/$filename",
-                $raw_size_data[SizeDTO::KEY_WIDTH] ?? null,
-                $raw_size_data[SizeDTO::KEY_HEIGHT] ?? null,
-                $raw_size_data[SizeDTO::KEY_FILESIZE] ?? null
-            );
+            $raw_sizes[SizeDTO::TYPE_ORIGINAL] = [
+                SizeDTO::KEY_FILE => Str::afterLast($this->filepath->getSubject(), DIRECTORY_SEPARATOR),
+                SizeDTO::KEY_FILESIZE => $this->raw_data[SizeDTO::KEY_FILESIZE] ?? null,
+                SizeDTO::KEY_WIDTH => $original_width,
+                SizeDTO::KEY_HEIGHT => $original_height,
+            ];
+
+            foreach ($raw_sizes as $raw_size_type => $raw_size_data) {
+                $sizes[$raw_size_type] = new SizeDTO(
+                    $raw_size_type,
+                    $filename = $raw_size_data[SizeDTO::KEY_FILE] ?? null,
+                    "$base_original_uploads_url/$filename",
+                    $raw_size_data[SizeDTO::KEY_WIDTH] ?? null,
+                    $raw_size_data[SizeDTO::KEY_HEIGHT] ?? null,
+                    $raw_size_data[SizeDTO::KEY_FILESIZE] ?? null
+                );
+            }
+
+            uasort($sizes, function (SizeDTO $size1, SizeDTO $size2): int {
+                return $size1->width - $size2->width;
+            });
         }
-
-        uasort($sizes, function (SizeDTO $size1, SizeDTO $size2): int {
-            return $size1->width - $size2->width;
-        });
 
         $this->sizes = $sizes;
     }
