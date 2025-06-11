@@ -11,6 +11,7 @@ use Wordless\Application\Commands\WpCliCaller;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\Carbon\Carbon;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\Internal\Exceptions\CallInternalCommandException;
 
 class RunSchedules extends ConsoleCommand
 {
@@ -58,7 +59,7 @@ class RunSchedules extends ConsoleCommand
                     PHP_EOL
                 ));
             }
-        } catch (CommandNotFoundException|ExceptionInterface $exception) {
+        } catch (CallInternalCommandException $exception) {
             $this->writelnDanger("[$datetime] {$exception->getMessage()}");
             $this->writeln($exception->getTraceAsString());
 

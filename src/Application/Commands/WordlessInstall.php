@@ -74,6 +74,7 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\RobotsTxtStubMounter;
 use Wordless\Application\Mounters\Stub\WordlessPluginStubMounter;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
+use Wordless\Application\Styles\AdminBarEnvironmentFlagStyle\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -627,7 +628,7 @@ class WordlessInstall extends ConsoleCommand
             }
 
             return $this;
-        } catch (FailedToLoadConfigFile|EmptyConfigKey $exception) {
+        } catch (FailedToLoadConfigFile|FailedToRetrieveConfigFromWordpressConfigFile $exception) {
             throw new FailedToLoadWpLanguagesException($exception);
         }
     }
@@ -758,7 +759,7 @@ class WordlessInstall extends ConsoleCommand
             $this->runWpCliCommand('db optimize');
 
             return $this;
-        } catch (EmptyConfigKey|PathNotFoundException|WpCliCommandReturnedNonZero|FailedToGetEnvVariableException|FailedToRunWpCliCommand $exception) {
+        } catch (WpCliCommandReturnedNonZero|FailedToGetEnvVariableException|FailedToRetrieveConfigFromWordpressConfigFile|FailedToRunWpCliCommand $exception) {
             throw new FailedToFixUrlOnDatabaseException($exception);
         }
     }

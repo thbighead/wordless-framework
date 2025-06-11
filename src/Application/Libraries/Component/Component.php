@@ -4,6 +4,7 @@ namespace Wordless\Application\Libraries\Component;
 
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\FailedToGetWordpressTheme;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Template;
@@ -91,7 +92,7 @@ abstract class Component
 
     /**
      * @return string
-     * @throws EmptyConfigKey
+     * @throws FailedToGetWordpressTheme
      * @throws TemplateNotFoundException
      */
     private function validateTemplateRelativePath(): string

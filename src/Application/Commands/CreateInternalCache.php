@@ -12,6 +12,7 @@ use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\InternalCache;
+use Wordless\Core\InternalCache\Exceptions\FailedToGenerateInternalCacheFile;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -49,15 +50,6 @@ class CreateInternalCache extends ConsoleCommand
         return [];
     }
 
-    /**
-     * @return int
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
-     * @throws FormatException
-     * @throws InvalidProviderClass
-     */
     protected function runIt(): int
     {
         try {
@@ -67,7 +59,7 @@ class CreateInternalCache extends ConsoleCommand
             );
 
             return Command::SUCCESS;
-        } catch (FailedToCopyStub|PathNotFoundException $exception) {
+        } catch (FailedToGenerateInternalCacheFile $exception) {
             $this->writelnDanger($exception->getMessage());
 
             return Command::FAILURE;

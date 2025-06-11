@@ -7,6 +7,7 @@ use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectD
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Listeners\RedirectAdminUris;
+use Wordless\Application\Styles\AdminBarEnvironmentFlagStyle\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO\Exceptions\TriedToSetFunctionWhenRemovingListener;
@@ -21,8 +22,7 @@ class AdminCustomUrlProvider extends Provider
     /**
      * @param bool $wrapped
      * @return string
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function getCustomUri(bool $wrapped = true): string
     {
@@ -40,8 +40,7 @@ class AdminCustomUrlProvider extends Provider
 
     /**
      * @return string[]|Listener[]
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public function registerListeners(): array
     {
@@ -56,8 +55,7 @@ class AdminCustomUrlProvider extends Provider
 
     /**
      * @return RemoveHookDTO[]
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      * @throws TriedToSetFunctionWhenRemovingListener
      */
     public function unregisterActionListeners(): array
@@ -74,8 +72,7 @@ class AdminCustomUrlProvider extends Provider
 
     /**
      * @return bool
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     private function hasCustomAdminUrlConfigured(): bool
     {
