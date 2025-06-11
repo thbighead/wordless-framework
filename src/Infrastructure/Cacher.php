@@ -8,6 +8,7 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryP
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Mounters\Stub\SimpleCacheStubMounter;
+use Wordless\Infrastructure\Cacher\Exceptions\CacherFailed;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
 abstract class Cacher
@@ -20,10 +21,7 @@ abstract class Cacher
 
     /**
      * @return void
-     * @throws FailedToCopyStub
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
-     * @throws PathNotFoundException
+     * @throws CacherFailed
      */
     final public static function generate(): void
     {
@@ -32,10 +30,7 @@ abstract class Cacher
 
     /**
      * @return void
-     * @throws FailedToCopyStub
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
-     * @throws PathNotFoundException
+     * @throws CacherFailed
      */
     private function cache(): void
     {
@@ -45,9 +40,13 @@ abstract class Cacher
             $array_to_cache = Arr::recursiveJoin(...$array_to_cache);
         }
 
-        $this->getSimpleCacheStubMounter()
-            ->setReplaceContentDictionary($array_to_cache)
-            ->mountNewFile();
+        try {
+            $this->getSimpleCacheStubMounter()
+                ->setReplaceContentDictionary($array_to_cache)
+                ->mountNewFile();
+        } catch (PathNotFoundException|FailedToCopyStub $exception) {
+            throw new CacherFailed($array_to_cache, $exception);
+        }
     }
 
     /**

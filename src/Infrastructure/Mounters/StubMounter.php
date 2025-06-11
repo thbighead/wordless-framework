@@ -45,10 +45,7 @@ abstract class StubMounter
     /**
      * @param string|null $new_file_path
      * @return void
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
      * @throws FailedToCopyStub
-     * @throws PathNotFoundException
      */
     public function mountNewFile(?string $new_file_path = null): void
     {
@@ -56,7 +53,9 @@ abstract class StubMounter
 
         try {
             DirectoryFiles::createFileAt($new_file_path, $this->replaceUnfilledContent(), false);
-        } catch (FailedToPutFileContent $exception) {
+        } catch (
+        FailedToPutFileContent|FailedToCreateDirectory|FailedToGetDirectoryPermissions|PathNotFoundException $exception
+        ) {
             throw new FailedToCopyStub($this->stub_filepath, $new_file_path, false, $exception);
         }
     }

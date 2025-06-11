@@ -4,6 +4,7 @@ namespace Wordless\Application\Cachers;
 
 use Wordless\Application\Cachers\Exceptions\FailedToMountCacheArray;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToLoadDotEnv;
 use Wordless\Application\Helpers\ProjectPath;
@@ -48,7 +49,7 @@ class EnvironmentCacher extends Cacher
 
                 $parsed_dot_env_content[$env_key] = Environment::getWithoutCache($env_key);
             }
-        } catch (DotEnvNotSetException|FailedToLoadDotEnv|PathNotFoundException $exception) {
+        } catch (CannotResolveEnvironmentGet|PathNotFoundException $exception) {
             throw new FailedToMountCacheArray($exception);
         }
 
