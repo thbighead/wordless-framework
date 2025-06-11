@@ -32,15 +32,6 @@ class CommentsSeeder extends SeederCommand
             . '.';
     }
 
-    /**
-     * @return int
-     * @throws CliReturnedNonZero
-     * @throws CommandNotFoundException
-     * @throws EmptyQueryBuilderArguments
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
-     * @throws WpCliCommandReturnedNonZero
-     */
     protected function runIt(): int
     {
         if (Post::noneCreated()) {

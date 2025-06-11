@@ -4,6 +4,7 @@ namespace Wordless\Application\Listeners;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
@@ -26,8 +27,7 @@ class BootHttpRemoteCallsLog extends ActionListener
      * @param array $request
      * @param string $url
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      * @noinspection PhpUnusedParameterInspection
      */
     public static function debugWordPressRemoteRequest(

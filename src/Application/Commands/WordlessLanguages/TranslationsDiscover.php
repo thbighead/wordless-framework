@@ -5,6 +5,7 @@ namespace Wordless\Application\Commands\WordlessLanguages;
 use Generator;
 use Wordless\Application\Commands\WordlessLanguages\TranslationsDiscover\Exceptions\DiscoverFailed;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\CannotReadPath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -52,7 +53,7 @@ class TranslationsDiscover
                     yield $wp_absolute_filepath;
                 }
             }
-        } catch (InvalidDirectory|PathNotFoundException $exception) {
+        } catch (CannotReadPath $exception) {
             throw new DiscoverFailed($exception);
         }
     }

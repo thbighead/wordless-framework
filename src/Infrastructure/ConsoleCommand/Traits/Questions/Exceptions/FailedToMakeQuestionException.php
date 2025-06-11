@@ -2,10 +2,11 @@
 
 namespace Wordless\Infrastructure\ConsoleCommand\Traits\Questions\Exceptions;
 
+use RuntimeException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class FailedToMakeQuestionException extends \RuntimeException
+class FailedToMakeQuestionException extends RuntimeException
 {
     public function __construct(?Throwable $previous = null)
     {

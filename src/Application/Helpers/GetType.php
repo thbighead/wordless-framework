@@ -45,10 +45,12 @@ class GetType extends Helper
     {
         $type = gettype($variable);
 
+        /** @noinspection PhpExpectedValuesShouldBeUsedInspection */
         if ($type === self::ARRAY) {
             return Arr::isAssociative($variable) ? "associative $type" : "list $type";
         }
 
+        /** @noinspection PhpExpectedValuesShouldBeUsedInspection */
         if ($type === self::OBJECT) {
             return $variable::class;
         }

@@ -11,6 +11,7 @@ use Wordless\Application\Commands\WordlessLanguages\TranslationsDiscover;
 use Wordless\Application\Commands\WordlessLanguages\TranslationsDiscover\Exceptions\DiscoverFailed;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\CannotReadPath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -87,7 +88,7 @@ class WordlessLanguages extends ConsoleCommand
                     }
                 }
             }
-        } catch (InvalidDirectory|PathNotFoundException|DiscoverFailed $exception) {
+        } catch (CannotReadPath|DiscoverFailed|PathNotFoundException $exception) {
             throw new FailedToRunCommand(self::COMMAND_NAME, $exception);
         }
 

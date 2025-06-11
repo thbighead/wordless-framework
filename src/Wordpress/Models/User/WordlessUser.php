@@ -4,6 +4,7 @@ namespace Wordless\Wordpress\Models\User;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Wordpress\Models\User;
@@ -22,7 +23,7 @@ final class WordlessUser extends User
     {
         try {
             $app_host = Environment::get('APP_HOST', $app_host = 'wordless.wordless');
-        } catch (FormatException|DotEnvNotSetException) {
+        } catch (CannotResolveEnvironmentGet) {
         }
 
         return self::USERNAME . "@$app_host";

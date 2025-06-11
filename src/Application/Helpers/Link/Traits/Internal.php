@@ -5,6 +5,7 @@ namespace Wordless\Application\Helpers\Link\Traits;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -17,8 +18,7 @@ trait Internal
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private static function getBaseUri(): string
     {
@@ -35,8 +35,7 @@ trait Internal
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private static function guessBaseUri(): string
     {
@@ -63,13 +62,6 @@ trait Internal
         return static::$base_assets_uri = self::guessBaseAssetsUri();
     }
 
-    /**
-     * @return string
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws PathNotFoundException
-     */
     private static function guessBaseAssetsUri(): string
     {
         $base_assets_uri = Environment::get('FRONT_END_URL', '');
@@ -80,8 +72,7 @@ trait Internal
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private static function guessUploadsUri(): string
     {
