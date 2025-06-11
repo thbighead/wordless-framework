@@ -4,6 +4,7 @@ namespace Wordless\Application\Helpers;
 
 use Exception;
 use Generator;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\CannotReadPath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangePathPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
@@ -477,21 +478,24 @@ class DirectoryFiles extends Helper
 
     /**
      * @param string $path
-     * @return Generator
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
+     * @return Generator<string>
+     * @throws CannotReadPath
      */
     public static function recursiveRead(string $path): Generator
     {
-        if (is_dir($real_path = ProjectPath::realpath($path))) {
-            foreach (static::listFromDirectory($real_path) as $file) {
-                yield from static::recursiveRead("$real_path/$file");
+        try {
+            if (is_dir($real_path = ProjectPath::realpath($path))) {
+                foreach (static::listFromDirectory($real_path) as $file) {
+                    yield from static::recursiveRead("$real_path/$file");
+                }
+
+                return;
             }
 
-            return;
+            yield $real_path;
+        } catch (InvalidDirectory|PathNotFoundException $exception) {
+            throw new CannotReadPath($path, $exception);
         }
-
-        yield $real_path;
     }
 
     /**

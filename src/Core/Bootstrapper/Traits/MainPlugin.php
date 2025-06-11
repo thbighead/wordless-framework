@@ -11,6 +11,7 @@ use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
 use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Traits\MainPlugin\Exceptions\FailedToBootEnqueueables;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Exceptions\FailedToBootMainPlugin;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Exceptions\FailedToResolveMenu;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallEnqueueables;
@@ -18,6 +19,7 @@ use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallListeners;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallMenus;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\InvalidEnqueueableId;
 
 trait MainPlugin
 {
@@ -38,9 +40,18 @@ trait MainPlugin
         }
     }
 
+    /**
+     * @param bool $on_admin
+     * @return void
+     * @throws FailedToBootEnqueueables
+     */
     public static function bootEnqueues(bool $on_admin = false): void
     {
-        self::getInstance()->resolveEnqueues($on_admin);
+        try {
+            self::getInstance()->resolveEnqueues($on_admin);
+        } catch (FailedToLoadErrorReportingConfiguration|InvalidEnqueueableId $exception) {
+            throw new FailedToBootEnqueueables($on_admin, $exception);
+        }
     }
 
     /**
