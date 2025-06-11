@@ -2,14 +2,15 @@
 
 namespace Wordless\Application\Commands\Traits\RunWpCliCommand\Traits;
 
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Exception\ExceptionInterface;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Traits\NoTtyMode;
 use Wordless\Application\Commands\Traits\NoTtyMode\DTO\NoTtyModeOptionDTO;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToCallWpCliCommand;
 use Wordless\Application\Commands\WpCliCaller;
 use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Response;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\Internal\Exceptions\CallInternalCommandException;
 
 trait Callers
 {
@@ -18,8 +19,7 @@ trait Callers
     /**
      * @param string $wp_cli_command
      * @return Response
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
+     * @throws FailedToCallWpCliCommand
      * @throws WpCliCommandReturnedNonZero
      */
     private function callWpCliCommand(string $wp_cli_command): Response
@@ -31,14 +31,15 @@ trait Callers
             ]);
         } catch (CliReturnedNonZero $exception) {
             throw new WpCliCommandReturnedNonZero($exception->full_command, $exception->commandResponse, $exception);
+        } catch (InvalidArgumentException|CallInternalCommandException $exception) {
+            throw new FailedToCallWpCliCommand($exception);
         }
     }
 
     /**
      * @param string $wp_cli_command
      * @return Response
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
+     * @throws FailedToCallWpCliCommand
      * @throws WpCliCommandReturnedNonZero
      */
     private function callWpCliCommandSilently(string $wp_cli_command): Response
@@ -50,14 +51,15 @@ trait Callers
             ]);
         } catch (CliReturnedNonZero $exception) {
             throw new WpCliCommandReturnedNonZero($exception->full_command, $exception->commandResponse, $exception);
+        } catch (CallInternalCommandException $exception) {
+            throw new FailedToCallWpCliCommand($exception);
         }
     }
 
     /**
      * @param string $wp_cli_command
      * @return Response
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
+     * @throws FailedToCallWpCliCommand
      */
     private function callWpCliCommandSilentlyWithoutInterruption(string $wp_cli_command): Response
     {
@@ -71,8 +73,7 @@ trait Callers
     /**
      * @param string $wp_cli_command
      * @return Response
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
+     * @throws FailedToCallWpCliCommand
      */
     private function callWpCliCommandWithoutInterruption(string $wp_cli_command): Response
     {

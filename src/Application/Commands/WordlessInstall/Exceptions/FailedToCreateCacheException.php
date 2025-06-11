@@ -1,0 +1,19 @@
+<?php
+
+namespace Wordless\Application\Commands\WordlessInstall\Exceptions;
+
+use RuntimeException;
+use Throwable;
+use Wordless\Infrastructure\Enums\ExceptionCode;
+
+class FailedToCreateCacheException extends RuntimeException
+{
+    public function __construct(?Throwable $previous = null)
+    {
+        parent::__construct(
+            'Failed to create cache.',
+            ExceptionCode::development_error->value,
+            $previous
+        );
+    }
+}
