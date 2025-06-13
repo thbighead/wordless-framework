@@ -6,12 +6,12 @@ use RuntimeException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class FailedToRunCommand extends RuntimeException
+class FailedToGetCommandOptionValue extends RuntimeException
 {
-    public function __construct(string $command, ?Throwable $previous = null)
+    public function __construct(readonly public string $option_key, ?Throwable $previous = null)
     {
         parent::__construct(
-            "Failed to run '$command' command.",
+            "Failed to retrieve '$this->option_key' command value.",
             ExceptionCode::development_error->value,
             $previous
         );
