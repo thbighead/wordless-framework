@@ -6,6 +6,7 @@ use Faker\Factory;
 use Faker\Generator;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Commands\Exceptions\FailedToGetCommandOptionValue;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Helpers\Environment;
@@ -69,11 +70,15 @@ abstract class SeederCommand extends ConsoleCommand
 
     /**
      * @return int
-     * @throws InvalidArgumentException
+     * @throws FailedToGetCommandOptionValue
      */
     protected function getQuantity(): int
     {
-        return $this->quantity ??
-            $this->quantity = max(abs((int)$this->input->getOption(self::OPTION_QUANTITY)), 1);
+        try {
+            return $this->quantity ??
+                $this->quantity = max(abs((int)$this->input->getOption($option = self::OPTION_QUANTITY)), 1);
+        } catch (InvalidArgumentException $exception) {
+            throw new FailedToGetCommandOptionValue($option, $exception);
+        }
     }
 }

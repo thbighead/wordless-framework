@@ -80,6 +80,7 @@ final class Bootstrapper extends Singleton
     /**
      * @return Bootstrapper
      * @throws FailedToLoadErrorReportingConfiguration
+     * @throws InvalidProviderClass
      */
     private function load(): Bootstrapper
     {

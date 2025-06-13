@@ -7,6 +7,7 @@ use Wordless\Application\Cachers\Exceptions\FailedToMountCacheArray;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\Cacher;
 use Wordless\Infrastructure\Wordpress\ApiController;
@@ -30,7 +31,7 @@ class ApiControllerCacher extends Cacher
             foreach (ApiController::loadProvidedApiControllers() as $api_controller_namespace) {
                 $api_controllers_cache_array[$api_controller_namespace] = $api_controller_namespace;
             }
-        } catch (DotEnvNotSetException|EmptyConfigKey|FormatException|InvalidProviderClass|PathNotFoundException $exception) {
+        } catch (FailedToLoadErrorReportingConfiguration $exception) {
             throw new FailedToMountCacheArray($exception);
         }
 
