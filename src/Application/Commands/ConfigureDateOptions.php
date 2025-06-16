@@ -3,19 +3,14 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Exception\ExceptionInterface;
-use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Commands\ConfigureDateOptions\Exceptions\FailedToSetTimezone;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
-use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
 use Wordless\Application\Helpers\Config;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Environment;
-use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Timezone;
+use Wordless\Application\Styles\AdminBarEnvironmentFlagStyle\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -59,18 +54,6 @@ class ConfigureDateOptions extends ConsoleCommand
         ];
     }
 
-    /**
-     * @return int
-     * @throws CommandNotFoundException
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws ExceptionInterface
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidConfigKey
-     * @throws PathNotFoundException
-     * @throws WpCliCommandReturnedNonZero
-     */
     protected function runIt(): int
     {
         $dateConfig = Config::wordpressAdmin()->ofKey(self::CONFIG_KEY_ADMIN_DATETIME);
@@ -92,26 +75,38 @@ class ConfigureDateOptions extends ConsoleCommand
 
     /**
      * @return void
-     * @throws CommandNotFoundException
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws ExceptionInterface
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToSetTimezone
      */
     private function setTimezone(): void
     {
-        $db_table_prefix = Environment::get('DB_TABLE_PREFIX', 'wp_');
-        $gmt_offset_option_value = Timezone::forOptionGmtOffset();
-        $timezone_string_option_value = Timezone::forOptionTimezoneString();
+        try {
+            $gmt_offset_option_value = Timezone::forOptionGmtOffset();
+            $timezone_string_option_value = Timezone::forOptionTimezoneString();
+        } catch (FailedToRetrieveConfigFromWordpressConfigFile $exception) {
+            throw new FailedToSetTimezone('Failed to retrieve timezone configuration.', $exception);
+        }
 
-        $this->runWpCliCommandWithoutInterruption(
-            "db query 'UPDATE {$db_table_prefix}options SET option_value=\"$gmt_offset_option_value\" WHERE option_name=\"gmt_offset\"'"
-        );
-        $this->runWpCliCommandWithoutInterruption(
-            "db query 'UPDATE {$db_table_prefix}options SET option_value=\"$timezone_string_option_value\" WHERE option_name=\"timezone_string\"'"
-        );
+        try {
+            $db_table_prefix = Environment::get('DB_TABLE_PREFIX', 'wp_');
+        } catch (CannotResolveEnvironmentGet $exception) {
+            throw new FailedToSetTimezone('Failed to retrieve database prefix configuration.', $exception);
+        }
+
+        $wp_cli_command = 'db query';
+        $update_query_prefix = "UPDATE {$db_table_prefix}options SET option_value=";
+        $update_option_gmt_offset_query = "$update_query_prefix\"$gmt_offset_option_value\" WHERE option_name=\"gmt_offset\"";
+        $update_option_timezone_string_query = "$update_query_prefix\"$timezone_string_option_value\" WHERE option_name=\"timezone_string\"";
+
+        try {
+            $query = "'$update_option_gmt_offset_query'";
+            $this->runWpCliCommandWithoutInterruption("$wp_cli_command $query");
+            $query = "'$update_option_timezone_string_query'";
+            $this->runWpCliCommandWithoutInterruption("$wp_cli_command $query");
+        } catch (FailedToRunWpCliCommand $exception) {
+            throw new FailedToSetTimezone(
+                "Failed to run query $query through WP CLI '$wp_cli_command' command.",
+                $exception
+            );
+        }
     }
 }

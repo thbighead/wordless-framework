@@ -9,7 +9,7 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Template;
 use Wordless\Application\Libraries\Component\Contracts\TemplateFile;
-use Wordless\Application\Libraries\Component\Exceptions\TemplateNotFoundException;
+use Wordless\Application\Libraries\Component\Exceptions\InvalidTemplatePathing;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
@@ -34,7 +34,7 @@ abstract class Component
     /**
      * @return string
      * @throws EmptyConfigKey
-     * @throws TemplateNotFoundException
+     * @throws InvalidTemplatePathing
      */
     final public function html(): string
     {
@@ -68,8 +68,7 @@ abstract class Component
 
     /**
      * @return string
-     * @throws EmptyConfigKey
-     * @throws TemplateNotFoundException
+     * @throws InvalidTemplatePathing
      */
     private function mountHtml(): string
     {
@@ -92,8 +91,7 @@ abstract class Component
 
     /**
      * @return string
-     * @throws FailedToGetWordpressTheme
-     * @throws TemplateNotFoundException
+     * @throws InvalidTemplatePathing
      */
     private function validateTemplateRelativePath(): string
     {
@@ -101,8 +99,8 @@ abstract class Component
 
         try {
             ProjectPath::theme($template_relative_path);
-        } catch (PathNotFoundException $exception) {
-            throw new TemplateNotFoundException($template_relative_path, $exception);
+        } catch (FailedToGetWordpressTheme|PathNotFoundException $exception) {
+            throw new InvalidTemplatePathing($template_relative_path, $exception);
         }
 
         return $template_relative_path;
