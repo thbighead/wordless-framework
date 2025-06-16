@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Styles\AdminBarEnvironmentFlagStyle\Exceptions;
+namespace Wordless\Exceptions;
 
 use RuntimeException;
 use Throwable;

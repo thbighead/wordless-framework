@@ -63,6 +63,7 @@ final class Bootstrapper extends Singleton
     /**
      * @return Bootstrapper
      * @throws FailedToLoadErrorReportingConfiguration
+     * @throws InvalidProviderClass
      */
     public static function getInstance(): Bootstrapper
     {
