@@ -4,13 +4,17 @@ namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Commands\ConfigureDateOptions\Exceptions\FailedToSetTimezone;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
 use Wordless\Application\Helpers\Config;
+use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Timezone;
-use Wordless\Application\Styles\AdminBarEnvironmentFlagStyle\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -54,21 +58,31 @@ class ConfigureDateOptions extends ConsoleCommand
         ];
     }
 
+    /**
+     * @return int
+     * @throws FailedToRunCommand
+     */
     protected function runIt(): int
     {
-        $dateConfig = Config::wordpressAdmin()->ofKey(self::CONFIG_KEY_ADMIN_DATETIME);
+        try {
+            $dateConfig = Config::wordpressAdmin()->ofKey(self::CONFIG_KEY_ADMIN_DATETIME);
 
-        $this->runWpCliCommand(
-            "option update date_format \"{$dateConfig->get(self::CONFIG_KEY_ADMIN_DATETIME_DATE_FORMAT, 'Y-m-d')}\""
-        );
-        $this->runWpCliCommand(
-            "option update time_format \"{$dateConfig->get(self::CONFIG_KEY_ADMIN_DATETIME_TIME_FORMAT, 'H:i')}\""
-        );
-        $this->runWpCliCommand('option update '
-            . StartOfWeek::KEY
-            . " {$dateConfig->get(StartOfWeek::KEY, StartOfWeek::sunday->value)}");
+            $this->runWpCliCommand(
+                "option update date_format \"{$dateConfig->get(self::CONFIG_KEY_ADMIN_DATETIME_DATE_FORMAT, 'Y-m-d')}\""
+            );
+            $this->runWpCliCommand(
+                "option update time_format \"{$dateConfig->get(self::CONFIG_KEY_ADMIN_DATETIME_TIME_FORMAT, 'H:i')}\""
+            );
+            $this->runWpCliCommand('option update '
+                . StartOfWeek::KEY
+                . " {$dateConfig->get(StartOfWeek::KEY, StartOfWeek::sunday->value)}");
 
-        $this->setTimezone();
+            $this->setTimezone();
+        } catch (
+            EmptyConfigKey|FailedToRetrieveConfigFromWordpressConfigFile|WpCliCommandReturnedNonZero|FailedToRunWpCliCommand|FailedToLoadConfigFile|FailedToSetTimezone $exception
+        ) {
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
+        }
 
         return Command::SUCCESS;
     }
@@ -93,6 +107,7 @@ class ConfigureDateOptions extends ConsoleCommand
         }
 
         $wp_cli_command = 'db query';
+        /** @noinspection SqlNoDataSourceInspection */
         $update_query_prefix = "UPDATE {$db_table_prefix}options SET option_value=";
         $update_option_gmt_offset_query = "$update_query_prefix\"$gmt_offset_option_value\" WHERE option_name=\"gmt_offset\"";
         $update_option_timezone_string_query = "$update_query_prefix\"$timezone_string_option_value\" WHERE option_name=\"timezone_string\"";

@@ -17,6 +17,7 @@ use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Migrations\Migrate;
 use Wordless\Application\Commands\Schedules\RegisterSchedules;
 use Wordless\Application\Commands\Traits\ForceMode;
@@ -52,7 +53,6 @@ use Wordless\Application\Commands\WordlessInstall\Exceptions\FailedToResolveWpCo
 use Wordless\Application\Commands\WordlessInstall\Exceptions\FailedToRotateDotEnvWpSaltVariablesException;
 use Wordless\Application\Commands\WordlessInstall\Exceptions\FailedToRunCoreStepsException;
 use Wordless\Application\Commands\WordlessInstall\Exceptions\FailedToRunMigrationsException;
-use Wordless\Application\Commands\WordlessInstall\Exceptions\FailedToRunWordlessInstallException;
 use Wordless\Application\Commands\WordlessInstall\Exceptions\FailedToSwitchToMaintenanceModeException;
 use Wordless\Application\Commands\WordlessInstall\Exceptions\FailedToSyncRolesException;
 use Wordless\Application\Commands\WordlessInstall\Exceptions\FailedToUpdateDatabaseException;
@@ -74,7 +74,7 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\RobotsTxtStubMounter;
 use Wordless\Application\Mounters\Stub\WordlessPluginStubMounter;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
-use Wordless\Application\Styles\AdminBarEnvironmentFlagStyle\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -129,7 +129,7 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return int
-     * @throws FailedToRunWordlessInstallException
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
@@ -151,7 +151,7 @@ class WordlessInstall extends ConsoleCommand
 
             return Command::SUCCESS;
         } catch (FailedToCreateCacheException|FailedToCreateConfigFromStubsException|FailedToCreateRobotsTxtException|FailedToCreateWordlessPluginFromStubException|FailedToCreateWpDatabaseException|FailedToFlushCacheException|FailedToLoadWpLanguagesException|FailedToRegisterSchedulesException|FailedToResolveDotEnvException|FailedToResolveForceModeException|FailedToResolveWpConfigChmodException|FailedToRunCoreStepsException|FailedToRunMigrationsException|FailedToSyncRolesException $exception) {
-            throw new FailedToRunWordlessInstallException($exception);
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
         }
     }
 

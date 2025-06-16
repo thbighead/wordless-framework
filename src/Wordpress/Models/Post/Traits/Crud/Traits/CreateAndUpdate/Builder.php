@@ -5,12 +5,9 @@ namespace Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate;
 use DateTimeInterface;
 use InvalidArgumentException;
 use Wordless\Application\Helpers\Config;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Listeners\DisableComments\Contracts\DisableCommentsActionListener;
-use Wordless\Application\Styles\AdminBarEnvironmentFlagStyle\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Wordpress\Models\Post;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder\Exceptions\WpInsertPostError;
@@ -113,7 +110,6 @@ abstract class Builder
     /**
      * @param string $slug
      * @return $this
-     * @throws InvalidArgumentException
      */
     public function slug(string $slug): static
     {
