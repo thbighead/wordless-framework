@@ -2,17 +2,10 @@
 
 namespace Wordless\Core;
 
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Config;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
-use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
-use Wordless\Application\Helpers\Environment\Exceptions\FailedToLoadDotEnv;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
-use Wordless\Application\Styles\AdminBarEnvironmentFlagStyle\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Core\Bootstrapper\Exceptions\ConstantAlreadyDefined;
 use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
@@ -24,6 +17,7 @@ use Wordless\Core\Bootstrapper\Traits\MainPlugin;
 use Wordless\Core\Bootstrapper\Traits\Migrations;
 use Wordless\Core\Bootstrapper\Traits\PublishConfigs;
 use Wordless\Core\Bootstrapper\Traits\Schedules;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\Provider;
 
 final class Bootstrapper extends Singleton

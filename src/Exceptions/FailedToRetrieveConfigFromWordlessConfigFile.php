@@ -6,17 +6,17 @@ use RuntimeException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class FailedToRetrieveConfigFromWordpressConfigFile extends RuntimeException
+class FailedToRetrieveConfigFromWordlessConfigFile extends RuntimeException
 {
     public function __construct(
-        readonly public string $ofKey,
-        readonly public ?string $key,
-        readonly public mixed $default,
-        ?Throwable $previous = null
+        readonly public string  $ofKey,
+        readonly public ?string $key = null,
+        readonly public mixed   $default = null,
+        ?Throwable              $previous = null
     )
     {
         parent::__construct(
-            'Failed to retrieve config/wordpress.php.',
+            'Failed to retrieve config/wordless.php.',
             ExceptionCode::development_error->value,
             $previous
         );
