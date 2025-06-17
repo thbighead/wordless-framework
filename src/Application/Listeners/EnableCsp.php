@@ -2,13 +2,11 @@
 
 namespace Wordless\Application\Listeners;
 
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Environment;
-use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
+use Wordless\Application\Listeners\EnableCsp\Exceptions\FailedToEnableCSP;
 use Wordless\Infrastructure\Http\Security\Csp;
-use Wordless\Infrastructure\Http\Security\Csp\Exceptions\FailedToSentCspHeadersFromBuilder;
+use Wordless\Infrastructure\Http\Security\Csp\Exceptions\FailedToSendCspHeaders;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 use Wordless\Wordpress\Hook\Enums\Action;
@@ -22,18 +20,17 @@ class EnableCsp extends ActionListener
 
     /**
      * Solving insecure cookies (https://rainastudio.com/enable-secure-cookie-setting/)
-     *
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FailedToSentCspHeadersFromBuilder
-     * @throws FormatException
-     * @throws PathNotFoundException
+     * @throws FailedToEnableCSP
      */
     public static function enable(): void
     {
-        if (Environment::get('WORDLESS_CSP', false)) {
-            Csp::enable();
+        try {
+            if (Environment::get('WORDLESS_CSP', false)) {
+                Csp::enable();
+            }
+        } catch (FailedToSendCspHeaders|CannotResolveEnvironmentGet $exception) {
+            throw new FailedToEnableCSP($exception);
         }
     }
 
