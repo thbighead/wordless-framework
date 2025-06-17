@@ -4,7 +4,8 @@ namespace Wordless\Application\Listeners\RestApi;
 
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
+use Wordless\Application\Listeners\RestApi\DefineEndpoints\Exceptions\FailedToGetRestApiConfig;
 use Wordless\Application\Listeners\RestApi\DefineEndpoints\Exceptions\InvalidRestApiMultipleConfigKey;
 use Wordless\Application\Providers\RestApiProvider;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
@@ -21,14 +22,17 @@ class DefineEndpoints extends FilterListener
     /**
      * @param array $endpoints
      * @return array
-     * @throws EmptyConfigKey
+     * @throws FailedToGetRestApiConfig
      * @throws InvalidRestApiMultipleConfigKey
-     * @throws PathNotFoundException
      */
     public static function setRestApiRoutes(array $endpoints): array
     {
-        $routes_configuration = Config::wordpress()->ofKey(RestApiProvider::CONFIG_KEY)
-            ->get(RestApiProvider::CONFIG_KEY_ROUTES, []);
+        try {
+            $routes_configuration = Config::wordpress()->ofKey(RestApiProvider::CONFIG_KEY)
+                ->get(RestApiProvider::CONFIG_KEY_ROUTES, []);
+        } catch (FailedToLoadConfigFile|EmptyConfigKey $exception) {
+            throw new FailedToGetRestApiConfig($exception);
+        }
 
         if (isset($routes_configuration[RestApiProvider::CONFIG_ROUTES_KEY_ALLOW])
             && isset($routes_configuration[RestApiProvider::CONFIG_ROUTES_KEY_DISALLOW])) {

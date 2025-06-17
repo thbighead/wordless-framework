@@ -12,6 +12,7 @@ use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironment
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\InternalCache\Exceptions\FailedToCleanInternalCaches;
 use Wordless\Core\InternalCache\Exceptions\FailedToGenerateInternalCacheFile;
@@ -64,7 +65,7 @@ final class InternalCache
             foreach (Bootstrapper::getInstance()->loadProvidedInternalCachers() as $internal_cacher_namespace) {
                 $internal_cacher_namespace::generate();
             }
-        } catch (FailedToLoadErrorReportingConfiguration|CacherFailed $exception) {
+        } catch (FailedToLoadBootstrapper|CacherFailed $exception) {
             throw new FailedToGenerateInternalCacheFile($internal_cacher_namespace ?? null, $exception);
         }
     }

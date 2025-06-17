@@ -2,9 +2,8 @@
 
 namespace Wordless\Application\Listeners\DisableComments;
 
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Listeners\DisableComments\Contracts\DisableCommentsActionListener;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Wordpress\Hook\Enums\Action;
 
@@ -17,8 +16,7 @@ class DisableDefaultComments extends DisableCommentsActionListener
 
     /**
      * @return void
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function removeCommentsSupport(): void
     {

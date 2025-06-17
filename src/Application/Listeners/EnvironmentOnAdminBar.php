@@ -2,11 +2,11 @@
 
 namespace Wordless\Application\Listeners;
 
-use InvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
-use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
+use Wordless\Application\Listeners\EnvironmentOnAdminBar\Exceptions\FailedToAddEnvironmentFlagToAdminMenu;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 use Wordless\Wordpress\Hook\Enums\Action;
@@ -22,19 +22,21 @@ class EnvironmentOnAdminBar extends ActionListener
     /**
      * @param WP_Admin_Bar $wpAdminBar
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws InvalidArgumentException
+     * @throws FailedToAddEnvironmentFlagToAdminMenu
      */
     public static function addEnvironmentFlagToAdminBarMenu(WP_Admin_Bar $wpAdminBar): void
     {
-        $environment_name = Environment::get('APP_ENV');
+        try {
+            $environment_name = Environment::get('APP_ENV');
 
-        $wpAdminBar->add_node([
-            'id' => "wordless_{$environment_name}_environment_admin_bar_flag",
-            'parent' => 'top-secondary',
-            'title' => Str::titleCase($environment_name),
-        ]);
+            $wpAdminBar->add_node([
+                'id' => "wordless_{$environment_name}_environment_admin_bar_flag",
+                'parent' => 'top-secondary',
+                'title' => Str::titleCase($environment_name),
+            ]);
+        } catch (CannotResolveEnvironmentGet|FailedToCreateInflector $exception) {
+            throw new FailedToAddEnvironmentFlagToAdminMenu($exception);
+        }
     }
 
     public static function priority(): int

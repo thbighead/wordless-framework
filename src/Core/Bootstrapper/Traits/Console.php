@@ -5,13 +5,8 @@ namespace Wordless\Core\Bootstrapper\Traits;
 use Exception;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
 use Wordless\Core\Bootstrapper\Traits\Console\Exceptions\FailedToAddConsoleCommand;
 use Wordless\Core\Bootstrapper\Traits\Console\Exceptions\FailedToBootApplication;
 
@@ -26,7 +21,7 @@ trait Console
     {
         try {
             self::getInstance()->bootIntoSymfonyApplication($application);
-        } catch (FailedToLoadErrorReportingConfiguration|FailedToAddConsoleCommand $exception) {
+        } catch (FailedToAddConsoleCommand|FailedToLoadBootstrapper $exception) {
             throw new FailedToBootApplication($application, $exception);
         }
     }

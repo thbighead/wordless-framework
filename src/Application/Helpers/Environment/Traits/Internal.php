@@ -3,6 +3,7 @@
 namespace Wordless\Application\Helpers\Environment\Traits;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToLoadDotEnv;
 
@@ -40,6 +41,11 @@ trait Internal
         return $package_variables_content;
     }
 
+    /**
+     * @param string $value
+     * @return string
+     * @throws CannotResolveEnvironmentGet
+     */
     private static function resolveReferences(string $value): string
     {
         do {
@@ -57,6 +63,12 @@ trait Internal
         return $value;
     }
 
+    /**
+     * @param string $key
+     * @param mixed|null $default
+     * @return mixed
+     * @throws CannotResolveEnvironmentGet
+     */
     private static function retrieveValue(string $key, mixed $default = null): mixed
     {
         if (($value = getenv($key)) === false) {

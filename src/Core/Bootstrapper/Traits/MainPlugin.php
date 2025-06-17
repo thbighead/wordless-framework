@@ -8,6 +8,7 @@ use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectD
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
@@ -35,7 +36,7 @@ trait MainPlugin
     {
         try {
             self::getInstance()->bootIntoWordpress();
-        } catch (FailedToLoadErrorReportingConfiguration|FailedToResolveMenu $exception) {
+        } catch (FailedToLoadBootstrapper|FailedToResolveMenu $exception) {
             throw new FailedToBootMainPlugin($exception);
         }
     }
@@ -49,7 +50,7 @@ trait MainPlugin
     {
         try {
             self::getInstance()->resolveEnqueues($on_admin);
-        } catch (FailedToLoadErrorReportingConfiguration|InvalidEnqueueableId $exception) {
+        } catch (FailedToLoadBootstrapper|InvalidEnqueueableId $exception) {
             throw new FailedToBootEnqueueables($on_admin, $exception);
         }
     }

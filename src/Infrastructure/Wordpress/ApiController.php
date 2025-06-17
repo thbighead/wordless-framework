@@ -10,6 +10,7 @@ use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Core\Bootstrapper;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\InternalCache;
@@ -65,8 +66,8 @@ abstract class ApiController extends WP_REST_Controller
     abstract protected function version(): ?string;
 
     /**
-     * @return Generator<string>
-     * @throws FailedToLoadErrorReportingConfiguration
+     * @return Generator
+     * @throws FailedToLoadBootstrapper
      */
     public static function all(): Generator
     {
@@ -84,8 +85,8 @@ abstract class ApiController extends WP_REST_Controller
     }
 
     /**
-     * @return string[]|ApiController[]
-     * @throws FailedToLoadErrorReportingConfiguration
+     * @return array
+     * @throws FailedToLoadBootstrapper
      */
     public static function loadProvidedApiControllers(): array
     {

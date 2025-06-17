@@ -7,6 +7,7 @@ use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
 use Wordless\Core\Bootstrapper\Exceptions\ConstantAlreadyDefined;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\ApiControllers;
@@ -39,7 +40,7 @@ final class Bootstrapper extends Singleton
     /**
      * @return void
      * @throws ConstantAlreadyDefined
-     * @throws FailedToLoadErrorReportingConfiguration
+     * @throws FailedToLoadBootstrapper
      */
     public static function bootConstants(): void
     {
@@ -56,8 +57,7 @@ final class Bootstrapper extends Singleton
 
     /**
      * @return Bootstrapper
-     * @throws FailedToLoadErrorReportingConfiguration
-     * @throws InvalidProviderClass
+     * @throws FailedToLoadBootstrapper
      */
     public static function getInstance(): Bootstrapper
     {
@@ -74,13 +74,16 @@ final class Bootstrapper extends Singleton
 
     /**
      * @return Bootstrapper
-     * @throws FailedToLoadErrorReportingConfiguration
-     * @throws InvalidProviderClass
+     * @throws FailedToLoadBootstrapper
      */
     private function load(): Bootstrapper
     {
-        return $this->setErrorReporting()
-            ->loadProviders();
+        try {
+            return $this->setErrorReporting()
+                ->loadProviders();
+        } catch (FailedToLoadErrorReportingConfiguration|InvalidProviderClass $exception) {
+            throw new FailedToLoadBootstrapper($exception);
+        }
     }
 
     /**

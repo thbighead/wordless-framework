@@ -3,8 +3,7 @@
 namespace Wordless\Application\Listeners\DisableComments\Contracts;
 
 use Wordless\Application\Helpers\Config;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 
 abstract class DisableCommentsActionListener extends ActionListener
@@ -18,8 +17,7 @@ abstract class DisableCommentsActionListener extends ActionListener
 
     /**
      * @return bool
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function areCommentsDisabled(): bool
     {
@@ -28,8 +26,7 @@ abstract class DisableCommentsActionListener extends ActionListener
 
     /**
      * @return bool
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     final public static function areCommentsEnabled(): bool
     {

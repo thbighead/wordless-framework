@@ -8,11 +8,13 @@ use MatthiasMullie\Minify\Exceptions\IOException;
 use MatthiasMullie\Minify\JS;
 use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Commands\DistributeFront\Enums\Type;
+use Wordless\Application\Commands\DistributeFront\Exceptions\FailedToMountMinifiedAbsoluteFilepath;
+use Wordless\Application\Commands\DistributeFront\Exceptions\FailedToRunDistributeFrontCommand;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\CannotReadPath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -59,52 +61,47 @@ class DistributeFront extends ConsoleCommand
 
     /**
      * @return int
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
-     * @throws FailedToPutFileContent
-     * @throws IOException
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
+     * @throws FailedToRunDistributeFrontCommand
      */
     protected function runIt(): int
     {
-        foreach ($this->readCssAssetsDirectory() as $css_absolute_filepath) {
-            $css_minified_absolute_filepath = $this->mountMinifiedAbsoluteFilepath($css_absolute_filepath);
+        try {
+            foreach ($this->readCssAssetsDirectory() as $css_absolute_filepath) {
+                $css_minified_absolute_filepath = $this->mountMinifiedAbsoluteFilepath($css_absolute_filepath);
 
-            $this->wrapScriptWithMessages(
-                "Minifying $css_absolute_filepath to $css_minified_absolute_filepath...",
-                function () use ($css_absolute_filepath, $css_minified_absolute_filepath) {
-                    $this->mountCssMinifier()
-                        ->addFile($css_absolute_filepath)
-                        ->minify($css_minified_absolute_filepath);
-                }
-            );
+                $this->wrapScriptWithMessages(
+                    "Minifying $css_absolute_filepath to $css_minified_absolute_filepath...",
+                    function () use ($css_absolute_filepath, $css_minified_absolute_filepath) {
+                        $this->mountCssMinifier()
+                            ->addFile($css_absolute_filepath)
+                            ->minify($css_minified_absolute_filepath);
+                    }
+                );
+            }
 
+            foreach ($this->readJsAssetsDirectory() as $js_absolute_filepath) {
+                $js_minified_absolute_filepath = $this->mountMinifiedAbsoluteFilepath($js_absolute_filepath);
+
+                $this->wrapScriptWithMessages(
+                    "Minifying $js_absolute_filepath to $js_minified_absolute_filepath...",
+                    function () use ($js_absolute_filepath, $js_minified_absolute_filepath) {
+                        $this->mountJsMinifier()
+                            ->addFile($js_absolute_filepath)
+                            ->minify($js_minified_absolute_filepath);
+                    }
+                );
+            }
+
+            return Command::SUCCESS;
+        } catch (FailedToMountMinifiedAbsoluteFilepath|IOException|CannotReadPath $exception) {
+            throw new FailedToRunDistributeFrontCommand($exception);
         }
-
-        foreach ($this->readJsAssetsDirectory() as $js_absolute_filepath) {
-            $js_minified_absolute_filepath = $this->mountMinifiedAbsoluteFilepath($js_absolute_filepath);
-
-            $this->wrapScriptWithMessages(
-                "Minifying $js_absolute_filepath to $js_minified_absolute_filepath...",
-                function () use ($js_absolute_filepath, $js_minified_absolute_filepath) {
-                    $this->mountJsMinifier()
-                        ->addFile($js_absolute_filepath)
-                        ->minify($js_minified_absolute_filepath);
-                }
-            );
-        }
-
-        return Command::SUCCESS;
     }
 
     /**
      * @param string $non_minified_filepath
      * @return string
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
-     * @throws FailedToPutFileContent
-     * @throws PathNotFoundException
+     * @throws FailedToMountMinifiedAbsoluteFilepath
      */
     private function mountMinifiedAbsoluteFilepath(string $non_minified_filepath): string
     {
@@ -116,7 +113,11 @@ class DistributeFront extends ConsoleCommand
                 ->before('.')
                 ->wrap("$detectedFileType->name/", ".min.$detectedFileType->name"));
         } catch (PathNotFoundException $exception) {
-            DirectoryFiles::createFileAt($exception->path);
+            try {
+                DirectoryFiles::createFileAt($exception->path);
+            } catch (FailedToCreateDirectory|FailedToGetDirectoryPermissions|FailedToPutFileContent|PathNotFoundException $exception) {
+                throw new FailedToMountMinifiedAbsoluteFilepath($exception);
+            }
 
             return $exception->path;
         }
@@ -135,8 +136,7 @@ class DistributeFront extends ConsoleCommand
     /**
      * @param Type $fileType
      * @return Generator|array
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
+     * @throws CannotReadPath
      */
     private function readAssetsDirectoryOf(Type $fileType): Generator|array
     {
@@ -151,8 +151,7 @@ class DistributeFront extends ConsoleCommand
 
     /**
      * @return Generator|array
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
+     * @throws CannotReadPath
      */
     private function readCssAssetsDirectory(): Generator|array
     {
@@ -161,8 +160,7 @@ class DistributeFront extends ConsoleCommand
 
     /**
      * @return Generator|array
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
+     * @throws CannotReadPath
      */
     private function readJsAssetsDirectory(): Generator|array
     {

@@ -12,6 +12,7 @@ use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\FailedToBootMigrationCommand;
@@ -32,7 +33,7 @@ trait Migrations
         try {
             return self::getInstance()->loadProvidedMigrations()
                 ->getLoadedMigrationsFilepath();
-        } catch (FailedToLoadErrorReportingConfiguration|FailedToLoadProvidedMigration $exception) {
+        } catch (FailedToLoadBootstrapper|FailedToLoadProvidedMigration $exception) {
             throw new FailedToBootMigrationCommand($exception);
         }
     }
