@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\Models\Traits\WithAcfs\Traits\Crud\Traits;
 
+use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 
 trait CreateOrUpdate
@@ -59,10 +60,17 @@ trait CreateOrUpdate
      * @param string $acf_selector
      * @param mixed $value
      * @return int|bool
+     * @throws FailedToParseArrayKey
      * @throws InvalidAcfFunction
      */
     private function callUpdateField(string $acf_selector, mixed $value): int|bool
     {
-        return $this->validateAcfFunction('update_field')($acf_selector, $value, $this->acf_from_id);
+        $result = $this->validateAcfFunction('update_field')($acf_selector, $value, $this->acf_from_id);
+
+        if ($result === false && $this->getAcf($acf_selector) === $value) {
+            return true;
+        }
+
+        return $result;
     }
 }
