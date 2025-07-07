@@ -11,6 +11,7 @@ trait CreateOrUpdate
      * @param string $acf_reference
      * @param mixed $value
      * @return int|true
+     * @throws FailedToParseArrayKey
      * @throws InvalidAcfFunction
      */
     public function createOrUpdateAcfValue(string $acf_reference, mixed $value): int|true
@@ -37,6 +38,7 @@ trait CreateOrUpdate
     /**
      * @param array<string, mixed> $values
      * @return array<string, int|bool>
+     * @throws FailedToParseArrayKey
      * @throws InvalidAcfFunction
      */
     public function createOrUpdateAcfValues(array $values): array
