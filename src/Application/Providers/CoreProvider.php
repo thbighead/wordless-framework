@@ -34,6 +34,7 @@ use Wordless\Application\Listeners\PageBodyClass;
 use Wordless\Application\Listeners\PreventWordlessUserDeletion;
 use Wordless\Application\Listeners\RegisterCustomScheduleRecurrences;
 use Wordless\Application\Listeners\RegisterEntities;
+use Wordless\Application\Listeners\RegisterWidgets;
 use Wordless\Application\Listeners\RemoveAdditionalCssFromAdmin;
 use Wordless\Application\Listeners\RemoveClassicThemeStylesInlineCss;
 use Wordless\Application\Listeners\RemoveGlobalCustomInlineStyles;
@@ -84,6 +85,7 @@ class CoreProvider extends Provider
             PreventWordlessUserDeletion::class,
             RegisterCustomScheduleRecurrences::class,
             RegisterEntities::class,
+            RegisterWidgets::class,
             RemoveAdditionalCssFromAdmin::class,
             RemoveClassicThemeStylesInlineCss::class,
             RemoveGlobalCustomInlineStyles::class,
