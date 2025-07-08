@@ -21,7 +21,7 @@ class ControlOptionsDTO
         return $this;
     }
 
-    public function toArray(): ?array
+    public function toArray(): array
     {
         $return = [];
 
@@ -33,6 +33,6 @@ class ControlOptionsDTO
             $return['id_base'] = $this->base_id;
         }
 
-        return empty($return) ? null : $return;
+        return $return;
     }
 }

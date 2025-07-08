@@ -2,7 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\WidgetRegistrar\DTO;
 
-class SideBarOptionsDTO
+class SidebarOptionsDTO
 {
     private string $description;
     private string $html_classes;
@@ -34,7 +34,7 @@ class SideBarOptionsDTO
         return $this;
     }
 
-    public function toArray(): ?array
+    public function toArray(): array
     {
         $return = [];
 
@@ -50,6 +50,6 @@ class SideBarOptionsDTO
             $return['show_instance_in_rest'] = $this->shown_instance_in_rest;
         }
 
-        return empty($return) ? null : $return;
+        return $return;
     }
 }

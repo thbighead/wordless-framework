@@ -4,7 +4,7 @@ namespace Wordless\Infrastructure\Wordpress;
 
 use Wordless\Infrastructure\Wordpress\WidgetRegistrar\AdminFormField;
 use Wordless\Infrastructure\Wordpress\WidgetRegistrar\DTO\ControlOptionsDTO;
-use Wordless\Infrastructure\Wordpress\WidgetRegistrar\DTO\SideBarOptionsDTO;
+use Wordless\Infrastructure\Wordpress\WidgetRegistrar\DTO\SidebarOptionsDTO;
 use WP_Widget;
 
 abstract class WidgetRegistrar extends WP_Widget
@@ -20,7 +20,7 @@ abstract class WidgetRegistrar extends WP_Widget
         array $registered_widget_properties
     ): string;
 
-    abstract protected function sideBarOptions(): SideBarOptionsDTO;
+    abstract protected function sidebarOptions(): SidebarOptionsDTO;
 
     public static function register(): void
     {
@@ -32,7 +32,7 @@ abstract class WidgetRegistrar extends WP_Widget
         parent::__construct(
             $this->id(),
             $this->displayName(),
-            $this->sideBarOptions()->toArray(),
+            $this->sidebarOptions()->toArray(),
             $this->controlOptions()->toArray()
         );
     }

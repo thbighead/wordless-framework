@@ -8,6 +8,7 @@ use Wordless\Infrastructure\Provider\Traits\ListenersRegistration;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPostStatus;
+use Wordless\Infrastructure\Wordpress\SidebarRegistrar;
 use Wordless\Infrastructure\Wordpress\WidgetRegistrar;
 use Wordless\Infrastructure\Wordpress\Menu;
 use Wordless\Infrastructure\Wordpress\Schedule;
@@ -97,6 +98,14 @@ abstract class Provider
      * @return string[]|Schedule[]
      */
     public function registerSchedules(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return string[]|SidebarRegistrar[]
+     */
+    public function registerSidebars(): array
     {
         return [];
     }

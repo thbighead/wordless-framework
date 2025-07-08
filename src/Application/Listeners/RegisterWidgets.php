@@ -25,6 +25,10 @@ class RegisterWidgets extends ActionListener
     public static function register(): void
     {
         foreach (Bootstrapper::getInstance()->getLoadedProviders() as $loadedProvider) {
+            foreach ($loadedProvider->registerSidebars() as $sidebarRegistrar) {
+                $sidebarRegistrar::register();
+            }
+
             foreach ($loadedProvider->registerWidgets() as $widgetRegistrar) {
                 $widgetRegistrar::register();
             }
