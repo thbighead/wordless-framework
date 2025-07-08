@@ -8,6 +8,7 @@ use Wordless\Infrastructure\Provider\Traits\ListenersRegistration;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPostStatus;
+use Wordless\Infrastructure\Wordpress\WidgetRegistrar;
 use Wordless\Infrastructure\Wordpress\Menu;
 use Wordless\Infrastructure\Wordpress\Schedule;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
@@ -104,6 +105,14 @@ abstract class Provider
      * @return string[]|CustomTaxonomy[]
      */
     public function registerTaxonomies(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return string[]|WidgetRegistrar[]
+     */
+    public function registerWidgets(): array
     {
         return [];
     }
