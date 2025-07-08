@@ -12,6 +12,7 @@ use Wordless\Infrastructure\Wordpress\SidebarRegistrar;
 use Wordless\Infrastructure\Wordpress\WidgetRegistrar;
 use Wordless\Infrastructure\Wordpress\Menu;
 use Wordless\Infrastructure\Wordpress\Schedule;
+use Wordless\Infrastructure\Wordpress\ShortcodeRegistrar;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
 
 abstract class Provider
@@ -98,6 +99,14 @@ abstract class Provider
      * @return string[]|Schedule[]
      */
     public function registerSchedules(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return string[]|ShortcodeRegistrar[]
+     */
+    public function registerShortcodes(): array
     {
         return [];
     }
