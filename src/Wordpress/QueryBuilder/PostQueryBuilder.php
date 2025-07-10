@@ -3,7 +3,7 @@
 namespace Wordless\Wordpress\QueryBuilder;
 
 use Wordless\Infrastructure\Wordpress\QueryBuilder\WpQueryBuilder;
-use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
+use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;

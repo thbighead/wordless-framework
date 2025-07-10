@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Wordpress\Models\Post\Enums;
+namespace Wordless\Wordpress\Models\PostStatus\Enums;
+
+use Wordless\Wordpress\Models\PostStatus;
 
 enum StandardStatus: string
 {
@@ -25,5 +27,14 @@ enum StandardStatus: string
     public static function reallyAny(): string
     {
         return implode(',', self::REALLY_ANY);
+    }
+
+    public function is(PostStatus|StandardStatus|string $status): bool
+    {
+        if (!is_string($status)) {
+            $status = $status->name;
+        }
+
+        return $this->name === $status;
     }
 }

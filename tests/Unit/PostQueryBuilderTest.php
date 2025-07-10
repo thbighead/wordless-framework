@@ -7,7 +7,7 @@ use Wordless\Application\Helpers\Reflection;
 use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\AuthorTests;
 use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\CategoryTests;
 use Wordless\Tests\WordlessTestCase\QueryBuilderTestCase;
-use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
+use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Pagination\Posts;
