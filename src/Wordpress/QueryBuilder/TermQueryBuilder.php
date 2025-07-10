@@ -89,7 +89,7 @@ class TermQueryBuilder extends WpQueryBuilder
      * @return $this
      * @throws DoNotUseNumberWithObjectIds
      */
-    public function limit(int $how_many = 1): static
+    public function limit(int $how_many): static
     {
         if (isset($this->arguments[self::OBJECT_IDS_KEY])) {
             throw new DoNotUseNumberWithObjectIds;
