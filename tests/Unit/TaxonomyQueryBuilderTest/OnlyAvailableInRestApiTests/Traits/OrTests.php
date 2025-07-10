@@ -15,7 +15,7 @@ trait OrTests
      */
     public function testOrOnlyAvailableInRestApi(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)->onlyAvailableInRestApi();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)->onlyAvailableInRestApi();
 
         $this->assertOrOperator($taxonomyQueryBuilder);
 
@@ -31,7 +31,7 @@ trait OrTests
      */
     public function testOrOnlyAvailableInRestApiWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->onlyHiddenFromRestApi()
             ->onlyAvailableInRestApi();
 
@@ -50,7 +50,7 @@ trait OrTests
      */
     public function testOrOnlyAvailableInRestApiWithSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereName('name')
             ->onlyDefault()
             ->onlyAvailableInRestApi();

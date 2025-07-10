@@ -3,7 +3,7 @@
 namespace Wordless\Wordpress\Models\Post\Traits\Crud\Traits;
 
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
-use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
+use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 
 trait Read
 {

@@ -16,7 +16,7 @@ trait OrTests
      */
     public function testOrWhereAssignPermissionTest(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereAssignPermission('capability');
 
         $this->assertOrOperator($taxonomyQueryBuilder);
@@ -34,7 +34,7 @@ trait OrTests
      */
     public function testOrWhereAssignPermissionWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereAssignPermission('capability')
             ->whereAssignPermission('capability');
 
@@ -53,7 +53,7 @@ trait OrTests
      */
     public function testOrWhereAssignPermissionWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereName('name')
             ->onlyDefault()
             ->whereAssignPermission('capability');
@@ -79,7 +79,7 @@ trait OrTests
     {
         $capability = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereAssignPermission($capability);
 
         $this->assertOrOperator($taxonomyQueryBuilder);
@@ -95,6 +95,6 @@ trait OrTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance(operator: Operator::or)->whereAssignPermission('');
+        TaxonomyQueryBuilder::make(operator: Operator::or)->whereAssignPermission('');
     }
 }

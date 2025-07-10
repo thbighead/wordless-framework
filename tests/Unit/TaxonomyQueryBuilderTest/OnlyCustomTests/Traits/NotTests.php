@@ -15,7 +15,7 @@ trait NotTests
      */
     public function testNotOnlyCustom(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->onlyCustom();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)->onlyCustom();
 
         $this->assertNotOperator($taxonomyQueryBuilder);
 
@@ -31,7 +31,7 @@ trait NotTests
      */
     public function testNotOnlyCustomWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->onlyDefault()
             ->onlyCustom();
 
@@ -50,7 +50,7 @@ trait NotTests
      */
     public function testNotOnlyCustomWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereName('name')
             ->onlyCustom();
 

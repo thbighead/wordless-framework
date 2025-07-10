@@ -14,7 +14,7 @@ trait AndTests
      */
     public function testAndOnlyPrivate(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->onlyPrivate();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->onlyPrivate();
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -30,7 +30,7 @@ trait AndTests
      */
     public function testAndOnlyPrivateWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->onlyPublic()
             ->onlyPrivate();
 
@@ -49,7 +49,7 @@ trait AndTests
      */
     public function testAndOnlyPrivateWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereName('name')
             ->onlyDefault()
             ->onlyPrivate();

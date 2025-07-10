@@ -5,7 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 use stdClass;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
-use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
+use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
@@ -140,22 +140,6 @@ trait Resolver
     {
         foreach ($extra_arguments as $extra_argument_key => $extra_argument_value) {
             $arguments[$extra_argument_key] = $extra_argument_value;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param array $arguments
-     * @return $this
-     * @throws EmptyQueryBuilderArguments
-     */
-    private function resolveMetaSubQuery(array &$arguments): static
-    {
-        $metaSubQueryBuilder = $arguments[MetaSubQueryBuilder::ARGUMENT_KEY] ?? null;
-
-        if ($metaSubQueryBuilder instanceof MetaSubQueryBuilder) {
-            $arguments[MetaSubQueryBuilder::ARGUMENT_KEY] = $metaSubQueryBuilder->buildArguments();
         }
 
         return $this;

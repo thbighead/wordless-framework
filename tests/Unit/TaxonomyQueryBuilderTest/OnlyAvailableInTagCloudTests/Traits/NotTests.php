@@ -15,7 +15,7 @@ trait NotTests
      */
     public function testNotOnlyAvailableInTagCloud(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->onlyAvailableInTagCloud();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)->onlyAvailableInTagCloud();
 
         $this->assertNotOperator($taxonomyQueryBuilder);
 
@@ -31,7 +31,7 @@ trait NotTests
      */
     public function testNotOnlyAvailableInTagCloudWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->onlyHiddenFromTagCloud()
             ->onlyAvailableInTagCloud();
 
@@ -50,7 +50,7 @@ trait NotTests
      */
     public function testNotOnlyAvailableInTagCloudWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereName('name')
             ->onlyDefault()
             ->onlyAvailableInTagCloud();
