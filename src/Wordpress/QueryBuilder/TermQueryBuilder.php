@@ -7,6 +7,7 @@ use Wordless\Infrastructure\Wordpress\QueryBuilder\WpQueryBuilder;
 use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Enums\TermsListFormat;
+use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Exceptions\DoNotUseNumberWithObjectIds;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\OrderBy;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\Resolver;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\WhereClauses;
@@ -23,8 +24,14 @@ class TermQueryBuilder extends WpQueryBuilder
     private const EXCLUDE_KEY = 'exclude';
     private const EXCLUDE_TREE_KEY = 'exclude_tree';
     private const HIDE_EMPTY_KEY = 'hide_empty';
+    private const NUMBER_KEY = 'number';
     private const OBJECT_IDS_KEY = 'object_ids';
     private const TAXONOMY_KEY = 'taxonomy';
+
+    public static function make(Taxonomy|string ...$taxonomies): static
+    {
+        return new static(...$taxonomies);
+    }
 
     public function __construct(Taxonomy|string ...$taxonomies)
     {
@@ -77,8 +84,34 @@ class TermQueryBuilder extends WpQueryBuilder
         return $this;
     }
 
+    /**
+     * @param int $how_many
+     * @return $this
+     * @throws DoNotUseNumberWithObjectIds
+     */
+    public function limit(int $how_many = 1): static
+    {
+        if (isset($this->arguments[self::OBJECT_IDS_KEY])) {
+            throw new DoNotUseNumberWithObjectIds;
+        }
+
+        $this->arguments[self::NUMBER_KEY] = max(1, $how_many);
+
+        return $this;
+    }
+
+    /**
+     * @param IRelatedMetaData|int $object
+     * @param IRelatedMetaData|int ...$objects
+     * @return $this
+     * @throws DoNotUseNumberWithObjectIds
+     */
     public function onlyAssociatedTo(IRelatedMetaData|int $object, IRelatedMetaData|int ...$objects): static
     {
+        if (isset($this->arguments[self::NUMBER_KEY])) {
+            throw new DoNotUseNumberWithObjectIds;
+        }
+
         foreach (Arr::prepend($objects, $object) as $object) {
             if ($object instanceof IRelatedMetaData) {
                 $object = $object->id();
