@@ -82,7 +82,7 @@ trait Sync
      */
     public static function syncCustomTaxonomiesPermissionsToRole(Role $role): void
     {
-        foreach (TaxonomyQueryBuilder::getInstance()->onlyCustom()->get() as $customTaxonomy) {
+        foreach (TaxonomyQueryBuilder::make()->onlyCustom()->get() as $customTaxonomy) {
             $role->syncCapabilities(array_combine(
                 $permissions = array_values((array)$customTaxonomy->cap),
                 array_fill(0, count($permissions), true)

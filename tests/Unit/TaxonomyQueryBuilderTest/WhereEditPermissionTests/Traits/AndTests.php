@@ -15,7 +15,7 @@ trait AndTests
      */
     public function testAndWhereEditPermission(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereEditPermission('capability');
 
         $this->assertAndOperator($taxonomyQueryBuilder);
@@ -33,7 +33,7 @@ trait AndTests
      */
     public function testAndWhereEditPermissionWhereSameAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereEditPermission('capability')
             ->whereEditPermission('capability');
 
@@ -52,7 +52,7 @@ trait AndTests
      */
     public function testAndWhereEditPermissionWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereEditPermission('capability_1')
             ->whereEditPermission('capability_2');
 
@@ -71,7 +71,7 @@ trait AndTests
      */
     public function testAndWhereEditPermissionWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereName('name')
             ->onlyDefault()
             ->whereEditPermission('capability');
@@ -96,6 +96,6 @@ trait AndTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->whereEditPermission('');
+        TaxonomyQueryBuilder::make()->whereEditPermission('');
     }
 }

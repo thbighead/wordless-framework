@@ -7,14 +7,14 @@ use Wordless\Application\Helpers\Reflection;
 use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\AuthorTests;
 use Wordless\Tests\Unit\PostQueryBuilderTest\Traits\CategoryTests;
 use Wordless\Tests\WordlessTestCase\QueryBuilderTestCase;
-use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
+use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Pagination\Posts;
+use Wordless\Wordpress\QueryBuilder\Enums\Direction;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\ColumnReference;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\OrderBy\Enums\Direction;
 
 class PostQueryBuilderTest extends QueryBuilderTestCase
 {
