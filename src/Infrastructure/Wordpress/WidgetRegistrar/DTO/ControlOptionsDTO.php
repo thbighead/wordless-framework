@@ -7,6 +7,11 @@ class ControlOptionsDTO
     private int $admin_box_width; // Better do not change it. Use it carefully
     private string $base_id;
 
+    public static function make(): static
+    {
+        return new static;
+    }
+
     public function setAdminBoxWidth(int $admin_box_width): static
     {
         $this->admin_box_width = $admin_box_width;
