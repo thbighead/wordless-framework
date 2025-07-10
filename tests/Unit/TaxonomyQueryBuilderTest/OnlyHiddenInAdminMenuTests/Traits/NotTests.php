@@ -15,7 +15,7 @@ trait NotTests
      */
     public function testNotOnlyHiddenInAdminMenu(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->onlyHiddenFromAdminMenu();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)->onlyHiddenFromAdminMenu();
 
         $this->assertNotOperator($taxonomyQueryBuilder);
 
@@ -31,7 +31,7 @@ trait NotTests
      */
     public function testNotOnlyHiddenInAdminMenuWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->onlyAvailableInAdminMenu()
             ->onlyHiddenFromAdminMenu();
 
@@ -50,7 +50,7 @@ trait NotTests
      */
     public function testNotOnlyHiddenInAdminMenuWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereName('name')
             ->onlyDefault()
             ->onlyHiddenFromAdminMenu();

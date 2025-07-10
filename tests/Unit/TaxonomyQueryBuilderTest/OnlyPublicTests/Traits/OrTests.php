@@ -15,7 +15,7 @@ trait OrTests
      */
     public function testOrOnlyPublic(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)->onlyPublic();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)->onlyPublic();
 
         $this->assertOrOperator($taxonomyQueryBuilder);
 
@@ -31,7 +31,7 @@ trait OrTests
      */
     public function testOrOnlyPublicWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->onlyPrivate()
             ->onlyPublic();
 
@@ -50,7 +50,7 @@ trait OrTests
      */
     public function testOrOnlyPublicWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereName('name')
             ->onlyDefault()
             ->onlyPublic();

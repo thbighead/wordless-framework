@@ -16,7 +16,7 @@ trait NotTests
      */
     public function testNotWhereDeletePermission(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereDeletePermission('capability');
 
         $this->assertNotOperator($taxonomyQueryBuilder);
@@ -34,7 +34,7 @@ trait NotTests
      */
     public function testNotWhereDeletePermissionWhereSameAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereDeletePermission('capability')
             ->whereDeletePermission('capability');
 
@@ -53,7 +53,7 @@ trait NotTests
      */
     public function testNotWhereDeletePermissionWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereDeletePermission('capability_1')
             ->whereDeletePermission('capability_2');
 
@@ -72,7 +72,7 @@ trait NotTests
      */
     public function testNotWhereDeletePermissionWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereName('name')
             ->onlyDefault()
             ->whereDeletePermission('capability');
@@ -97,6 +97,6 @@ trait NotTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereDeletePermission('');
+        TaxonomyQueryBuilder::make(operator: Operator::not)->whereDeletePermission('');
     }
 }

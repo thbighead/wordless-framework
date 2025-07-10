@@ -16,7 +16,7 @@ trait OrTests
      */
     public function testOrWhereName(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)->whereName('name_1');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)->whereName('name_1');
 
         $this->assertOrOperator($taxonomyQueryBuilder);
 
@@ -33,7 +33,7 @@ trait OrTests
      */
     public function testOrWhereNameWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereName('name_1')
             ->whereName('name_2');
 
@@ -52,7 +52,7 @@ trait OrTests
      */
     public function testOrWhereNameWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->onlyDefault()
             ->whereName('name_1');
 
@@ -76,7 +76,7 @@ trait OrTests
     {
         $string = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)->whereName($string);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)->whereName($string);
 
         $this->assertOrOperator($taxonomyQueryBuilder);
 
@@ -91,6 +91,6 @@ trait OrTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance(operator: Operator::or)->whereName('');
+        TaxonomyQueryBuilder::make(operator: Operator::or)->whereName('');
     }
 }

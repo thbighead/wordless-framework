@@ -16,7 +16,7 @@ trait NotTests
      */
     public function testNotWhereAdminMenuSingularLabelTest(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereAdminMenuSingularLabel('test_label');
 
         $this->assertNotOperator($taxonomyQueryBuilder);
@@ -34,7 +34,7 @@ trait NotTests
      */
     public function testNotWhereAdminMenuSingularLabelWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereAdminMenuSingularLabel('test_label')
             ->whereAdminMenuSingularLabel('test_label');
 
@@ -53,7 +53,7 @@ trait NotTests
      */
     public function testNotWhereAdminMenuSingularLabelWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereName('name')
             ->onlyDefault()
             ->whereAdminMenuSingularLabel('test_label');
@@ -79,7 +79,7 @@ trait NotTests
     {
         $string = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereAdminMenuSingularLabel($string);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)->whereAdminMenuSingularLabel($string);
 
         $this->assertNotOperator($taxonomyQueryBuilder);
 
@@ -94,6 +94,6 @@ trait NotTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance(operator: Operator::not)->whereAdminMenuSingularLabel('');
+        TaxonomyQueryBuilder::make(operator: Operator::not)->whereAdminMenuSingularLabel('');
     }
 }

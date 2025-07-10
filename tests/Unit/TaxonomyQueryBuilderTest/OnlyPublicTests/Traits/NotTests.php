@@ -15,7 +15,7 @@ trait NotTests
      */
     public function testNotOnlyPublic(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)->onlyPublic();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)->onlyPublic();
 
         $this->assertNotOperator($taxonomyQueryBuilder);
 
@@ -31,7 +31,7 @@ trait NotTests
      */
     public function testNotOnlyPublicWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->onlyPrivate()
             ->onlyPublic();
 
@@ -50,7 +50,7 @@ trait NotTests
      */
     public function testNotOnlyPublicWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::not)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::not)
             ->whereName('name')
             ->onlyDefault()
             ->onlyPublic();

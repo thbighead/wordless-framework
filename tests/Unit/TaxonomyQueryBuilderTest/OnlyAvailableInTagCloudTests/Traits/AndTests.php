@@ -14,7 +14,7 @@ trait AndTests
      */
     public function testAndOnlyAvailableInTagCloud(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->onlyAvailableInTagCloud();
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->onlyAvailableInTagCloud();
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -30,7 +30,7 @@ trait AndTests
      */
     public function testAndOnlyAvailableInTagCloudWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->onlyHiddenFromTagCloud()
             ->onlyAvailableInTagCloud();
 
@@ -49,7 +49,7 @@ trait AndTests
      */
     public function testAndOnlyAvailableInTagCloudWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereName('name')
             ->onlyDefault()
             ->onlyAvailableInTagCloud();
