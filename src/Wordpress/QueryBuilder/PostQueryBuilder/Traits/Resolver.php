@@ -5,7 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits;
 use stdClass;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
-use Wordless\Wordpress\Models\Post\Enums\StandardStatus;
+use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
