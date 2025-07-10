@@ -15,7 +15,7 @@ trait AndTests
      */
     public function testAndWhereUrlQueryVariable(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->whereUrlQueryVariable('string_query_var');
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->whereUrlQueryVariable('string_query_var');
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -32,7 +32,7 @@ trait AndTests
      */
     public function testAndWhereUrlQueryVariableWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->whereUrlQueryVariable('string_query_var_1')
             ->whereUrlQueryVariable('string_query_var_2');
 
@@ -51,7 +51,7 @@ trait AndTests
      */
     public function testAndWhereUrlQueryVariableWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()
             ->onlyDefault()
             ->whereUrlQueryVariable('string_query_var');
 
@@ -75,7 +75,7 @@ trait AndTests
     {
         $string = str_repeat('a', 256 * 1024);
 
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance()->whereUrlQueryVariable($string);
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make()->whereUrlQueryVariable($string);
 
         $this->assertAndOperator($taxonomyQueryBuilder);
 
@@ -90,6 +90,6 @@ trait AndTests
     {
         $this->expectException(EmptyStringParameter::class);
 
-        TaxonomyQueryBuilder::getInstance()->whereUrlQueryVariable('');
+        TaxonomyQueryBuilder::make()->whereUrlQueryVariable('');
     }
 }

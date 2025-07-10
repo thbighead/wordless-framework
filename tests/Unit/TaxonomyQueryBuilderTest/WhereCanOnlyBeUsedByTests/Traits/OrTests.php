@@ -16,7 +16,7 @@ trait OrTests
      */
     public function testOrWhereCanOnlyBeUsedBy(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereCanOnlyBeUsedBy(ObjectType::post);
 
         $this->assertOrOperator($taxonomyQueryBuilder);
@@ -33,7 +33,7 @@ trait OrTests
      */
     public function testOrWhereCanOnlyBeUsedByWhereSameAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereCanOnlyBeUsedBy(ObjectType::post)
             ->whereCanOnlyBeUsedBy(ObjectType::post);
 
@@ -51,7 +51,7 @@ trait OrTests
      */
     public function testOrWhereCanOnlyBeUsedByWhereAlreadySet(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereCanOnlyBeUsedBy(ObjectType::post)
             ->whereCanOnlyBeUsedBy(ObjectType::comment);
 
@@ -70,7 +70,7 @@ trait OrTests
      */
     public function testOrWhereCanOnlyBeUsedByWhitSomeArguments(): void
     {
-        $taxonomyQueryBuilder = TaxonomyQueryBuilder::getInstance(operator: Operator::or)
+        $taxonomyQueryBuilder = TaxonomyQueryBuilder::make(operator: Operator::or)
             ->whereName('name')
             ->onlyDefault()
             ->whereCanOnlyBeUsedBy(ObjectType::post);
