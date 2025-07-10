@@ -53,7 +53,7 @@ abstract class WidgetRegistrar extends WP_Widget
     }
 
     /**
-     * @return AdminFormField[]
+     * @return string[]|AdminFormField[]
      */
     protected function adminFormFields(): array
     {
@@ -76,7 +76,13 @@ abstract class WidgetRegistrar extends WP_Widget
         $html = '';
 
         foreach ($formFields as $adminFormField) {
-            $html .= $adminFormField->html();
+            $field_key = $adminFormField::key();
+
+            $html .= $adminFormField::make(
+                $this->get_field_id($field_key),
+                $this->get_field_name($field_key),
+                $old_submitted_values[$field_key] ?? ''
+            )->html();
         }
 
         return $html;
