@@ -24,6 +24,15 @@ abstract class WpQueryBuilder extends QueryBuilder
         $this->query = $this->mountNewWpQuery();
     }
 
+    public function sql(): ?string
+    {
+        if (!isset($this->getQuery()->request)) {
+            return null;
+        }
+
+        return $this->getQuery()->request;
+    }
+
     protected function getQuery(): WP_User_Query|WP_Query|WP_Term_Query|WP_Comment_Query
     {
         return $this->query;
