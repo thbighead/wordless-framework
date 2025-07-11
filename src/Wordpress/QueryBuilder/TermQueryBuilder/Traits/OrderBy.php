@@ -47,7 +47,7 @@ trait OrderBy
 
     private function doOrderBy(string $field_reference, Direction $direction): static
     {
-        $this->arguments[self::ORDER_BY_KEY][] = $field_reference;
+        $this->arguments[self::ORDER_BY_KEY] = $field_reference;
         $this->arguments[self::DIRECTION_KEY] = $direction->value;
 
         return $this;
