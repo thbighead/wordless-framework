@@ -2,13 +2,14 @@
 
 namespace Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits;
 
-use Wordless\Application\Helpers\Arr;
 use Wordless\Wordpress\QueryBuilder\Enums\Direction;
+use Wordless\Wordpress\QueryBuilder\MetaSubQueryBuilder\Enums\Type;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\OrderBy\Enums\FieldReference;
 
 trait OrderBy
 {
     private const DIRECTION_KEY = 'order';
+    private const META_ORDER_BY_TYPE_KEY = 'meta_order_by_type';
     private const ORDER_BY_KEY = 'orderby';
 
     public function orderBy(FieldReference $field, Direction $direction = Direction::ascending): static
@@ -16,32 +17,10 @@ trait OrderBy
         return $this->doOrderBy($field->value, $direction);
     }
 
-    public function orderByAscending(FieldReference|string $field, FieldReference|string ...$fields): static
+    public function orderByMeta(string $meta_key, Type $metaType, Direction $direction = Direction::ascending): static
     {
-        foreach (Arr::prepend($fields, $field) as $field) {
-            match (true) {
-                $field instanceof FieldReference => $this->orderBy($field),
-                is_string($field) => $this->orderByMeta($field),
-            };
-        }
+        $this->arguments[self::META_ORDER_BY_TYPE_KEY] = $metaType;
 
-        return $this;
-    }
-
-    public function orderByDescending(FieldReference|string $field, FieldReference|string ...$fields): static
-    {
-        foreach (Arr::prepend($fields, $field) as $field) {
-            match (true) {
-                $field instanceof FieldReference => $this->orderBy($field, Direction::descending),
-                is_string($field) => $this->orderByMeta($field, Direction::descending),
-            };
-        }
-
-        return $this;
-    }
-
-    public function orderByMeta(string $meta_key, Direction $direction = Direction::ascending): static
-    {
         return $this->doOrderBy($meta_key, $direction);
     }
 
