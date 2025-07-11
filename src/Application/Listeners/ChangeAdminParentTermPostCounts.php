@@ -45,7 +45,7 @@ class ChangeAdminParentTermPostCounts extends ActionListener
     private static function isRequestedTaxonomyHierarchical(): bool
     {
         try {
-            return TaxonomyQueryBuilder::getInstance()->whereName($_REQUEST['taxonomy'] ?? '')
+            return TaxonomyQueryBuilder::make()->whereName($_REQUEST['taxonomy'] ?? '')
                 ->first()
                 ?->hierarchical ?? false;
         } catch (EmptyStringParameter) {
