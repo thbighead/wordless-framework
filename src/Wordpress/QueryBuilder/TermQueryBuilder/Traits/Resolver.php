@@ -4,6 +4,8 @@ namespace Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits;
 
 use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
+use Wordless\Wordpress\QueryBuilder\MetaSubQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\MetaSubQueryBuilder\Enums\Type;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Enums\TermsListFormat;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Exceptions\DoNotUseNumberWithObjectIds;
 use WP_Term;
@@ -230,6 +232,7 @@ trait Resolver
         $this->resolveExceptArguments($arguments)
             ->resolveOnlyAssociatedToArgument($arguments)
             ->resolveOnlyTaxonomiesArgument($arguments)
+            ->resolveOrderByMeta($arguments)
             ->resolveMetaSubQuery($arguments)
             ->resolveExtraArguments($arguments, $extra_arguments);
 
@@ -269,6 +272,19 @@ trait Resolver
     private function resolveOnlyTaxonomiesArgument(array &$arguments): static
     {
         return $this->resolveUniqueKeyedArgumentArray($arguments, self::TAXONOMY_KEY);
+    }
+
+    private function resolveOrderByMeta(array &$arguments): static
+    {
+        if (($meta_order_by_type_key = $arguments[self::META_ORDER_BY_TYPE_KEY] ?? null) instanceof Type) {
+            $metaSubQuery = $arguments[MetaSubQueryBuilder::ARGUMENT_KEY] ?? MetaSubQueryBuilder::make();
+
+            $metaSubQuery->hasKey($arguments[self::ORDER_BY_KEY], $meta_order_by_type_key);
+
+            $arguments[MetaSubQueryBuilder::ARGUMENT_KEY] = $metaSubQuery;
+        }
+
+        return $this;
     }
 
     private function resolveUniqueKeyedArgumentArray(array &$arguments, string $key): static
