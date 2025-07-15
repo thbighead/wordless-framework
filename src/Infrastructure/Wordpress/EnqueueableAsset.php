@@ -66,7 +66,7 @@ abstract class EnqueueableAsset
 
     final public function enqueue(Context $context = StandardContext::no_context): bool
     {
-        if ($this->notEnqueuedYet($context)) {
+        if ($this->notEnqueuedYet($context) && $this->onlyWhen($context)) {
             $this->callWpEnqueueFunction();
 
             return self::$already_enqueued[static::class][$context->name] = true;
@@ -104,11 +104,6 @@ abstract class EnqueueableAsset
         return [];
     }
 
-    protected function version(): ?string
-    {
-        return null;
-    }
-
     /**
      * @return string[]
      */
@@ -128,6 +123,16 @@ abstract class EnqueueableAsset
     protected function getVersion(): string|bool
     {
         return $this->version() ?? false;
+    }
+
+    protected function onlyWhen(Context $context): bool
+    {
+        return true;
+    }
+
+    protected function version(): ?string
+    {
+        return null;
     }
 
     /**
