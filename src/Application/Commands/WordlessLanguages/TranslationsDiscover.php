@@ -68,8 +68,8 @@ class TranslationsDiscover
     {
         return $this->wpFilepath
             ->beginsWith(
-                $this->custom_relative_filepath_without_extension === $this->language
-                    ? $this->language
+                $this->custom_relative_filepath_without_extension === "/$this->language"
+                    ? $this->custom_relative_filepath_without_extension
                     : "$this->custom_relative_filepath_without_extension-$this->language"
             );
     }
