@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\Models;
 
+use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Wordpress\Enums\ObjectType;
@@ -60,11 +61,11 @@ class User extends WP_User implements IRelatedMetaData
 
     public function hasRole(Role|DefaultRole|string $role): bool
     {
-        return in_array($this->roles, match (true) {
+        return Arr::hasValue($this->roles, match (true) {
             $role instanceof Role => $role->name,
             $role instanceof DefaultRole => $role->value,
             default => $role,
-        }, true);
+        });
     }
 
     public function toArray(): array
