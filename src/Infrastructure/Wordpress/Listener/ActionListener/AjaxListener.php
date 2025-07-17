@@ -8,35 +8,16 @@ use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 
 abstract class AjaxListener extends ActionListener
 {
-    /**
-     * Define wp_ajax_ prefixed hook to let AJAX be called from admin panel (only logged in)
-     *
-     * @return bool
-     */
-    abstract protected static function isAvailableToAdminPanel(): bool;
-
-    /**
-     * Define wp_ajax_nopriv_ prefixed hook to let AJAX be called from frontend application (log in not an obligation)
-     *
-     * @return bool
-     */
-    abstract protected static function isAvailableToFrontend(): bool;
-
-    final protected const PREFIX_WP_AJAX = 'wp_ajax_';
-    final protected const PREFIX_WP_AJAX_NOPRIV = 'wp_ajax_nopriv_';
+    private const PREFIX_WP_AJAX = 'wp_ajax_';
+    private const PREFIX_WP_AJAX_NOPRIV = 'wp_ajax_nopriv_';
 
     public static function hookIt(?Closure $callback = null): void
     {
-        if (static::isAvailableToFrontend()) {
-            static::addActionToFrontend($callback);
-        }
-
-        if (static::isAvailableToAdminPanel()) {
-            static::addActionToAdminPanel($callback);
-        }
+        static::addActionToAuthenticatedUser($callback);
+        static::addActionToUnauthenticatedUser($callback);
     }
 
-    final protected static function addActionToAdminPanel(?Closure $callback = null): void
+    final protected static function addActionToAuthenticatedUser(?Closure $callback = null): void
     {
         add_action(
             Str::startWith(static::hook()->value, self::PREFIX_WP_AJAX),
@@ -46,7 +27,7 @@ abstract class AjaxListener extends ActionListener
         );
     }
 
-    final protected static function addActionToFrontend(?Closure $callback = null): void
+    final protected static function addActionToUnauthenticatedUser(?Closure $callback = null): void
     {
         add_action(
             Str::startWith(static::hook()->value, self::PREFIX_WP_AJAX_NOPRIV),

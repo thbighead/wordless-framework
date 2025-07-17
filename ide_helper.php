@@ -24,16 +24,6 @@ final class ExampleAjaxListener extends AjaxListener
     {
         return Action::init;
     }
-
-    protected static function isAvailableToAdminPanel(): bool
-    {
-        return true;
-    }
-
-    protected static function isAvailableToFrontend(): bool
-    {
-        return true;
-    }
 }
 
 final class ExampleListener extends Listener
