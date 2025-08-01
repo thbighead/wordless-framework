@@ -2,13 +2,21 @@
 
 namespace Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Traits;
 
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Enums\ObjectType;
 
 trait ArgumentsBuilder
 {
+    /**
+     * @return array<string, string|int|bool|array>
+     */
     protected function buildArguments(): array
     {
-        $arguments = parent::buildArguments();
+        try {
+            $arguments = parent::buildArguments();
+        } catch (EmptyQueryBuilderArguments) {
+            $arguments = [];
+        }
 
         $this->buildObjectTypeArgument($arguments);
 

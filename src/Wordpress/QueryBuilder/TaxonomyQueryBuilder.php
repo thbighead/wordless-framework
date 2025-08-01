@@ -38,21 +38,11 @@ class TaxonomyQueryBuilder extends QueryBuilder
     {
     }
 
-    /**
-     * @return bool
-     * @throws EmptyQueryBuilderArguments
-     */
     public function exists(): bool
     {
         return !empty($this->get());
     }
 
-    /**
-     * @param int $quantity
-     * @param ResultFormat|null $format
-     * @return WP_Taxonomy|array|string|null
-     * @throws EmptyQueryBuilderArguments
-     */
     public function first(int $quantity = 1, ?ResultFormat $format = null): WP_Taxonomy|array|string|null
     {
         return Arr::first($this->get($format), $quantity) ?? null;
@@ -61,7 +51,6 @@ class TaxonomyQueryBuilder extends QueryBuilder
     /**
      * @param ResultFormat|null $format
      * @return string[]|WP_Taxonomy[]
-     * @throws EmptyQueryBuilderArguments
      */
     public function get(?ResultFormat $format = null): array
     {
