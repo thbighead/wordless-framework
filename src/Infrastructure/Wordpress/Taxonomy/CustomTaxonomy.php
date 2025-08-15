@@ -10,4 +10,13 @@ abstract class CustomTaxonomy extends Taxonomy
     use Register;
 
     public const TAXONOMY_NAME_MAX_LENGTH = 32;
+
+    public function parent(bool $with_acfs = false): ?static
+    {
+        if (!static::isHierarchical()) {
+            return null;
+        }
+
+        return parent::parent($with_acfs);
+    }
 }
