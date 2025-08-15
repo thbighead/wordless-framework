@@ -85,11 +85,6 @@ abstract class Taxonomy implements IRelatedMetaData
         return $this;
     }
 
-    public function is(string $name): bool
-    {
-        return $this->taxonomy === $name;
-    }
-
     /**
      * @return bool
      * @throws EmptyQueryBuilderArguments
@@ -98,9 +93,14 @@ abstract class Taxonomy implements IRelatedMetaData
      * @throws InvalidAcfFunction
      * @throws InvalidArgumentException
      */
-    public function isSubcategory(): bool
+    public function hasParent(): bool
     {
         return !is_null($this->parent());
+    }
+
+    public function is(string $name): bool
+    {
+        return $this->taxonomy === $name;
     }
 
     /**
