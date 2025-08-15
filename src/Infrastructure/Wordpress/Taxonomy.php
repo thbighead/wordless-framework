@@ -36,6 +36,8 @@ abstract class Taxonomy implements IRelatedMetaData
 
     public readonly WP_Taxonomy $wpTaxonomy;
     protected string $url;
+    /** @var static|null $parent */
+    private ?Taxonomy $parent;
 
     final public static function getNameKey(): string
     {
@@ -58,8 +60,7 @@ abstract class Taxonomy implements IRelatedMetaData
      */
     public function __construct(WP_Term|int|string $term, bool $with_acfs = true)
     {
-        $this->wpTerm = ($term instanceof WP_Term ? $term : static::find($term))
-            ?? static::getDictionary()->reload()->find($term);
+        $this->wpTerm = ($term instanceof WP_Term ? $term : static::get($term)) ?? static::find($term);
 
         if (!$this->is($this->name())) {
             throw new InitializingModelWithWrongTaxonomyName($this, $with_acfs);
@@ -87,6 +88,21 @@ abstract class Taxonomy implements IRelatedMetaData
     public function is(string $name): bool
     {
         return $this->taxonomy === $name;
+    }
+
+    /**
+     * @param bool $with_acfs
+     * @return $this|null
+     * @throws EmptyQueryBuilderArguments
+     * @throws EmptyStringParameter
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws InvalidAcfFunction
+     * @throws InvalidArgumentException
+     */
+    public function parent(bool $with_acfs = false): ?static
+    {
+        return $this->parent
+            ?? $this->parent = $this->wpTerm->parent > 0 ? new static($this->wpTerm->parent, $with_acfs) : null;
     }
 
     /**
