@@ -11,9 +11,9 @@ abstract class CustomTaxonomy extends Taxonomy
 
     public const TAXONOMY_NAME_MAX_LENGTH = 32;
 
-    public function isSubcategory(): bool
+    public function hasParent(): bool
     {
-        return static::isHierarchical() && parent::isSubcategory();
+        return static::isHierarchical() && parent::hasParent();
     }
 
     public function parent(bool $with_acfs = false): ?static
