@@ -91,6 +91,19 @@ abstract class Taxonomy implements IRelatedMetaData
     }
 
     /**
+     * @return bool
+     * @throws EmptyQueryBuilderArguments
+     * @throws EmptyStringParameter
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws InvalidAcfFunction
+     * @throws InvalidArgumentException
+     */
+    public function isSubcategory(): bool
+    {
+        return !is_null($this->parent());
+    }
+
+    /**
      * @param bool $with_acfs
      * @return $this|null
      * @throws EmptyQueryBuilderArguments
