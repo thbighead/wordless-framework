@@ -7,6 +7,7 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedAggregatingObject;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedToGetTermLink;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\MixinWpTerm;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository;
@@ -17,6 +18,7 @@ use Wordless\Wordpress\Models\Traits\WithAcfs;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
+use WP_Error;
 use WP_Taxonomy;
 use WP_Term;
 
@@ -73,14 +75,23 @@ abstract class Taxonomy implements IRelatedMetaData
         }
     }
 
+    /**
+     * @param IRelatedMetaData|int $object
+     * @return $this
+     * @throws FailedAggregatingObject
+     */
     public function appendToObject(IRelatedMetaData|int $object): static
     {
-        wp_set_object_terms(
+        $result = wp_set_object_terms(
             is_int($object) ? $object : $object->id(),
             $this->id(),
             $this->taxonomy,
             true
         );
+
+        if ($result instanceof WP_Error || $result === false) {
+            throw new FailedAggregatingObject($object, $this, $result);
+        }
 
         return $this;
     }
@@ -116,6 +127,26 @@ abstract class Taxonomy implements IRelatedMetaData
     {
         return $this->parent
             ?? $this->parent = $this->wpTerm->parent > 0 ? new static($this->wpTerm->parent, $with_acfs) : null;
+    }
+
+    /**
+     * @param IRelatedMetaData|int $object
+     * @return $this
+     * @throws FailedAggregatingObject
+     */
+    public function removeFromObject(IRelatedMetaData|int $object): static
+    {
+        $result = wp_remove_object_terms(
+            is_int($object) ? $object : $object->id(),
+            $this->id(),
+            $this->taxonomy
+        );
+
+        if ($result instanceof WP_Error || $result === false) {
+            throw new FailedAggregatingObject($object, $this, $result);
+        }
+
+        return $this;
     }
 
     /**
