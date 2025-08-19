@@ -16,6 +16,7 @@ use Wordless\Wordpress\Models\Post\Traits\MixinWpPost;
 use Wordless\Wordpress\Models\Post\Traits\Taxonomies;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
+use Wordless\Wordpress\Models\Traits\Terms;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use WP_Post;
@@ -25,10 +26,11 @@ use WP_Post;
  */
 class Post implements IRelatedMetaData
 {
-    use Taxonomies;
+    use Crud;
     use FeaturedImage;
     use MixinWpPost;
-    use Crud;
+    use Taxonomies;
+    use Terms;
     use WithAcfs;
     use WithMetaData;
 

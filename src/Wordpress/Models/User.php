@@ -9,6 +9,7 @@ use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
+use Wordless\Wordpress\Models\Traits\Terms;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
@@ -18,6 +19,7 @@ use WP_User;
 class User extends WP_User implements IRelatedMetaData
 {
     use Crud;
+    use Terms;
     use WithAcfs;
     use WithMetaData;
 
