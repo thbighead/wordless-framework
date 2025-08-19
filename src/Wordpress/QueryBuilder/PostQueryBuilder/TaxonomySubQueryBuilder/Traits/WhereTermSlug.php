@@ -100,7 +100,7 @@ trait WhereTermSlug
         Operator     $operator = Operator::in
     ): static
     {
-        return $this->where(Field::name, $slug, $taxonomy, $operator);
+        return $this->where(Field::slug, $slug, $taxonomy, $operator);
     }
 
     private function whereTermSlugIncludingChildren(
@@ -109,6 +109,6 @@ trait WhereTermSlug
         Operator     $operator = Operator::in
     ): static
     {
-        return $this->whereIncludingChildren(Field::name, $slug, $taxonomy, $operator);
+        return $this->whereIncludingChildren(Field::slug, $slug, $taxonomy, $operator);
     }
 }
