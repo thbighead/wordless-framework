@@ -50,7 +50,11 @@ trait PolymorphicConstructorGuesser
         ];
 
         foreach ($arguments as $argument) {
-            $parsed_arguments[self::PARSED_ARGUMENTS_ARGUMENTS_TYPES_KEY] .= GetType::of($argument);
+            if (Str::endsWith($type = GetType::of($argument), GetType::ARRAY)) {
+                $type = GetType::ARRAY;
+            }
+
+            $parsed_arguments[self::PARSED_ARGUMENTS_ARGUMENTS_TYPES_KEY] .= $type;
         }
 
         return $parsed_arguments;
