@@ -7,12 +7,15 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\PolymorphicConstructor\Contracts\IPolymorphicConstructor;
 use Wordless\Application\Libraries\PolymorphicConstructor\Exceptions\ClassDoesNotImplementsPolymorphicConstructor;
 use Wordless\Application\Libraries\PolymorphicConstructor\Exceptions\ConstructorNotImplemented;
+use Wordless\Application\Libraries\PolymorphicConstructor\Traits\PolymorphicConstructorGuesser\DTO\ParsedArgumentsDTO;
+use Wordless\Application\Libraries\PolymorphicConstructor\Traits\PolymorphicConstructorGuesser\Exceptions\FailedToGuessConstructor;
 
 trait PolymorphicConstructorGuesser
 {
     /**
      * @throws ClassDoesNotImplementsPolymorphicConstructor
      * @throws ConstructorNotImplemented
+     * @throws FailedToGuessConstructor
      */
     public function __construct()
     {
@@ -21,7 +24,7 @@ trait PolymorphicConstructorGuesser
             throw new ClassDoesNotImplementsPolymorphicConstructor(static::class);
         }
 
-        $constructor_method = self::guessConstructor(self::parseArguments($arguments = func_get_args()));
+        $constructor_method = self::guessConstructor(new ParsedArgumentsDTO($arguments = func_get_args()));
 
         if (!method_exists($this, $constructor_method)) {
             throw new ConstructorNotImplemented(static::class, $constructor_method);
@@ -30,33 +33,27 @@ trait PolymorphicConstructorGuesser
         call_user_func_array([$this, $constructor_method], $arguments);
     }
 
-    private static function guessConstructor(array $parsed_arguments): string
+    /**
+     * @param ParsedArgumentsDTO $parsedArguments
+     * @return string
+     * @throws FailedToGuessConstructor
+     */
+    private static function guessConstructor(ParsedArgumentsDTO $parsedArguments): string
     {
-        $number_of_arguments = $parsed_arguments[self::PARSED_ARGUMENTS_NUMBER_OF_ARGUMENTS_KEY];
-        $arguments_types = $parsed_arguments[self::PARSED_ARGUMENTS_ARGUMENTS_TYPES_KEY];
+        $constructor_method = null;
 
-        return Str::startWith(
-            static::constructorsDictionary()[$number_of_arguments][$arguments_types] ?? $number_of_arguments,
-            '__construct'
-        );
-    }
+        foreach ($parsedArguments->typesConcat() as $types_concat) {
+            $constructor_method = static::constructorsDictionary()[$parsedArguments->count][$types_concat] ?? null;
 
-    private static function parseArguments(array $arguments): array
-    {
-        $parsed_arguments = [
-            self::PARSED_ARGUMENTS_NUMBER_OF_ARGUMENTS_KEY => count($arguments),
-            self::PARSED_ARGUMENTS_ARGUMENTS_VALUES_KEY => $arguments,
-            self::PARSED_ARGUMENTS_ARGUMENTS_TYPES_KEY => '',
-        ];
-
-        foreach ($arguments as $argument) {
-            if (Str::endsWith($type = GetType::of($argument), GetType::ARRAY)) {
-                $type = GetType::ARRAY;
+            if ($constructor_method !== null) {
+                break;
             }
-
-            $parsed_arguments[self::PARSED_ARGUMENTS_ARGUMENTS_TYPES_KEY] .= $type;
         }
 
-        return $parsed_arguments;
+        if ($constructor_method === null) {
+            throw new FailedToGuessConstructor($parsedArguments, static::constructorsDictionary());
+        }
+
+        return Str::startWith($constructor_method, '__construct');
     }
 }
