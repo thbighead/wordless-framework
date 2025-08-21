@@ -4,6 +4,7 @@ namespace Wordless\Application\Helpers;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Database\DTO\QueryResultDTO;
+use Wordless\Application\Helpers\Database\Exceptions\InvalidDataTypeToInsert;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\Database\Traits\SmartTransaction;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
@@ -42,19 +43,64 @@ class Database extends Helper
     }
 
     /**
+     * @param string $table
+     * @param array<string, double|int|string> $data
+     * @return QueryResultDTO
+     * @throws InvalidDataTypeToInsert
+     * @throws QueryError
+     */
+    public static function insert(string $table, array $data): QueryResultDTO
+    {
+        if (($affected_rows = self::wpdb()->insert(
+                Str::startWith($table, self::wpdb()->prefix),
+                $data,
+                self::parseDataTypes($data)
+            )) === false) {
+            throw new QueryError(self::wpdb()->last_query);
+        }
+
+        return new QueryResultDTO($affected_rows, self::wpdb()->last_result);
+    }
+
+    /**
      * @param string $query
      * @return QueryResultDTO
      * @throws QueryError
      */
     public static function query(string $query): QueryResultDTO
     {
-        /** @var wpdb $wpdb */
-        global $wpdb;
-
-        if (($affected_rows = $wpdb->query($query)) === false) {
+        if (($affected_rows = self::wpdb()->query($query)) === false) {
             throw new QueryError($query);
         }
 
-        return new QueryResultDTO($affected_rows, $wpdb->last_result);
+        return new QueryResultDTO($affected_rows, self::wpdb()->last_result);
+    }
+
+    final public static function wpdb(): wpdb
+    {
+        global $wpdb;
+
+        return $wpdb;
+    }
+
+    /**
+     * @param array<string, double|int|string> $data
+     * @return array
+     * @throws InvalidDataTypeToInsert
+     */
+    private static function parseDataTypes(array $data): array
+    {
+        $data_types = [];
+
+        foreach ($data as $key => $value) {
+            $data_types[] = match ($type = GetType::of($value)) {
+                GetType::DOUBLE => '%f',
+                GetType::INTEGER => '%d',
+                GetType::STRING => '%s',
+                default => throw new InvalidDataTypeToInsert($type, $key, $value),
+            };
+        }
+
+        return $data_types;
     }
 }
