@@ -101,10 +101,9 @@ abstract class ApiController extends WP_REST_Controller
 
     private function __construct()
     {
-        $uri_namespace_prefix = "/{$this->namespace()}";
         $this->namespace = empty($this->version()) ?
-            $uri_namespace_prefix :
-            "/$uri_namespace_prefix/{$this->version()}";
+            $this->namespace() :
+            "{$this->namespace()}/{$this->version()}";
         $this->rest_base = $this->resourceName();
         $this->setAuthenticatedUser();
     }

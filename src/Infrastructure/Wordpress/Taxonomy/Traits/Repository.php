@@ -112,9 +112,9 @@ trait Repository
 
     private static function areEquals(?WP_Term $term1, ?WP_Term $term2): bool
     {
-        return $term1?->term_id === $term2->term_id
-            && $term1?->term_taxonomy_id === $term2->term_taxonomy_id
-            && $term1?->slug === $term2->slug
-            && $term1?->name === $term2->name;
+        return $term1?->term_id === $term2?->term_id
+            && $term1?->term_taxonomy_id === $term2?->term_taxonomy_id
+            && $term1?->slug === $term2?->slug
+            && $term1?->name === $term2?->name;
     }
 }
