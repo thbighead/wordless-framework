@@ -121,7 +121,7 @@ abstract class ApiController extends WP_REST_Controller
     protected function setAuthenticatedUser(): void
     {
         try {
-            $this->authenticatedUser = new User;
+            $this->authenticatedUser = new User(with_acfs: function_exists('get_fields'));
         } catch (NoUserAuthenticated) {
             $this->authenticatedUser = null;
         }
