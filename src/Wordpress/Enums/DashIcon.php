@@ -598,6 +598,8 @@ enum DashIcon: string
     case screen_desktop = self::DASHICON_PREFIX . 'desktop';
     /** @var string https://developer.wordpress.org/resource/dashicons/#tablet */
     case screen_tablet = self::DASHICON_PREFIX . 'tablet';
+    /** @var string https://developer.wordpress.org/resource/dashicons/#smartphone */
+    case smartphone = self::DASHICON_PREFIX . 'smartphone';
     /** @var string https://developer.wordpress.org/resource/dashicons/#phone */
     case screen_phone = self::DASHICON_PREFIX . 'phone';
     /** @var string https://developer.wordpress.org/resource/dashicons/#carrot */
