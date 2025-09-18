@@ -53,6 +53,7 @@ class WordlessInstall extends ConsoleCommand
     use RunWpCliCommand;
 
     public const COMMAND_NAME = 'wordless:install';
+    final public const WORDLESS_ADMIN_USER = 'wordless';
     private const FIRST_ADMIN_PASSWORD = 'wordless_admin';
     private const FIRST_ADMIN_USERNAME = 'admin';
     private const MU_PLUGIN_FILE_NAME = 'wordless-plugin.php';
@@ -759,11 +760,11 @@ class WordlessInstall extends ConsoleCommand
         } catch (FormatException|DotEnvNotSetException) {
         }
 
-        $email = WordlessUser::USERNAME . "@$app_host";
+        $email = self::WORDLESS_ADMIN_USER . "@$app_host";
 
         $this->runWpCliCommandWithoutInterruption(
             "db query 'UPDATE {$this->getEnvVariableByKey('DB_TABLE_PREFIX')}users SET user_pass=\""
-            . WordlessUser::password()
+            . Str::random()
             . "\" WHERE user_email=\"$email\"'"
         );
     }
