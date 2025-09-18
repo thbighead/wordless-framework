@@ -10,6 +10,7 @@ use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Create\Exceptions\FailedToCreateUser;
+use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToDeleteWordlessUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToUpdateWordlessUser;
 
 final class WordlessUser extends User
@@ -60,6 +61,15 @@ final class WordlessUser extends User
     public static function make(): self
     {
         return self::getInstance();
+    }
+
+    /**
+     * @return void
+     * @throws TryingToDeleteWordlessUser
+     */
+    public function delete(): void
+    {
+        throw new TryingToDeleteWordlessUser;
     }
 
     /**
