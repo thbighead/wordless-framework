@@ -4,12 +4,14 @@ namespace Wordless\Wordpress\Models\User;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Create\Exceptions\FailedToCreateUser;
+use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToDeleteWordlessUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToUpdateWordlessUser;
 
 final class WordlessUser extends User
@@ -17,7 +19,6 @@ final class WordlessUser extends User
     use Constructors;
 
     public const USERNAME = 'wordless';
-    public const FIRST_PASSWORD = 'wordless_admin';
 
     public static function email(): string
     {
@@ -46,7 +47,7 @@ final class WordlessUser extends User
     ): static
     {
         if (self::find() === null) {
-            return parent::create(self::email(), self::FIRST_PASSWORD, role: DefaultRole::admin);
+            return parent::create(self::email(), self::password(), role: DefaultRole::admin);
         }
 
         return self::make();
@@ -60,6 +61,20 @@ final class WordlessUser extends User
     public static function make(): self
     {
         return self::getInstance();
+    }
+
+    final public static function password(): string
+    {
+        return Str::random();
+    }
+
+    /**
+     * @return void
+     * @throws TryingToDeleteWordlessUser
+     */
+    public function delete(): void
+    {
+        throw new TryingToDeleteWordlessUser;
     }
 
     /**
