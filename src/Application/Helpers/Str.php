@@ -7,6 +7,7 @@ namespace Wordless\Application\Helpers;
 use InvalidArgumentException;
 use JsonException;
 use Ramsey\Uuid\Uuid;
+use Random\RandomException;
 use Wordless\Application\Helpers\Str\Contracts\Subjectable;
 use Wordless\Application\Helpers\Str\Enums\Encoding;
 use Wordless\Application\Helpers\Str\Enums\Language;
@@ -53,9 +54,30 @@ class Str extends Subjectable
         return self::getInflector($language)->pluralize($string);
     }
 
+    /**
+     * @param int $size
+     * @return string
+     * @throws RandomException
+     */
     public static function random(int $size = self::DEFAULT_RANDOM_SIZE): string
     {
-        return wp_generate_password($size <= 0 ? self::DEFAULT_RANDOM_SIZE : $size, false);
+        if ($size <= 0) {
+            $size = self::DEFAULT_RANDOM_SIZE;
+        }
+
+        if (function_exists('wp_generate_password')) {
+            return wp_generate_password($size, false);
+        }
+
+        $keyspace = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $pieces = [];
+        $max = mb_strlen($keyspace, '8bit') - 1;
+
+        for ($i = 0; $i < $size; ++$i) {
+            $pieces [] = $keyspace[random_int(0, $max)];
+        }
+
+        return implode('', $pieces);
     }
 
     /**
