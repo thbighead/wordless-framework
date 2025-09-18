@@ -44,6 +44,7 @@ use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
+use Wordless\Wordpress\Models\User\WordlessUser;
 
 class WordlessInstall extends ConsoleCommand
 {
@@ -52,7 +53,8 @@ class WordlessInstall extends ConsoleCommand
     use RunWpCliCommand;
 
     public const COMMAND_NAME = 'wordless:install';
-    final public const TEMP_MAIL = 'temp@mail.not.real';
+    private const FIRST_ADMIN_PASSWORD = 'wordless_admin';
+    private const FIRST_ADMIN_USERNAME = 'admin';
     private const MU_PLUGIN_FILE_NAME = 'wordless-plugin.php';
     private const WORDPRESS_SALT_URL_GETTER = 'https://api.wordpress.org/secret-key/1.1/salt/';
 
@@ -454,6 +456,16 @@ class WordlessInstall extends ConsoleCommand
         $this->fresh_new_env_content = (new Dotenv)->parse($dot_env_content);
     }
 
+    private function firstAdminEmail(): string
+    {
+        try {
+            $app_host = $this->getEnvVariableByKey('APP_HOST', $app_host = 'wordless.wordless');
+        } catch (FormatException|DotEnvNotSetException) {
+        }
+
+        return self::FIRST_ADMIN_USERNAME . "@$app_host";
+    }
+
     /**
      * @return $this
      * @throws CliReturnedNonZero
@@ -570,14 +582,17 @@ class WordlessInstall extends ConsoleCommand
         try {
             $this->runWpCliCommand('core is-installed');
             $this->writelnInfoWhenVerbose('WordPress Core Database already installed, skipping.');
+            $this->refreshWordlessUserPassword();
         } catch (WpCliCommandReturnedNonZero) {
             $app_name = $this->getEnvVariableByKey('APP_NAME', 'Wordless App');
             $app_url = $this->getEnvVariableByKey('APP_URL', Environment::isFramework() ? '' : null);
             $app_url_with_final_slash = Str::finishWith($app_url, '/');
 
             $this->runWpCliCommand(
-                "core install --url=$app_url_with_final_slash --locale={$this->getWpLanguages()[0]} --title=\"$app_name\" --skip-email --admin_user=temp --admin_email="
-                . self::TEMP_MAIL
+                "core install --url=$app_url_with_final_slash --locale={$this->getWpLanguages()[0]} --title=\"$app_name\" --skip-email --admin_email={$this->firstAdminEmail()} --admin_user="
+                . self::FIRST_ADMIN_USERNAME
+                . ' --admin_password='
+                . self::FIRST_ADMIN_PASSWORD
             );
         }
 
@@ -727,6 +742,30 @@ class WordlessInstall extends ConsoleCommand
         $this->runWpCliCommand('db optimize');
 
         return $this;
+    }
+
+    /**
+     * @return void
+     * @throws CommandNotFoundException
+     * @throws DotEnvNotSetException
+     * @throws ExceptionInterface
+     * @throws FormatException
+     * @throws InvalidArgumentException
+     */
+    private function refreshWordlessUserPassword(): void
+    {
+        try {
+            $app_host = $this->getEnvVariableByKey('APP_HOST', $app_host = 'wordless.wordless');
+        } catch (FormatException|DotEnvNotSetException) {
+        }
+
+        $email = WordlessUser::USERNAME . "@$app_host";
+
+        $this->runWpCliCommandWithoutInterruption(
+            "db query 'UPDATE {$this->getEnvVariableByKey('DB_TABLE_PREFIX')}users SET user_pass=\""
+            . WordlessUser::password()
+            . "\" WHERE user_email=\"$email\"'"
+        );
     }
 
     /**
