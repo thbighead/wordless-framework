@@ -40,8 +40,8 @@ final class WordlessUser extends User
      * @noinspection PhpUnnecessaryStaticReferenceInspection
      */
     public static function create(
-        string                  $email,
-        string                  $password,
+        string                  $email = '',
+        string                  $password = '',
         ?string                 $username = null,
         Role|DefaultRole|string|null $role = DefaultRole::subscriber
     ): static
