@@ -3,6 +3,7 @@
 namespace Wordless\Wordpress\Models\User;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Commands\WordlessInstall;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
@@ -18,7 +19,7 @@ final class WordlessUser extends User
 {
     use Constructors;
 
-    public const USERNAME = 'wordless';
+    final public const USERNAME = WordlessInstall::WORDLESS_ADMIN_USER;
 
     public static function email(): string
     {
@@ -63,7 +64,7 @@ final class WordlessUser extends User
         return self::getInstance();
     }
 
-    final public static function password(): string
+    private static function password(): string
     {
         return Str::random();
     }
