@@ -6,9 +6,19 @@ use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 
 trait Loader
 {
-    /** @noinspection PhpPrivateFieldCanBeLocalVariableInspection */
     private int|string $acf_from_id;
     private array $acfs = [];
+
+    /**
+     * @return $this
+     * @throws InvalidAcfFunction
+     */
+    public function reloadAcfs(): static
+    {
+        $this->loadAcfs($this->acf_from_id);
+
+        return $this;
+    }
 
     /**
      * @param int|string $from_id

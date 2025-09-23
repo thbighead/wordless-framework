@@ -2,12 +2,107 @@
 
 namespace Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits;
 
+use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
+use Wordless\Wordpress\QueryBuilder\MetaSubQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\MetaSubQueryBuilder\Enums\Type;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Enums\TermsListFormat;
+use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Exceptions\DoNotUseNumberWithObjectIds;
 use WP_Term;
 
 trait Resolver
 {
+    /**
+     * @param int $quantity
+     * @param array $extra_arguments
+     * @return WP_Term|null
+     * @throws DoNotUseNumberWithObjectIds
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function first(int $quantity = 1, array $extra_arguments = []): ?WP_Term
+    {
+        return Arr::first($this->limit($quantity = max(1, $quantity))
+            ->get($extra_arguments), $quantity);
+    }
+
+    /**
+     * @param int $quantity
+     * @param array $extra_arguments
+     * @return int|null
+     * @throws DoNotUseNumberWithObjectIds
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function firstId(int $quantity = 1, array $extra_arguments = []): ?int
+    {
+        return Arr::first($this->limit($quantity = max(1, $quantity))
+            ->getIds($extra_arguments), $quantity);
+    }
+
+    /**
+     * @param int $quantity
+     * @param array $extra_arguments
+     * @return string|null
+     * @throws DoNotUseNumberWithObjectIds
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function firstName(int $quantity = 1, array $extra_arguments = []): ?string
+    {
+        return Arr::first($this->limit($quantity = max(1, $quantity))
+            ->getNames($extra_arguments), $quantity);
+    }
+
+    /**
+     * @param int $quantity
+     * @param array $extra_arguments
+     * @return int|null
+     * @throws DoNotUseNumberWithObjectIds
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function firstNumberOfAssociatedObjects(int $quantity = 1, array $extra_arguments = []): ?int
+    {
+        return Arr::first($this->limit($quantity = max(1, $quantity))
+            ->getNumberOfAssociatedObjects($extra_arguments), $quantity);
+    }
+
+    /**
+     * @param int $quantity
+     * @param array $extra_arguments
+     * @return int|null
+     * @throws DoNotUseNumberWithObjectIds
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function firstParentId(int $quantity = 1, array $extra_arguments = []): ?int
+    {
+        return Arr::first($this->limit($quantity = max(1, $quantity))
+            ->getParentIdsKeyedById($extra_arguments), $quantity);
+    }
+
+    /**
+     * @param int $quantity
+     * @param array $extra_arguments
+     * @return string|null
+     * @throws DoNotUseNumberWithObjectIds
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function firstSlug(int $quantity = 1, array $extra_arguments = []): ?string
+    {
+        return Arr::first($this->limit($quantity = max(1, $quantity))
+            ->getSlugs($extra_arguments), $quantity);
+    }
+
+    /**
+     * @param int $quantity
+     * @param array $extra_arguments
+     * @return string|null
+     * @throws DoNotUseNumberWithObjectIds
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function firstTaxonomyTermId(int $quantity = 1, array $extra_arguments = []): ?string
+    {
+        return Arr::first($this->limit($quantity = max(1, $quantity))
+            ->getTaxonomyTermIds($extra_arguments), $quantity);
+    }
+
     /**
      * @return WP_Term[]
      * @throws EmptyQueryBuilderArguments
@@ -137,6 +232,7 @@ trait Resolver
         $this->resolveExceptArguments($arguments)
             ->resolveOnlyAssociatedToArgument($arguments)
             ->resolveOnlyTaxonomiesArgument($arguments)
+            ->resolveOrderByMeta($arguments)
             ->resolveMetaSubQuery($arguments)
             ->resolveExtraArguments($arguments, $extra_arguments);
 
@@ -176,6 +272,19 @@ trait Resolver
     private function resolveOnlyTaxonomiesArgument(array &$arguments): static
     {
         return $this->resolveUniqueKeyedArgumentArray($arguments, self::TAXONOMY_KEY);
+    }
+
+    private function resolveOrderByMeta(array &$arguments): static
+    {
+        if (($meta_order_by_type_key = $arguments[self::META_ORDER_BY_TYPE_KEY] ?? null) instanceof Type) {
+            $metaSubQuery = $arguments[MetaSubQueryBuilder::ARGUMENT_KEY] ?? MetaSubQueryBuilder::make();
+
+            $metaSubQuery->hasKey($arguments[self::ORDER_BY_KEY], $meta_order_by_type_key);
+
+            $arguments[MetaSubQueryBuilder::ARGUMENT_KEY] = $metaSubQuery;
+        }
+
+        return $this;
     }
 
     private function resolveUniqueKeyedArgumentArray(array &$arguments, string $key): static

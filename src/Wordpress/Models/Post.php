@@ -2,8 +2,6 @@
 
 namespace Wordless\Wordpress\Models;
 
-use Wordless\Application\Helpers\Arr;
-use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
@@ -16,6 +14,7 @@ use Wordless\Wordpress\Models\Post\Traits\MixinWpPost;
 use Wordless\Wordpress\Models\Post\Traits\Taxonomies;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
+use Wordless\Wordpress\Models\Traits\Terms;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use WP_Post;
@@ -25,10 +24,11 @@ use WP_Post;
  */
 class Post implements IRelatedMetaData
 {
-    use Taxonomies;
+    use Crud;
     use FeaturedImage;
     use MixinWpPost;
-    use Crud;
+    use Taxonomies;
+    use Terms;
     use WithAcfs;
     use WithMetaData;
 
@@ -101,13 +101,6 @@ class Post implements IRelatedMetaData
         }
     }
 
-    public function appendTaxonomy(Taxonomy $taxonomyTerm): static
-    {
-        wp_set_object_terms($this->id(), $taxonomyTerm->id(), $taxonomyTerm->taxonomy, true);
-
-        return $this;
-    }
-
     public function getStatus(): PostStatus
     {
         return $this->status ?? $this->status = new PostStatus($this->post_status);
@@ -116,35 +109,6 @@ class Post implements IRelatedMetaData
     public function getType(): PostType
     {
         return $this->type;
-    }
-
-    public function resetTaxonomies(string $taxonomy_key): static
-    {
-        wp_set_object_terms($this->id(), [], $taxonomy_key);
-
-        return $this;
-    }
-
-    public function setTaxonomies(Taxonomy $taxonomyTerm, Taxonomy ...$taxonomyTerms): static
-    {
-        $terms_ids_grouped_by_taxonomy_key = [];
-
-        /** @var Taxonomy $term */
-        foreach (Arr::prepend($taxonomyTerms, $taxonomyTerm) as $term) {
-            $terms_ids_grouped_by_taxonomy_key[$term->taxonomy][] = $term->id();
-        }
-
-        foreach ($terms_ids_grouped_by_taxonomy_key as $taxonomy_key => $terms) {
-            $taxonomy_terms_ids = [];
-
-            foreach ($terms as $term_id) {
-                $taxonomy_terms_ids[] = $term_id;
-            }
-
-            wp_set_object_terms($this->id(), $taxonomy_terms_ids, $taxonomy_key);
-        }
-
-        return $this;
     }
 
     /**

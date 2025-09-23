@@ -3,9 +3,13 @@
 namespace Wordless\Wordpress\Models\User;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Commands\WordlessInstall;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Wordpress\Models\Role;
+use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Create\Exceptions\FailedToCreateUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToDeleteWordlessUser;
@@ -15,8 +19,7 @@ final class WordlessUser extends User
 {
     use Constructors;
 
-    public const USERNAME = 'wordless';
-    public const FIRST_PASSWORD = 'wordless_admin';
+    final public const USERNAME = WordlessInstall::WORDLESS_ADMIN_USER;
 
     public static function email(): string
     {
@@ -32,14 +35,20 @@ final class WordlessUser extends User
      * @param string $email
      * @param string $password
      * @param string|null $username
+     * @param Role|DefaultRole|string|null $role
      * @return static
      * @throws FailedToCreateUser
      * @noinspection PhpUnnecessaryStaticReferenceInspection
      */
-    public static function create(string $email = '', string $password = '', ?string $username = null): static
+    public static function create(
+        string                  $email = '',
+        string                  $password = '',
+        ?string                 $username = null,
+        Role|DefaultRole|string|null $role = DefaultRole::subscriber
+    ): static
     {
         if (self::find() === null) {
-            return parent::create(self::email(), self::FIRST_PASSWORD);
+            return parent::create(self::email(), self::password(), role: DefaultRole::admin);
         }
 
         return self::make();
@@ -53,6 +62,11 @@ final class WordlessUser extends User
     public static function make(): self
     {
         return self::getInstance();
+    }
+
+    private static function password(): string
+    {
+        return Str::random();
     }
 
     /**

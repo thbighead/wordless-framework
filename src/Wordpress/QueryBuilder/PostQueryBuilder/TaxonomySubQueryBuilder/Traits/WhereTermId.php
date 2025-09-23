@@ -80,7 +80,7 @@ trait WhereTermId
         Operator  $operator = Operator::in
     ): static
     {
-        return $this->where(Field::name, $term_id, $taxonomy, $operator);
+        return $this->where(Field::term_id, $term_id, $taxonomy, $operator);
     }
 
     private function whereTermIdIncludingChildren(
@@ -89,6 +89,6 @@ trait WhereTermId
         Operator  $operator = Operator::in
     ): static
     {
-        return $this->whereIncludingChildren(Field::name, $term_id, $taxonomy, $operator);
+        return $this->whereIncludingChildren(Field::term_id, $term_id, $taxonomy, $operator);
     }
 }

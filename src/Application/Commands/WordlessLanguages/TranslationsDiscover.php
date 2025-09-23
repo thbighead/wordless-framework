@@ -67,7 +67,11 @@ class TranslationsDiscover
     private function hasDiscovered(): bool
     {
         return $this->wpFilepath
-            ->beginsWith("$this->custom_relative_filepath_without_extension-$this->language");
+            ->beginsWith(
+                $this->custom_relative_filepath_without_extension === "/$this->language"
+                    ? $this->custom_relative_filepath_without_extension
+                    : "$this->custom_relative_filepath_without_extension-$this->language"
+            );
     }
 
     private function isValidFileExtension(): bool

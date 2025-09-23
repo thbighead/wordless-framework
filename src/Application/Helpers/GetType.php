@@ -8,9 +8,11 @@ use Wordless\Infrastructure\Helper;
 class GetType extends Helper
 {
     final public const ARRAY = 'array';
+    final public const ASSOCIATIVE_ARRAY = 'associative ' . self::ARRAY;
     final public const BOOLEAN = 'boolean';
     final public const DOUBLE = 'double';
     final public const INTEGER = 'integer';
+    final public const LIST_ARRAY = 'list ' . self::ARRAY;
     final public const NULL = 'NULL';
     final public const OBJECT = 'object';
     final public const STRING = 'string';
@@ -43,16 +45,10 @@ class GetType extends Helper
 
     public static function of($variable): string
     {
-        $type = gettype($variable);
-
-        if ($type === self::ARRAY) {
-            return Arr::isAssociative($variable) ? "associative $type" : "list $type";
-        }
-
-        if ($type === self::OBJECT) {
-            return $variable::class;
-        }
-
-        return $type;
+        return match ($type = gettype($variable)) {
+            self::ARRAY => Arr::isAssociative($variable) ? self::ASSOCIATIVE_ARRAY : self::LIST_ARRAY,
+            self::OBJECT => $variable::class,
+            default => $type,
+        };
     }
 }

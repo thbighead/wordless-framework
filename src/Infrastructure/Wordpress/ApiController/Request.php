@@ -4,6 +4,7 @@ namespace Wordless\Infrastructure\Wordpress\ApiController;
 
 use Wordless\Infrastructure\Http\MutableHeaderBag;
 use WP_REST_Request;
+use WP_REST_Server;
 
 class Request extends WP_REST_Request implements MutableHeaderBag
 {
@@ -33,6 +34,13 @@ class Request extends WP_REST_Request implements MutableHeaderBag
     )
     {
         parent::__construct($method, $route, $attributes);
+
+        $this->set_query_params(wp_unslash($_GET));
+        $this->set_body_params(wp_unslash($_POST));
+        $this->set_file_params($_FILES);
+        $this->set_headers((new WP_REST_Server)->get_headers(wp_unslash($_SERVER)));
+        $this->set_body(WP_REST_Server::get_raw_data());
+
         $this->validated_fields = $validated_fields;
     }
 

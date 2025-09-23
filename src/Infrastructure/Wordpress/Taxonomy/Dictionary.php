@@ -55,7 +55,7 @@ abstract class Dictionary extends Singleton
         return self::$taxonomy_terms_keyed_by_id[$this->taxonomy] ?? [];
     }
 
-    public function find(int|string $category): ?WP_Term
+    public function get(int|string $category): ?WP_Term
     {
         if (is_int($category) || is_numeric($category)) {
             return $this->getById((int)$category);

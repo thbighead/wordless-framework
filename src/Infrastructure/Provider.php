@@ -8,8 +8,11 @@ use Wordless\Infrastructure\Provider\Traits\ListenersRegistration;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPostStatus;
+use Wordless\Infrastructure\Wordpress\SidebarRegistrar;
+use Wordless\Infrastructure\Wordpress\WidgetRegistrar;
 use Wordless\Infrastructure\Wordpress\Menu;
 use Wordless\Infrastructure\Wordpress\Schedule;
+use Wordless\Infrastructure\Wordpress\ShortcodeRegistrar;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
 
 abstract class Provider
@@ -101,9 +104,33 @@ abstract class Provider
     }
 
     /**
+     * @return string[]|ShortcodeRegistrar[]
+     */
+    public function registerShortcodes(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return string[]|SidebarRegistrar[]
+     */
+    public function registerSidebars(): array
+    {
+        return [];
+    }
+
+    /**
      * @return string[]|CustomTaxonomy[]
      */
     public function registerTaxonomies(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return string[]|WidgetRegistrar[]
+     */
+    public function registerWidgets(): array
     {
         return [];
     }

@@ -4,6 +4,7 @@ namespace Wordless\Application\Libraries\Validation;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -30,7 +31,14 @@ class Validator
 
     public function hasErrors(): bool
     {
-        return !empty($this->validationErrors);
+        /** @var ConstraintViolationList $fieldErrorsList */
+        foreach ($this->validationErrors as $fieldErrorsList) {
+            if ($fieldErrorsList->count() > 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

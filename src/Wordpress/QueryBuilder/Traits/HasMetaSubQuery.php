@@ -3,7 +3,7 @@
 namespace Wordless\Wordpress\QueryBuilder\Traits;
 
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\MetaSubQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\MetaSubQueryBuilder;
 
 trait HasMetaSubQuery
 {

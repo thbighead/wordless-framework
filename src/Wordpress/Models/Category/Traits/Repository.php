@@ -10,14 +10,14 @@ trait Repository
     /**
      * @return static[]
      */
-    public static function all(): array
+    public static function all(bool $with_acfs = false): array
     {
         /** @var Dictionary $dictionary */
         $dictionary = static::getDictionary();
         $all = [];
 
         foreach ($dictionary->all() as $key => $categoryWpTerm) {
-            $all[$key] = $categoryWpTerm;
+            $all[$key] = new static($categoryWpTerm, $with_acfs);
         }
 
         return $all;
