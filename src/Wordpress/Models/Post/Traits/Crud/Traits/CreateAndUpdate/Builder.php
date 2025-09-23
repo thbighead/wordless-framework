@@ -23,7 +23,7 @@ use WP_User;
 
 abstract class Builder
 {
-    private int|null $author_id = null;
+    private int|null $author_id;
     private bool $accepts_comments;
     private ?string $content = null;
     private ?string $excerpt = null;
