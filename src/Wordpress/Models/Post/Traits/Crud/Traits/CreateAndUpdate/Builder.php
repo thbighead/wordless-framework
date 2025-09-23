@@ -17,12 +17,13 @@ use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\User;
+use Wordless\Wordpress\Models\User\WordlessUser;
 use WP_Error;
 use WP_User;
 
 abstract class Builder
 {
-    private User|WP_User|int|null $author_id = null;
+    private int|null $author_id = null;
     private bool $accepts_comments;
     private ?string $content = null;
     private ?string $excerpt = null;
@@ -40,6 +41,8 @@ abstract class Builder
         private readonly StandardType|PostType|CustomPost|string $type
     )
     {
+        $this->author_id = WordlessUser::make()->id();
+
         try {
             $this->accepts_comments = (bool)Config::wordpressAdmin(
                 DisableCommentsActionListener::CONFIG_KEY_ENABLE_COMMENTS
@@ -47,6 +50,13 @@ abstract class Builder
         } catch (EmptyConfigKey|PathNotFoundException) {
             $this->accepts_comments = false;
         }
+    }
+
+    public function author(User|WP_User|int|null $user): static
+    {
+        $this->author_id = is_int($user) || is_null($user) ? $user : $user->ID;
+
+        return $this;
     }
 
     public function content(string $html_content): static
@@ -124,6 +134,11 @@ abstract class Builder
         return $this;
     }
 
+    public function user(User|WP_User|int|null $user): static
+    {
+        return $this->author($user);
+    }
+
     public function withMeta(string $meta_key, mixed $meta_value): static
     {
         $this->meta[$meta_key] = $meta_value;
@@ -154,7 +169,7 @@ abstract class Builder
         }
 
         if ($this->author_id !== null) {
-            $post_array['post_author'] = is_int($this->author_id) ? $this->author_id : $this->author_id->ID;
+            $post_array['post_author'] = $this->author_id;
         }
 
         if ($this->publishing_date !== null) {
