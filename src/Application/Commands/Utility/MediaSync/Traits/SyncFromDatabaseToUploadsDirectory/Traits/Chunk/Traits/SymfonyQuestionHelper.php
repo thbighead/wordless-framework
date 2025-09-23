@@ -7,6 +7,7 @@ use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Wordless\Infrastructure\ConsoleCommand\Traits\Questions\Exceptions\GetQuestionHelperException;
 
 trait SymfonyQuestionHelper
 {
@@ -15,9 +16,8 @@ trait SymfonyQuestionHelper
 
     /**
      * @return bool
-     * @throws InvalidArgumentException
-     * @throws LogicException
      * @throws RuntimeException
+     * @throws GetQuestionHelperException
      */
     private function askToContinueToNextChunk(): bool
     {

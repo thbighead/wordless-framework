@@ -8,8 +8,11 @@ use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Wordless\Application\Commands\Exceptions\FailedToGetCommandOptionValue;
 use Wordless\Application\Commands\Seeders\Contracts\SeederCommand;
+use Wordless\Application\Commands\Seeders\UsersSeeder\Exceptions\FailedToGenerateUsers;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
 
 class UsersSeeder extends SeederCommand
 {
@@ -31,8 +34,8 @@ class UsersSeeder extends SeederCommand
 
     /**
      * @return int
-     * @throws Exception
-     * @throws ExceptionInterface
+     * @throws FailedToGenerateUsers
+     * @throws FailedToGetCommandOptionValue
      */
     protected function runIt(): int
     {
@@ -51,20 +54,21 @@ class UsersSeeder extends SeederCommand
     /**
      * @param ProgressBar $progressBar
      * @return void
-     * @throws ExceptionInterface
-     * @throws CommandNotFoundException
-     * @throws InvalidArgumentException
-     * @throws WpCliCommandReturnedNonZero
+     * @throws FailedToGenerateUsers
      */
     private function generateUsers(ProgressBar $progressBar): void
     {
-        for ($i = 0; $i < $this->getQuantity(); $i++) {
-            $user_name = $this->faker->userName();
-            $user_email = $this->faker->safeEmail();
+        try {
+            for ($i = 0; $i < $this->getQuantity(); $i++) {
+                $user_name = $this->faker->userName();
+                $user_email = $this->faker->safeEmail();
 
-            $progressBar->setMessage("Creating user $user_name with e-mail $user_email.");
+                $progressBar->setMessage("Creating user $user_name with e-mail $user_email.");
 
-            $this->runWpCliCommandSilently("user create $user_name $user_email --porcelain --quiet");
+                $this->runWpCliCommandSilently("user create $user_name $user_email --porcelain --quiet");
+            }
+        } catch (FailedToGetCommandOptionValue|FailedToRunWpCliCommand|WpCliCommandReturnedNonZero $exception) {
+            throw new FailedToGenerateUsers($exception);
         }
     }
 }

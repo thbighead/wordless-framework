@@ -10,11 +10,13 @@ use Symfony\Component\Process\Exception\ProcessStartFailedException;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Exception\RuntimeException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Utility\RunTests\Traits\CoverageOption;
 use Wordless\Application\Commands\Utility\RunTests\Traits\FilterOption;
 use Wordless\Application\Commands\Utility\RunTests\Traits\OutputOption;
 use Wordless\Application\Commands\Utility\RunTests\Traits\PathArgument;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\External\Exceptions\CallExternalCommandException;
 
 class RunTests extends ConsoleCommand
 {
@@ -57,22 +59,19 @@ class RunTests extends ConsoleCommand
 
     /**
      * @return int
-     * @throws CliReturnedNonZero
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws ProcessSignaledException
-     * @throws ProcessStartFailedException
-     * @throws ProcessTimedOutException
-     * @throws RuntimeException
-     * @throws SymfonyConsoleInvalidArgumentException
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
-        $phpunit_command = "vendor/bin/phpunit {$this->getTestOutputFormat()}";
+        try {
+            $phpunit_command = "vendor/bin/phpunit {$this->getTestOutputFormat()}";
 
-        return $this->resolveFilterOptions($phpunit_command)
-            ->resolveCoverageOptions($phpunit_command)
-            ->callExternalCommand("$phpunit_command {$this->getPathArgument()}")
-            ->result_code;
+            return $this->resolveFilterOptions($phpunit_command)
+                ->resolveCoverageOptions($phpunit_command)
+                ->callExternalCommand("$phpunit_command {$this->getPathArgument()}")
+                ->result_code;
+        } catch (CallExternalCommandException|CliReturnedNonZero|SymfonyConsoleInvalidArgumentException $exception) {
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
+        }
     }
 }

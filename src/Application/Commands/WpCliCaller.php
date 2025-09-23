@@ -79,7 +79,10 @@ class WpCliCaller extends ConsoleCommand
             }
 
             return $this->callExternalCommand($full_command, !$this->isNoTtyMode())->result_code;
-        } catch (CallExternalCommandException|InvalidArgumentException|PathNotFoundException|CliReturnedNonZero $exception) {
+        } catch (CallExternalCommandException
+        |CliReturnedNonZero
+        |InvalidArgumentException
+        |PathNotFoundException $exception) {
             throw new FailedToRunCommand(self::COMMAND_NAME, $exception);
         }
     }

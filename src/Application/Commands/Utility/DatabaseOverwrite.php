@@ -10,6 +10,7 @@ use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO\Exceptions\InvalidRawUserData;
@@ -69,16 +70,19 @@ class DatabaseOverwrite extends ConsoleCommand
 
     /**
      * @return int
-     * @throws CannotResolveEnvironmentGet
-     * @throws FailedToLoadDatabaseConfig
-     * @throws FailedToMakeQuestionException
-     * @throws InvalidRawUserData
-     * @throws OverflowException
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
-        $this->initializeConfigurations()
-            ->overwriteAllUsers();
+        try {
+            $this->initializeConfigurations()
+                ->overwriteAllUsers();
+        } catch (CannotResolveEnvironmentGet
+        |FailedToLoadDatabaseConfig
+        |FailedToMakeQuestionException
+        |InvalidRawUserData|OverflowException $exception) {
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
+        }
 
         return Command::SUCCESS;
     }

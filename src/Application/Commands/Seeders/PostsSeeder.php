@@ -2,19 +2,16 @@
 
 namespace Wordless\Application\Commands\Seeders;
 
-
 use Carbon\Carbon;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Exceptions\FailedToGetCommandOptionValue;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Seeders\Contracts\SeederCommand;
 use Wordless\Application\Commands\Seeders\PostsSeeder\Exceptions\FailedToGenerateCategorizedPost;
 use Wordless\Application\Commands\Seeders\PostsSeeder\Exceptions\FailedToPopulateCategories;
-use Wordless\Application\Commands\Seeders\PostsSeeder\Exceptions\PostsSeederFailed;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
 use Wordless\Application\Helpers\Str;
@@ -62,7 +59,7 @@ class PostsSeeder extends SeederCommand
     /**
      * @return int
      * @throws FailedToPopulateCategories
-     * @throws PostsSeederFailed
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
@@ -85,7 +82,7 @@ class PostsSeeder extends SeederCommand
                 $this->generatePostsCategorizedAs($category, $progressBar);
             }
         } catch (FailedToGetCommandOptionValue|FailedToGenerateCategorizedPost $exception) {
-            throw new PostsSeederFailed($exception);
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
         }
 
         $progressBar->setMessage("Done! A total of $posts_total posts were generated.");

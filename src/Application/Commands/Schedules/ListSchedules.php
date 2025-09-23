@@ -3,7 +3,7 @@
 namespace Wordless\Application\Commands\Schedules;
 
 use Symfony\Component\Console\Command\Command;
-use Wordless\Application\Commands\Schedules\ListSchedules\Exceptions\FailedToRunSchedulesListCommand;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
@@ -40,7 +40,7 @@ class ListSchedules extends ConsoleCommand
 
     /**
      * @return int
-     * @throws FailedToRunSchedulesListCommand
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
@@ -49,7 +49,7 @@ class ListSchedules extends ConsoleCommand
 
             return Command::SUCCESS;
         } catch (FailedToRunWpCliCommand|WpCliCommandReturnedNonZero $exception) {
-            throw new FailedToRunSchedulesListCommand($exception);
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
         }
     }
 }

@@ -9,7 +9,7 @@ use MatthiasMullie\Minify\JS;
 use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Commands\DistributeFront\Enums\Type;
 use Wordless\Application\Commands\DistributeFront\Exceptions\FailedToMountMinifiedAbsoluteFilepath;
-use Wordless\Application\Commands\DistributeFront\Exceptions\FailedToRunDistributeFrontCommand;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\CannotReadPath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
@@ -61,7 +61,7 @@ class DistributeFront extends ConsoleCommand
 
     /**
      * @return int
-     * @throws FailedToRunDistributeFrontCommand
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
@@ -94,7 +94,7 @@ class DistributeFront extends ConsoleCommand
 
             return Command::SUCCESS;
         } catch (FailedToMountMinifiedAbsoluteFilepath|IOException|CannotReadPath $exception) {
-            throw new FailedToRunDistributeFrontCommand($exception);
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
         }
     }
 
@@ -167,4 +167,3 @@ class DistributeFront extends ConsoleCommand
         return $this->readAssetsDirectoryOf(Type::js);
     }
 }
-

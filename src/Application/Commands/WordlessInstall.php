@@ -4,8 +4,6 @@ namespace Wordless\Application\Commands;
 
 use Random\RandomException;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -74,14 +72,12 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\RobotsTxtStubMounter;
 use Wordless\Application\Mounters\Stub\WordlessPluginStubMounter;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\Internal\Exceptions\CallInternalCommandException;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
-use Wordless\Wordpress\Models\User\WordlessUser;
 
 class WordlessInstall extends ConsoleCommand
 {
@@ -130,7 +126,6 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return int
-     * @throws FailedToRefreshWordlessUserPassword
      * @throws FailedToRunCommand
      */
     protected function runIt(): int
@@ -152,7 +147,21 @@ class WordlessInstall extends ConsoleCommand
                 ->resolveWpConfigChmod();
 
             return Command::SUCCESS;
-        } catch (FailedToCreateCacheException|FailedToCreateConfigFromStubsException|FailedToCreateRobotsTxtException|FailedToCreateWordlessPluginFromStubException|FailedToCreateWpDatabaseException|FailedToFlushCacheException|FailedToLoadWpLanguagesException|FailedToRegisterSchedulesException|FailedToResolveDotEnvException|FailedToResolveForceModeException|FailedToResolveWpConfigChmodException|FailedToRunCoreStepsException|FailedToRunMigrationsException|FailedToSyncRolesException $exception) {
+        } catch (FailedToCreateCacheException
+        |FailedToCreateConfigFromStubsException
+        |FailedToCreateRobotsTxtException
+        |FailedToCreateWordlessPluginFromStubException
+        |FailedToCreateWpDatabaseException
+        |FailedToFlushCacheException
+        |FailedToLoadWpLanguagesException
+        |FailedToRefreshWordlessUserPassword
+        |FailedToRegisterSchedulesException
+        |FailedToResolveDotEnvException
+        |FailedToResolveForceModeException
+        |FailedToResolveWpConfigChmodException
+        |FailedToRunCoreStepsException
+        |FailedToRunMigrationsException
+        |FailedToSyncRolesException $exception) {
             throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
         }
     }

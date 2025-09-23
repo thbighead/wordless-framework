@@ -78,9 +78,12 @@ class ConfigureDateOptions extends ConsoleCommand
                 . " {$dateConfig->get(StartOfWeek::KEY, StartOfWeek::sunday->value)}");
 
             $this->setTimezone();
-        } catch (
-            EmptyConfigKey|FailedToRetrieveConfigFromWordpressConfigFile|WpCliCommandReturnedNonZero|FailedToRunWpCliCommand|FailedToLoadConfigFile|FailedToSetTimezone $exception
-        ) {
+        } catch (EmptyConfigKey
+        |FailedToRetrieveConfigFromWordpressConfigFile
+        |WpCliCommandReturnedNonZero
+        |FailedToRunWpCliCommand
+        |FailedToLoadConfigFile
+        |FailedToSetTimezone $exception) {
             throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
         }
 

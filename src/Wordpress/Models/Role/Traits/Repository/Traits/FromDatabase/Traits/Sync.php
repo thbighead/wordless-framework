@@ -2,49 +2,40 @@
 
 namespace Wordless\Wordpress\Models\Role\Traits\Repository\Traits\FromDatabase\Traits;
 
-use InvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\SyncRoles;
 use Wordless\Application\Helpers\Config;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
 use Wordless\Infrastructure\Wordpress\ApiController;
-use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
+use Wordless\Wordpress\Models\Role\Traits\Repository\Traits\FromDatabase\Traits\Sync\Exceptions\SynchroniseFailed;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 
 trait Sync
 {
     /**
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws EmptyQueryBuilderArguments
-     * @throws FailedToCreateRole
-     * @throws FailedToFindRole
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @throws SynchroniseFailed
      */
     public static function sync(): void
     {
-        self::syncPermissionsToAdminAsDefault();
-        self::syncConfiguredPermissions();
+        try {
+            self::syncPermissionsToAdminAsDefault();
+            self::syncConfiguredPermissions();
+        } catch (FailedToCreateInflector|FailedToCreateRole|FailedToFindRole|FailedToLoadBootstrapper $exception) {
+            throw new SynchroniseFailed($exception);
+        }
     }
 
     /**
      * @return void
+     * @throws FailedToCreateInflector
      * @throws FailedToCreateRole
-     * @throws PathNotFoundException
-     * @throws InvalidArgumentException
      */
     public static function syncConfiguredPermissions(): void
     {
@@ -78,7 +69,6 @@ trait Sync
     /**
      * @param Role $role
      * @return void
-     * @throws EmptyQueryBuilderArguments
      */
     public static function syncCustomTaxonomiesPermissionsToRole(Role $role): void
     {
@@ -92,13 +82,8 @@ trait Sync
 
     /**
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws EmptyQueryBuilderArguments
      * @throws FailedToFindRole
-     * @throws FormatException
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @throws FailedToLoadBootstrapper
      */
     public static function syncPermissionsToAdminAsDefault(): void
     {
@@ -110,11 +95,7 @@ trait Sync
     /**
      * @param Role $role
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @throws FailedToLoadBootstrapper
      */
     public static function syncRestResourcesPermissionsToRole(Role $role): void
     {

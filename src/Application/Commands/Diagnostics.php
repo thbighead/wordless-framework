@@ -8,7 +8,7 @@ use Wordless\Application\Commands\Diagnostics\Exceptions\FailedToConfigAnalysis;
 use Wordless\Application\Commands\Diagnostics\Exceptions\FailedToExecuteAnalysis;
 use Wordless\Application\Commands\Diagnostics\Exceptions\FailedToGetTestUrls;
 use Wordless\Application\Commands\Diagnostics\Exceptions\FailedToMountComposerInfo;
-use Wordless\Application\Commands\Diagnostics\Exceptions\FailedToRunDiagnosticsCommand;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToCallWpCliCommand;
 use Wordless\Application\Helpers\DirectoryFiles;
@@ -97,7 +97,7 @@ class Diagnostics extends ConsoleCommand
 
     /**
      * @return int
-     * @throws FailedToRunDiagnosticsCommand
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
@@ -112,7 +112,7 @@ class Diagnostics extends ConsoleCommand
 
             return Command::SUCCESS;
         } catch (CallExternalCommandException|CannotResolveEnvironmentGet|FailedToCallWpCliCommand|FailedToConfigAnalysis|FailedToExecuteAnalysis|FailedToMountComposerInfo|FailedToMountTableFromCsvException $exception) {
-            throw new FailedToRunDiagnosticsCommand($exception);
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
         }
     }
 

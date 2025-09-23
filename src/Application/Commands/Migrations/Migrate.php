@@ -3,30 +3,18 @@
 namespace Wordless\Application\Commands\Migrations;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Exception\ExceptionInterface;
-use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
-use Wordless\Application\Commands\Migrations\Migrate\Exceptions\MigrationFailed;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Migrations\Migrate\Traits\ExecutionTimestamp;
 use Wordless\Application\Commands\Migrations\Migrate\Traits\ForceMode;
 use Wordless\Application\Commands\Migrations\Migrate\Traits\ForceMode\Exceptions\FailedToResolveForceMode;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\Arr;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Database;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
-use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Option;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\FailedToBootMigrationCommand;
-use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\InvalidMigrationFilename;
-use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\Migration;
 
@@ -89,7 +77,7 @@ class Migrate extends ConsoleCommand
 
     /**
      * @return int
-     * @throws MigrationFailed
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
@@ -98,7 +86,7 @@ class Migrate extends ConsoleCommand
                 ->filterMigrationsMissingExecution()
                 ->executeFilteredMigrations();
         } catch (FailedToBootMigrationCommand|FailedToResolveForceMode|FailedToUpdateOption|QueryError $exception) {
-            throw new MigrationFailed($exception);
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
         }
 
         return Command::SUCCESS;

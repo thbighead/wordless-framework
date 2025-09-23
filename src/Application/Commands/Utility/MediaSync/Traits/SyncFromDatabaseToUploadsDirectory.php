@@ -10,11 +10,16 @@ use Symfony\Component\Dotenv\Exception\FormatException;
 use Symfony\Component\Dotenv\Exception\PathException;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachment;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachmentMetadata;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Exceptions\FailedToProcessUploadedFilepath;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Exceptions\FailedToSyncFromUploadsDirectoryToDatabase;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\FailedToResolveFinishedChunk;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\InvalidChunkValue;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\StopUploadsProcess;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\InsertToDatabase;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\InsertToDatabase\Exceptions\FailedToCreateAttachmentForUploadedFilepath;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\CannotReadPath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath;
@@ -60,7 +65,7 @@ trait SyncFromDatabaseToUploadsDirectory
 
     /**
      * @return int
-     * @throws InvalidDirectory
+     * @throws CannotReadPath
      * @throws PathNotFoundException
      */
     private function getUploadsFilePathsCount(): int
@@ -117,8 +122,8 @@ trait SyncFromDatabaseToUploadsDirectory
     }
 
     /**
-     * @return Generator|null
-     * @throws InvalidDirectory
+     * @return Generator<string>|null
+     * @throws CannotReadPath
      * @throws PathNotFoundException
      */
     private function mountUploadsFilePathReaderGenerator(): ?Generator
@@ -128,16 +133,9 @@ trait SyncFromDatabaseToUploadsDirectory
 
     /**
      * @return int
-     * @throws DotEnvNotSetException
-     * @throws FailedToCreateWordpressAttachment
-     * @throws FailedToCreateWordpressAttachmentMetadata
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidChunkValue
-     * @throws InvalidDirectory
-     * @throws LogicException
+     * @throws CannotReadPath
+     * @throws FailedToProcessUploadedFilepath
      * @throws PathNotFoundException
-     * @throws RuntimeException
      */
     private function processUploadsFiles(): int
     {
@@ -146,17 +144,24 @@ trait SyncFromDatabaseToUploadsDirectory
 
         foreach ($this->mountUploadsFilePathReaderGenerator() as $uploaded_file_absolute_path) {
             try {
-                $this->resolveFinishedChunk();
-            } catch (StopUploadsProcess) {
-                break;
-            }
+                try {
+                    $this->resolveFinishedChunk();
+                } catch (StopUploadsProcess) {
+                    break;
+                }
 
-            if (!$this->shouldProcessUploadedFilepath($uploaded_file_absolute_path)) {
-                $progressBar->advance();
-                continue;
-            }
+                if (!$this->shouldProcessUploadedFilepath($uploaded_file_absolute_path)) {
+                    $progressBar->advance();
+                    continue;
+                }
 
-            $this->createAttachmentForUploadedFilepath($uploaded_file_absolute_path);
+                $this->createAttachmentForUploadedFilepath($uploaded_file_absolute_path);
+            } catch (FailedToCreateAttachmentForUploadedFilepath
+            |FailedToCreateWordpressAttachment
+            |FailedToResolveFinishedChunk
+            |PathNotFoundException $exception) {
+                throw new FailedToProcessUploadedFilepath($uploaded_file_absolute_path, $exception);
+            }
 
             $inserted_attachments_count++;
             $progressBar->advance();
@@ -182,25 +187,19 @@ trait SyncFromDatabaseToUploadsDirectory
 
     /**
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws FailedToCreateWordpressAttachment
-     * @throws FailedToCreateWordpressAttachmentMetadata
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidChunkValue
-     * @throws InvalidDirectory
-     * @throws LogicException
-     * @throws PathException
-     * @throws PathNotFoundException
-     * @throws RuntimeException
+     * @throws FailedToSyncFromUploadsDirectoryToDatabase
      */
     private function syncFromUploadsDirectoryToDatabase(): void
     {
-        require_once ProjectPath::wpCore('wp-admin/includes/image.php');
-        require_once ProjectPath::wpCore('wp-admin/includes/media.php');
+        try {
+            require_once ProjectPath::wpCore('wp-admin/includes/image.php');
+            require_once ProjectPath::wpCore('wp-admin/includes/media.php');
 
-        $this->writelnInfo("\nChecking uploads directory...");
+            $this->writelnInfo("\nChecking uploads directory...");
 
-        $this->writelnSuccess("\nFinish (inserted: {$this->processUploadsFiles()})");
+            $this->writelnSuccess("\nFinish (inserted: {$this->processUploadsFiles()})");
+        } catch (CannotReadPath|FailedToProcessUploadedFilepath|PathNotFoundException $exception) {
+            throw new FailedToSyncFromUploadsDirectoryToDatabase($exception);
+        }
     }
 }

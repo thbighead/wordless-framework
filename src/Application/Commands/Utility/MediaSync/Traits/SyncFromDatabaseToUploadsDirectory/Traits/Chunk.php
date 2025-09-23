@@ -5,6 +5,7 @@ namespace Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabas
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\LogicException;
 use Symfony\Component\Console\Exception\RuntimeException;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\FailedToResolveFinishedChunk;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\InvalidChunkValue;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\InvalidOptionsUsage;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\StopUploadsProcess;
@@ -12,6 +13,7 @@ use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUpl
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Traits\OptionsMounter\DTO\ChunkOptionDTO;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Traits\OptionsMounter\DTO\OnceOptionDTO;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Traits\SymfonyQuestionHelper;
+use Wordless\Infrastructure\ConsoleCommand\Traits\Questions\Exceptions\GetQuestionHelperException;
 
 trait Chunk
 {
@@ -103,24 +105,25 @@ trait Chunk
 
     /**
      * @return void
-     * @throws InvalidArgumentException
-     * @throws InvalidChunkValue
-     * @throws LogicException
-     * @throws RuntimeException
+     * @throws FailedToResolveFinishedChunk
      * @throws StopUploadsProcess
      */
     private function resolveFinishedChunk(): void
     {
-        if (!$this->isChunked()) {
-            return;
-        }
+        try {
+            if (!$this->isChunked()) {
+                return;
+            }
 
-        if (!$this->finishedChunk()) {
-            return;
-        }
+            if (!$this->finishedChunk()) {
+                return;
+            }
 
-        if ($this->isOnlyOnce() || !$this->askToContinueToNextChunk()) {
-            throw new StopUploadsProcess($this->chunk_number);
+            if ($this->isOnlyOnce() || !$this->askToContinueToNextChunk()) {
+                throw new StopUploadsProcess($this->chunk_number);
+            }
+        } catch (GetQuestionHelperException|InvalidArgumentException|InvalidChunkValue|RuntimeException $exception) {
+            throw new FailedToResolveFinishedChunk($exception);
         }
 
         $this->chunk_number++;

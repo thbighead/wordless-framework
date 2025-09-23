@@ -1,17 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Commands\Migrations\Migrate\Exceptions;
+namespace Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Exceptions;
 
 use RuntimeException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class MigrationFailed extends RuntimeException
+class FailedToSyncFromUploadsDirectoryToDatabase extends RuntimeException
 {
     public function __construct(?Throwable $previous = null)
     {
         parent::__construct(
-            'Migration command failed.',
+            'Failed to synchronise uploads directory into database.',
             ExceptionCode::intentional_interrupt->value,
             $previous
         );

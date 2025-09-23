@@ -1,18 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Commands\Schedules\ListSchedules\Exceptions;
+namespace Wordless\Application\Commands\Seeders\UsersSeeder\Exceptions;
 
 use RuntimeException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class FailedToRunSchedulesListCommand extends RuntimeException
+class FailedToGenerateUsers extends RuntimeException
 {
     public function __construct(?Throwable $previous = null)
     {
         parent::__construct(
-            'Failed to run schedules list command.',
-            ExceptionCode::development_error->value,
+            'Could not generate users to seed database.',
+            ExceptionCode::intentional_interrupt->value,
             $previous
         );
     }

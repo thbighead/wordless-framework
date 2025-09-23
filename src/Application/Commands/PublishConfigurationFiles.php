@@ -4,23 +4,18 @@ namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\PublishConfigurationFiles\Exceptions\FailedToPublishConfigFilesFromCommandArgument;
 use Wordless\Application\Commands\PublishConfigurationFiles\Exceptions\FailedToPublishConfigFilesFromVendorPackage;
-use Wordless\Application\Commands\PublishConfigurationFiles\Exceptions\PublishConfigurationFilesFailed;
 use Wordless\Application\Commands\Traits\ForceMode;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\CannotReadPath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
-use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
@@ -72,7 +67,7 @@ class PublishConfigurationFiles extends ConsoleCommand
 
     /**
      * @return int
-     * @throws PublishConfigurationFilesFailed
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
@@ -88,7 +83,7 @@ class PublishConfigurationFiles extends ConsoleCommand
         |FailedToPublishConfigFilesFromCommandArgument
         |FailedToPublishConfigFilesFromVendorPackage
         |InvalidArgumentException $exception) {
-            throw new PublishConfigurationFilesFailed($exception);
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
         }
 
         return Command::SUCCESS;

@@ -5,6 +5,8 @@ namespace Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabas
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachment;
 use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachmentMetadata;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\InsertToDatabase\Exceptions\FailedToCreateAttachmentForUploadedFilepath;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -16,32 +18,35 @@ trait InsertToDatabase
     /**
      * @param string $uploaded_file_absolute_path
      * @return void
-     * @throws DotEnvNotSetException
+     * @throws FailedToCreateAttachmentForUploadedFilepath
      * @throws FailedToCreateWordpressAttachment
-     * @throws FailedToCreateWordpressAttachmentMetadata
-     * @throws FormatException
-     * @throws PathNotFoundException
      */
     private function createAttachmentForUploadedFilepath(string $uploaded_file_absolute_path): void
     {
-        $relative_path = Str::after(
-            $uploaded_file_absolute_path,
-            Str::finishWith($this->getUploadsDirectoryAbsolutePath(), '/')
-        );
+        try {
+            $relative_path = Str::after(
+                $uploaded_file_absolute_path,
+                Str::finishWith($this->getUploadsDirectoryAbsolutePath(), '/')
+            );
 
-        $attachment_id = wp_insert_attachment([
-            'guid' => "{$this->getUploadsBaseUrl()}$relative_path",
-            'post_mime_type' => mime_content_type($uploaded_file_absolute_path),
-            'post_title' => $this->extractFilenameFromAbsolutePath($uploaded_file_absolute_path),
-            'post_content' => '',
-            'post_status' => 'inherit',
-        ], $relative_path);
+            $attachment_id = wp_insert_attachment([
+                'guid' => "{$this->getUploadsBaseUrl()}$relative_path",
+                'post_mime_type' => mime_content_type($uploaded_file_absolute_path),
+                'post_title' => $this->extractFilenameFromAbsolutePath($uploaded_file_absolute_path),
+                'post_content' => '',
+                'post_status' => 'inherit',
+            ], $relative_path);
 
-        if (!$this->hasAttachmentCreationSucceeded($attachment_id)) {
-            throw new FailedToCreateWordpressAttachment($uploaded_file_absolute_path);
+            if (!$this->hasAttachmentCreationSucceeded($attachment_id)) {
+                throw new FailedToCreateWordpressAttachment($uploaded_file_absolute_path);
+            }
+
+            $this->createAttachmentMetadataForUploadedFilepath($attachment_id, $uploaded_file_absolute_path);
+        } catch (CannotResolveEnvironmentGet
+        |FailedToCreateWordpressAttachmentMetadata
+        |PathNotFoundException $exception) {
+            throw new FailedToCreateAttachmentForUploadedFilepath($uploaded_file_absolute_path, $exception);
         }
-
-        $this->createAttachmentMetadataForUploadedFilepath($attachment_id, $uploaded_file_absolute_path);
     }
 
     /**

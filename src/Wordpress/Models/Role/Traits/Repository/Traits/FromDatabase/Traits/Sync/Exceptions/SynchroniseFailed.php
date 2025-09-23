@@ -1,18 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Commands\DistributeFront\Exceptions;
+namespace Wordless\Wordpress\Models\Role\Traits\Repository\Traits\FromDatabase\Traits\Sync\Exceptions;
 
 use RuntimeException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class FailedToRunDistributeFrontCommand extends RuntimeException
+class SynchroniseFailed extends RuntimeException
 {
     public function __construct(?Throwable $previous = null)
     {
         parent::__construct(
-            'Failed to run distribute front command.',
-            ExceptionCode::development_error->value,
+            'Failed to synchronise roles.',
+            ExceptionCode::intentional_interrupt->value,
             $previous
         );
     }

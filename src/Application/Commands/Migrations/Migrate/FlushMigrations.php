@@ -14,6 +14,7 @@ use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Option;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\FailedToBootMigrationCommand;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\InvalidMigrationFilename;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
@@ -51,15 +52,7 @@ class FlushMigrations extends MigrateRollback
 
     /**
      * @return int
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidDirectory
-     * @throws InvalidMigrationFilename
-     * @throws InvalidProviderClass
-     * @throws MigrationFileNotFound
-     * @throws PathException
-     * @throws PathNotFoundException
+     * @throws FailedToBootMigrationCommand
      * @throws QueryError
      */
     protected function runIt(): int
@@ -84,16 +77,8 @@ class FlushMigrations extends MigrateRollback
 
     /**
      * @return $this
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidDirectory
-     * @throws InvalidMigrationFilename
-     * @throws InvalidProviderClass
-     * @throws MigrationFileNotFound
-     * @throws PathException
-     * @throws PathNotFoundException
      * @throws QueryError
+     * @throws FailedToBootMigrationCommand
      */
     private function flushExecutedMigrations(): static
     {

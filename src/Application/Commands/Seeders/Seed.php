@@ -7,6 +7,7 @@ use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\Internal\Exceptions\CallInternalCommandException;
 
 class Seed extends ConsoleCommand
 {
@@ -34,8 +35,7 @@ class Seed extends ConsoleCommand
 
     /**
      * @return int
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
+     * @throws CallInternalCommandException
      * @throws CliReturnedNonZero
      */
     protected function runIt(): int

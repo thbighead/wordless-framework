@@ -18,9 +18,8 @@ trait FromDatabase
      * @param string $name
      * @param string $capability
      * @param string ...$capabilities
-     * @return Role
+     * @return static
      * @throws FailedToCreateRole
-     * @throws InvalidArgumentException
      */
     public static function create(string $name, string $capability, string ...$capabilities): static
     {

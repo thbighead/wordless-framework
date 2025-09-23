@@ -7,8 +7,11 @@ use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Wordless\Application\Commands\Exceptions\FailedToGetCommandOptionValue;
 use Wordless\Application\Commands\Seeders\Contracts\SeederCommand;
+use Wordless\Application\Commands\Seeders\TaxonomyTermsSeeder\Exceptions\FailedToGenerateTaxonomyTerms;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\ResultFormat;
@@ -32,18 +35,15 @@ class TaxonomyTermsSeeder extends SeederCommand
 
     /**
      * @return int
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
-     * @throws WpCliCommandReturnedNonZero
-     * @throws EmptyQueryBuilderArguments
+     * @throws FailedToGenerateTaxonomyTerms
+     * @throws FailedToGetCommandOptionValue
      */
     protected function runIt(): int
     {
         /** @var string[] $taxonomies */
         $taxonomies = TaxonomyQueryBuilder::make(ResultFormat::names)->get();
 
-        $progressBar = $this->progressBar($taxinomy_terms_total = count($taxonomies) * $this->getQuantity());
+        $progressBar = $this->progressBar($taxonomy_terms_total = count($taxonomies) * $this->getQuantity());
         $progressBar->setMessage('Creating Taxonomy Terms...');
         $progressBar->start();
 
@@ -51,7 +51,7 @@ class TaxonomyTermsSeeder extends SeederCommand
             $this->generateTaxonomyTerms($taxonomy, $progressBar);
         }
 
-        $progressBar->setMessage("Done! A total of $taxinomy_terms_total taxonomy terms were generated.");
+        $progressBar->setMessage("Done! A total of $taxonomy_terms_total taxonomy terms were generated.");
         $progressBar->finish();
 
         return Command::SUCCESS;
@@ -61,9 +61,7 @@ class TaxonomyTermsSeeder extends SeederCommand
      * @param string $taxonomy
      * @param ProgressBar $progressBar
      * @return void
-     * @throws ExceptionInterface
-     * @throws CommandNotFoundException
-     * @throws InvalidArgumentException
+     * @throws FailedToRunWpCliCommand
      * @throws WpCliCommandReturnedNonZero
      */
     private function generateTaxonomyTerm(string $taxonomy, ProgressBar $progressBar): void
@@ -83,15 +81,16 @@ class TaxonomyTermsSeeder extends SeederCommand
      * @param string $taxonomy
      * @param ProgressBar $progressBar
      * @return void
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
-     * @throws WpCliCommandReturnedNonZero
+     * @throws FailedToGenerateTaxonomyTerms
      */
     private function generateTaxonomyTerms(string $taxonomy, ProgressBar $progressBar): void
     {
-        for ($i = 0; $i < $this->getQuantity(); $i++) {
-            $this->generateTaxonomyTerm($taxonomy, $progressBar);
+        try {
+            for ($i = 0; $i < $this->getQuantity(); $i++) {
+                $this->generateTaxonomyTerm($taxonomy, $progressBar);
+            }
+        } catch (FailedToGetCommandOptionValue|FailedToRunWpCliCommand|WpCliCommandReturnedNonZero $exception) {
+            throw new FailedToGenerateTaxonomyTerms($taxonomy, $exception);
         }
     }
 }
