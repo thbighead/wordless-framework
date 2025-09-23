@@ -8,6 +8,7 @@ use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderA
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedAggregatingObject;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedDisaggregatingObject;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedToGetTermLink;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\MixinWpTerm;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository;
@@ -132,7 +133,7 @@ abstract class Taxonomy implements IRelatedMetaData
     /**
      * @param IRelatedMetaData|int $object
      * @return $this
-     * @throws FailedAggregatingObject
+     * @throws FailedDisaggregatingObject
      */
     public function removeFromObject(IRelatedMetaData|int $object): static
     {
@@ -143,7 +144,7 @@ abstract class Taxonomy implements IRelatedMetaData
         );
 
         if ($result instanceof WP_Error || $result === false) {
-            throw new FailedAggregatingObject($object, $this, $result);
+            throw new FailedDisaggregatingObject($object, $this, $result);
         }
 
         return $this;
