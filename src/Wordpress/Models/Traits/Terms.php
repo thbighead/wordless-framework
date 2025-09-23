@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\Models\Traits;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Wordpress\Models\Traits\Terms\Exceptions\FailedAggregatingTerm;
+use Wordless\Wordpress\Models\Traits\Terms\Exceptions\FailedDisaggregatingTerm;
 use WP_Error;
 
 trait Terms
@@ -48,7 +49,7 @@ trait Terms
      * @param Taxonomy $term
      * @param Taxonomy ...$terms
      * @return $this
-     * @throws FailedAggregatingTerm
+     * @throws FailedDisaggregatingTerm
      */
     public function removeTerms(Taxonomy $term, Taxonomy ...$terms): static
     {
@@ -56,7 +57,7 @@ trait Terms
             $result = wp_remove_object_terms($this->id(), array_values($ids), $taxonomy);
 
             if ($result instanceof WP_Error || $result === false) {
-                throw new FailedAggregatingTerm($this, $taxonomy, $result);
+                throw new FailedDisaggregatingTerm($this, $taxonomy, $result);
             }
         }
 
