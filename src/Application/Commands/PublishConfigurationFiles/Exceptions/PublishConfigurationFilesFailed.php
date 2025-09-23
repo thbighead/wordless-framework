@@ -6,12 +6,12 @@ use RuntimeException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class FailedToPublishConfigFilesFromCommandArgument extends RuntimeException
+class PublishConfigurationFilesFailed extends RuntimeException
 {
     public function __construct(?Throwable $previous = null)
     {
         parent::__construct(
-            'Could not publish configuration file.',
+            'Could not publish configuration files.',
             ExceptionCode::intentional_interrupt->value,
             $previous
         );

@@ -9,6 +9,7 @@ use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Infrastructure\Wordpress\Schedule;
 
 trait Schedules
 {
@@ -23,6 +24,9 @@ trait Schedules
         }
     }
 
+    /**
+     * @return Generator<string|Schedule>
+     */
     public function getProvidedSchedules(): Generator
     {
         foreach ($this->loaded_providers as $provider) {

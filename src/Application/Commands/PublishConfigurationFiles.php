@@ -5,6 +5,9 @@ namespace Wordless\Application\Commands;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Commands\PublishConfigurationFiles\Exceptions\FailedToPublishConfigFilesFromCommandArgument;
+use Wordless\Application\Commands\PublishConfigurationFiles\Exceptions\FailedToPublishConfigFilesFromVendorPackage;
+use Wordless\Application\Commands\PublishConfigurationFiles\Exceptions\PublishConfigurationFilesFailed;
 use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
@@ -69,21 +72,24 @@ class PublishConfigurationFiles extends ConsoleCommand
 
     /**
      * @return int
-     * @throws FailedToLoadBootstrapper
-     * @throws FailedToCopyFile
-     * @throws InvalidArgumentException
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
+     * @throws PublishConfigurationFilesFailed
      */
     protected function runIt(): int
     {
-        $config_filenames = $this->input->getArgument(self::CONFIG_FILENAME_ARGUMENT_NAME);
+        try {
+            $config_filenames = $this->input->getArgument(self::CONFIG_FILENAME_ARGUMENT_NAME);
 
-        $this->provided_configs = Bootstrapper::bootProvidedConfigs();
+            $this->provided_configs = Bootstrapper::bootProvidedConfigs();
 
-        !empty($config_filenames) ?
-            $this->publishConfigFilesFromCommandArgument($config_filenames) :
-            $this->publishConfigFilesFromVendorPackage();
+            !empty($config_filenames) ?
+                $this->publishConfigFilesFromCommandArgument($config_filenames) :
+                $this->publishConfigFilesFromVendorPackage();
+        } catch (FailedToLoadBootstrapper
+        |FailedToPublishConfigFilesFromCommandArgument
+        |FailedToPublishConfigFilesFromVendorPackage
+        |InvalidArgumentException $exception) {
+            throw new PublishConfigurationFilesFailed($exception);
+        }
 
         return Command::SUCCESS;
     }
@@ -91,23 +97,25 @@ class PublishConfigurationFiles extends ConsoleCommand
     /**
      * @param array $config_filenames
      * @return void
-     * @throws FailedToCopyFile
-     * @throws InvalidArgumentException
-     * @throws PathNotFoundException
+     * @throws FailedToPublishConfigFilesFromCommandArgument
      */
     private function publishConfigFilesFromCommandArgument(array $config_filenames): void
     {
         foreach ($config_filenames as $config_filename) {
             $config_filename_with_extension = Str::finishWith($config_filename, '.php');
 
-            if ($this->resolveFromPackageProvider($config_filename_with_extension)) {
-                continue;
+            try {
+                if ($this->resolveFromPackageProvider($config_filename_with_extension)) {
+                    continue;
+                }
+
+                $config_relative_filepath = "config/$config_filename_with_extension";
+                $config_filepath_from = ProjectPath::assets($config_relative_filepath);
+
+                $this->skipOrCopyConfigFile($config_filepath_from);
+            } catch (FailedToCopyFile|InvalidArgumentException|PathNotFoundException $exception) {
+                throw new FailedToPublishConfigFilesFromCommandArgument($exception);
             }
-
-            $config_relative_filepath = "config/$config_filename_with_extension";
-            $config_filepath_from = ProjectPath::assets($config_relative_filepath);
-
-            $this->skipOrCopyConfigFile($config_filepath_from);
         }
     }
 
@@ -128,6 +136,10 @@ class PublishConfigurationFiles extends ConsoleCommand
         return false;
     }
 
+    /**
+     * @return void
+     * @throws FailedToPublishConfigFilesFromVendorPackage
+     */
     private function publishConfigFilesFromVendorPackage(): void
     {
         try {
@@ -139,7 +151,7 @@ class PublishConfigurationFiles extends ConsoleCommand
                 $this->skipOrCopyConfigFile($provided_config);
             }
         } catch (CannotReadPath|FailedToCopyFile|InvalidArgumentException|PathNotFoundException $exception) {
-
+            throw new FailedToPublishConfigFilesFromVendorPackage($exception);
         }
     }
 

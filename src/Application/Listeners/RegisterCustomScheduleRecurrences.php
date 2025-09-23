@@ -7,6 +7,7 @@ use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectD
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
@@ -16,13 +17,9 @@ use Wordless\Wordpress\Hook\Enums\Filter;
 class RegisterCustomScheduleRecurrences extends FilterListener
 {
     /**
-     * @param array $schedules
-     * @return array
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @param array<string, array<string, int|string>> $schedules
+     * @return array<string, array<string, int|string>>
+     * @throws FailedToLoadBootstrapper
      */
     public static function register(array $schedules): array
     {

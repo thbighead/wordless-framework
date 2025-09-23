@@ -9,6 +9,7 @@ use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Traits\Entities\Exceptions\FailedToRegisterWordlessEntity;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKeyFormat;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKeyFormat;
@@ -30,20 +31,7 @@ class RegisterEntities extends ActionListener
 
     /**
      * @return void
-     * @throws CustomPostTypeRegistrationFailed
-     * @throws CustomTaxonomyRegistrationFailed
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidCustomPostTypeKeyFormat
-     * @throws InvalidCustomTaxonomyNameFormat
-     * @throws InvalidObjectTypeAssociationToTaxonomy
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     * @throws ReservedCustomPostStatusKey
-     * @throws ReservedCustomPostTypeKeyFormat
-     * @throws ReservedCustomTaxonomyNameFormat
+     * @throws FailedToRegisterWordlessEntity
      */
     public static function register(): void
     {
