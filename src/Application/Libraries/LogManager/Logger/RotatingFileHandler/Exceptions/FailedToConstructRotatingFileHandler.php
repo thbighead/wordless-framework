@@ -1,17 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions;
+namespace Wordless\Application\Libraries\LogManager\Logger\RotatingFileHandler\Exceptions;
 
 use RuntimeException;
 use Throwable;
+use Wordless\Application\Libraries\LogManager\Logger\RotatingFileHandler;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class FailedToResolveFinishedChunk extends RuntimeException
+class FailedToConstructRotatingFileHandler extends RuntimeException
 {
     public function __construct(?Throwable $previous = null)
     {
         parent::__construct(
-            'Failed to resolve finished chunk when syncing.',
+            'Could not instantiate ' . RotatingFileHandler::class . ' object.',
             ExceptionCode::intentional_interrupt->value,
             $previous
         );

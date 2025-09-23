@@ -14,6 +14,7 @@ use Wordless\Application\Helpers\Str\Enums\Language;
 use Wordless\Application\Helpers\Str\Enums\UuidVersion;
 use Wordless\Application\Helpers\Str\Traits\Boolean;
 use Wordless\Application\Helpers\Str\Traits\Internal;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Application\Helpers\Str\Traits\Mutators;
 use Wordless\Application\Helpers\Str\Traits\Substring;
 use Wordless\Application\Helpers\Str\Traits\WordCase;
@@ -47,7 +48,7 @@ class Str extends Subjectable
      * @param string $string
      * @param Language|null $language
      * @return string
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public static function plural(string $string, ?Language $language = Language::english): string
     {
@@ -84,7 +85,7 @@ class Str extends Subjectable
      * @param string $string
      * @param Language|null $language
      * @return string
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public static function singular(string $string, ?Language $language = Language::english): string
     {

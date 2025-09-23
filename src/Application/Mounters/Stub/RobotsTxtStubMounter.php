@@ -4,6 +4,7 @@ namespace Wordless\Application\Mounters\Stub;
 
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Mounters\StubMounter;
 
@@ -15,8 +16,7 @@ class RobotsTxtStubMounter extends StubMounter
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     protected function relativeStubFilename(): string
     {

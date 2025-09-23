@@ -24,8 +24,7 @@ class RedirectAdminUris extends ActionListener
 
     /**
      * @return void
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function redirectToAdminUri(): void
     {

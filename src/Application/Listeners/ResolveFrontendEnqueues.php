@@ -9,6 +9,7 @@ use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Traits\MainPlugin\Exceptions\FailedToBootEnqueueables;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
@@ -23,13 +24,7 @@ class ResolveFrontendEnqueues extends ActionListener
 
     /**
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws DuplicatedEnqueueableId
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @throws FailedToBootEnqueueables
      */
     public static function runEnqueues(): void
     {

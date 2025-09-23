@@ -8,6 +8,7 @@ use JsonException;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Http;
+use Wordless\Application\Helpers\Http\Exceptions\FailedToResolveRequest;
 use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Http\Request\Enums\Verb;
@@ -116,9 +117,7 @@ trait Requests
      * @param array<string, string>|string $body
      * @param array<string, string> $additional_headers
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public function request(

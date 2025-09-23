@@ -5,20 +5,13 @@ namespace Wordless\Application\Commands\Makers;
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Makers\Exceptions\FailedToMake;
-use Wordless\Application\Commands\Makers\Exceptions\FailedToResolveNoPermissionsMode;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
-use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Application\Mounters\Stub\CustomPostTypeStubMounter;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
@@ -27,12 +20,8 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMo
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKeyFormat;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKeyFormat;
-use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Role;
-use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
-use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
+use Wordless\Wordpress\Models\Role\Traits\Repository\Traits\FromDatabase\Traits\Sync\Exceptions\SynchroniseFailed;
 
 class MakeCustomPostType extends ConsoleCommand
 {
@@ -109,11 +98,12 @@ class MakeCustomPostType extends ConsoleCommand
             );
 
             $this->resolveNoPermissionsMode($custom_post_type_class_name);
-        } catch (FailedToCopyStub
+        } catch (CustomPostTypeRegistrationFailed
+        |FailedToCopyStub
         |FailedToCreateInflector
-        |FailedToResolveNoPermissionsMode
         |InvalidArgumentException
-        |PathNotFoundException $exception) {
+        |PathNotFoundException
+        |SynchroniseFailed $exception) {
             throw new FailedToMake('Custom Post Type', $exception);
         }
 
@@ -170,7 +160,8 @@ class MakeCustomPostType extends ConsoleCommand
     /**
      * @param string $custom_post_type_class_name
      * @return void
-     * @throws FailedToResolveNoPermissionsMode
+     * @throws CustomPostTypeRegistrationFailed
+     * @throws SynchroniseFailed
      */
     private function resolveNoPermissionsMode(string $custom_post_type_class_name): void
     {
@@ -178,27 +169,14 @@ class MakeCustomPostType extends ConsoleCommand
             return;
         }
 
-        try {
-            $this->wrapScriptWithMessages(
-                "Registering $custom_post_type_class_name permissions to admin role...",
-                function () use ($custom_post_type_class_name) {
-                    /** @var CustomPost $custom_post_type_class_guessed_namespace */
-                    $custom_post_type_class_guessed_namespace = "App\\CustomPostTypes\\$custom_post_type_class_name";
-                    $custom_post_type_class_guessed_namespace::register();
-                    Role::sync();
-                }
-            );
-        } catch (CustomPostTypeRegistrationFailed
-        |DotEnvNotSetException
-        |EmptyConfigKey
-        |EmptyQueryBuilderArguments
-        |FailedToCreateRole
-        |FailedToFindRole
-        |FormatException
-        |PathNotFoundException
-        |InvalidArgumentException
-        |InvalidProviderClass $exception) {
-            throw new FailedToResolveNoPermissionsMode($exception);
-        }
+        $this->wrapScriptWithMessages(
+            "Registering $custom_post_type_class_name permissions to admin role...",
+            function () use ($custom_post_type_class_name) {
+                /** @var CustomPost $custom_post_type_class_guessed_namespace */
+                $custom_post_type_class_guessed_namespace = "App\\CustomPostTypes\\$custom_post_type_class_name";
+                $custom_post_type_class_guessed_namespace::register();
+                Role::sync();
+            }
+        );
     }
 }

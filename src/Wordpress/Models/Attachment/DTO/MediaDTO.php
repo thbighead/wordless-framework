@@ -26,8 +26,7 @@ readonly class MediaDTO
 
     /**
      * @param array $raw_data
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      * @throws PathNotFoundException
      */
     public function __construct(public array $raw_data)

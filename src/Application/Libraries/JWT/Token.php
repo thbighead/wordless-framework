@@ -25,6 +25,7 @@ use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\JWT\Enums\CryptoAlgorithm;
@@ -100,10 +101,10 @@ class Token implements IPolymorphicConstructor
     /**
      * @return bool
      * @throws EmptyConfigKey
+     * @throws FailedToLoadConfigFile
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws NoConstraintsGiven
-     * @throws PathNotFoundException
      */
     public function isValid(): bool
     {
@@ -118,10 +119,10 @@ class Token implements IPolymorphicConstructor
     /**
      * @return void
      * @throws EmptyConfigKey
+     * @throws FailedToLoadConfigFile
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws NoConstraintsGiven
-     * @throws PathNotFoundException
      * @throws RequiredConstraintsViolated
      */
     public function validateSignature(): void
@@ -142,10 +143,10 @@ class Token implements IPolymorphicConstructor
      * @throws CannotSignPayload
      * @throws ConversionFailed
      * @throws EmptyConfigKey
+     * @throws FailedToLoadConfigFile
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws InvalidKeyProvided
-     * @throws PathNotFoundException
      * @throws RegisteredClaimGiven
      */
     protected function buildJwt(array $payload, ?CryptoAlgorithm $crypto_strategy = null): void
@@ -166,7 +167,6 @@ class Token implements IPolymorphicConstructor
     /**
      * @return ConfigSubjectDTO
      * @throws EmptyConfigKey
-     * @throws PathNotFoundException
      */
     private function getConfig(): ConfigSubjectDTO
     {

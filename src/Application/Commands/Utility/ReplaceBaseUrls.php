@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
@@ -68,9 +69,7 @@ class ReplaceBaseUrls extends ConsoleCommand
 
     /**
      * @return int
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
+     * @throws FailedToRunWpCliCommand
      * @throws WpCliCommandReturnedNonZero
      */
     protected function runIt(): int
@@ -122,9 +121,7 @@ class ReplaceBaseUrls extends ConsoleCommand
 
     /**
      * @return void
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
+     * @throws FailedToRunWpCliCommand
      * @throws WpCliCommandReturnedNonZero
      */
     private function runDatabaseSearchReplace(): void

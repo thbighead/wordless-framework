@@ -10,6 +10,7 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToTravelDirectories;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO;
@@ -77,9 +78,8 @@ final class DirectoryPathSubjectDTO extends ProjectPathSubjectDTO
      * @param string $symbolic_link_target
      * @param string|null $from_absolute_path
      * @return SymlinkPathSubjectDTO
-     * @throws FailedToChangeDirectoryTo
      * @throws FailedToCreateSymlink
-     * @throws FailedToGetCurrentWorkingDirectory
+     * @throws FailedToTravelDirectories
      * @throws PathNotFoundException
      */
     public function createSymlink(

@@ -4,6 +4,7 @@ namespace Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubje
 
 use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 
 trait Mutators
 {
@@ -53,7 +54,7 @@ trait Mutators
 
     /**
      * @return $this
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function unnaccented(): static
     {

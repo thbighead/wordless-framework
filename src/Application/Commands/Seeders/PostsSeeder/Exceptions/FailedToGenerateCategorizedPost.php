@@ -11,6 +11,10 @@ class FailedToGenerateCategorizedPost extends RuntimeException
 {
     public function __construct(public readonly Category $postCategory, ?Throwable $previous = null)
     {
-        parent::__construct($message, ExceptionCode::intentional_interrupt->value, $previous);
+        parent::__construct(
+            "Could not generate a post categorized as {$this->postCategory->name}.",
+            ExceptionCode::intentional_interrupt->value,
+            $previous
+        );
     }
 }
