@@ -5,9 +5,9 @@ namespace Wordless\Application\Commands\Makers;
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
+use Wordless\Application\Commands\Makers\Exceptions\FailedToMake;
+use Wordless\Application\Commands\Makers\Exceptions\FailedToResolveNoPermissionsMode;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -57,7 +57,7 @@ class MakeController extends ConsoleCommand
         return [
             OptionDTO::make(
                 self::NO_PERMISSIONS_MODE,
-                'Don\'t auto register CPT permissions into admin role.',
+                'Don\'t auto register Controller permissions into admin role.',
                 mode: OptionMode::no_value
             ),
         ];
@@ -65,54 +65,54 @@ class MakeController extends ConsoleCommand
 
     /**
      * @return int
-     * @throws FailedToCopyStub
-     * @throws FailedToCreateDirectory
-     * @throws FailedToFindRole
-     * @throws FailedToGetDirectoryPermissions
-     * @throws PathNotFoundException
-     * @throws InvalidArgumentException
-     * @throws SymfonyInvalidArgumentException
+     * @throws FailedToMake
      */
     protected function runIt(): int
     {
-        $controller_suffix = 'Controller';
-        $controllerClassNameSubject = Str::of(
-            $this->input->getArgument(self::CONTROLLER_CLASS_ARGUMENT_NAME)
-        )->pascalCase()->finishWith($controller_suffix);
-        $controller_class_name = (string)$controllerClassNameSubject;
-        $resource_name = (string)$controllerClassNameSubject->beforeLast($controller_suffix)->snakeCase();
+        try {
+            $controller_suffix = 'Controller';
+            $controllerClassNameSubject = Str::of(
+                $this->input->getArgument(self::CONTROLLER_CLASS_ARGUMENT_NAME)
+            )->pascalCase()->finishWith($controller_suffix);
+            $controller_class_name = (string)$controllerClassNameSubject;
+            $resource_name = (string)$controllerClassNameSubject->beforeLast($controller_suffix)->snakeCase();
 
-        $this->wrapScriptWithMessages(
-            "Creating $controller_class_name...",
-            function () use ($controller_class_name, $resource_name) {
-                ControllerStubMounter::make(ProjectPath::controllers() . "/$controller_class_name.php")
-                    ->setReplaceContentDictionary([
-                        'DummyController' => $controller_class_name,
-                        'dummy_resource' => $resource_name,
-                    ])->mountNewFile();
-            }
-        );
+            $this->wrapScriptWithMessages(
+                "Creating $controller_class_name...",
+                function () use ($controller_class_name, $resource_name) {
+                    ControllerStubMounter::make(ProjectPath::controllers() . "/$controller_class_name.php")
+                        ->setReplaceContentDictionary([
+                            'DummyController' => $controller_class_name,
+                            'dummy_resource' => $resource_name,
+                        ])->mountNewFile();
+                }
+            );
 
-        $this->resolveNoPermissionsMode($controller_class_name);
+            $this->resolveNoPermissionsMode($controller_class_name);
+        } catch (FailedToCopyStub
+        |FailedToResolveNoPermissionsMode
+        |InvalidArgumentException
+        |PathNotFoundException
+        |SymfonyInvalidArgumentException $exception) {
+            throw new FailedToMake('Controller', $exception);
+        }
 
         return Command::SUCCESS;
     }
 
-    /**
-     * @return bool
-     * @throws SymfonyInvalidArgumentException
-     */
     private function isNoPermissionsMode(): bool
     {
-        return (bool)$this->input->getOption(self::NO_PERMISSIONS_MODE);
+        try {
+            return (bool)$this->input->getOption(self::NO_PERMISSIONS_MODE);
+        } catch (SymfonyInvalidArgumentException) {
+            return false;
+        }
     }
 
     /**
      * @param string $controller_class_name
      * @return void
-     * @throws FailedToFindRole
-     * @throws InvalidArgumentException
-     * @throws SymfonyInvalidArgumentException
+     * @throws FailedToResolveNoPermissionsMode
      */
     private function resolveNoPermissionsMode(string $controller_class_name): void
     {
@@ -120,16 +120,20 @@ class MakeController extends ConsoleCommand
             return;
         }
 
-        $this->wrapScriptWithMessages(
-            "Registering $controller_class_name permissions to admin role...",
-            function () use ($controller_class_name) {
-                /** @var ApiController $controller_class_guessed_namespace */
-                $controller_class_guessed_namespace = "App\\Controllers\\$controller_class_name";
+        try {
+            $this->wrapScriptWithMessages(
+                "Registering $controller_class_name permissions to admin role...",
+                function () use ($controller_class_name) {
+                    /** @var ApiController $controller_class_guessed_namespace */
+                    $controller_class_guessed_namespace = "App\\Controllers\\$controller_class_name";
 
-                $controller_class_guessed_namespace::getInstance()->registerCapabilitiesToRole(
-                    Role::findOrFail(DefaultRole::admin->value)
-                );
-            }
-        );
+                    $controller_class_guessed_namespace::getInstance()->registerCapabilitiesToRole(
+                        Role::findOrFail(DefaultRole::admin->value)
+                    );
+                }
+            );
+        } catch (FailedToFindRole $exception) {
+            throw new FailedToResolveNoPermissionsMode($exception);
+        }
     }
 }

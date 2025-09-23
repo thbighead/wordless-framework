@@ -18,7 +18,9 @@ use WP_Error;
 
 trait Register
 {
-    use Labels, Rewrite, Validation;
+    use Labels;
+    use Rewrite;
+    use Validation;
 
     /**
      * @return array<int, ObjectType|CustomPost|StandardType>

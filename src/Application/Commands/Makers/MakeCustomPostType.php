@@ -6,6 +6,8 @@ use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
 use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Commands\Makers\Exceptions\FailedToMake;
+use Wordless\Application\Commands\Makers\Exceptions\FailedToResolveNoPermissionsMode;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
@@ -14,6 +16,7 @@ use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Application\Mounters\Stub\CustomPostTypeStubMounter;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\ConsoleCommand;
@@ -85,41 +88,34 @@ class MakeCustomPostType extends ConsoleCommand
 
     /**
      * @return int
-     * @throws CustomPostTypeRegistrationFailed
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws EmptyQueryBuilderArguments
-     * @throws FailedToCopyStub
-     * @throws FailedToCreateDirectory
-     * @throws FailedToCreateRole
-     * @throws FailedToFindRole
-     * @throws FailedToGetDirectoryPermissions
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidCustomPostTypeKeyFormat
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     * @throws ReservedCustomPostTypeKeyFormat
-     * @throws SymfonyInvalidArgumentException
+     * @throws FailedToMake
      */
     protected function runIt(): int
     {
-        $custom_post_type_class_name = Str::pascalCase(
-            $this->input->getArgument(self::CUSTOM_POST_TYPE_CLASS_ARGUMENT_NAME)
-        );
+        try {
+            $custom_post_type_class_name = Str::pascalCase(
+                $this->input->getArgument(self::CUSTOM_POST_TYPE_CLASS_ARGUMENT_NAME)
+            );
 
-        $this->wrapScriptWithMessages(
-            "Creating $custom_post_type_class_name...",
-            function () use ($custom_post_type_class_name) {
-                CustomPostTypeStubMounter::make(
-                    ProjectPath::customPostTypes() . "/$custom_post_type_class_name.php")
-                    ->setReplaceContentDictionary(
-                        $this->mountStubContentReplacementDictionary($custom_post_type_class_name)
-                    )->mountNewFile();
-            }
-        );
+            $this->wrapScriptWithMessages(
+                "Creating $custom_post_type_class_name...",
+                function () use ($custom_post_type_class_name) {
+                    CustomPostTypeStubMounter::make(
+                        ProjectPath::customPostTypes() . "/$custom_post_type_class_name.php")
+                        ->setReplaceContentDictionary(
+                            $this->mountStubContentReplacementDictionary($custom_post_type_class_name)
+                        )->mountNewFile();
+                }
+            );
 
-        $this->resolveNoPermissionsMode($custom_post_type_class_name);
+            $this->resolveNoPermissionsMode($custom_post_type_class_name);
+        } catch (FailedToCopyStub
+        |FailedToCreateInflector
+        |FailedToResolveNoPermissionsMode
+        |InvalidArgumentException
+        |PathNotFoundException $exception) {
+            throw new FailedToMake('Custom Post Type', $exception);
+        }
 
         return Command::SUCCESS;
     }
@@ -147,6 +143,7 @@ class MakeCustomPostType extends ConsoleCommand
     /**
      * @param string $custom_post_type_class_name
      * @return array<string, string>
+     * @throws FailedToCreateInflector
      * @throws InvalidArgumentException
      */
     private function mountStubContentReplacementDictionary(string $custom_post_type_class_name): array
@@ -173,18 +170,7 @@ class MakeCustomPostType extends ConsoleCommand
     /**
      * @param string $custom_post_type_class_name
      * @return void
-     * @throws CustomPostTypeRegistrationFailed
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws EmptyQueryBuilderArguments
-     * @throws FailedToCreateRole
-     * @throws FailedToFindRole
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidCustomPostTypeKeyFormat
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     * @throws ReservedCustomPostTypeKeyFormat
+     * @throws FailedToResolveNoPermissionsMode
      */
     private function resolveNoPermissionsMode(string $custom_post_type_class_name): void
     {
@@ -192,14 +178,27 @@ class MakeCustomPostType extends ConsoleCommand
             return;
         }
 
-        $this->wrapScriptWithMessages(
-            "Registering $custom_post_type_class_name permissions to admin role...",
-            function () use ($custom_post_type_class_name) {
-                /** @var CustomPost $custom_post_type_class_guessed_namespace */
-                $custom_post_type_class_guessed_namespace = "App\\CustomPostTypes\\$custom_post_type_class_name";
-                $custom_post_type_class_guessed_namespace::register();
-                Role::sync();
-            }
-        );
+        try {
+            $this->wrapScriptWithMessages(
+                "Registering $custom_post_type_class_name permissions to admin role...",
+                function () use ($custom_post_type_class_name) {
+                    /** @var CustomPost $custom_post_type_class_guessed_namespace */
+                    $custom_post_type_class_guessed_namespace = "App\\CustomPostTypes\\$custom_post_type_class_name";
+                    $custom_post_type_class_guessed_namespace::register();
+                    Role::sync();
+                }
+            );
+        } catch (CustomPostTypeRegistrationFailed
+        |DotEnvNotSetException
+        |EmptyConfigKey
+        |EmptyQueryBuilderArguments
+        |FailedToCreateRole
+        |FailedToFindRole
+        |FormatException
+        |PathNotFoundException
+        |InvalidArgumentException
+        |InvalidProviderClass $exception) {
+            throw new FailedToResolveNoPermissionsMode($exception);
+        }
     }
 }

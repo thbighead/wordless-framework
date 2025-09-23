@@ -12,6 +12,7 @@ use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Response;
 use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\External;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\External\Exceptions\CallExternalCommandException;
 
 abstract class Migration
 {
@@ -27,13 +28,8 @@ abstract class Migration
      * @param string $command_name
      * @param array<int|string, string> $inputs
      * @return Response
+     * @throws CallExternalCommandException
      * @throws CliReturnedNonZero
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws ProcessSignaledException
-     * @throws ProcessStartFailedException
-     * @throws ProcessTimedOutException
-     * @throws RuntimeException
      */
     protected function callConsoleCommand(string $command_name, array $inputs = []): Response
     {
@@ -44,13 +40,8 @@ abstract class Migration
      * @param string $command_name
      * @param array $inputs
      * @return Response
+     * @throws CallExternalCommandException
      * @throws CliReturnedNonZero
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws ProcessSignaledException
-     * @throws ProcessStartFailedException
-     * @throws ProcessTimedOutException
-     * @throws RuntimeException
      */
     protected function callConsoleCommandSilently(string $command_name, array $inputs = []): Response
     {
@@ -61,12 +52,7 @@ abstract class Migration
      * @param string $command_name
      * @param array $inputs
      * @return Response
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws ProcessSignaledException
-     * @throws ProcessStartFailedException
-     * @throws ProcessTimedOutException
-     * @throws RuntimeException
+     * @throws CallExternalCommandException
      */
     protected function callConsoleCommandSilentlyWithoutInterrupt(string $command_name, array $inputs = []): Response
     {
@@ -81,12 +67,7 @@ abstract class Migration
      * @param string $command_name
      * @param array $inputs
      * @return Response
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws ProcessSignaledException
-     * @throws ProcessStartFailedException
-     * @throws ProcessTimedOutException
-     * @throws RuntimeException
+     * @throws CallExternalCommandException
      */
     protected function callConsoleCommandWithoutInterrupt(string $command_name, array $inputs = []): Response
     {

@@ -5,12 +5,14 @@ namespace Wordless\Application\Commands\Makers;
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
+use Wordless\Application\Commands\Makers\Exceptions\FailedToMake;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Application\Mounters\Stub\SchedulerStubMounter;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
@@ -59,26 +61,28 @@ class MakeScheduler extends ConsoleCommand
 
     /**
      * @return int
-     * @throws FailedToCopyStub
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
-     * @throws PathNotFoundException
-     * @throws InvalidArgumentException
-     * @throws SymfonyInvalidArgumentException
+     * @throws FailedToMake
      */
     protected function runIt(): int
     {
-        $scheduler_class_name = Str::pascalCase($this->input->getArgument(self::SCHEDULER_CLASS_ARGUMENT_NAME));
+        try {
+            $scheduler_class_name = Str::pascalCase($this->input->getArgument(self::SCHEDULER_CLASS_ARGUMENT_NAME));
 
-        $this->wrapScriptWithMessages(
-            "Creating $scheduler_class_name...",
-            function () use ($scheduler_class_name) {
-                SchedulerStubMounter::make(ProjectPath::schedulers() . "/$scheduler_class_name.php")
-                    ->setReplaceContentDictionary([
-                        'DummyScheduler' => $scheduler_class_name,
-                    ])->mountNewFile();
-            }
-        );
+            $this->wrapScriptWithMessages(
+                "Creating $scheduler_class_name...",
+                function () use ($scheduler_class_name) {
+                    SchedulerStubMounter::make(ProjectPath::schedulers() . "/$scheduler_class_name.php")
+                        ->setReplaceContentDictionary([
+                            'DummyScheduler' => $scheduler_class_name,
+                        ])->mountNewFile();
+                }
+            );
+        } catch (FailedToCopyStub
+        |FailedToCreateInflector
+        |PathNotFoundException
+        |SymfonyInvalidArgumentException $exception) {
+            throw new FailedToMake('Scheduler', $exception);
+        }
 
         return Command::SUCCESS;
     }

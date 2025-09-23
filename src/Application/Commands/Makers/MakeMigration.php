@@ -5,6 +5,7 @@ namespace Wordless\Application\Commands\Makers;
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
+use Wordless\Application\Commands\Makers\Exceptions\FailedToMake;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
@@ -60,27 +61,26 @@ class MakeMigration extends ConsoleCommand
 
     /**
      * @return int
-     * @throws FailedToCopyStub
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
-     * @throws InvalidArgumentException
-     * @throws PathNotFoundException
-     * @throws SymfonyInvalidArgumentException
+     * @throws FailedToMake
      */
     protected function runIt(): int
     {
-        $snake_cased_migration_class_name = Str::snakeCase(
-            (string)$this->input->getArgument(self::MIGRATION_FILENAME_ARGUMENT_NAME)
-        );
-        $migration_file_name = date(Migration::FILENAME_DATE_FORMAT) . "$snake_cased_migration_class_name.php";
+        try {
+            $snake_cased_migration_class_name = Str::snakeCase(
+                (string)$this->input->getArgument(self::MIGRATION_FILENAME_ARGUMENT_NAME)
+            );
+            $migration_file_name = date(Migration::FILENAME_DATE_FORMAT) . "$snake_cased_migration_class_name.php";
 
-        $this->wrapScriptWithMessages(
-            "Creating $migration_file_name...",
-            function () use ($migration_file_name) {
-                MigrationStubMounter::make(ProjectPath::migrations() . "/$migration_file_name")
-                    ->mountNewFile();
-            }
-        );
+            $this->wrapScriptWithMessages(
+                "Creating $migration_file_name...",
+                function () use ($migration_file_name) {
+                    MigrationStubMounter::make(ProjectPath::migrations() . "/$migration_file_name")
+                        ->mountNewFile();
+                }
+            );
+        } catch (FailedToCopyStub|PathNotFoundException|SymfonyInvalidArgumentException $exception) {
+            throw new FailedToMake('Migration', $exception);
+        }
 
         return Command::SUCCESS;
     }

@@ -8,6 +8,7 @@ use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Traits\ForceMode;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\CannotReadPath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
@@ -15,6 +16,7 @@ use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
@@ -67,13 +69,10 @@ class PublishConfigurationFiles extends ConsoleCommand
 
     /**
      * @return int
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
+     * @throws FailedToLoadBootstrapper
      * @throws FailedToCopyFile
-     * @throws FormatException
      * @throws InvalidArgumentException
      * @throws InvalidDirectory
-     * @throws InvalidProviderClass
      * @throws PathNotFoundException
      */
     protected function runIt(): int
@@ -129,21 +128,18 @@ class PublishConfigurationFiles extends ConsoleCommand
         return false;
     }
 
-    /**
-     * @return void
-     * @throws FailedToCopyFile
-     * @throws InvalidArgumentException
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
-     */
     private function publishConfigFilesFromVendorPackage(): void
     {
-        foreach (DirectoryFiles::recursiveRead(ProjectPath::assets('config')) as $config_filepath_from) {
-            $this->skipOrCopyConfigFile($config_filepath_from);
-        }
+        try {
+            foreach (DirectoryFiles::recursiveRead(ProjectPath::assets('config')) as $config_filepath_from) {
+                $this->skipOrCopyConfigFile($config_filepath_from);
+            }
 
-        foreach ($this->provided_configs as $provided_config) {
-            $this->skipOrCopyConfigFile($provided_config);
+            foreach ($this->provided_configs as $provided_config) {
+                $this->skipOrCopyConfigFile($provided_config);
+            }
+        } catch (CannotReadPath|FailedToCopyFile|InvalidArgumentException|PathNotFoundException $exception) {
+
         }
     }
 

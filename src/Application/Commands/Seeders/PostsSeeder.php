@@ -10,17 +10,24 @@ use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
+use Wordless\Application\Commands\Exceptions\FailedToGetCommandOptionValue;
 use Wordless\Application\Commands\Seeders\Contracts\SeederCommand;
+use Wordless\Application\Commands\Seeders\PostsSeeder\Exceptions\FailedToGenerateCategorizedPost;
+use Wordless\Application\Commands\Seeders\PostsSeeder\Exceptions\FailedToPopulateCategories;
+use Wordless\Application\Commands\Seeders\PostsSeeder\Exceptions\PostsSeederFailed;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\Internal\Exceptions\CallInternalCommandException;
 use Wordless\Wordpress\Models\Category;
 
 class PostsSeeder extends SeederCommand
 {
     final public const COMMAND_NAME = 'seeder:posts';
     private const DEFAULT_POST_SIZE_IN_PARAGRAPHS = 3;
+    private const MIN_POST_SIZE_IN_PARAGRAPHS = 1;
     private const OPTION_POST_SIZE_IN_PARAGRAPHS = 'paragraphs';
 
     protected function description(): string
@@ -54,26 +61,31 @@ class PostsSeeder extends SeederCommand
 
     /**
      * @return int
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
-     * @throws WpCliCommandReturnedNonZero
-     * @throws CliReturnedNonZero
+     * @throws FailedToPopulateCategories
+     * @throws PostsSeederFailed
      */
     protected function runIt(): int
     {
         if (Category::noneCreated()) {
-            $this->callConsoleCommand(TaxonomyTermsSeeder::COMMAND_NAME);
+            try {
+                $this->callConsoleCommand(TaxonomyTermsSeeder::COMMAND_NAME);
+            } catch (CliReturnedNonZero|CallInternalCommandException $exception) {
+                throw new FailedToPopulateCategories($exception);
+            }
         }
 
         $categories = Category::all();
 
-        $progressBar = $this->progressBar($posts_total = count($categories) * $this->getQuantity());
-        $progressBar->setMessage('Creating Posts...');
-        $progressBar->start();
+        try {
+            $progressBar = $this->progressBar($posts_total = count($categories) * $this->getQuantity());
+            $progressBar->setMessage('Creating Posts...');
+            $progressBar->start();
 
-        foreach ($categories as $category) {
-            $this->generatePostsCategorizedAs($category, $progressBar);
+            foreach ($categories as $category) {
+                $this->generatePostsCategorizedAs($category, $progressBar);
+            }
+        } catch (FailedToGetCommandOptionValue|FailedToGenerateCategorizedPost $exception) {
+            throw new PostsSeederFailed($exception);
         }
 
         $progressBar->setMessage("Done! A total of $posts_total posts were generated.");
@@ -86,36 +98,40 @@ class PostsSeeder extends SeederCommand
      * @param Category $category
      * @param ProgressBar $progressBar
      * @return void
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
-     * @throws CommandNotFoundException
-     * @throws WpCliCommandReturnedNonZero
+     * @throws FailedToGenerateCategorizedPost
      */
     private function generatePostsCategorizedAs(Category $category, ProgressBar $progressBar): void
     {
-        for ($i = 0; $i < $this->getQuantity(); $i++) {
-            $post_title = $this->faker->sentence();
-            $category_name = $category->name;
-            $post_date = Carbon::now()->subDays($i)->format('Y-m-d H:i:s');
-            $post_content = Str::remove(
-                nl2br($this->faker->paragraphs($this->getPostParagraphs(), true)),
-                ["\n", "\r"]
-            );
+        try {
+            for ($i = 0; $i < $this->getQuantity(); $i++) {
+                $post_title = $this->faker->sentence();
+                $category_name = $category->name;
+                $post_date = Carbon::now()->subDays($i)->format('Y-m-d H:i:s');
+                $post_content = Str::remove(
+                    nl2br($this->faker->paragraphs($this->getPostParagraphs(), true)),
+                    ["\n", "\r"]
+                );
 
-            $progressBar->setMessage("Creating post '$post_title' categorized as '$category_name'...");
+                $progressBar->setMessage("Creating post '$post_title' categorized as '$category_name'...");
 
-            $this->runWpCliCommandSilently(
-                "post create --post_status=publish --post_date='$post_date' --post_title='$post_title' --post_content='$post_content' --post_excerpt='{$this->faker->paragraph()}' --post_category='$category->name' --quiet"
-            );
+                $this->runWpCliCommandSilently(
+                    "post create --post_status=publish --post_date='$post_date' --post_title='$post_title' --post_content='$post_content' --post_excerpt='{$this->faker->paragraph()}' --post_category='$category->name' --quiet"
+                );
+            }
+        } catch (FailedToGetCommandOptionValue|FailedToRunWpCliCommand|WpCliCommandReturnedNonZero $exception) {
+            throw new FailedToGenerateCategorizedPost($category, $exception);
         }
     }
 
-    /**
-     * @return int
-     * @throws InvalidArgumentException
-     */
     private function getPostParagraphs(): int
     {
-        return max(abs((int)$this->input->getOption(self::OPTION_POST_SIZE_IN_PARAGRAPHS)), 1);
+        try {
+            return max(
+                abs((int)$this->input->getOption(self::OPTION_POST_SIZE_IN_PARAGRAPHS)),
+                self::MIN_POST_SIZE_IN_PARAGRAPHS
+            );
+        } catch (InvalidArgumentException) {
+            return self::MIN_POST_SIZE_IN_PARAGRAPHS;
+        }
     }
 }
