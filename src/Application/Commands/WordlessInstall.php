@@ -74,6 +74,7 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Application\Mounters\Stub\RobotsTxtStubMounter;
 use Wordless\Application\Mounters\Stub\WordlessPluginStubMounter;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
+use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
@@ -129,6 +130,7 @@ class WordlessInstall extends ConsoleCommand
 
     /**
      * @return int
+     * @throws FailedToRefreshWordlessUserPassword
      * @throws FailedToRunCommand
      */
     protected function runIt(): int
@@ -351,6 +353,7 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @return $this
      * @throws FailedToCreateWpDatabaseException
+     * @throws FailedToRefreshWordlessUserPassword
      */
     private function createWpDatabase(): static
     {
@@ -472,6 +475,16 @@ class WordlessInstall extends ConsoleCommand
         }
     }
 
+    private function firstAdminEmail(): string
+    {
+        try {
+            $app_host = $this->getEnvVariableByKey('APP_HOST', $app_host = 'wordless.wordless');
+        } catch (FailedToGetEnvVariableException) {
+        }
+
+        return self::FIRST_ADMIN_USERNAME . "@$app_host";
+    }
+
     /**
      * @return $this
      * @throws FailedToFlushCacheException
@@ -585,6 +598,7 @@ class WordlessInstall extends ConsoleCommand
     /**
      * @return $this
      * @throws FailedToInstallWpDatabaseCoreException
+     * @throws FailedToRefreshWordlessUserPassword
      */
     private function installWpDatabaseCore(): static
     {
