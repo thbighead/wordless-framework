@@ -2,15 +2,8 @@
 
 namespace Wordless\Application\Commands;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Process\Exception\InvalidArgumentException as SymfonyProcessInvalidArgumentException;
-use Symfony\Component\Process\Exception\LogicException;
-use Symfony\Component\Process\Exception\ProcessSignaledException;
-use Symfony\Component\Process\Exception\ProcessStartFailedException;
-use Symfony\Component\Process\Exception\ProcessTimedOutException;
-use Symfony\Component\Process\Exception\RuntimeException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Traits\NoTtyMode;
@@ -21,6 +14,7 @@ use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\External\Exceptions\CallExternalCommandException;
 
 class WpCliCaller extends ConsoleCommand
 {
@@ -61,7 +55,6 @@ class WpCliCaller extends ConsoleCommand
     protected function runIt(): int
     {
         try {
-
             $wp_cli_filepath = $this->chooseWpCliScriptByOperationalSystem();
             $wp_cli_full_command_string = $this->input->getArgument(self::WP_CLI_FULL_COMMAND_STRING_ARGUMENT_NAME);
 
@@ -86,7 +79,7 @@ class WpCliCaller extends ConsoleCommand
             }
 
             return $this->callExternalCommand($full_command, !$this->isNoTtyMode())->result_code;
-        } catch (CliReturnedNonZero|InvalidArgumentException|LogicException|PathNotFoundException|ProcessSignaledException|ProcessStartFailedException|ProcessTimedOutException|RuntimeException|SymfonyProcessInvalidArgumentException $exception) {
+        } catch (CallExternalCommandException|InvalidArgumentException|PathNotFoundException|CliReturnedNonZero $exception) {
             throw new FailedToRunCommand(self::COMMAND_NAME, $exception);
         }
     }

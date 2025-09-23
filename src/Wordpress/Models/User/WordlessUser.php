@@ -2,12 +2,13 @@
 
 namespace Wordless\Wordpress\Models\User;
 
+use Random\RandomException;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\WordlessInstall;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 use Wordless\Wordpress\Models\User;
@@ -38,6 +39,7 @@ final class WordlessUser extends User
      * @param Role|DefaultRole|string|null $role
      * @return static
      * @throws FailedToCreateUser
+     * @throws RandomException
      * @noinspection PhpUnnecessaryStaticReferenceInspection
      */
     public static function create(
@@ -64,6 +66,10 @@ final class WordlessUser extends User
         return self::getInstance();
     }
 
+    /**
+     * @return string
+     * @throws RandomException
+     */
     private static function password(): string
     {
         return Str::random();
