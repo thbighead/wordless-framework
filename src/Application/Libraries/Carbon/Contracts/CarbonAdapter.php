@@ -22,6 +22,9 @@ use Wordless\Application\Libraries\Carbon\CarbonInterval;
 use Wordless\Application\Libraries\Carbon\CarbonPeriod;
 use Wordless\Application\Libraries\Carbon\CarbonPeriodImmutable;
 use Wordless\Application\Libraries\Carbon\CarbonTimeZone;
+use Wordless\Application\Libraries\Carbon\CarbonTimeZone\Exceptions\FailedToInstantiateOriginalCarbonTimeZone;
+use Wordless\Application\Libraries\Carbon\Contracts\CarbonAdapter\Exceptions\FailedToAdaptFromOriginalCarbonClass;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 
 abstract class CarbonAdapter
 {
@@ -53,12 +56,7 @@ abstract class CarbonAdapter
      * @param mixed $originalCarbon
      * @param DateTimeZone|string|null $timezone
      * @return mixed
-     * @throws EmptyConfigKey
-     * @throws InvalidArgumentException
-     * @throws InvalidConfigKey
-     * @throws InvalidFormatException
-     * @throws PathNotFoundException
-     * @throws Exception
+     * @throws FailedToAdaptFromOriginalCarbonClass
      */
     public static function createFromOriginalCarbon(
         mixed                    $originalCarbon,
@@ -69,15 +67,19 @@ abstract class CarbonAdapter
             return $originalCarbon;
         }
 
-        return match ($originalCarbon::class) {
-            OriginalCarbon::class => new Carbon($originalCarbon, $timezone),
-            OriginalCarbonImmutable::class => new CarbonImmutable($originalCarbon, $timezone),
-            OriginalCarbonInterval::class => new CarbonInterval($originalCarbon, timezone: $timezone),
-            OriginalCarbonPeriod::class => new CarbonPeriod($originalCarbon, $timezone),
-            OriginalCarbonPeriodImmutable::class => new CarbonPeriodImmutable($originalCarbon, $timezone),
-            OriginalCarbonTimeZone::class => new CarbonTimeZone($originalCarbon),
-            default => $originalCarbon,
-        };
+        try {
+            return match ($originalCarbon::class) {
+                OriginalCarbon::class => new Carbon($originalCarbon, $timezone),
+                OriginalCarbonImmutable::class => new CarbonImmutable($originalCarbon, $timezone),
+                OriginalCarbonInterval::class => new CarbonInterval($originalCarbon, timezone: $timezone),
+                OriginalCarbonPeriod::class => new CarbonPeriod($originalCarbon, $timezone),
+                OriginalCarbonPeriodImmutable::class => new CarbonPeriodImmutable($originalCarbon, $timezone),
+                OriginalCarbonTimeZone::class => new CarbonTimeZone($originalCarbon),
+                default => $originalCarbon,
+            };
+        } catch (Exception $exception) {
+            throw new FailedToAdaptFromOriginalCarbonClass($originalCarbon::class, $exception);
+        }
     }
 
     private static function parseSelfArguments(array $arguments): array
@@ -95,11 +97,7 @@ abstract class CarbonAdapter
      * @param string $name
      * @param array $arguments
      * @return mixed
-     * @throws EmptyConfigKey
-     * @throws InvalidArgumentException
-     * @throws InvalidConfigKey
-     * @throws InvalidFormatException
-     * @throws PathNotFoundException
+     * @throws FailedToAdaptFromOriginalCarbonClass
      */
     public function __call(string $name, array $arguments): mixed
     {
@@ -121,11 +119,7 @@ abstract class CarbonAdapter
     /**
      * @param string $name
      * @return mixed
-     * @throws EmptyConfigKey
-     * @throws InvalidArgumentException
-     * @throws InvalidConfigKey
-     * @throws InvalidFormatException
-     * @throws PathNotFoundException
+     * @throws FailedToAdaptFromOriginalCarbonClass
      */
     public function __get(string $name): mixed
     {

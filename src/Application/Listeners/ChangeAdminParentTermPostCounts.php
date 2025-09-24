@@ -14,11 +14,6 @@ class ChangeAdminParentTermPostCounts extends ActionListener
 {
     protected const FUNCTION = 'countWithChildren';
 
-    /**
-     * @param WP_Term_Query $query
-     * @return void
-     * @throws EmptyQueryBuilderArguments
-     */
     public static function countWithChildren(WP_Term_Query $query): void
     {
         global $pagenow;

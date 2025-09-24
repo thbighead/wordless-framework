@@ -21,6 +21,7 @@ use Wordless\Wordpress\Models\Attachment\DTO\MediaDTO\DTO\SizeDTO;
 use Wordless\Wordpress\Models\Attachment\DTO\WpInsertAttachmentResultDTO;
 use Wordless\Wordpress\Models\Attachment\Exceptions\CallWpInsertAttachmentByFileFailed;
 use Wordless\Wordpress\Models\Attachment\Exceptions\FailedToCreateAttachmentFromFile;
+use Wordless\Wordpress\Models\Attachment\Exceptions\FailedToUpdateAttachmentFile;
 use Wordless\Wordpress\Models\Attachment\Exceptions\NewMetadataEqualsToOldMetadata;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData\Traits\Crud\Traits\Read\Exceptions\InvalidMetaKey;
 use Wordless\Wordpress\Models\Post\Exceptions\FailedToGetPermalink;
@@ -65,9 +66,8 @@ class Attachment extends Post
     {
         /**
          * @return WpInsertAttachmentResultDTO
-         * @throws FailedToCopyFile
+         * @throws CallWpInsertAttachmentByFileFailed
          * @throws FailedToCreateAttachmentFromFile
-         * @throws InvalidArgumentException
          * @throws PathNotFoundException
          */
         $transaction = function () use ($absolute_filepath, $secure_mode): WpInsertAttachmentResultDTO {
@@ -259,20 +259,14 @@ class Attachment extends Post
      * @param string $absolute_filepath
      * @param bool $secure_mode
      * @return WpInsertAttachmentResultDTO
-     * @throws FailedToCopyFile
-     * @throws FailedToCreateAttachmentFromFile
-     * @throws InvalidArgumentException
-     * @throws PathNotFoundException
-     * @throws QueryError
-     * @noinspection PhpDocRedundantThrowsInspection
+     * @throws FailedToUpdateAttachmentFile
      */
     public function updateFile(string $absolute_filepath, bool $secure_mode = true): WpInsertAttachmentResultDTO
     {
         /**
          * @return WpInsertAttachmentResultDTO
-         * @throws FailedToCopyFile
+         * @throws CallWpInsertAttachmentByFileFailed
          * @throws FailedToCreateAttachmentFromFile
-         * @throws InvalidArgumentException
          * @throws PathNotFoundException
          */
         $transaction = function () use ($absolute_filepath, $secure_mode): WpInsertAttachmentResultDTO {
@@ -300,7 +294,14 @@ class Attachment extends Post
             return $result;
         };
 
-        return Database::smartTransaction($transaction);
+        try {
+            return Database::smartTransaction($transaction);
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (CallWpInsertAttachmentByFileFailed
+        |FailedToCreateAttachmentFromFile
+        |PathNotFoundException
+        |QueryError $exception) {
+            throw new FailedToUpdateAttachmentFile($this, $absolute_filepath, $secure_mode, $exception);
+        }
     }
 
     private function setAltText(): static

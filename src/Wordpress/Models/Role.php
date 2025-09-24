@@ -41,10 +41,6 @@ class Role extends WP_Role
         return $this->has_cap($capability);
     }
 
-    /**
-     * @return bool
-     * @throws InvalidArgumentException
-     */
     public function isDefault(): bool
     {
         return $this->is_default ?? $this->is_default = self::isDefaultByName($this->name);

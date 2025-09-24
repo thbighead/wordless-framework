@@ -8,6 +8,7 @@ use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguratio
 use Wordless\Core\Bootstrapper\Traits\Entities\Exceptions\FailedToRegisterWordlessEntity;
 use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomPostStatuses;
 use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomPostTypes;
+use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomPostTypes\Exceptions\FailedToResolveCustomPostTypeRegistrar;
 use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomTaxonomies;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
 use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
@@ -30,7 +31,10 @@ trait Entities
                 ->resolveCustomTaxonomies()
                 ->resolveCustomPostStatuses()
                 ->resolveCustomPostTypes();
-        } catch (FailedToLoadBootstrapper|ReservedCustomPostStatusKey|CustomPostTypeRegistrationFailed|CustomTaxonomyRegistrationFailed $exception) {
+        } catch (FailedToLoadBootstrapper
+        |FailedToResolveCustomPostTypeRegistrar
+        |ReservedCustomPostStatusKey
+        |CustomTaxonomyRegistrationFailed $exception) {
             throw new FailedToRegisterWordlessEntity($exception);
         }
     }

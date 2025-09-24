@@ -101,12 +101,11 @@ class MakeCustomPostType extends ConsoleCommand
             );
 
             $this->resolveNoPermissionsMode($custom_post_type_class_name);
-        } catch (CustomPostTypeRegistrationFailed
-        |FailedToCopyStub
+        } catch (FailedToCopyStub
         |FailedToCreateInflector
+        |FailedToRegisterCustomPostTypeWithPermissionMode
         |InvalidArgumentException
-        |PathNotFoundException
-        |SynchroniseFailed $exception) {
+        |PathNotFoundException $exception) {
             throw new FailedToMake('Custom Post Type', $exception);
         }
 

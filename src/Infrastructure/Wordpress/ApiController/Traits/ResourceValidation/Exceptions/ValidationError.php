@@ -4,6 +4,7 @@ namespace Wordless\Infrastructure\Wordpress\ApiController\Traits\ResourceValidat
 
 use InvalidArgumentException;
 use Throwable;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 use Wordless\Infrastructure\Http\Response\Enums\StatusCode;
 use Wordless\Infrastructure\Wordpress\ApiController\Response;
@@ -27,7 +28,7 @@ class ValidationError extends InvalidArgumentException
 
     /**
      * @return Response
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function getResponse(): Response
     {
@@ -36,7 +37,7 @@ class ValidationError extends InvalidArgumentException
 
     /**
      * @return Response
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     private function mountResponse(): Response
     {

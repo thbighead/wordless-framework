@@ -26,19 +26,13 @@ class Response extends WP_REST_Response implements MutableHeaderBag
      * @param string $message
      * @param array $data
      * @return static
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public static function error(StatusCode $http_code, string $message, array $data = []): static
     {
         return (new static)->setWpError($http_code, $message, $data);
     }
 
-    /**
-     * @param string $key
-     * @param string|array|null $default
-     * @return string|null
-     * @throws InvalidArgumentException
-     */
     public function getHeader(string $key, string|array|null $default = null): ?string
     {
         return $this->headers[self::canonicalizeHeaderName($key)] ?? $default;
@@ -52,11 +46,6 @@ class Response extends WP_REST_Response implements MutableHeaderBag
         return $this->headers;
     }
 
-    /**
-     * @param string $key
-     * @return bool
-     * @throws InvalidArgumentException
-     */
     public function hasHeader(string $key): bool
     {
         return $this->getHeader($key) !== null;
@@ -95,13 +84,6 @@ class Response extends WP_REST_Response implements MutableHeaderBag
         return $this->wpError ?? $this;
     }
 
-    /**
-     * @param string $key
-     * @param string $value
-     * @param bool $override
-     * @return $this
-     * @throws InvalidArgumentException
-     */
     public function setHeader(string $key, string $value, bool $override = false): static
     {
         $this->header(self::canonicalizeHeaderName($key), $value, $override);
@@ -113,7 +95,6 @@ class Response extends WP_REST_Response implements MutableHeaderBag
      * @param string[] $headers
      * @param bool $override
      * @return $this
-     * @throws InvalidArgumentException
      */
     public function setHeaders(array $headers, bool $override = false): static
     {

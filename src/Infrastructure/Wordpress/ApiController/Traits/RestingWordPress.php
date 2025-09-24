@@ -4,6 +4,7 @@ namespace Wordless\Infrastructure\Wordpress\ApiController\Traits;
 
 use InvalidArgumentException;
 use Wordless\Application\Helpers\Debugger;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Infrastructure\Http\Response\Enums\StatusCode;
 use Wordless\Infrastructure\Wordpress\ApiController\Request;
 use Wordless\Infrastructure\Wordpress\ApiController\Response;
@@ -151,7 +152,7 @@ trait RestingWordPress
     /**
      * @param Request $request
      * @return Response
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     private function mountNotImplementedError(Request $request): Response
     {

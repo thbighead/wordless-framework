@@ -55,11 +55,9 @@ abstract class Taxonomy implements IRelatedMetaData
     /**
      * @param WP_Term|int|string $term
      * @param bool $with_acfs
-     * @throws EmptyQueryBuilderArguments
      * @throws EmptyStringParameter
      * @throws InitializingModelWithWrongTaxonomyName
      * @throws InvalidAcfFunction
-     * @throws InvalidArgumentException
      */
     public function __construct(WP_Term|int|string $term, bool $with_acfs = true)
     {
@@ -181,7 +179,6 @@ abstract class Taxonomy implements IRelatedMetaData
      * @param int $from_id
      * @return void
      * @throws InvalidAcfFunction
-     * @throws InvalidArgumentException
      */
     private function loadTermAcfs(int $from_id): void
     {
