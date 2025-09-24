@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Cachers\Exceptions;
 
@@ -12,7 +12,7 @@ class FailedToMountCacheArray extends RuntimeException
     {
         parent::__construct(
             'Failed on try mount cache array.',
-            ExceptionCode::development_error,
+            ExceptionCode::development_error->value,
             $previous
         );
     }

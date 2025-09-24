@@ -10,6 +10,7 @@ use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\
 use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\Traits\HelperMethods\Traits\WordCase;
 use Wordless\Application\Helpers\Str\Enums\Encoding;
 use Wordless\Application\Helpers\Str\Enums\Language;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 
 trait HelperMethods
 {
@@ -29,7 +30,7 @@ trait HelperMethods
     /**
      * @param Language|null $language
      * @return $this
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function plural(?Language $language = Language::english): static
     {
@@ -44,7 +45,7 @@ trait HelperMethods
     /**
      * @param Language|null $language
      * @return $this
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function singular(?Language $language = Language::english): static
     {

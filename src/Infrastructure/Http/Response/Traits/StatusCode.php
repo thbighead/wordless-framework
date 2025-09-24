@@ -3,6 +3,7 @@
 namespace Wordless\Infrastructure\Http\Response\Traits;
 
 use InvalidArgumentException;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Infrastructure\Http\Response\Enums\StatusCode as StatusCodeEnum;
 
 trait StatusCode
@@ -24,7 +25,7 @@ trait StatusCode
     /**
      * @param bool $prefer_original
      * @return string
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function statusCodeText(bool $prefer_original = false): string
     {

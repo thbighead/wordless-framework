@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\Internal\Exceptions;
 
@@ -12,7 +12,7 @@ class CallInternalCommandException extends RuntimeException
     {
         parent::__construct(
             'Failed to call internal command.',
-            ExceptionCode::development_error,
+            ExceptionCode::development_error->value,
             $previous
         );
     }

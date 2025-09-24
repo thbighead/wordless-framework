@@ -2,15 +2,14 @@
 
 namespace Wordless\Application\Commands\Makers;
 
-use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
 use Wordless\Application\Commands\Makers\Exceptions\FailedToMake;
-use Wordless\Application\Commands\Makers\Exceptions\FailedToResolveNoPermissionsMode;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Application\Mounters\Stub\ControllerStubMounter;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
@@ -90,8 +89,8 @@ class MakeController extends ConsoleCommand
 
             $this->resolveNoPermissionsMode($controller_class_name);
         } catch (FailedToCopyStub
-        |FailedToResolveNoPermissionsMode
-        |InvalidArgumentException
+        |FailedToCreateInflector
+        |FailedToFindRole
         |PathNotFoundException
         |SymfonyInvalidArgumentException $exception) {
             throw new FailedToMake('Controller', $exception);
@@ -112,7 +111,7 @@ class MakeController extends ConsoleCommand
     /**
      * @param string $controller_class_name
      * @return void
-     * @throws FailedToResolveNoPermissionsMode
+     * @throws FailedToFindRole
      */
     private function resolveNoPermissionsMode(string $controller_class_name): void
     {
@@ -120,20 +119,16 @@ class MakeController extends ConsoleCommand
             return;
         }
 
-        try {
-            $this->wrapScriptWithMessages(
-                "Registering $controller_class_name permissions to admin role...",
-                function () use ($controller_class_name) {
-                    /** @var ApiController $controller_class_guessed_namespace */
-                    $controller_class_guessed_namespace = "App\\Controllers\\$controller_class_name";
+        $this->wrapScriptWithMessages(
+            "Registering $controller_class_name permissions to admin role...",
+            function () use ($controller_class_name) {
+                /** @var ApiController $controller_class_guessed_namespace */
+                $controller_class_guessed_namespace = "App\\Controllers\\$controller_class_name";
 
-                    $controller_class_guessed_namespace::getInstance()->registerCapabilitiesToRole(
-                        Role::findOrFail(DefaultRole::admin->value)
-                    );
-                }
-            );
-        } catch (FailedToFindRole $exception) {
-            throw new FailedToResolveNoPermissionsMode($exception);
-        }
+                $controller_class_guessed_namespace::getInstance()->registerCapabilitiesToRole(
+                    Role::findOrFail(DefaultRole::admin->value)
+                );
+            }
+        );
     }
 }

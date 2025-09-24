@@ -33,7 +33,6 @@ abstract class Component
 
     /**
      * @return string
-     * @throws EmptyConfigKey
      * @throws InvalidTemplatePathing
      */
     final public function html(): string

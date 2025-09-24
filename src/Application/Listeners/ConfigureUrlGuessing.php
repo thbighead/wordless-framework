@@ -16,10 +16,6 @@ class ConfigureUrlGuessing extends FilterListener
      */
     protected const FUNCTION = 'configure404ResponseGuessing';
 
-    /**
-     * @return bool
-     * @throws PathNotFoundException
-     */
     public static function configure404ResponseGuessing(): bool
     {
         return Config::wordpress(self::CONFIG_KEY_STOP_URL_GUESSING, true);

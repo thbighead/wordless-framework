@@ -11,6 +11,7 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\PublicSymlink;
 use Wordless\Core\PublicSymlink\Exceptions\InvalidPublicSymlinkTargetWithExceptions;
+use Wordless\Core\PublicSymlink\Exceptions\PublicSymlinkParseFailed;
 use Wordless\Core\PublicSymlink\Wlsymlink\Exceptions\WlsymlinkParseFailed;
 
 final class Wlsymlink
@@ -49,8 +50,8 @@ final class Wlsymlink
                 ->setGeneratedSymlinks();
         } catch (FailedToGetFileContent
         |InvalidDirectory
-        |InvalidPublicSymlinkTargetWithExceptions
-        |PathNotFoundException $exception) {
+        |PathNotFoundException
+        |PublicSymlinkParseFailed $exception) {
             throw new WlsymlinkParseFailed($exception);
         }
     }
@@ -172,8 +173,7 @@ final class Wlsymlink
 
     /**
      * @return PublicSymlink
-     * @throws InvalidPublicSymlinkTargetWithExceptions
-     * @throws PathNotFoundException
+     * @throws PublicSymlinkParseFailed
      */
     private function mountPublicSymlinkFromFileContent(): PublicSymlink
     {
@@ -194,8 +194,7 @@ final class Wlsymlink
     /**
      * @param PublicSymlink $from
      * @return Generator<PublicSymlink>
-     * @throws InvalidPublicSymlinkTargetWithExceptions
-     * @throws PathNotFoundException
+     * @throws PublicSymlinkParseFailed
      */
     private function mountSymlinksUntilOrigin(PublicSymlink $from): Generator
     {
@@ -222,8 +221,7 @@ final class Wlsymlink
 
     /**
      * @return void
-     * @throws InvalidPublicSymlinkTargetWithExceptions
-     * @throws PathNotFoundException
+     * @throws PublicSymlinkParseFailed
      */
     private function setGeneratedSymlinks(): void
     {

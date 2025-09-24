@@ -17,11 +17,6 @@ class Role extends WP_Role
 
     private bool $is_default;
 
-    /**
-     * @param string $role
-     * @return bool
-     * @throws InvalidArgumentException
-     */
     public static function isDefaultByName(string $role): bool
     {
         return DefaultRole::tryFrom(Str::slugCase($role)) !== null;

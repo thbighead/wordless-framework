@@ -21,9 +21,7 @@ trait Requests
      * @param array<string, string>|string $body
      * @param array<string, string> $additional_headers
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public function delete(
@@ -40,9 +38,7 @@ trait Requests
      * @param array<string, string>|string $body
      * @param array<string, string> $additional_headers
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public function get(
@@ -59,9 +55,7 @@ trait Requests
      * @param array<string, string>|string $body
      * @param array<string, string> $additional_headers
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public function patch(
@@ -78,9 +72,7 @@ trait Requests
      * @param array<string, string>|string $body
      * @param array<string, string> $additional_headers
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public function post(
@@ -97,9 +89,7 @@ trait Requests
      * @param array<string, string>|string $body
      * @param array<string, string> $additional_headers
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public function put(

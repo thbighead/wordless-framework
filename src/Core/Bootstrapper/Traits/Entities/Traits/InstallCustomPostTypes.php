@@ -3,6 +3,7 @@
 namespace Wordless\Core\Bootstrapper\Traits\Entities\Traits;
 
 use InvalidArgumentException;
+use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomPostTypes\Exceptions\FailedToResolveCustomPostTypeRegistrar;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
@@ -33,12 +34,18 @@ trait InstallCustomPostTypes
 
     /**
      * @return $this
-     * @throws CustomPostTypeRegistrationFailed
+     * @throws FailedToResolveCustomPostTypeRegistrar
      */
     private function resolveCustomPostTypes(): static
     {
         foreach ($this->getLoadedCustomPostTypes() as $custom_post_type_namespace) {
-            $custom_post_type_namespace::register();
+            try {
+                $custom_post_type_namespace::register();
+            } catch (CustomPostTypeRegistrationFailed
+            |InvalidCustomPostTypeKeyFormat
+            |ReservedCustomPostTypeKeyFormat $exception) {
+                throw new FailedToResolveCustomPostTypeRegistrar($custom_post_type_namespace, $exception);
+            }
         }
 
         return $this;

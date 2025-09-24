@@ -109,6 +109,12 @@ trait SetHostFromNginx
         );
     }
 
+    /**
+     * @param string $app_host
+     * @return void
+     * @throws AppHostAlreadySetOnDotEnv
+     * @throws FailedToSetAppHostValueAtDotEnv
+     */
     private static function setAppHostValueAtDotEnv(string $app_host): void
     {
         try {

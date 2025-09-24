@@ -7,6 +7,7 @@ use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectD
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Listeners\RemoveAdditionalCssFromAdmin;
 use Wordless\Application\Listeners\RemoveGlobalCustomInlineStyles;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO\Exceptions\TriedToSetFunctionWhenRemovingListener;
@@ -19,8 +20,7 @@ class WpSpeedUpProvider extends Provider
 
     /**
      * @return string[]|Listener[]
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public function registerListeners(): array
     {
@@ -46,8 +46,7 @@ class WpSpeedUpProvider extends Provider
 
     /**
      * @return RemoveHookDTO[]
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      * @throws TriedToSetFunctionWhenRemovingListener
      */
     public function unregisterActionListeners(): array
@@ -67,8 +66,7 @@ class WpSpeedUpProvider extends Provider
 
     /**
      * @return bool
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     private function isConfiguredToSpeedUpWordpress(): bool
     {

@@ -15,10 +15,6 @@ class CustomPostStatusNameGuesser extends Guesser
         $this->class_name = Str::afterLast($class_name, '\\');
     }
 
-    /**
-     * @return string
-     * @throws InvalidArgumentException
-     */
     protected function guessValue(): string
     {
         return Str::slugCase($this->class_name);

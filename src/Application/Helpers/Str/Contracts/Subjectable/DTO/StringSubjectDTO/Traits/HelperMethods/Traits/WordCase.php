@@ -5,12 +5,13 @@ namespace Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubje
 use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Enums\Encoding;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 
 trait WordCase
 {
     /**
      * @return $this
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function camelCase(): static
     {
@@ -19,10 +20,6 @@ trait WordCase
         return $this->recalculateLength();
     }
 
-    /**
-     * @return $this
-     * @throws InvalidArgumentException
-     */
     public function kebabCase(): static
     {
         $this->subject = Str::kebabCase($this->subject);
@@ -42,7 +39,7 @@ trait WordCase
 
     /**
      * @return $this
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function pascalCase(): static
     {
@@ -51,10 +48,6 @@ trait WordCase
         return $this->recalculateLength();
     }
 
-    /**
-     * @return $this
-     * @throws InvalidArgumentException
-     */
     public function slugCase(): static
     {
         $this->subject = Str::slugCase($this->subject);
@@ -62,13 +55,6 @@ trait WordCase
         return $this->recalculateLength();
     }
 
-    /**
-     * @param string $delimiter
-     * @param bool $upper_cased
-     * @param Encoding|null $encoding
-     * @return $this
-     * @throws InvalidArgumentException
-     */
     public function snakeCase(
         string    $delimiter = Str::UNDERSCORE,
         bool      $upper_cased = false,
@@ -86,8 +72,9 @@ trait WordCase
     }
 
     /**
+     * @param Encoding|null $encoding
      * @return $this
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function titleCase(?Encoding $encoding = Encoding::UTF_8): static
     {

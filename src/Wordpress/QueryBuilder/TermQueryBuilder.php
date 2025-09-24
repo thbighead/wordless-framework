@@ -166,11 +166,4 @@ class TermQueryBuilder extends WpQueryBuilder
     {
         return new WP_Term_Query;
     }
-
-    private function setTermsFormat(TermsListFormat $format): static
-    {
-        $this->arguments[TermsListFormat::FIELDS_KEY] = $format->value;
-
-        return $this;
-    }
 }

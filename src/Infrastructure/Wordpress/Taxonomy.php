@@ -172,10 +172,6 @@ abstract class Taxonomy implements IRelatedMetaData
         return $this->term_id;
     }
 
-    /**
-     * @return string
-     * @throws InvalidArgumentException
-     */
     protected function name(): string
     {
         return static::NAME_KEY ?? Str::slugCase(static::class);

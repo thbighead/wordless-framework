@@ -4,6 +4,7 @@ namespace Wordless\Infrastructure\Wordpress\ApiController;
 
 use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Infrastructure\Http\MutableHeaderBag;
 use Wordless\Infrastructure\Http\Response\Enums\StatusCode;
 use WP_Error;
@@ -15,11 +16,6 @@ class Response extends WP_REST_Response implements MutableHeaderBag
 
     private ?WP_Error $wpError = null;
 
-    /**
-     * @param string $key
-     * @return string
-     * @throws InvalidArgumentException
-     */
     public static function canonicalizeHeaderName(string $key): string
     {
         return Str::slugCase($key);
@@ -133,7 +129,7 @@ class Response extends WP_REST_Response implements MutableHeaderBag
      * @param string $message
      * @param array $data
      * @return $this
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function setWpError(StatusCode $http_code, string $message, array $data = []): static
     {

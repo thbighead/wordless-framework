@@ -28,6 +28,8 @@ trait Register
     /**
      * @return void
      * @throws CustomPostTypeRegistrationFailed
+     * @throws InvalidCustomPostTypeKeyFormat
+     * @throws ReservedCustomPostTypeKeyFormat
      */
     public static function register(): void
     {

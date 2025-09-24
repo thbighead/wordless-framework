@@ -38,10 +38,6 @@ class ChangeAdminParentTermPostCounts extends ActionListener
         return Action::pre_get_terms;
     }
 
-    /**
-     * @return bool
-     * @throws EmptyQueryBuilderArguments
-     */
     private static function isRequestedTaxonomyHierarchical(): bool
     {
         try {

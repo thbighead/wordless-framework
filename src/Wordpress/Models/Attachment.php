@@ -8,15 +8,18 @@ use Wordless\Application\Helpers\Database;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\GetType;
 use Wordless\Application\Helpers\Log;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Wordpress\Models\Attachment\DTO\MediaDTO;
 use Wordless\Wordpress\Models\Attachment\DTO\MediaDTO\DTO\SizeDTO;
 use Wordless\Wordpress\Models\Attachment\DTO\WpInsertAttachmentResultDTO;
+use Wordless\Wordpress\Models\Attachment\Exceptions\CallWpInsertAttachmentByFileFailed;
 use Wordless\Wordpress\Models\Attachment\Exceptions\FailedToCreateAttachmentFromFile;
 use Wordless\Wordpress\Models\Attachment\Exceptions\NewMetadataEqualsToOldMetadata;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData\Traits\Crud\Traits\Read\Exceptions\InvalidMetaKey;
@@ -97,48 +100,56 @@ class Attachment extends Post
 
     /**
      * @param string $absolute_filepath
-     * @param int|PostStatus|StandardStatus $attachment_reference
+     * @param int|PostStatus|StandardStatus $status_or_attachment_id
      * @param bool $secure_mode
      * @return WpInsertAttachmentResultDTO
-     * @throws FailedToCopyFile
+     * @throws CallWpInsertAttachmentByFileFailed
      * @throws FailedToCreateAttachmentFromFile
-     * @throws InvalidArgumentException
-     * @throws PathNotFoundException
      */
     private static function callWpInsertAttachmentByFile(
         string                        $absolute_filepath,
-        int|PostStatus|StandardStatus $attachment_reference,
+        int|PostStatus|StandardStatus $status_or_attachment_id,
         bool                          $secure_mode = true
     ): WpInsertAttachmentResultDTO
     {
-        $insert_arguments = [
-            'ID' => null,
-            'post_mime_type' => mime_content_type($absolute_filepath),
-            'post_title' => (string)Str::of(basename($absolute_filepath))
-                ->before('.')
-                ->replace(['-', '_'], ' ')
-                ->titleCase(),
-        ];
+        try {
+            $insert_arguments = [
+                'ID' => null,
+                'post_mime_type' => mime_content_type($absolute_filepath),
+                'post_title' => (string)Str::of(basename($absolute_filepath))
+                    ->before('.')
+                    ->replace(['-', '_'], ' ')
+                    ->titleCase(),
+            ];
 
-        switch (GetType::of($attachment_reference)) {
-            case PostStatus::class:
-            case StandardStatus::class:
-                $insert_arguments['post_status'] = $attachment_reference->value ?? $attachment_reference->name;
-                unset($insert_arguments['ID']);
-                break;
-            case 'integer':
-            default:
-                $insert_arguments['ID'] = $attachment_reference;
-                break;
-        }
+            switch (GetType::of($status_or_attachment_id)) {
+                case PostStatus::class:
+                case StandardStatus::class:
+                    $insert_arguments['post_status'] = $status_or_attachment_id->value
+                        ?? $status_or_attachment_id->name;
+                    unset($insert_arguments['ID']);
+                    break;
+                case 'integer':
+                default:
+                    $insert_arguments['ID'] = $status_or_attachment_id;
+                    break;
+            }
 
-        $result = wp_insert_attachment(
-            $insert_arguments,
-            $wp_uploads_new_filepath = DirectoryFiles::copyFileToWpUploads(
+            $result = wp_insert_attachment(
+                $insert_arguments,
+                $wp_uploads_new_filepath = DirectoryFiles::copyFileToWpUploads(
+                    $absolute_filepath,
+                    secure_mode: $secure_mode
+                )
+            );
+        } catch (FailedToCopyFile|FailedToCreateInflector|PathNotFoundException $exception) {
+            throw new CallWpInsertAttachmentByFileFailed(
                 $absolute_filepath,
-                secure_mode: $secure_mode
-            )
-        );
+                $status_or_attachment_id,
+                $secure_mode,
+                $exception
+            );
+        }
 
         if ($result instanceof WP_Error || $result === 0) {
             throw new FailedToCreateAttachmentFromFile(
@@ -303,9 +314,7 @@ class Attachment extends Post
     {
         try {
             $this->media = new MediaDTO($this->raw_metadata + [self::KEY_MIME_TYPE => $this->post_mime_type]);
-        } catch (
-        FormatException|PathNotFoundException|DotEnvNotSetException $exception
-        ) {
+        } catch (CannotResolveEnvironmentGet|PathNotFoundException $exception) {
             Log::info(
                 "Trying to set media to attachment '$this->post_title' resulted in: {$exception->getMessage()}"
             );

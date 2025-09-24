@@ -12,10 +12,6 @@ class EnqueueableAssetIdGuesser extends Guesser
     {
     }
 
-    /**
-     * @return string
-     * @throws InvalidArgumentException
-     */
     protected function guessValue(): string
     {
         return (string)Str::of($this->class_name)
