@@ -2,7 +2,6 @@
 
 namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits;
 
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 

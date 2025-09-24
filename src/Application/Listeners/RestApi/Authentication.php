@@ -6,7 +6,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Url;
 use Wordless\Application\Listeners\RestApi\Authentication\Exceptions\FailedToRetrievePublicApiEndpoints;

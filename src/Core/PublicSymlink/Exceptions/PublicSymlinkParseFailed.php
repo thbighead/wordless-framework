@@ -5,7 +5,6 @@ namespace Wordless\Core\PublicSymlink\Exceptions;
 use RuntimeException;
 use Throwable;
 use Wordless\Core\PublicSymlink;
-use Wordless\Core\PublicSymlink\Wlsymlink;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class PublicSymlinkParseFailed extends RuntimeException

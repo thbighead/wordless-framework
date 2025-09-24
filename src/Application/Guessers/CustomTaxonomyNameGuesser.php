@@ -2,7 +2,6 @@
 
 namespace Wordless\Application\Guessers;
 
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Guesser;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;

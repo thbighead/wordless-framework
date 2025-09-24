@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Wordless\Application\Helpers;
 
 use JsonException;
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
-use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Http\Contracts\Subjectable;
 use Wordless\Application\Helpers\Http\Enums\Version;
 use Wordless\Application\Helpers\Http\Exceptions\FailedToResolveRequest;

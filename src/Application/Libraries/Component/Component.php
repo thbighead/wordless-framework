@@ -2,7 +2,6 @@
 
 namespace Wordless\Application\Libraries\Component;
 
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\FailedToGetWordpressTheme;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;

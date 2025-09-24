@@ -2,7 +2,6 @@
 
 namespace Wordless\Infrastructure\Wordpress\ApiController;
 
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Infrastructure\Http\MutableHeaderBag;
@@ -51,11 +50,6 @@ class Response extends WP_REST_Response implements MutableHeaderBag
         return $this->getHeader($key) !== null;
     }
 
-    /**
-     * @param string $key
-     * @return $this
-     * @throws InvalidArgumentException
-     */
     public function removeHeader(string $key): static
     {
         if ($this->hasHeader($key)) {
@@ -68,7 +62,6 @@ class Response extends WP_REST_Response implements MutableHeaderBag
     /**
      * @param string[] $headers
      * @return $this
-     * @throws InvalidArgumentException
      */
     public function removeHeaders(array $headers): static
     {

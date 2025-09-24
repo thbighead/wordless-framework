@@ -9,7 +9,6 @@ use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadC
 use Wordless\Application\Helpers\Config\Traits\Wordless;
 use Wordless\Application\Helpers\Config\Traits\Wordpress;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\InternalCache;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 

@@ -13,7 +13,6 @@ use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
-use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\InternalCache\Exceptions\FailedToCleanInternalCaches;
 use Wordless\Core\InternalCache\Exceptions\FailedToGenerateInternalCacheFile;
 use Wordless\Core\InternalCache\Exceptions\FailedToLoadCachedValues;

@@ -2,7 +2,6 @@
 
 namespace Wordless\Application\Listeners;
 
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Http;
 use Wordless\Infrastructure\Enums\MimeType;
 use Wordless\Infrastructure\Wordpress\ApiController\Request;

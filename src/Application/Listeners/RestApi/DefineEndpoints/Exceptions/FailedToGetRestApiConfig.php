@@ -2,10 +2,8 @@
 
 namespace Wordless\Application\Listeners\RestApi\DefineEndpoints\Exceptions;
 
-use DomainException;
 use RuntimeException;
 use Throwable;
-use Wordless\Application\Providers\RestApiProvider;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToGetRestApiConfig extends RuntimeException

@@ -11,12 +11,9 @@ use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadC
 use Wordless\Application\Libraries\DesignPattern\Singleton;
 use Wordless\Application\Listeners\HandleCors;
 use Wordless\Exceptions\FailedToRetrieveConfigFromWordlessConfigFile;
-use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\Http\Request;
 use Wordless\Infrastructure\Http\Request\Enums\Verb;
 use Wordless\Infrastructure\Http\Response\Enums\StatusCode;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
-use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 
 final class Cors extends Singleton
 {

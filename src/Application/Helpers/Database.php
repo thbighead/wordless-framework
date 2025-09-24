@@ -2,13 +2,11 @@
 
 namespace Wordless\Application\Helpers;
 
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Database\DTO\QueryResultDTO;
 use Wordless\Application\Helpers\Database\Exceptions\InvalidDataTypeToInsert;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\Database\Traits\SmartTransaction;
 use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
-use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Helper;
 use wpdb;
 

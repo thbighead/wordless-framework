@@ -6,7 +6,6 @@ use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\WpQueryBuilder;
 use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
-use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Enums\TermsListFormat;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Exceptions\DoNotUseNumberWithObjectIds;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\OrderBy;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\Resolver;

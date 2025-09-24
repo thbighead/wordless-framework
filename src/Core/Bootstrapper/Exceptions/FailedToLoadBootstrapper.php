@@ -4,7 +4,6 @@ namespace Wordless\Core\Bootstrapper\Exceptions;
 
 use RuntimeException;
 use Throwable;
-use Wordless\Core\Bootstrapper;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
 class FailedToLoadBootstrapper extends RuntimeException

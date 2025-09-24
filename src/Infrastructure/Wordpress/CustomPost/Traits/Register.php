@@ -2,7 +2,6 @@
 
 namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits;
 
-use InvalidArgumentException;
 use Wordless\Application\Guessers\CustomPostTypeKeyGuesser;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;

@@ -2,10 +2,8 @@
 
 namespace Wordless\Wordpress\Models\Role\Traits\Repository\Traits;
 
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Str;
-use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Traits\Repository\Traits\FromDatabase\Traits\Sync;
 use WP_Role;

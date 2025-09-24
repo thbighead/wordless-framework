@@ -2,10 +2,8 @@
 
 namespace Wordless\Infrastructure\Wordpress;
 
-use InvalidArgumentException;
 use Wordless\Application\Guessers\EnqueueableAssetIdGuesser;
 use Wordless\Application\Helpers\Arr;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Contracts\Context;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;

@@ -7,6 +7,7 @@ abstract readonly class AdminFormField
     protected string $html_old_value;
 
     abstract public static function key(): string;
+
     abstract public function html(): string;
 
     public static function make(

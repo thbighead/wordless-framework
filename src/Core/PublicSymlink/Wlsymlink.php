@@ -4,13 +4,11 @@ namespace Wordless\Core\PublicSymlink;
 
 use Generator;
 use Wordless\Application\Helpers\DirectoryFiles;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\CannotReadPath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\PublicSymlink;
-use Wordless\Core\PublicSymlink\Exceptions\InvalidPublicSymlinkTargetWithExceptions;
 use Wordless\Core\PublicSymlink\Exceptions\PublicSymlinkParseFailed;
 use Wordless\Core\PublicSymlink\Wlsymlink\Exceptions\WlsymlinkParseFailed;
 

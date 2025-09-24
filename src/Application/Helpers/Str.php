@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Wordless\Application\Helpers;
 
-use InvalidArgumentException;
 use JsonException;
 use Ramsey\Uuid\Uuid;
 use Random\RandomException;

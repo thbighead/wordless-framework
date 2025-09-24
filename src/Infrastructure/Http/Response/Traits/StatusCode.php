@@ -2,7 +2,6 @@
 
 namespace Wordless\Infrastructure\Http\Response\Traits;
 
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Infrastructure\Http\Response\Enums\StatusCode as StatusCodeEnum;
 

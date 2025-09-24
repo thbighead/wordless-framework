@@ -11,7 +11,7 @@ class FailedToRegisterCustomPostTypeWithPermissionMode extends RuntimeException
 {
     public function __construct(
         public readonly string|CustomPost $custom_post_type_namespace,
-        ?Throwable $previous = null
+        ?Throwable                        $previous = null
     )
     {
         parent::__construct(

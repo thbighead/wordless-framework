@@ -2,7 +2,6 @@
 
 namespace Wordless\Application\Helpers\Str\Traits;
 
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 
 trait Mutators

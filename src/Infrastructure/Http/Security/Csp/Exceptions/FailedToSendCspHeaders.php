@@ -2,8 +2,6 @@
 
 namespace Wordless\Infrastructure\Http\Security\Csp\Exceptions;
 
-use ErrorException;
-use Exception;
 use RuntimeException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;

@@ -3,8 +3,6 @@
 namespace Wordless\Application\Providers;
 
 use Wordless\Application\Helpers\Config;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Listeners\RemoveEmojiFromTinyMce;
 use Wordless\Application\Listeners\RemoveEmojiFromWpResourceHints;
 use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;

@@ -3,23 +3,13 @@
 namespace Wordless\Application\Libraries\JWT\Traits;
 
 use Lcobucci\JWT\Encoding\CannotDecodeContent;
-use Lcobucci\JWT\Encoding\CannotEncodeContent;
 use Lcobucci\JWT\Encoding\JoseEncoder;
-use Lcobucci\JWT\Signer\CannotSignPayload;
-use Lcobucci\JWT\Signer\Ecdsa\ConversionFailed;
-use Lcobucci\JWT\Signer\InvalidKeyProvided;
 use Lcobucci\JWT\Token\InvalidTokenStructure;
 use Lcobucci\JWT\Token\Parser;
 use Lcobucci\JWT\Token\Plain;
-use Lcobucci\JWT\Token\RegisteredClaimGiven;
 use Lcobucci\JWT\Token\UnsupportedHeaderFound;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
-use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Helpers\GetType;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\JWT\Enums\CryptoAlgorithm;
-use Wordless\Application\Libraries\JWT\Exceptions\InvalidJwtCryptoAlgorithmId;
 use Wordless\Application\Libraries\JWT\Token\Exceptions\FailedToBuildJwt;
 use Wordless\Application\Libraries\JWT\Traits\Constructors\Exceptions\FailedToParseStringFullToken;
 

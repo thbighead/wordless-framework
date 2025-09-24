@@ -11,9 +11,9 @@ class FailedToUpdateAttachmentFile extends RuntimeException
 {
     public function __construct(
         public readonly Attachment $attachment,
-        public readonly string $absolute_filepath,
-        public readonly bool $secure_mode,
-        ?Throwable $previous = null
+        public readonly string     $absolute_filepath,
+        public readonly bool       $secure_mode,
+        ?Throwable                 $previous = null
     )
     {
         $secure_text = $this->secure_mode ? 'secure' : 'insecure';

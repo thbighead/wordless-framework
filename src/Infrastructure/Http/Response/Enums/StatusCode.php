@@ -2,7 +2,6 @@
 
 namespace Wordless\Infrastructure\Http\Response\Enums;
 
-use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;

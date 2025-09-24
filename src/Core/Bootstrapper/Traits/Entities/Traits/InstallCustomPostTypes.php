@@ -2,7 +2,6 @@
 
 namespace Wordless\Core\Bootstrapper\Traits\Entities\Traits;
 
-use InvalidArgumentException;
 use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomPostTypes\Exceptions\FailedToResolveCustomPostTypeRegistrar;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Wordpress\CustomPost;

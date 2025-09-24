@@ -2,7 +2,6 @@
 
 namespace Wordless\Wordpress\Models\Post\Traits;
 
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;

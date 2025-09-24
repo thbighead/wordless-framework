@@ -3,8 +3,6 @@
 namespace Wordless\Infrastructure;
 
 use Wordless\Application\Helpers\Arr;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Mounters\Stub\SimpleCacheStubMounter;

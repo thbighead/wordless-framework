@@ -3,7 +3,6 @@
 namespace Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate;
 
 use DateTimeInterface;
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Listeners\DisableComments\Contracts\DisableCommentsActionListener;

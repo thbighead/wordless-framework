@@ -2,7 +2,6 @@
 
 namespace Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Traits;
 
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
 
 trait Labels

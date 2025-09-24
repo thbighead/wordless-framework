@@ -2,16 +2,9 @@
 
 namespace Wordless\Core\Bootstrapper\Traits;
 
-use InvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
 use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
-use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadErrorReportingConfiguration;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Exceptions\FailedToBootEnqueueables;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Exceptions\FailedToBootMainPlugin;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Exceptions\FailedToResolveMenu;
@@ -19,7 +12,6 @@ use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallEnqueueables;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallListeners;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallMenus;
 use Wordless\Infrastructure\Provider;
-use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\InvalidEnqueueableId;
 
 trait MainPlugin
