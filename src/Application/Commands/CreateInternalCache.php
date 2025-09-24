@@ -3,19 +3,12 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Core\InternalCache;
+use Wordless\Core\InternalCache\Exceptions\FailedToGenerateInternalCacheFile;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
-use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 
 class CreateInternalCache extends ConsoleCommand
 {
@@ -49,15 +42,6 @@ class CreateInternalCache extends ConsoleCommand
         return [];
     }
 
-    /**
-     * @return int
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
-     * @throws FormatException
-     * @throws InvalidProviderClass
-     */
     protected function runIt(): int
     {
         try {
@@ -67,7 +51,7 @@ class CreateInternalCache extends ConsoleCommand
             );
 
             return Command::SUCCESS;
-        } catch (FailedToCopyStub|PathNotFoundException $exception) {
+        } catch (FailedToGenerateInternalCacheFile $exception) {
             $this->writelnDanger($exception->getMessage());
 
             return Command::FAILURE;

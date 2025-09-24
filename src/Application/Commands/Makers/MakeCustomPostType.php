@@ -5,17 +5,14 @@ namespace Wordless\Application\Commands\Makers;
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Commands\Makers\Exceptions\FailedToMake;
+use Wordless\Application\Commands\Makers\MakeCustomPostType\Exceptions\FailedToRegisterCustomPostTypeWithPermissionMode;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Application\Mounters\Stub\CustomPostTypeStubMounter;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
@@ -24,12 +21,10 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMo
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKey;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKey;
-use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKeyFormat;
+use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKeyFormat;
 use Wordless\Wordpress\Models\Role;
-use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
-use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
+use Wordless\Wordpress\Models\Role\Traits\Repository\Traits\FromDatabase\Traits\Sync\Exceptions\SynchroniseFailed;
 
 class MakeCustomPostType extends ConsoleCommand
 {
@@ -85,41 +80,34 @@ class MakeCustomPostType extends ConsoleCommand
 
     /**
      * @return int
-     * @throws CustomPostTypeRegistrationFailed
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws EmptyQueryBuilderArguments
-     * @throws FailedToCopyStub
-     * @throws FailedToCreateDirectory
-     * @throws FailedToCreateRole
-     * @throws FailedToFindRole
-     * @throws FailedToGetDirectoryPermissions
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidCustomPostTypeKey
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     * @throws ReservedCustomPostTypeKey
-     * @throws SymfonyInvalidArgumentException
+     * @throws FailedToMake
      */
     protected function runIt(): int
     {
-        $custom_post_type_class_name = Str::pascalCase(
-            $this->input->getArgument(self::CUSTOM_POST_TYPE_CLASS_ARGUMENT_NAME)
-        );
+        try {
+            $custom_post_type_class_name = Str::pascalCase(
+                $this->input->getArgument(self::CUSTOM_POST_TYPE_CLASS_ARGUMENT_NAME)
+            );
 
-        $this->wrapScriptWithMessages(
-            "Creating $custom_post_type_class_name...",
-            function () use ($custom_post_type_class_name) {
-                CustomPostTypeStubMounter::make(
-                    ProjectPath::customPostTypes() . "/$custom_post_type_class_name.php")
-                    ->setReplaceContentDictionary(
-                        $this->mountStubContentReplacementDictionary($custom_post_type_class_name)
-                    )->mountNewFile();
-            }
-        );
+            $this->wrapScriptWithMessages(
+                "Creating $custom_post_type_class_name...",
+                function () use ($custom_post_type_class_name) {
+                    CustomPostTypeStubMounter::make(
+                        ProjectPath::customPostTypes() . "/$custom_post_type_class_name.php")
+                        ->setReplaceContentDictionary(
+                            $this->mountStubContentReplacementDictionary($custom_post_type_class_name)
+                        )->mountNewFile();
+                }
+            );
 
-        $this->resolveNoPermissionsMode($custom_post_type_class_name);
+            $this->resolveNoPermissionsMode($custom_post_type_class_name);
+        } catch (FailedToCopyStub
+        |FailedToCreateInflector
+        |FailedToRegisterCustomPostTypeWithPermissionMode
+        |InvalidArgumentException
+        |PathNotFoundException $exception) {
+            throw new FailedToMake('Custom Post Type', $exception);
+        }
 
         return Command::SUCCESS;
     }
@@ -147,7 +135,7 @@ class MakeCustomPostType extends ConsoleCommand
     /**
      * @param string $custom_post_type_class_name
      * @return array<string, string>
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     private function mountStubContentReplacementDictionary(string $custom_post_type_class_name): array
     {
@@ -173,18 +161,7 @@ class MakeCustomPostType extends ConsoleCommand
     /**
      * @param string $custom_post_type_class_name
      * @return void
-     * @throws CustomPostTypeRegistrationFailed
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws EmptyQueryBuilderArguments
-     * @throws FailedToCreateRole
-     * @throws FailedToFindRole
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidCustomPostTypeKey
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
-     * @throws ReservedCustomPostTypeKey
+     * @throws FailedToRegisterCustomPostTypeWithPermissionMode
      */
     private function resolveNoPermissionsMode(string $custom_post_type_class_name): void
     {
@@ -197,8 +174,18 @@ class MakeCustomPostType extends ConsoleCommand
             function () use ($custom_post_type_class_name) {
                 /** @var CustomPost $custom_post_type_class_guessed_namespace */
                 $custom_post_type_class_guessed_namespace = "App\\CustomPostTypes\\$custom_post_type_class_name";
-                $custom_post_type_class_guessed_namespace::register();
-                Role::sync();
+                try {
+                    $custom_post_type_class_guessed_namespace::register();
+                    Role::sync();
+                } catch (CustomPostTypeRegistrationFailed
+                |InvalidCustomPostTypeKeyFormat
+                |ReservedCustomPostTypeKeyFormat
+                |SynchroniseFailed $exception) {
+                    throw new FailedToRegisterCustomPostTypeWithPermissionMode(
+                        $custom_post_type_class_guessed_namespace,
+                        $exception
+                    );
+                }
             }
         );
     }

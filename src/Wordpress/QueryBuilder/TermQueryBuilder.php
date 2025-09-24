@@ -6,7 +6,6 @@ use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\WpQueryBuilder;
 use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
-use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Enums\TermsListFormat;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Exceptions\DoNotUseNumberWithObjectIds;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\OrderBy;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\Resolver;
@@ -165,12 +164,5 @@ class TermQueryBuilder extends WpQueryBuilder
     protected function mountNewWpQuery(): WP_Term_Query
     {
         return new WP_Term_Query;
-    }
-
-    private function setTermsFormat(TermsListFormat $format): static
-    {
-        $this->arguments[TermsListFormat::FIELDS_KEY] = $format->value;
-
-        return $this;
     }
 }

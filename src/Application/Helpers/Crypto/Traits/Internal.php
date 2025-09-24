@@ -2,16 +2,14 @@
 
 namespace Wordless\Application\Helpers\Crypto\Traits;
 
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 
 trait Internal
 {
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private static function hashedIv(): string
     {
@@ -20,8 +18,7 @@ trait Internal
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private static function hashedKey(): string
     {
@@ -30,8 +27,7 @@ trait Internal
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private static function secretIv(): string
     {
@@ -40,8 +36,7 @@ trait Internal
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private static function secretKey(): string
     {

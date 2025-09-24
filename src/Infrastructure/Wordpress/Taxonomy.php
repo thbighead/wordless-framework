@@ -2,14 +2,13 @@
 
 namespace Wordless\Infrastructure\Wordpress;
 
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedAggregatingObject;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedDisaggregatingObject;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedToGetTermLink;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedToInstantiateParent;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\MixinWpTerm;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository;
 use Wordless\Wordpress\Enums\ObjectType;
@@ -55,11 +54,9 @@ abstract class Taxonomy implements IRelatedMetaData
     /**
      * @param WP_Term|int|string $term
      * @param bool $with_acfs
-     * @throws EmptyQueryBuilderArguments
      * @throws EmptyStringParameter
      * @throws InitializingModelWithWrongTaxonomyName
      * @throws InvalidAcfFunction
-     * @throws InvalidArgumentException
      */
     public function __construct(WP_Term|int|string $term, bool $with_acfs = true)
     {
@@ -99,11 +96,7 @@ abstract class Taxonomy implements IRelatedMetaData
 
     /**
      * @return bool
-     * @throws EmptyQueryBuilderArguments
-     * @throws EmptyStringParameter
-     * @throws InitializingModelWithWrongTaxonomyName
-     * @throws InvalidAcfFunction
-     * @throws InvalidArgumentException
+     * @throws FailedToInstantiateParent
      */
     public function hasParent(): bool
     {
@@ -118,16 +111,16 @@ abstract class Taxonomy implements IRelatedMetaData
     /**
      * @param bool $with_acfs
      * @return $this|null
-     * @throws EmptyQueryBuilderArguments
-     * @throws EmptyStringParameter
-     * @throws InitializingModelWithWrongTaxonomyName
-     * @throws InvalidAcfFunction
-     * @throws InvalidArgumentException
+     * @throws FailedToInstantiateParent
      */
     public function parent(bool $with_acfs = false): ?static
     {
-        return $this->parent
-            ?? $this->parent = $this->wpTerm->parent > 0 ? new static($this->wpTerm->parent, $with_acfs) : null;
+        try {
+            return $this->parent
+                ?? $this->parent = $this->wpTerm->parent > 0 ? new static($this->wpTerm->parent, $with_acfs) : null;
+        } catch (EmptyStringParameter|InvalidAcfFunction|InitializingModelWithWrongTaxonomyName $exception) {
+            throw new FailedToInstantiateParent($this, $with_acfs, $exception);
+        }
     }
 
     /**
@@ -172,10 +165,6 @@ abstract class Taxonomy implements IRelatedMetaData
         return $this->term_id;
     }
 
-    /**
-     * @return string
-     * @throws InvalidArgumentException
-     */
     protected function name(): string
     {
         return static::NAME_KEY ?? Str::slugCase(static::class);
@@ -185,7 +174,6 @@ abstract class Taxonomy implements IRelatedMetaData
      * @param int $from_id
      * @return void
      * @throws InvalidAcfFunction
-     * @throws InvalidArgumentException
      */
     private function loadTermAcfs(int $from_id): void
     {

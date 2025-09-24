@@ -2,11 +2,9 @@
 
 namespace Wordless\Application\Helpers;
 
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Link\Traits\Internal;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Application\Helpers\Link\Traits\Internal\Exceptions\FailedToGuessBaseAssetsUri;
 use Wordless\Infrastructure\Helper;
 
 class Link extends Helper
@@ -16,10 +14,7 @@ class Link extends Helper
     /**
      * @param string $css_filename
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws PathNotFoundException
+     * @throws FailedToGuessBaseAssetsUri
      */
     public static function css(string $css_filename): string
     {
@@ -29,10 +24,7 @@ class Link extends Helper
     /**
      * @param string $img_filename
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws PathNotFoundException
+     * @throws FailedToGuessBaseAssetsUri
      */
     public static function img(string $img_filename): string
     {
@@ -42,10 +34,7 @@ class Link extends Helper
     /**
      * @param string $js_filename
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws PathNotFoundException
+     * @throws FailedToGuessBaseAssetsUri
      */
     public static function js(string $js_filename): string
     {
@@ -55,8 +44,7 @@ class Link extends Helper
     /**
      * @param string $additional_path
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     public static function raw(string $additional_path = ''): string
     {
@@ -66,10 +54,7 @@ class Link extends Helper
     /**
      * @param string $additional_path
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws PathNotFoundException
+     * @throws FailedToGuessBaseAssetsUri
      */
     public static function themePublic(string $additional_path = ''): string
     {
@@ -79,8 +64,7 @@ class Link extends Helper
     /**
      * @param string $additional_path
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     public static function uploads(string $additional_path = ''): string
     {

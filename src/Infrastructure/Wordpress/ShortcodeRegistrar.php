@@ -5,6 +5,7 @@ namespace Wordless\Infrastructure\Wordpress;
 abstract class ShortcodeRegistrar
 {
     abstract public function mountHtml(array $shortcode_tag_attributes, string $shortcode_tag_content): string;
+
     abstract protected function shortcodeTag(): string;
 
     public static function make(): static

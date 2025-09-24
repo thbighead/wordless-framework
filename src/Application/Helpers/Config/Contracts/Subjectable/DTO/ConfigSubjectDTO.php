@@ -6,7 +6,7 @@ use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Traits\Internal;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Infrastructure\Helper\Contracts\Subjectable\DTO\SubjectDTO;
 
 final class ConfigSubjectDTO extends SubjectDTO
@@ -15,9 +15,9 @@ final class ConfigSubjectDTO extends SubjectDTO
 
     /**
      * @param string|null $key
-     * @param mixed $default
+     * @param mixed|null $default
      * @return mixed
-     * @throws PathNotFoundException
+     * @throws FailedToLoadConfigFile
      */
     public function get(?string $key = null, mixed $default = null): mixed
     {
@@ -27,8 +27,8 @@ final class ConfigSubjectDTO extends SubjectDTO
     /**
      * @param string $key
      * @return mixed
+     * @throws FailedToLoadConfigFile
      * @throws InvalidConfigKey
-     * @throws PathNotFoundException
      */
     public function getFresh(string $key): mixed
     {
@@ -38,8 +38,8 @@ final class ConfigSubjectDTO extends SubjectDTO
     /**
      * @param string $key
      * @return mixed
+     * @throws FailedToLoadConfigFile
      * @throws InvalidConfigKey
-     * @throws PathNotFoundException
      */
     public function getOrFail(string $key): mixed
     {

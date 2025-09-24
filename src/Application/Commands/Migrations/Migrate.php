@@ -3,27 +3,18 @@
 namespace Wordless\Application\Commands\Migrations;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Exception\ExceptionInterface;
-use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Migrations\Migrate\Traits\ExecutionTimestamp;
 use Wordless\Application\Commands\Migrations\Migrate\Traits\ForceMode;
+use Wordless\Application\Commands\Migrations\Migrate\Traits\ForceMode\Exceptions\FailedToResolveForceMode;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Helpers\Arr;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Database;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Option;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
-use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\InvalidMigrationFilename;
-use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\FailedToBootMigrationCommand;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\Migration;
 
@@ -86,26 +77,17 @@ class Migrate extends ConsoleCommand
 
     /**
      * @return int
-     * @throws CliReturnedNonZero
-     * @throws CommandNotFoundException
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws ExceptionInterface
-     * @throws FailedToUpdateOption
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidDirectory
-     * @throws InvalidMigrationFilename
-     * @throws InvalidProviderClass
-     * @throws MigrationFileNotFound
-     * @throws PathNotFoundException
-     * @throws QueryError
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
-        $this->resolveForceMode()
-            ->filterMigrationsMissingExecution()
-            ->executeFilteredMigrations();
+        try {
+            $this->resolveForceMode()
+                ->filterMigrationsMissingExecution()
+                ->executeFilteredMigrations();
+        } catch (FailedToBootMigrationCommand|FailedToResolveForceMode|FailedToUpdateOption|QueryError $exception) {
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
+        }
 
         return Command::SUCCESS;
     }
@@ -159,14 +141,7 @@ class Migrate extends ConsoleCommand
 
     /**
      * @return array<string, string>
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidDirectory
-     * @throws InvalidMigrationFilename
-     * @throws InvalidProviderClass
-     * @throws MigrationFileNotFound
-     * @throws PathNotFoundException
+     * @throws FailedToBootMigrationCommand
      */
     final protected function getLoadedMigrations(): array
     {
@@ -222,14 +197,7 @@ class Migrate extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidDirectory
-     * @throws InvalidMigrationFilename
-     * @throws InvalidProviderClass
-     * @throws MigrationFileNotFound
-     * @throws PathNotFoundException
+     * @throws FailedToBootMigrationCommand
      */
     private function filterMigrationsMissingExecution(): static
     {

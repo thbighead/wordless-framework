@@ -2,12 +2,12 @@
 
 namespace Wordless\Wordpress\Models\User;
 
-use Symfony\Component\Dotenv\Exception\FormatException;
+use Random\RandomException;
 use Wordless\Application\Commands\WordlessInstall;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Wordpress\Models\Role;
 use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
 use Wordless\Wordpress\Models\User;
@@ -25,7 +25,7 @@ final class WordlessUser extends User
     {
         try {
             $app_host = Environment::get('APP_HOST', $app_host = 'wordless.wordless');
-        } catch (FormatException|DotEnvNotSetException) {
+        } catch (CannotResolveEnvironmentGet) {
         }
 
         return self::USERNAME . "@$app_host";
@@ -38,12 +38,13 @@ final class WordlessUser extends User
      * @param Role|DefaultRole|string|null $role
      * @return static
      * @throws FailedToCreateUser
+     * @throws RandomException
      * @noinspection PhpUnnecessaryStaticReferenceInspection
      */
     public static function create(
-        string                  $email = '',
-        string                  $password = '',
-        ?string                 $username = null,
+        string                       $email = '',
+        string                       $password = '',
+        ?string                      $username = null,
         Role|DefaultRole|string|null $role = DefaultRole::subscriber
     ): static
     {
@@ -64,6 +65,10 @@ final class WordlessUser extends User
         return self::getInstance();
     }
 
+    /**
+     * @return string
+     * @throws RandomException
+     */
     private static function password(): string
     {
         return Str::random();

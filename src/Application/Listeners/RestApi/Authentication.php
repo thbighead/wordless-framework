@@ -5,9 +5,10 @@ namespace Wordless\Application\Listeners\RestApi;
 use Symfony\Component\HttpFoundation\Response;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Url;
+use Wordless\Application\Listeners\RestApi\Authentication\Exceptions\FailedToRetrievePublicApiEndpoints;
 use Wordless\Application\Providers\RestApiProvider;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
@@ -24,8 +25,7 @@ class Authentication extends FilterListener
     /**
      * @param WP_Error|true|null $errors
      * @return WP_Error|true|null
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrievePublicApiEndpoints
      */
     public static function checkUserAuthorization(WP_Error|null|true $errors): WP_Error|null|true
     {
@@ -52,8 +52,7 @@ class Authentication extends FilterListener
 
     /**
      * @return bool
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrievePublicApiEndpoints
      */
     private static function isUnauthorized(): bool
     {
@@ -70,14 +69,18 @@ class Authentication extends FilterListener
 
     /**
      * @return bool
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrievePublicApiEndpoints
      */
     private static function isCurrentApiEndpointPublic(): bool
     {
-        $public_endpoints = Config::wordpress()->ofKey(RestApiProvider::CONFIG_KEY)
-            ->ofKey(RestApiProvider::CONFIG_KEY_ROUTES)
-            ->get(RestApiProvider::CONFIG_ROUTES_KEY_PUBLIC, []);
+        try {
+            $public_endpoints = Config::wordpress()->ofKey(RestApiProvider::CONFIG_KEY)
+                ->ofKey(RestApiProvider::CONFIG_KEY_ROUTES)
+                ->get(RestApiProvider::CONFIG_ROUTES_KEY_PUBLIC, []);
+        } catch (EmptyConfigKey|FailedToLoadConfigFile $exception) {
+            throw new FailedToRetrievePublicApiEndpoints($exception);
+        }
+
         $current_endpoint = Url::getCurrentRestApiEndpoint();
 
         foreach ($public_endpoints as $public_endpoint) {

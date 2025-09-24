@@ -6,8 +6,10 @@ use Exception;
 use ParagonIE\CSPBuilder\CSPBuilder;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordlessConfigFile;
+use Wordless\Infrastructure\Http\Security\Csp\Exceptions\FailedToSendCspHeaders;
 use Wordless\Infrastructure\Http\Security\Csp\Exceptions\FailedToSentCspHeadersFromBuilder;
 
 final class Csp extends Singleton
@@ -16,9 +18,7 @@ final class Csp extends Singleton
 
     /**
      * @return void
-     * @throws EmptyConfigKey
-     * @throws FailedToSentCspHeadersFromBuilder
-     * @throws PathNotFoundException
+     * @throws FailedToSendCspHeaders
      */
     public static function enable(): void
     {
@@ -39,13 +39,16 @@ final class Csp extends Singleton
 
     /**
      * @return void
-     * @throws EmptyConfigKey
+     * @throws FailedToRetrieveConfigFromWordlessConfigFile
      * @throws FailedToSentCspHeadersFromBuilder
-     * @throws PathNotFoundException
      */
     private function addConfiguredCspHeaders(): void
     {
-        $cspBuilder = CSPBuilder::fromArray(Config::wordlessCsp()->get());
+        try {
+            $cspBuilder = CSPBuilder::fromArray(Config::wordlessCsp()->get());
+        } catch (EmptyConfigKey|FailedToLoadConfigFile $exception) {
+            throw new FailedToRetrieveConfigFromWordlessConfigFile(self::CONFIG_KEY, previous: $exception);
+        }
 
         try {
             $cspBuilder->sendCSPHeader();
@@ -69,15 +72,17 @@ final class Csp extends Singleton
 
     /**
      * @return void
-     * @throws EmptyConfigKey
-     * @throws FailedToSentCspHeadersFromBuilder
-     * @throws PathNotFoundException
+     * @throws FailedToSendCspHeaders
      */
     private function sendHeaders(): void
     {
-        if (!headers_sent()) {
-            $this->addCommonCspHeaders()
-                ->addConfiguredCspHeaders();
+        try {
+            if (!headers_sent()) {
+                $this->addCommonCspHeaders()
+                    ->addConfiguredCspHeaders();
+            }
+        } catch (FailedToRetrieveConfigFromWordlessConfigFile|FailedToSentCspHeadersFromBuilder $exception) {
+            throw new FailedToSendCspHeaders($exception);
         }
     }
 }

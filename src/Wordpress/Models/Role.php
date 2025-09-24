@@ -17,11 +17,6 @@ class Role extends WP_Role
 
     private bool $is_default;
 
-    /**
-     * @param string $role
-     * @return bool
-     * @throws InvalidArgumentException
-     */
     public static function isDefaultByName(string $role): bool
     {
         return DefaultRole::tryFrom(Str::slugCase($role)) !== null;
@@ -46,10 +41,6 @@ class Role extends WP_Role
         return $this->has_cap($capability);
     }
 
-    /**
-     * @return bool
-     * @throws InvalidArgumentException
-     */
     public function isDefault(): bool
     {
         return $this->is_default ?? $this->is_default = self::isDefaultByName($this->name);

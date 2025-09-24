@@ -2,7 +2,6 @@
 
 namespace Wordless\Application\Libraries\PolymorphicConstructor\Traits;
 
-use Wordless\Application\Helpers\GetType;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\PolymorphicConstructor\Contracts\IPolymorphicConstructor;
 use Wordless\Application\Libraries\PolymorphicConstructor\Exceptions\ClassDoesNotImplementsPolymorphicConstructor;

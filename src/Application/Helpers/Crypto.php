@@ -2,11 +2,10 @@
 
 namespace Wordless\Application\Helpers;
 
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Crypto\Traits\Base64;
 use Wordless\Application\Helpers\Crypto\Traits\Base64\Exceptions\FailedToDecode;
 use Wordless\Application\Helpers\Crypto\Traits\Internal;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Infrastructure\Helper;
 
 class Crypto extends Helper
@@ -21,9 +20,8 @@ class Crypto extends Helper
     /**
      * @param string $string_to_decrypt
      * @return bool|string
-     * @throws DotEnvNotSetException
+     * @throws CannotResolveEnvironmentGet
      * @throws FailedToDecode
-     * @throws FormatException
      */
     public static function decrypt(string $string_to_decrypt): bool|string
     {
@@ -39,8 +37,7 @@ class Crypto extends Helper
     /**
      * @param string $string_to_encrypt
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     public static function encrypt(string $string_to_encrypt): string
     {

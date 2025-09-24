@@ -2,10 +2,9 @@
 
 namespace Wordless\Application\Helpers;
 
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Url\Traits\Internal;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\Helper;
 
 class Url extends Helper
@@ -47,8 +46,7 @@ class Url extends Helper
 
     /**
      * @return bool
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function isCurrentAdminLogin(): bool
     {

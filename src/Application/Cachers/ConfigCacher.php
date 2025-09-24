@@ -2,8 +2,10 @@
 
 namespace Wordless\Application\Cachers;
 
+use Wordless\Application\Cachers\Exceptions\FailedToMountCacheArray;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
@@ -20,17 +22,19 @@ class ConfigCacher extends Cacher
 
     /**
      * @return array
-     * @throws InvalidConfigKey
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
+     * @throws FailedToMountCacheArray
      */
     protected function mountCacheArray(): array
     {
         $cached_configs = [];
 
-        foreach (DirectoryFiles::listFromDirectory(ProjectPath::config()) as $config_file) {
-            $config_name = Str::before($config_file, '.php');
-            $cached_configs[$config_name] = Config::getOrFail($config_name);
+        try {
+            foreach (DirectoryFiles::listFromDirectory(ProjectPath::config()) as $config_file) {
+                $config_name = Str::before($config_file, '.php');
+                $cached_configs[$config_name] = Config::getOrFail($config_name);
+            }
+        } catch (FailedToLoadConfigFile|InvalidConfigKey|InvalidDirectory|PathNotFoundException $exception) {
+            throw new FailedToMountCacheArray($exception);
         }
 
         return $cached_configs;

@@ -3,10 +3,9 @@
 namespace Wordless\Application\Providers;
 
 use Wordless\Application\Helpers\Config;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Listeners\RemoveEmojiFromTinyMce;
 use Wordless\Application\Listeners\RemoveEmojiFromWpResourceHints;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO\Exceptions\TriedToSetFunctionWhenRemovingListener;
@@ -22,9 +21,8 @@ class RemoveEmojiProvider extends Provider
     private const FUNCTION_WP_STATICIZE_EMOJI = 'wp_staticize_emoji';
 
     /**
-     * @return class-string[]|Listener[]
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @return string[]|Listener[]
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public function registerListeners(): array
     {
@@ -40,8 +38,7 @@ class RemoveEmojiProvider extends Provider
 
     /**
      * @return RemoveHookDTO[]
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      * @throws TriedToSetFunctionWhenRemovingListener
      */
     public function unregisterActionListeners(): array
@@ -66,8 +63,7 @@ class RemoveEmojiProvider extends Provider
 
     /**
      * @return RemoveHookDTO[]
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      * @throws TriedToSetFunctionWhenRemovingListener
      */
     public function unregisterFilterListeners(): array
@@ -87,8 +83,7 @@ class RemoveEmojiProvider extends Provider
 
     /**
      * @return bool
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     private function isApplicationConfiguredToRemoveEmojis(): bool
     {

@@ -3,13 +3,15 @@
 namespace Wordless\Core;
 
 use Wordless\Application\Helpers\DirectoryFiles;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\CannotReadPath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\PublicSymlink\Exceptions\InvalidPublicSymlinkTargetWithExceptions;
+use Wordless\Core\PublicSymlink\Exceptions\PublicSymlinkParseFailed;
 use Wordless\Core\PublicSymlink\Wlsymlink;
+use Wordless\Core\PublicSymlink\Wlsymlink\Exceptions\WlsymlinkParseFailed;
 
 final class PublicSymlink
 {
@@ -30,10 +32,7 @@ final class PublicSymlink
      * @param string $link_relative_path
      * @param string $target_relative_path
      * @param bool $should_search_for_wlsymlinks
-     * @throws FailedToGetFileContent
-     * @throws InvalidDirectory
-     * @throws InvalidPublicSymlinkTargetWithExceptions
-     * @throws PathNotFoundException
+     * @throws PublicSymlinkParseFailed
      */
     public function __construct(
         string $link_relative_path,
@@ -42,10 +41,17 @@ final class PublicSymlink
     )
     {
         $this->link_relative_path = $link_relative_path;
-        $this->setTargetPaths($target_relative_path);
+        try {
+            $this->setTargetPaths($target_relative_path);
 
-        if ($should_search_for_wlsymlinks) {
-            $this->recursiveSearchWlsymlinks();
+            if ($should_search_for_wlsymlinks) {
+                $this->recursiveSearchWlsymlinks();
+            }
+        } catch (CannotReadPath
+        |InvalidPublicSymlinkTargetWithExceptions
+        |PathNotFoundException
+        |WlsymlinkParseFailed $exception) {
+            throw new PublicSymlinkParseFailed($exception);
         }
     }
 
@@ -181,10 +187,8 @@ final class PublicSymlink
 
     /**
      * @return void
-     * @throws FailedToGetFileContent
-     * @throws InvalidDirectory
-     * @throws InvalidPublicSymlinkTargetWithExceptions
-     * @throws PathNotFoundException
+     * @throws CannotReadPath
+     * @throws WlsymlinkParseFailed
      */
     private function recursiveSearchWlsymlinks(): void
     {

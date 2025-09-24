@@ -74,10 +74,6 @@ abstract class Menu
         return Expect::array($menu);
     }
 
-    /**
-     * @return void
-     * @throws InvalidArgumentException
-     */
     protected function mountHtmlCodes(): void
     {
         $this->navigation_html = '<nav><ul id="' . Str::lowerSnakeCase(static::id()) . '_list">';

@@ -20,9 +20,9 @@ trait Create
      * @throws FailedToCreateUser
      */
     public static function create(
-        string                  $email,
-        string                  $password,
-        ?string                 $username = null,
+        string                       $email,
+        string                       $password,
+        ?string                      $username = null,
         Role|DefaultRole|string|null $role = null
     ): static
     {

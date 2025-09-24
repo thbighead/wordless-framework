@@ -6,6 +6,7 @@ use Monolog\Handler\RotatingFileHandler as MonologRotatingFileHandler;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
@@ -13,6 +14,8 @@ use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\LogManager\Logger;
+use Wordless\Application\Libraries\LogManager\Logger\RotatingFileHandler\Exceptions\FailedToConstructRotatingFileHandler;
+use Wordless\Application\Libraries\LogManager\Logger\RotatingFileHandler\Exceptions\FailedToResolveFilepath;
 
 class RotatingFileHandler extends MonologRotatingFileHandler
 {
@@ -22,21 +25,22 @@ class RotatingFileHandler extends MonologRotatingFileHandler
     private readonly ConfigSubjectDTO $config;
 
     /**
-     * @throws EmptyConfigKey
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
-     * @throws PathNotFoundException
+     * @throws FailedToConstructRotatingFileHandler
      */
     public function __construct()
     {
-        $this->config = Config::wordless()->ofKey(Logger::CONFIG_KEY_LOG);
+        try {
+            $this->config = Config::wordless()->ofKey(Logger::CONFIG_KEY_LOG);
 
-        parent::__construct(
-            $this->resolveFilePath(),
-            (int)$this->config->get(Logger::CONFIG_KEY_MAX_FILES_LIMIT, self::MAX_LOG_FILES_LIMIT)
-        );
+            parent::__construct(
+                $this->resolveFilepath(),
+                (int)$this->config->get(Logger::CONFIG_KEY_MAX_FILES_LIMIT, self::MAX_LOG_FILES_LIMIT)
+            );
 
-        $this->setFormatter(LogFormatter::mountOutputFormatter());
+            $this->setFormatter(LogFormatter::mountOutputFormatter());
+        } catch (EmptyConfigKey|FailedToLoadConfigFile|FailedToResolveFilepath $exception) {
+            throw new FailedToConstructRotatingFileHandler($exception);
+        }
     }
 
     public function getTimeFormattedFilename(): string
@@ -46,22 +50,27 @@ class RotatingFileHandler extends MonologRotatingFileHandler
 
     /**
      * @return string
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
-     * @throws PathNotFoundException
+     * @throws FailedToResolveFilepath
      */
-    private function resolveFilePath(): string
+    private function resolveFilepath(): string
     {
         try {
-            $logs_directory_path = ProjectPath::root('logs');
-        } catch (PathNotFoundException $exception) {
-            $logs_directory_path = $exception->path;
-            DirectoryFiles::createDirectoryAt($logs_directory_path);
-        }
+            try {
+                $logs_directory_path = ProjectPath::root('logs');
+            } catch (PathNotFoundException $exception) {
+                $logs_directory_path = $exception->path;
+                DirectoryFiles::createDirectoryAt($logs_directory_path);
+            }
 
-        return $logs_directory_path . Str::startWith(
-                $this->config->get(Logger::CONFIG_KEY_FILENAME, self::DEFAULT_FILENAME),
-                '/'
-            );
+            return $logs_directory_path . Str::startWith(
+                    $this->config->get(Logger::CONFIG_KEY_FILENAME, self::DEFAULT_FILENAME),
+                    '/'
+                );
+        } catch (FailedToCreateDirectory
+        |FailedToGetDirectoryPermissions
+        |FailedToLoadConfigFile
+        |PathNotFoundException $exception) {
+            throw new FailedToResolveFilepath($exception);
+        }
     }
 }

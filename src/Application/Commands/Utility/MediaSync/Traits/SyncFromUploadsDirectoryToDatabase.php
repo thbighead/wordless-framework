@@ -2,14 +2,14 @@
 
 namespace Wordless\Application\Commands\Utility\MediaSync\Traits;
 
-use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Exceptions\FailedToProcessDatabaseAttachment;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToDeleteAttachment;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToRetrieveAttachmentUrl;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use WP_Post;
 
 trait SyncFromUploadsDirectoryToDatabase
@@ -22,8 +22,7 @@ trait SyncFromUploadsDirectoryToDatabase
     /**
      * @param string $media_url
      * @return bool
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private function isApplicationUploadsFileUrlBroken(string $media_url): bool
     {
@@ -33,34 +32,35 @@ trait SyncFromUploadsDirectoryToDatabase
     /**
      * @param WP_Post[] $attachments
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws FailedToDeleteAttachment
-     * @throws FailedToRetrieveAttachmentUrl
-     * @throws FormatException
+     * @throws FailedToProcessDatabaseAttachment
      */
     private function processDatabaseAttachments(array $attachments): void
     {
         $progressBar = $this->initializeProgressBar(count($attachments));
 
         foreach ($attachments as $attachment) {
-            $relative_path = Str::after(
-                $attachment_url = $this->getAttachmentUrl($attachment->ID),
-                $this->getUploadsBaseUrl()
-            );
-
             try {
-                $full_path = ProjectPath::wpUploads($relative_path);
+                $relative_path = Str::after(
+                    $attachment_url = $this->getAttachmentUrl($attachment->ID),
+                    $this->getUploadsBaseUrl()
+                );
 
-                if ($this->isApplicationUploadsFileUrlBroken($attachment_url)) {
-                    $this->fixAttachmentFileRelativePath($attachment->ID, $relative_path);
+                try {
+                    $full_path = ProjectPath::wpUploads($relative_path);
+
+                    if ($this->isApplicationUploadsFileUrlBroken($attachment_url)) {
+                        $this->fixAttachmentFileRelativePath($attachment->ID, $relative_path);
+                    }
+
+                    $this->already_synchronized_attachments[$full_path] = $relative_path;
+                } catch (PathNotFoundException) {
+                    $this->removeNotFoundAttachment($attachment->ID);
                 }
-
-                $this->already_synchronized_attachments[$full_path] = $relative_path;
-            } catch (PathNotFoundException) {
-                $this->removeNotFoundAttachment($attachment->ID);
-            } finally {
-                $progressBar->advance();
+            } catch (CannotResolveEnvironmentGet|FailedToDeleteAttachment|FailedToRetrieveAttachmentUrl $exception) {
+                throw new FailedToProcessDatabaseAttachment($attachment, $exception);
             }
+
+            $progressBar->advance();
         }
 
         $progressBar->finish();
@@ -68,10 +68,7 @@ trait SyncFromUploadsDirectoryToDatabase
 
     /**
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws FailedToDeleteAttachment
-     * @throws FailedToRetrieveAttachmentUrl
-     * @throws FormatException
+     * @throws FailedToProcessDatabaseAttachment
      */
     private function syncFromDatabaseToUploadsDirectory(): void
     {

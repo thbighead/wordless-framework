@@ -2,13 +2,13 @@
 
 namespace Wordless\Application\Helpers\Link\Traits;
 
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
+use Wordless\Application\Helpers\Link\Traits\Internal\Exceptions\FailedToGuessBaseAssetsUri;
 use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\FailedToGetWordpressTheme;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 trait Internal
 {
@@ -17,8 +17,7 @@ trait Internal
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private static function getBaseUri(): string
     {
@@ -35,8 +34,7 @@ trait Internal
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private static function guessBaseUri(): string
     {
@@ -45,10 +43,7 @@ trait Internal
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws PathNotFoundException
+     * @throws FailedToGuessBaseAssetsUri
      */
     private static function getBaseAssetsUri(): string
     {
@@ -65,23 +60,23 @@ trait Internal
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws PathNotFoundException
+     * @throws FailedToGuessBaseAssetsUri
      */
     private static function guessBaseAssetsUri(): string
     {
-        $base_assets_uri = Environment::get('FRONT_END_URL', '');
-        $assets_uri_path = Str::after(ProjectPath::theme(), ProjectPath::wp());
+        try {
+            $base_assets_uri = Environment::get('FRONT_END_URL', '');
+            $assets_uri_path = Str::after(ProjectPath::theme(), ProjectPath::wp());
 
-        return "$base_assets_uri$assets_uri_path";
+            return "$base_assets_uri$assets_uri_path";
+        } catch (CannotResolveEnvironmentGet|PathNotFoundException|FailedToGetWordpressTheme $exception) {
+            throw new FailedToGuessBaseAssetsUri($exception);
+        }
     }
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private static function guessUploadsUri(): string
     {

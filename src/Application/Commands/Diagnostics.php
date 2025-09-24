@@ -2,33 +2,31 @@
 
 namespace Wordless\Application\Commands;
 
-use League\Csv\Exception;
-use League\Csv\SyntaxError;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Process\Exception\InvalidArgumentException;
-use Symfony\Component\Process\Exception\LogicException;
-use Symfony\Component\Process\Exception\ProcessSignaledException;
-use Symfony\Component\Process\Exception\ProcessStartFailedException;
-use Symfony\Component\Process\Exception\ProcessTimedOutException;
-use Symfony\Component\Process\Exception\RuntimeException;
+use Wordless\Application\Commands\Diagnostics\Exceptions\FailedToConfigAnalysis;
+use Wordless\Application\Commands\Diagnostics\Exceptions\FailedToExecuteAnalysis;
+use Wordless\Application\Commands\Diagnostics\Exceptions\FailedToGetTestUrls;
+use Wordless\Application\Commands\Diagnostics\Exceptions\FailedToMountComposerInfo;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
-use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToCallWpCliCommand;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Link;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\External\Exceptions\CallExternalCommandException;
+use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\TabledMessage\Exceptions\FailedToMountTableFromCsvException;
+use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\TabledMessage\Exceptions\FailedToMountTableFromJsonException;
+use Wordless\Infrastructure\ConsoleCommand\Traits\OutputMessage\TabledMessage\Exceptions\FailedToMountTableFromTsvException;
 
 class Diagnostics extends ConsoleCommand
 {
@@ -99,34 +97,23 @@ class Diagnostics extends ConsoleCommand
 
     /**
      * @return int
-     * @throws CommandNotFoundException
-     * @throws DotEnvNotSetException
-     * @throws Exception
-     * @throws ExceptionInterface
-     * @throws FailedToGetFileContent
-     * @throws FailedToParseArrayKey
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws PathNotFoundException
-     * @throws ProcessSignaledException
-     * @throws ProcessStartFailedException
-     * @throws ProcessTimedOutException
-     * @throws RuntimeException
-     * @throws SymfonyInvalidArgumentException
-     * @throws SyntaxError
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
-        $this->dotEnvInfo()
-            ->phpCliInfo()
-            ->composerInfo()
-            ->wpConfigAnalysis()
-            ->wpCliInfo()
-            ->wpExecutionAnalysis()
-            ->wpCliDoctorAnalysis();
+        try {
+            $this->dotEnvInfo()
+                ->phpCliInfo()
+                ->composerInfo()
+                ->wpConfigAnalysis()
+                ->wpCliInfo()
+                ->wpExecutionAnalysis()
+                ->wpCliDoctorAnalysis();
 
-        return Command::SUCCESS;
+            return Command::SUCCESS;
+        } catch (CallExternalCommandException|CannotResolveEnvironmentGet|FailedToCallWpCliCommand|FailedToConfigAnalysis|FailedToExecuteAnalysis|FailedToMountComposerInfo|FailedToMountTableFromCsvException $exception) {
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
+        }
     }
 
     private function checkWpConfigFile(): void
@@ -138,32 +125,28 @@ class Diagnostics extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws FailedToGetFileContent
-     * @throws FailedToParseArrayKey
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws PathNotFoundException
-     * @throws ProcessSignaledException
-     * @throws ProcessStartFailedException
-     * @throws ProcessTimedOutException
-     * @throws RuntimeException
+     * @throws FailedToMountComposerInfo
      */
     private function composerInfo(): static
     {
-        $this->wrapInfoBlock('Composer INFO', function () {
-            $this->writeDetachedTitle('Composer JSON');
-            $this->writeln(DirectoryFiles::getFileContent(ProjectPath::root('composer.json')));
-            $this->writeTableFromJson(
-                $this->callExternalCommandSilentlyWithoutInterruption(
-                    'composer show --format=json'
-                )->output ?? '',
-                'installed',
-                'Composer Installed Packages',
-                true
-            );
-        })->writeBlocksSeparator();
+        try {
+            $this->wrapInfoBlock('Composer INFO', function () {
+                $this->writeDetachedTitle('Composer JSON');
+                $this->writeln(DirectoryFiles::getFileContent(ProjectPath::root('composer.json')));
+                $this->writeTableFromJson(
+                    $this->callExternalCommandSilentlyWithoutInterruption(
+                        'composer show --format=json'
+                    )->output ?? '',
+                    'installed',
+                    'Composer Installed Packages',
+                    true
+                );
+            })->writeBlocksSeparator();
 
-        return $this;
+            return $this;
+        } catch (CallExternalCommandException|FailedToMountTableFromJsonException|FailedToGetFileContent|PathNotFoundException $exception) {
+            throw new FailedToMountComposerInfo($exception);
+        }
     }
 
     private function detachTitleOutput(string $title_output): string
@@ -173,8 +156,7 @@ class Diagnostics extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private function dotEnvInfo(): static
     {
@@ -191,15 +173,17 @@ class Diagnostics extends ConsoleCommand
 
     /**
      * @return string[]
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws SymfonyInvalidArgumentException
+     * @throws FailedToGetTestUrls
      */
     private function getTestUrls(): array
     {
-        return $this->test_urls ?? $this->test_urls = array_map(function (string $test_url): string {
-            return (string)Str::of($test_url)->startWith('/')->startWith(Link::raw());
-        }, $this->input->getArgument(self::ARGUMENT_NAME_TEST_URLS));
+        try {
+            return $this->test_urls ?? $this->test_urls = array_map(function (string $test_url): string {
+                return (string)Str::of($test_url)->startWith('/')->startWith(Link::raw());
+            }, $this->input->getArgument(self::ARGUMENT_NAME_TEST_URLS));
+        } catch (CannotResolveEnvironmentGet|SymfonyInvalidArgumentException $exception) {
+            throw new FailedToGetTestUrls($exception);
+        }
     }
 
     private function isWpConfigFilePlaced(): bool
@@ -220,12 +204,7 @@ class Diagnostics extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws ProcessSignaledException
-     * @throws ProcessStartFailedException
-     * @throws ProcessTimedOutException
-     * @throws RuntimeException
+     * @throws CallExternalCommandException
      */
     private function phpCliInfo(): static
     {
@@ -242,12 +221,9 @@ class Diagnostics extends ConsoleCommand
 
     /**
      * @return void
-     * @throws CommandNotFoundException
-     * @throws DotEnvNotSetException
-     * @throws Exception
-     * @throws ExceptionInterface
-     * @throws FormatException
-     * @throws SyntaxError
+     * @throws CannotResolveEnvironmentGet
+     * @throws FailedToCallWpCliCommand
+     * @throws FailedToMountTableFromCsvException
      */
     private function wpCliDoctorAnalysis(): void
     {
@@ -279,8 +255,7 @@ class Diagnostics extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
+     * @throws FailedToCallWpCliCommand
      */
     private function wpCliInfo(): static
     {
@@ -293,99 +268,98 @@ class Diagnostics extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws CommandNotFoundException
-     * @throws Exception
-     * @throws ExceptionInterface
-     * @throws SyntaxError
+     * @throws FailedToConfigAnalysis
      */
     private function wpConfigAnalysis(): static
     {
-        $this->wrapInfoBlock(self::WP_CONFIG_FILENAME . ' analysis', function () {
-            $this->checkWpConfigFile();
+        try {
+            $this->wrapInfoBlock(self::WP_CONFIG_FILENAME . ' analysis', function () {
+                $this->checkWpConfigFile();
 
-            $this->writeTableFromCsv(
-                preg_replace(
-                    '/^(DB_NAME|DB_USER|DB_PASSWORD|DB_HOST),.*$/m',
-                    '',
-                    $this->callWpCliCommandSilentlyWithoutInterruption(
-                        'config list --format=csv'
-                    )->output
-                ) ?? '',
-                'Config List',
-                true
-            );
-        })->writeBlocksSeparator();
+                $this->writeTableFromCsv(
+                    preg_replace(
+                        '/^(DB_NAME|DB_USER|DB_PASSWORD|DB_HOST),.*$/m',
+                        '',
+                        $this->callWpCliCommandSilentlyWithoutInterruption(
+                            'config list --format=csv'
+                        )->output
+                    ) ?? '',
+                    'Config List',
+                    true
+                );
+            })->writeBlocksSeparator();
 
-        return $this;
+            return $this;
+        } catch (FailedToCallWpCliCommand|FailedToMountTableFromCsvException $exception) {
+            throw new FailedToConfigAnalysis($exception);
+        }
     }
 
     /**
      * @return $this
-     * @throws CommandNotFoundException
-     * @throws DotEnvNotSetException
-     * @throws Exception
-     * @throws ExceptionInterface
-     * @throws FormatException
-     * @throws SymfonyInvalidArgumentException
-     * @throws SyntaxError
+     * @throws FailedToExecuteAnalysis
      */
     private function wpExecutionAnalysis(): static
     {
-        $this->wrapInfoBlock('WP execution analysis', function () {
-            $i = 0;
+        try {
+            $this->wrapInfoBlock('WP execution analysis', function () {
+                $i = 0;
 
-            do {
-                $test_url_option = empty($this->getTestUrls()) ? '' : " --url={$this->getTestUrls()[$i]}";
+                do {
+                    $test_url_option = empty($this->getTestUrls()) ? '' : " --url={$this->getTestUrls()[$i]}";
 
-                if (!empty($test_url_option)) {
-                    $this->writeDetachedTitle("Analysing URL: {$this->getTestUrls()[$i]}");
-                }
+                    if (!empty($test_url_option)) {
+                        $this->writeDetachedTitle("Analysing URL: {$this->getTestUrls()[$i]}");
+                    }
 
-                $this->writeTableFromCsv(
-                    $this->callWpCliCommandSilentlyWithoutInterruption(
-                        "profile stage --format=csv$test_url_option"
-                    )->output ?? '',
-                    'Draft',
-                    true
-                );
+                    $this->writeTableFromCsv(
+                        $this->callWpCliCommandSilentlyWithoutInterruption(
+                            "profile stage --format=csv$test_url_option"
+                        )->output ?? '',
+                        'Draft',
+                        true
+                    );
 
-                $this->writeTableFromTsv(
-                    $this->callWpCliCommandSilentlyWithoutInterruption(
-                        "profile stage bootstrap $test_url_option"
-                    )->output ?? '',
-                    'Bootstrap',
-                    true
-                );
+                    $this->writeTableFromTsv(
+                        $this->callWpCliCommandSilentlyWithoutInterruption(
+                            "profile stage bootstrap $test_url_option"
+                        )->output ?? '',
+                        'Bootstrap',
+                        true
+                    );
 
-                $this->writeTableFromTsv(
-                    $this->callWpCliCommandSilentlyWithoutInterruption(
-                        "profile stage main_query $test_url_option"
-                    )->output ?? '',
-                    'Main Query',
-                    true
-                );
+                    $this->writeTableFromTsv(
+                        $this->callWpCliCommandSilentlyWithoutInterruption(
+                            "profile stage main_query $test_url_option"
+                        )->output ?? '',
+                        'Main Query',
+                        true
+                    );
 
-                $this->writeTableFromTsv(
-                    $this->callWpCliCommandSilentlyWithoutInterruption(
-                        "profile stage template $test_url_option"
-                    )->output ?? '',
-                    'Template',
-                    true
-                );
+                    $this->writeTableFromTsv(
+                        $this->callWpCliCommandSilentlyWithoutInterruption(
+                            "profile stage template $test_url_option"
+                        )->output ?? '',
+                        'Template',
+                        true
+                    );
 
-                $this->writeTableFromCsv(
-                    $this->callWpCliCommandSilentlyWithoutInterruption(
-                        "profile hook --all --format=csv$test_url_option"
-                    )->output ?? '',
-                    'Hooks',
-                    true
-                );
+                    $this->writeTableFromCsv(
+                        $this->callWpCliCommandSilentlyWithoutInterruption(
+                            "profile hook --all --format=csv$test_url_option"
+                        )->output ?? '',
+                        'Hooks',
+                        true
+                    );
 
-                $i++;
-            } while (isset($this->getTestUrls()[$i]));
-        })->writeBlocksSeparator();
+                    $i++;
+                } while (isset($this->getTestUrls()[$i]));
+            })->writeBlocksSeparator();
 
-        return $this;
+            return $this;
+        } catch (FailedToMountTableFromTsvException|FailedToCallWpCliCommand|FailedToGetTestUrls|FailedToMountTableFromCsvException $exception) {
+            throw new FailedToExecuteAnalysis($exception);
+        }
     }
 
     private function wrapInfoBlock(string $title, callable $info_block): static

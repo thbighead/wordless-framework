@@ -3,10 +3,8 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\InternalCache;
+use Wordless\Core\InternalCache\Exceptions\FailedToCleanInternalCaches;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -51,7 +49,7 @@ class CleanInternalCache extends ConsoleCommand
             );
 
             return Command::SUCCESS;
-        } catch (FailedToDeletePath|InvalidDirectory|PathNotFoundException $exception) {
+        } catch (FailedToCleanInternalCaches $exception) {
             $this->writelnDanger("Failed! {$exception->getMessage()}");
 
             return Command::FAILURE;

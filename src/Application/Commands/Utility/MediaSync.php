@@ -5,24 +5,17 @@ namespace Wordless\Application\Commands\Utility;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\SignalableCommandInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Symfony\Component\Dotenv\Exception\PathException;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
-use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachment;
-use Wordless\Application\Commands\Utility\MediaSync\Exceptions\FailedToCreateWordpressAttachmentMetadata;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Exceptions\FailedToSyncFromUploadsDirectoryToDatabase;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\InvalidChunkValue;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromDatabaseToUploadsDirectory\Traits\Chunk\Exceptions\InvalidOptionsUsage;
 use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase;
-use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToDeleteAttachment;
-use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Traits\Database\Exceptions\FailedToRetrieveAttachmentUrl;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
+use Wordless\Application\Commands\Utility\MediaSync\Traits\SyncFromUploadsDirectoryToDatabase\Exceptions\FailedToProcessDatabaseAttachment;
 use Wordless\Application\Helpers\Environment;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\Traits\SignalResolver;
 
@@ -62,38 +55,29 @@ class MediaSync extends ConsoleCommand implements SignalableCommandInterface
 
     /**
      * @return int
-     * @throws DotEnvNotSetException
-     * @throws FailedToCreateWordpressAttachment
-     * @throws FailedToCreateWordpressAttachmentMetadata
-     * @throws FailedToDeleteAttachment
-     * @throws FailedToRetrieveAttachmentUrl
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidChunkValue
-     * @throws InvalidDirectory
-     * @throws InvalidOptionsUsage
-     * @throws LogicException
-     * @throws PathException
-     * @throws PathNotFoundException
-     * @throws RuntimeException
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
-        $this->validateOptions();
-
-        $this->syncFromDatabaseToUploadsDirectory();
-
-        $this->resolveCommandIfInterrupted();
-
-        $this->syncFromUploadsDirectoryToDatabase();
+        try {
+            $this->validateOptions();
+            $this->syncFromDatabaseToUploadsDirectory();
+            $this->resolveCommandIfInterrupted();
+            $this->syncFromUploadsDirectoryToDatabase();
+        } catch (FailedToProcessDatabaseAttachment
+        |FailedToSyncFromUploadsDirectoryToDatabase
+        |InvalidArgumentException
+        |InvalidChunkValue
+        |InvalidOptionsUsage $exception) {
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
+        }
 
         return Command::SUCCESS;
     }
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private function getUploadsBaseUrl(): string
     {

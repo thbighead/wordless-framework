@@ -2,11 +2,8 @@
 
 namespace Wordless\Infrastructure\Wordpress\EnqueueableAsset;
 
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Link;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Application\Helpers\Link\Traits\Internal\Exceptions\FailedToGuessBaseAssetsUri;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle\Enums\MediaOption;
 
@@ -27,10 +24,7 @@ abstract class EnqueueableStyle extends EnqueueableAsset
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws PathNotFoundException
+     * @throws FailedToGuessBaseAssetsUri
      */
     protected function mountFileUrl(): string
     {

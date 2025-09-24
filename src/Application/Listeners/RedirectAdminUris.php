@@ -2,9 +2,8 @@
 
 namespace Wordless\Application\Listeners;
 
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Providers\AdminCustomUrlProvider;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
 use Wordless\Wordpress\Hook\Enums\Action;
@@ -23,8 +22,7 @@ class RedirectAdminUris extends ActionListener
 
     /**
      * @return void
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function redirectToAdminUri(): void
     {
@@ -47,8 +45,7 @@ class RedirectAdminUris extends ActionListener
 
     /**
      * @return bool
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     private static function isRequestingAdminUri(): bool
     {

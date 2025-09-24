@@ -3,8 +3,7 @@
 namespace Wordless\Application\Listeners;
 
 use Wordless\Application\Helpers\Config;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
 use Wordless\Infrastructure\Wordpress\Listener\FilterListener;
 use Wordless\Wordpress\Hook\Enums\Filter;
@@ -26,8 +25,7 @@ class ChooseImageEditor extends FilterListener
      *
      * @param string[] $image_editors
      * @return string[]
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function useGdInsteadImagick(array $image_editors): array
     {

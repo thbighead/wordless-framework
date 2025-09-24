@@ -6,7 +6,7 @@ use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Libraries\LogManager\Logger;
 
 class LogFormatter extends StreamHandler
@@ -19,7 +19,7 @@ class LogFormatter extends StreamHandler
     /**
      * @return LineFormatter
      * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToLoadConfigFile
      */
     public static function mountOutputFormatter(): LineFormatter
     {

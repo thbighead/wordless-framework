@@ -2,9 +2,9 @@
 
 namespace Wordless\Infrastructure\Http\Response\Enums;
 
-use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Infrastructure\Http\Response\Enums\StatusCode\Enums\Category;
 
 enum StatusCode: int
@@ -75,7 +75,7 @@ enum StatusCode: int
 
     /**
      * @return string
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function asText(): string
     {

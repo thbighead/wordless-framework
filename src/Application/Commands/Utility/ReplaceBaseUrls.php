@@ -3,16 +3,15 @@
 namespace Wordless\Application\Commands\Utility;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
 use Wordless\Application\Helpers\Environment;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
+use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
@@ -31,8 +30,7 @@ class ReplaceBaseUrls extends ConsoleCommand
 
     /**
      * @return ArgumentDTO[]
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     protected function arguments(): array
     {
@@ -68,9 +66,7 @@ class ReplaceBaseUrls extends ConsoleCommand
 
     /**
      * @return int
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
+     * @throws FailedToRunWpCliCommand
      * @throws WpCliCommandReturnedNonZero
      */
     protected function runIt(): int
@@ -87,8 +83,8 @@ class ReplaceBaseUrls extends ConsoleCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return void
+     * @throws CannotResolveEnvironmentGet
      * @throws DotEnvNotSetException
-     * @throws FormatException
      * @throws InvalidArgumentException
      */
     protected function setup(InputInterface $input, OutputInterface $output): void
@@ -122,9 +118,7 @@ class ReplaceBaseUrls extends ConsoleCommand
 
     /**
      * @return void
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
+     * @throws FailedToRunWpCliCommand
      * @throws WpCliCommandReturnedNonZero
      */
     private function runDatabaseSearchReplace(): void

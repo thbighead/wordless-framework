@@ -4,13 +4,15 @@ namespace Wordless\Application\Commands\Seeders;
 
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Exception\ExceptionInterface;
-use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
+use Wordless\Application\Commands\Exceptions\FailedToGetCommandOptionValue;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
+use Wordless\Application\Commands\Seeders\CommentsSeeder\Exceptions\FailedToRunCommentsSeederCommand;
 use Wordless\Application\Commands\Seeders\Contracts\SeederCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\Internal\Exceptions\CallInternalCommandException;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Post;
 
@@ -34,20 +36,36 @@ class CommentsSeeder extends SeederCommand
 
     /**
      * @return int
-     * @throws CliReturnedNonZero
-     * @throws CommandNotFoundException
-     * @throws EmptyQueryBuilderArguments
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
-     * @throws WpCliCommandReturnedNonZero
+     * @throws FailedToGetCommandOptionValue
+     * @throws FailedToRunCommand
+     * @throws FailedToRunCommentsSeederCommand
      */
     protected function runIt(): int
     {
-        if (Post::noneCreated()) {
-            $this->callConsoleCommand(PostsSeeder::COMMAND_NAME);
+        try {
+            $have_no_posts = Post::noneCreated();
+        } catch (EmptyQueryBuilderArguments $exception) {
+            throw new FailedToRunCommentsSeederCommand(
+                'Failed to check if no posts were created.',
+                $exception
+            );
         }
 
-        $posts = Post::getAll();
+        if ($have_no_posts) {
+            try {
+                $this->callConsoleCommand($command = PostsSeeder::COMMAND_NAME);
+            } catch (CallInternalCommandException $exception) {
+                throw new FailedToRunCommand($command, $exception);
+            } catch (CliReturnedNonZero $exception) {
+                throw new FailedToRunCommand($exception->full_command, $exception);
+            }
+        }
+
+        try {
+            $posts = Post::getAll();
+        } catch (EmptyQueryBuilderArguments $exception) {
+            throw new FailedToRunCommentsSeederCommand('Failed to retrieve all posts.', $exception);
+        }
 
         $progressBar = $this->progressBar($comments_total = count($posts) * $this->getQuantity());
         $progressBar->setMessage('Creating Comments...');
@@ -67,10 +85,8 @@ class CommentsSeeder extends SeederCommand
      * @param Post $post
      * @param ProgressBar $progressBar
      * @return void
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
-     * @throws WpCliCommandReturnedNonZero
+     * @throws FailedToRunCommand
+     * @throws FailedToGetCommandOptionValue
      */
     private function generateCommentsForPost(Post $post, ProgressBar $progressBar): void
     {
@@ -81,9 +97,14 @@ class CommentsSeeder extends SeederCommand
                 "Generating a comment from user $comment_author for post $post->post_title."
             );
 
-            $this->runWpCliCommandSilently(
-                "comment create --comment_post_ID=$post->ID --comment_content='{$this->faker->paragraph()}' --comment_author='$comment_author' --quiet"
-            );
+            $command =
+                "comment create --comment_post_ID=$post->ID --comment_content='{$this->faker->paragraph()}' --comment_author='$comment_author' --quiet";
+
+            try {
+                $this->runWpCliCommandSilently($command);
+            } catch (WpCliCommandReturnedNonZero|FailedToRunWpCliCommand $exception) {
+                throw new FailedToRunCommand($exception->full_command ?? $command);
+            }
         }
     }
 }

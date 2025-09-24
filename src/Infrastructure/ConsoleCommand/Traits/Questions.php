@@ -10,6 +10,8 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
+use Wordless\Infrastructure\ConsoleCommand\Traits\Questions\Exceptions\FailedToMakeQuestionException;
+use Wordless\Infrastructure\ConsoleCommand\Traits\Questions\Exceptions\GetQuestionHelperException;
 
 trait Questions
 {
@@ -18,25 +20,24 @@ trait Questions
     /**
      * @param Question $question
      * @return mixed
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
-     * @throws SymfonyLogicException
+     * @throws FailedToMakeQuestionException
      */
     protected function ask(Question $question): mixed
     {
-        return $this->getQuestionHelper()
-            ->ask($this->input, $this->output, $question);
+        try {
+            return $this->getQuestionHelper()
+                ->ask($this->input, $this->output, $question);
+        } catch (GetQuestionHelperException|RuntimeException $exception) {
+            throw new FailedToMakeQuestionException($exception);
+        }
     }
 
     /**
      * @param string $question
-     * @param array<string|bool|int|float|null> $choices
+     * @param array $choices
      * @param bool $use_first_as_default
      * @return string|bool|int|float|null
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws RuntimeException
-     * @throws SymfonyLogicException
+     * @throws FailedToMakeQuestionException
      */
     protected function choiceQuestion(
         string $question,
@@ -44,20 +45,22 @@ trait Questions
         bool   $use_first_as_default = true
     ): string|bool|int|float|null
     {
-        return $this->ask(new ChoiceQuestion(
-            $question,
-            $choices,
-            $use_first_as_default ? $choices[0] : null
-        ));
+        try {
+            return $this->ask(new ChoiceQuestion(
+                $question,
+                $choices,
+                $use_first_as_default ? $choices[0] : null
+            ));
+        } catch (InvalidArgumentException|LogicException|SymfonyLogicException $exception) {
+            throw new FailedToMakeQuestionException($exception);
+        }
     }
 
     /**
      * @param string $question
      * @param bool $default
      * @return bool
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
-     * @throws SymfonyLogicException
+     * @throws FailedToMakeQuestionException
      */
     protected function confirmationQuestion(string $question, bool $default = true): bool
     {
@@ -66,21 +69,22 @@ trait Questions
 
     /**
      * @return QuestionHelper
-     * @throws InvalidArgumentException
-     * @throws SymfonyLogicException
+     * @throws GetQuestionHelperException
      */
     protected function getQuestionHelper(): QuestionHelper
     {
-        return $this->questionHelper ?? $this->questionHelper = $this->getHelper('question');
+        try {
+            return $this->questionHelper ?? $this->questionHelper = $this->getHelper('question');
+        } catch (InvalidArgumentException|SymfonyLogicException $exception) {
+            throw new GetQuestionHelperException($exception);
+        }
     }
 
     /**
      * @param string $question
      * @param string|bool|int|float|null $default
      * @return string|bool|int|float|null
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
-     * @throws SymfonyLogicException
+     * @throws FailedToMakeQuestionException
      */
     protected function question(
         string                     $question,

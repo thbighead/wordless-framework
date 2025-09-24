@@ -2,12 +2,14 @@
 
 namespace Wordless\Application\Commands\Utility;
 
-use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
+use Wordless\Application\Commands\Utility\WpHooksList\Exceptions\FailedToResolveDiffMode;
 use Wordless\Application\Commands\Utility\WpHooksList\Exceptions\InvalidHookType;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\ArgumentMode;
@@ -70,25 +72,27 @@ class WpHooksList extends ConsoleCommand
 
     /**
      * @return int
-     * @throws SymfonyInvalidArgumentException
-     * @throws InvalidHookType
-     * @throws InvalidArgumentException
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
-        if ($this->isDiffMode()) {
-            $this->resolveDiffMode();
+        try {
+            if ($this->isDiffMode()) {
+                $this->resolveDiffMode();
 
-            return Command::SUCCESS;
-        }
+                return Command::SUCCESS;
+            }
 
-        $this->writeTable(
-            [
+            $this->writeTable([
                 Str::titleCase($this->getHookTypeArgument()) . ' hook names',
                 'How many times fired',
-            ],
-            $this->prepareTableContent()
-        );
+            ], $this->prepareTableContent());
+        } catch (FailedToCreateInflector
+        |FailedToResolveDiffMode
+        |InvalidHookType
+        |SymfonyInvalidArgumentException $exception) {
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
+        }
 
         return Command::SUCCESS;
     }
@@ -134,30 +138,32 @@ class WpHooksList extends ConsoleCommand
 
     /**
      * @return void
-     * @throws SymfonyInvalidArgumentException
-     * @throws InvalidHookType
-     * @throws InvalidArgumentException
+     * @throws FailedToResolveDiffMode
      */
     private function resolveDiffMode(): void
     {
         $missing_in_framework_enum = [];
 
-        /** @var Hook $hookEnum */
-        $hookEnum = match ($this->getHookTypeArgument()) {
-            Type::action->name => Action::class,
-            Type::filter->name => Filter::class,
-        };
+        try {
+            /** @var Hook $hookEnum */
+            $hookEnum = match ($this->getHookTypeArgument()) {
+                Type::action->name => Action::class,
+                Type::filter->name => Filter::class,
+            };
 
-        foreach ($this->retrieveHooksList() as $hook_name => $how_many_times_fired) {
-            if ($hookEnum::tryFrom($hook_name) === null) {
-                $missing_in_framework_enum[] = [$hook_name];
+            foreach ($this->retrieveHooksList() as $hook_name => $how_many_times_fired) {
+                if ($hookEnum::tryFrom($hook_name) === null) {
+                    $missing_in_framework_enum[] = [$hook_name];
+                }
             }
-        }
 
-        $this->writeTable(
-            [Str::titleCase($this->getHookTypeArgument()) . ' hook names missing from Enum'],
-            $missing_in_framework_enum
-        );
+            $this->writeTable(
+                [Str::titleCase($this->getHookTypeArgument()) . ' hook names missing from Enum'],
+                $missing_in_framework_enum
+            );
+        } catch (FailedToCreateInflector|InvalidHookType|SymfonyInvalidArgumentException $exception) {
+            throw new FailedToResolveDiffMode($exception);
+        }
     }
 
     /**

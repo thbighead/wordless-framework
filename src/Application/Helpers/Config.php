@@ -5,10 +5,10 @@ namespace Wordless\Application\Helpers;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
 use Wordless\Application\Helpers\Config\Traits\Internal;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Helpers\Config\Traits\Wordless;
 use Wordless\Application\Helpers\Config\Traits\Wordpress;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\InternalCache;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 
@@ -22,7 +22,7 @@ class Config extends Subjectable
      * @param string $key
      * @param mixed|null $default
      * @return mixed
-     * @throws PathNotFoundException
+     * @throws FailedToLoadConfigFile
      */
     public static function get(string $key, mixed $default = null): mixed
     {
@@ -36,8 +36,8 @@ class Config extends Subjectable
     /**
      * @param string $key
      * @return mixed
+     * @throws FailedToLoadConfigFile
      * @throws InvalidConfigKey
-     * @throws PathNotFoundException
      */
     public static function getFresh(string $key): mixed
     {
@@ -50,8 +50,8 @@ class Config extends Subjectable
     /**
      * @param string $key
      * @return mixed
+     * @throws FailedToLoadConfigFile
      * @throws InvalidConfigKey
-     * @throws PathNotFoundException
      */
     public static function getOrFail(string $key): mixed
     {

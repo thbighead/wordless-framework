@@ -11,7 +11,7 @@ class InvalidDataTypeToInsert extends InvalidArgumentException
 {
     public function __construct(
         public readonly string $type,
-        public readonly mixed $datum_key,
+        public readonly mixed  $datum_key,
         public readonly mixed  $datum_value,
         ?Throwable             $previous = null
     )

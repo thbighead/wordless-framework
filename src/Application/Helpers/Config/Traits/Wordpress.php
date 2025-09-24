@@ -4,7 +4,8 @@ namespace Wordless\Application\Helpers\Config\Traits;
 
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 
 trait Wordpress
 {
@@ -18,7 +19,6 @@ trait Wordpress
      * @param string|null $key
      * @param mixed|null $default
      * @return mixed|ConfigSubjectDTO
-     * @throws PathNotFoundException
      */
     public static function wordpress(?string $key = null, mixed $default = null): mixed
     {
@@ -28,9 +28,8 @@ trait Wordpress
     /**
      * @param string|null $key
      * @param mixed|null $default
-     * @return ConfigSubjectDTO|mixed
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @return mixed|ConfigSubjectDTO
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function wordpressAdmin(?string $key = null, mixed $default = null): mixed
     {
@@ -40,9 +39,8 @@ trait Wordpress
     /**
      * @param string|null $key
      * @param mixed|null $default
-     * @return mixed
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @return mixed|ConfigSubjectDTO
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function wordpressLanguages(?string $key = null, mixed $default = null): mixed
     {
@@ -52,9 +50,8 @@ trait Wordpress
     /**
      * @param string|null $key
      * @param mixed|null $default
-     * @return ConfigSubjectDTO|mixed
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @return mixed|ConfigSubjectDTO
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function wordpressTheme(?string $key = null, mixed $default = null): mixed
     {
@@ -66,11 +63,14 @@ trait Wordpress
      * @param string|null $key
      * @param mixed|null $default
      * @return mixed|ConfigSubjectDTO
-     * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     private static function fromWordpressFile(string $ofKey, ?string $key = null, mixed $default = null): mixed
     {
-        return self::fromDTO(static::wordpress(), $ofKey, $key, $default);
+        try {
+            return self::fromDTO(static::wordpress(), $ofKey, $key, $default);
+        } catch (EmptyConfigKey|FailedToLoadConfigFile $exception) {
+            throw new FailedToRetrieveConfigFromWordpressConfigFile($ofKey, $key, $default, $exception);
+        }
     }
 }

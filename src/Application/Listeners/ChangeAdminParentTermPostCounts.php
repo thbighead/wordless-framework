@@ -4,7 +4,6 @@ namespace Wordless\Application\Listeners;
 
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
-use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Hook\Enums\Action;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
@@ -14,11 +13,6 @@ class ChangeAdminParentTermPostCounts extends ActionListener
 {
     protected const FUNCTION = 'countWithChildren';
 
-    /**
-     * @param WP_Term_Query $query
-     * @return void
-     * @throws EmptyQueryBuilderArguments
-     */
     public static function countWithChildren(WP_Term_Query $query): void
     {
         global $pagenow;
@@ -38,10 +32,6 @@ class ChangeAdminParentTermPostCounts extends ActionListener
         return Action::pre_get_terms;
     }
 
-    /**
-     * @return bool
-     * @throws EmptyQueryBuilderArguments
-     */
     private static function isRequestedTaxonomyHierarchical(): bool
     {
         try {
