@@ -2,14 +2,13 @@
 
 namespace Wordless\Wordpress\Models\Attachment\DTO;
 
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Arr;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Link;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO\FilePathSubjectDTO;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Wordpress\Models\Attachment;
 use Wordless\Wordpress\Models\Attachment\DTO\MediaDTO\DTO\SizeDTO;
 
@@ -25,8 +24,7 @@ readonly class MediaDTO
 
     /**
      * @param array $raw_data
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      * @throws PathNotFoundException
      */
     public function __construct(public array $raw_data)
@@ -70,8 +68,7 @@ readonly class MediaDTO
 
     /**
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     private function setSizes(): void
     {

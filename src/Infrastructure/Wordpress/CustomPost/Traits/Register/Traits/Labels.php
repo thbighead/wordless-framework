@@ -2,8 +2,8 @@
 
 namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits;
 
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 
 trait Labels
 {
@@ -25,7 +25,7 @@ trait Labels
      * https://developer.wordpress.org/reference/functions/get_post_type_labels/#description
      *
      * @return string[]
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     private static function mountDefaultLabels(): array
     {

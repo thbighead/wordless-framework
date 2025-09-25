@@ -3,10 +3,9 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Exception\ExceptionInterface;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
@@ -48,8 +47,7 @@ class HelixShell extends ConsoleCommand
 
     /**
      * @return int
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
+     * @throws FailedToRunWpCliCommand
      */
     protected function runIt(): int
     {

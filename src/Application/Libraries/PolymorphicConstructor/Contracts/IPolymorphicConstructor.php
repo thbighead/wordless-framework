@@ -6,9 +6,9 @@ namespace Wordless\Application\Libraries\PolymorphicConstructor\Contracts;
 
 interface IPolymorphicConstructor
 {
-    const PARSED_ARGUMENTS_ARGUMENTS_VALUES_KEY = 'arguments_values';
-    const PARSED_ARGUMENTS_ARGUMENTS_TYPES_KEY = 'arguments_types';
-    const PARSED_ARGUMENTS_NUMBER_OF_ARGUMENTS_KEY = 'number_of_arguments';
+    public const PARSED_ARGUMENTS_ARGUMENTS_VALUES_KEY = 'arguments_values';
+    public const PARSED_ARGUMENTS_ARGUMENTS_TYPES_KEY = 'arguments_types';
+    public const PARSED_ARGUMENTS_NUMBER_OF_ARGUMENTS_KEY = 'number_of_arguments';
 
     /**
      * Must have the following structure:

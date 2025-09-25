@@ -2,12 +2,12 @@
 
 namespace Wordless\Application\Commands\Migrations\Migrate\Traits;
 
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Migrations\Migrate\FlushMigrations;
+use Wordless\Application\Commands\Migrations\Migrate\Traits\ForceMode\Exceptions\FailedToResolveForceMode;
 use Wordless\Application\Commands\Traits\ForceMode as BaseForceMode;
+use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\Internal\Exceptions\CallInternalCommandException;
 
 trait ForceMode
 {
@@ -15,19 +15,20 @@ trait ForceMode
 
     /**
      * @return $this
-     * @throws CliReturnedNonZero
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
+     * @throws FailedToResolveForceMode
      */
     private function resolveForceMode(): static
     {
-        if ($this->isForceMode()) {
-            $this->writelnWarning('Running migration into force mode. Rolling back every executed migration.');
+        try {
+            if ($this->isForceMode()) {
+                $this->writelnWarning('Running migration into force mode. Rolling back every executed migration.');
 
-            $this->callConsoleCommand(FlushMigrations::COMMAND_NAME);
+                $this->callConsoleCommand(FlushMigrations::COMMAND_NAME);
+            }
+
+            return $this;
+        } catch (CliReturnedNonZero|InvalidArgumentException|CallInternalCommandException $exception) {
+            throw new FailedToResolveForceMode($exception);
         }
-
-        return $this;
     }
 }

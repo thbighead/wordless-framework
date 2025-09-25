@@ -2,8 +2,8 @@
 
 namespace Wordless\Infrastructure\Http\Response\Enums\StatusCode\Enums;
 
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 
 enum Category: int
 {
@@ -15,7 +15,7 @@ enum Category: int
 
     /**
      * @return string
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function asText(): string
     {

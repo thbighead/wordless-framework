@@ -25,10 +25,11 @@ use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\JWT\Enums\CryptoAlgorithm;
 use Wordless\Application\Libraries\JWT\Exceptions\InvalidJwtCryptoAlgorithmId;
+use Wordless\Application\Libraries\JWT\Token\Exceptions\FailedToBuildJwt;
 use Wordless\Application\Libraries\JWT\Traits\Constructors;
 use Wordless\Application\Libraries\PolymorphicConstructor\Contracts\IPolymorphicConstructor;
 use Wordless\Application\Libraries\PolymorphicConstructor\Traits\PolymorphicConstructorGuesser;
@@ -100,10 +101,10 @@ class Token implements IPolymorphicConstructor
     /**
      * @return bool
      * @throws EmptyConfigKey
+     * @throws FailedToLoadConfigFile
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws NoConstraintsGiven
-     * @throws PathNotFoundException
      */
     public function isValid(): bool
     {
@@ -118,10 +119,10 @@ class Token implements IPolymorphicConstructor
     /**
      * @return void
      * @throws EmptyConfigKey
+     * @throws FailedToLoadConfigFile
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws NoConstraintsGiven
-     * @throws PathNotFoundException
      * @throws RequiredConstraintsViolated
      */
     public function validateSignature(): void
@@ -138,35 +139,38 @@ class Token implements IPolymorphicConstructor
      * @param array $payload
      * @param CryptoAlgorithm|null $crypto_strategy
      * @return void
-     * @throws CannotEncodeContent
-     * @throws CannotSignPayload
-     * @throws ConversionFailed
-     * @throws EmptyConfigKey
-     * @throws InvalidConfigKey
-     * @throws InvalidJwtCryptoAlgorithmId
-     * @throws InvalidKeyProvided
-     * @throws PathNotFoundException
-     * @throws RegisteredClaimGiven
+     * @throws FailedToBuildJwt
      */
     protected function buildJwt(array $payload, ?CryptoAlgorithm $crypto_strategy = null): void
     {
-        $builder = new Builder(new JoseEncoder, (new ChainedFormatter));
-        $crypto_strategy = $crypto_strategy ?? $this->getConfig()->getOrFail(self::CONFIG_DEFAULT_CRYPTO);
+        try {
+            $builder = new Builder(new JoseEncoder, (new ChainedFormatter));
+            $crypto_strategy = $crypto_strategy ?? $this->getConfig()->getOrFail(self::CONFIG_DEFAULT_CRYPTO);
 
-        foreach ($payload as $key => $value) {
-            $builder = $builder->withClaim("$key", $value);
+            foreach ($payload as $key => $value) {
+                $builder = $builder->withClaim("$key", $value);
+            }
+
+            $this->parsedToken = $builder->getToken(
+                $this->getCryptoAlgorithm($crypto_strategy),
+                $this->mountSignatureKey($crypto_strategy, $this->getConfig()->getOrFail(self::CONFIG_SIGN_KEY))
+            );
+        } catch (CannotEncodeContent
+        |CannotSignPayload
+        |ConversionFailed
+        |EmptyConfigKey
+        |FailedToLoadConfigFile
+        |InvalidConfigKey
+        |InvalidJwtCryptoAlgorithmId
+        |InvalidKeyProvided
+        |RegisteredClaimGiven $exception) {
+            throw new FailedToBuildJwt($payload, $crypto_strategy, $exception);
         }
-
-        $this->parsedToken = $builder->getToken(
-            $this->getCryptoAlgorithm($crypto_strategy),
-            $this->mountSignatureKey($crypto_strategy, $this->getConfig()->getOrFail(self::CONFIG_SIGN_KEY))
-        );
     }
 
     /**
      * @return ConfigSubjectDTO
      * @throws EmptyConfigKey
-     * @throws PathNotFoundException
      */
     private function getConfig(): ConfigSubjectDTO
     {

@@ -4,22 +4,21 @@ namespace Wordless\Application\Commands\Utility;
 
 use OverflowException;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Exception\LogicException;
-use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\DTO\UserDTO\Exceptions\InvalidRawUserData;
+use Wordless\Application\Commands\Utility\DatabaseOverwrite\Exceptions\FailedToLoadDatabaseConfig;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite\Exceptions\FailedToOverwriteUser;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Helpers\Environment;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Infrastructure\ConsoleCommand;
+use Wordless\Infrastructure\ConsoleCommand\Traits\Questions\Exceptions\FailedToMakeQuestionException;
 use wpdb;
 
 class DatabaseOverwrite extends ConsoleCommand
@@ -35,8 +34,7 @@ class DatabaseOverwrite extends ConsoleCommand
 
     /**
      * @return bool
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     public function canRun(): bool
     {
@@ -65,20 +63,19 @@ class DatabaseOverwrite extends ConsoleCommand
 
     /**
      * @return int
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidRawUserData
-     * @throws LogicException
-     * @throws OverflowException
-     * @throws PathNotFoundException
-     * @throws RuntimeException
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
-        $this->initializeConfigurations()
-            ->overwriteAllUsers();
+        try {
+            $this->initializeConfigurations()
+                ->overwriteAllUsers();
+        } catch (CannotResolveEnvironmentGet
+        |FailedToLoadDatabaseConfig
+        |FailedToMakeQuestionException
+        |InvalidRawUserData|OverflowException $exception) {
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
+        }
 
         return Command::SUCCESS;
     }
@@ -107,14 +104,17 @@ class DatabaseOverwrite extends ConsoleCommand
 
     /**
      * @return $this
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws PathNotFoundException
+     * @throws CannotResolveEnvironmentGet
+     * @throws FailedToLoadDatabaseConfig
      */
     private function initializeConfigurations(): static
     {
-        $this->configurations = Config::wordlessDatabase()->get();
+        try {
+            $this->configurations = Config::wordlessDatabase()->get();
+        } catch (EmptyConfigKey|FailedToLoadConfigFile $exception) {
+            throw new FailedToLoadDatabaseConfig($exception);
+        }
+
         $this->databaseConnection = new wpdb(
             Environment::get('DB_USER'),
             Environment::get('DB_PASSWORD'),
@@ -128,11 +128,9 @@ class DatabaseOverwrite extends ConsoleCommand
 
     /**
      * @return void
-     * @throws InvalidArgumentException
+     * @throws FailedToMakeQuestionException
      * @throws InvalidRawUserData
-     * @throws LogicException
      * @throws OverflowException
-     * @throws RuntimeException
      */
     private function overwriteAllUsers(): void
     {
@@ -187,9 +185,7 @@ class DatabaseOverwrite extends ConsoleCommand
     /**
      * @param UserDTO $user
      * @return void
-     * @throws InvalidArgumentException
-     * @throws LogicException
-     * @throws RuntimeException
+     * @throws FailedToMakeQuestionException
      */
     private function tryUntilForfeit(UserDTO $user): void
     {

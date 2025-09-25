@@ -2,8 +2,8 @@
 
 namespace Wordless\Infrastructure\Wordpress\ApiController\Traits;
 
-use InvalidArgumentException;
 use Wordless\Application\Helpers\Debugger;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Infrastructure\Http\Response\Enums\StatusCode;
 use Wordless\Infrastructure\Wordpress\ApiController\Request;
 use Wordless\Infrastructure\Wordpress\ApiController\Response;
@@ -16,7 +16,7 @@ trait RestingWordPress
     /**
      * @param WP_REST_Request $request
      * @return Response|WP_Error
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     final public function create_item($request): Response|WP_Error
     {
@@ -33,7 +33,7 @@ trait RestingWordPress
     /**
      * @param WP_REST_Request $request
      * @return Response|WP_Error
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     final public function delete_item($request): Response|WP_Error
     {
@@ -50,7 +50,7 @@ trait RestingWordPress
     /**
      * @param Request $request
      * @return Response
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function destroy(Request $request): Response
     {
@@ -60,7 +60,7 @@ trait RestingWordPress
     /**
      * @param WP_REST_Request $request
      * @return Response|WP_Error
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     final public function get_item($request): Response|WP_Error
     {
@@ -77,7 +77,7 @@ trait RestingWordPress
     /**
      * @param WP_REST_Request $request
      * @return Response|WP_Error
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     final public function get_items($request): Response|WP_Error
     {
@@ -94,7 +94,7 @@ trait RestingWordPress
     /**
      * @param Request $request
      * @return Response
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function index(Request $request): Response
     {
@@ -104,7 +104,7 @@ trait RestingWordPress
     /**
      * @param Request $request
      * @return Response
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function show(Request $request): Response
     {
@@ -114,7 +114,7 @@ trait RestingWordPress
     /**
      * @param Request $request
      * @return Response
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function store(Request $request): Response
     {
@@ -124,7 +124,7 @@ trait RestingWordPress
     /**
      * @param Request $request
      * @return Response
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     public function update(Request $request): Response
     {
@@ -134,7 +134,7 @@ trait RestingWordPress
     /**
      * @param WP_REST_Request $request
      * @return Response|WP_Error
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     final public function update_item($request): Response|WP_Error
     {
@@ -151,7 +151,7 @@ trait RestingWordPress
     /**
      * @param Request $request
      * @return Response
-     * @throws InvalidArgumentException
+     * @throws FailedToCreateInflector
      */
     private function mountNotImplementedError(Request $request): Response
     {

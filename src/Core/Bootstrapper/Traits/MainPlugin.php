@@ -2,19 +2,17 @@
 
 namespace Wordless\Core\Bootstrapper\Traits;
 
-use InvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Core\Bootstrapper\Exceptions\DuplicatedMenuId;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\InvalidMenuClass;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Traits\MainPlugin\Exceptions\FailedToBootEnqueueables;
+use Wordless\Core\Bootstrapper\Traits\MainPlugin\Exceptions\FailedToBootMainPlugin;
+use Wordless\Core\Bootstrapper\Traits\MainPlugin\Exceptions\FailedToResolveMenu;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallEnqueueables;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallListeners;
 use Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits\InstallMenus;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Provider;
-use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\InvalidEnqueueableId;
 
 trait MainPlugin
 {
@@ -24,39 +22,34 @@ trait MainPlugin
 
     /**
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws DuplicatedMenuId
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidMenuClass
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @throws FailedToBootMainPlugin
      */
     public static function bootMainPlugin(): void
     {
-        self::getInstance()->bootIntoWordpress();
+        try {
+            self::getInstance()->bootIntoWordpress();
+        } catch (FailedToLoadBootstrapper|FailedToResolveMenu $exception) {
+            throw new FailedToBootMainPlugin($exception);
+        }
     }
 
     /**
      * @param bool $on_admin
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws DuplicatedEnqueueableId
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @throws FailedToBootEnqueueables
      */
     public static function bootEnqueues(bool $on_admin = false): void
     {
-        self::getInstance()->resolveEnqueues($on_admin);
+        try {
+            self::getInstance()->resolveEnqueues($on_admin);
+        } catch (FailedToLoadBootstrapper|InvalidEnqueueableId $exception) {
+            throw new FailedToBootEnqueueables($on_admin, $exception);
+        }
     }
 
     /**
      * @return void
-     * @throws DuplicatedMenuId
-     * @throws InvalidMenuClass
+     * @throws FailedToResolveMenu
      */
     private function bootIntoWordpress(): void
     {
@@ -85,12 +78,15 @@ trait MainPlugin
 
     /**
      * @return void
-     * @throws DuplicatedMenuId
-     * @throws InvalidMenuClass
+     * @throws FailedToResolveMenu
      */
     private function finishWordpressServicesBoot(): void
     {
-        $this->resolveListeners()
-            ->resolveMenus();
+        try {
+            $this->resolveListeners()
+                ->resolveMenus();
+        } catch (DuplicatedMenuId|InvalidMenuClass $exception) {
+            throw new FailedToResolveMenu($exception);
+        }
     }
 }

@@ -2,35 +2,36 @@
 
 namespace Wordless\Application\Styles;
 
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Link;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Application\Styles\AdminBarEnvironmentFlagStyle\Exceptions\CannotMountAdminEnvironmentFlagStyleSymlinkRelativePath;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle\GlobalEnqueueableStyle;
 
 class AdminBarEnvironmentFlagStyle extends GlobalEnqueueableStyle
 {
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws PathNotFoundException
+     * @throws CannotMountAdminEnvironmentFlagStyleSymlinkRelativePath
      */
     public static function mountSymlinkTargetRelativePath(): string
     {
-        return '../' . Str::after(
-                ProjectPath::vendorPackageRoot(Environment::isNotLocal() ? 'dist' : 'assets'),
-                Str::finishWith(ProjectPath::root(), DIRECTORY_SEPARATOR)
-            );
+        try {
+            return '../' . Str::after(
+                    ProjectPath::vendorPackageRoot(Environment::isNotLocal() ? 'dist' : 'assets'),
+                    Str::finishWith(ProjectPath::root(), DIRECTORY_SEPARATOR)
+                );
+        } catch (CannotResolveEnvironmentGet|PathNotFoundException $exception) {
+            throw new CannotMountAdminEnvironmentFlagStyleSymlinkRelativePath($exception);
+        }
     }
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     protected function filename(): string
     {
@@ -45,8 +46,7 @@ class AdminBarEnvironmentFlagStyle extends GlobalEnqueueableStyle
 
     /**
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws FormatException
+     * @throws CannotResolveEnvironmentGet
      */
     protected function mountFileUrl(): string
     {

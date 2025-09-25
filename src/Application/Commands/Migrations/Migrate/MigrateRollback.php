@@ -4,19 +4,14 @@ namespace Wordless\Application\Commands\Migrations\Migrate;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Migrations\Migrate;
 use Wordless\Application\Commands\Migrations\Migrate\Exceptions\FailedToFindExecutedMigrationScript;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
+use Wordless\Application\Commands\Migrations\Migrate\MigrateRollback\Exceptions\FailedToFilterExecutedMigrationsToRollback;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
-use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\InvalidMigrationFilename;
-use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\FailedToBootMigrationCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
@@ -62,25 +57,14 @@ class MigrateRollback extends Migrate
         ];
     }
 
-    /**
-     * @return int
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FailedToFindExecutedMigrationScript
-     * @throws FailedToUpdateOption
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidDirectory
-     * @throws InvalidMigrationFilename
-     * @throws InvalidProviderClass
-     * @throws MigrationFileNotFound
-     * @throws PathNotFoundException
-     * @throws QueryError
-     */
     protected function runIt(): int
     {
-        $this->filterExecutedMigrationsToRollback()
-            ->executeFilteredMigrations();
+        try {
+            $this->filterExecutedMigrationsToRollback()
+                ->executeFilteredMigrations();
+        } catch (FailedToFilterExecutedMigrationsToRollback|FailedToUpdateOption|QueryError $exception) {
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
+        }
 
         return Command::SUCCESS;
     }
@@ -88,15 +72,8 @@ class MigrateRollback extends Migrate
     /**
      * @param string $migration_filename
      * @return string
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
      * @throws FailedToFindExecutedMigrationScript
-     * @throws FormatException
-     * @throws InvalidDirectory
-     * @throws InvalidMigrationFilename
-     * @throws InvalidProviderClass
-     * @throws MigrationFileNotFound
-     * @throws PathNotFoundException
+     * @throws FailedToBootMigrationCommand
      */
     final protected function findLoadedMigrationFilepathByFilename(string $migration_filename): string
     {
@@ -107,16 +84,9 @@ class MigrateRollback extends Migrate
     /**
      * @param string $migration_filename
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
+     * @throws FailedToBootMigrationCommand
      * @throws FailedToFindExecutedMigrationScript
      * @throws FailedToUpdateOption
-     * @throws FormatException
-     * @throws InvalidDirectory
-     * @throws InvalidMigrationFilename
-     * @throws InvalidProviderClass
-     * @throws MigrationFileNotFound
-     * @throws PathNotFoundException
      */
     final protected function registerMigrationExecution(string $migration_filename): void
     {
@@ -147,26 +117,23 @@ class MigrateRollback extends Migrate
 
     /**
      * @return $this
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FailedToFindExecutedMigrationScript
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidDirectory
-     * @throws InvalidMigrationFilename
-     * @throws InvalidProviderClass
-     * @throws MigrationFileNotFound
-     * @throws PathNotFoundException
+     * @throws FailedToFilterExecutedMigrationsToRollback
      */
     private function filterExecutedMigrationsToRollback(): static
     {
         $filtered_migrations = [];
 
-        foreach ($this->getFilteredMigrationChunksOrderedDescending() as $executed_migration_chunk) {
-            foreach ($executed_migration_chunk as $executed_migration_filename) {
-                $filtered_migrations[$executed_migration_filename] =
-                    $this->findLoadedMigrationFilepathByFilename($executed_migration_filename);
+        try {
+            foreach ($this->getFilteredMigrationChunksOrderedDescending() as $executed_migration_chunk) {
+                foreach ($executed_migration_chunk as $executed_migration_filename) {
+                    $filtered_migrations[$executed_migration_filename] =
+                        $this->findLoadedMigrationFilepathByFilename($executed_migration_filename);
+                }
             }
+        } catch (FailedToBootMigrationCommand
+        |FailedToFindExecutedMigrationScript
+        |InvalidArgumentException $exception) {
+            throw new FailedToFilterExecutedMigrationsToRollback($exception);
         }
 
         return $this->instantiateFilteredMigrations($filtered_migrations);

@@ -2,11 +2,13 @@
 
 namespace Wordless\Application\Helpers;
 
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\FailedToGetWordpressTheme;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\ProjectPath\Traits\Internal;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 
 class ProjectPath extends Subjectable
 {
@@ -316,13 +318,17 @@ class ProjectPath extends Subjectable
     /**
      * @param string $additional_path
      * @return string
-     * @throws EmptyConfigKey
+     * @throws FailedToGetWordpressTheme
      * @throws PathNotFoundException
      */
     final public static function theme(string $additional_path = ''): string
     {
-        return self::wpThemes(Config::wordpressTheme()->get(default: 'wordless')
-            . "/$additional_path");
+        try {
+            return self::wpThemes(Config::wordpressTheme()->get(default: 'wordless')
+                . "/$additional_path");
+        } catch (FailedToLoadConfigFile|FailedToRetrieveConfigFromWordpressConfigFile $exception) {
+            throw new FailedToGetWordpressTheme($exception);
+        }
     }
 
     /**

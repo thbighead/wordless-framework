@@ -2,21 +2,13 @@
 
 namespace Wordless\Application\Commands;
 
-use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Commands\Traits\LoadWpConfig;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\ConsoleCommand;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
-use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Role;
-use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
-use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
+use Wordless\Wordpress\Models\Role\Traits\Repository\Traits\FromDatabase\Traits\Sync\Exceptions\SynchroniseFailed;
 
 class SyncRoles extends ConsoleCommand
 {
@@ -53,15 +45,7 @@ class SyncRoles extends ConsoleCommand
 
     /**
      * @return int
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws EmptyQueryBuilderArguments
-     * @throws FailedToCreateRole
-     * @throws FailedToFindRole
-     * @throws FormatException
-     * @throws InvalidArgumentException
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @throws SynchroniseFailed
      */
     protected function runIt(): int
     {

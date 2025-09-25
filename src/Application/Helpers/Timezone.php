@@ -5,7 +5,8 @@ namespace Wordless\Application\Helpers;
 use Wordless\Application\Commands\ConfigureDateOptions;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\Config\Exceptions\InvalidConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\Helper;
 
 class Timezone extends Helper
@@ -15,21 +16,23 @@ class Timezone extends Helper
 
     /**
      * @return string
-     * @throws EmptyConfigKey
-     * @throws InvalidConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function raw(): string
     {
-        return Config::wordpressAdmin()->ofKey(ConfigureDateOptions::CONFIG_KEY_ADMIN_DATETIME)
-            ->getOrFail(self::CONFIG_KEY);
+        $of_key = ConfigureDateOptions::CONFIG_KEY_ADMIN_DATETIME;
+        $key = self::CONFIG_KEY;
+
+        try {
+            return Config::wordpressAdmin()->ofKey($of_key)->getOrFail($key);
+        } catch (EmptyConfigKey|InvalidConfigKey|FailedToLoadConfigFile $exception) {
+            throw new FailedToRetrieveConfigFromWordpressConfigFile($of_key, $key, $exception);
+        }
     }
 
     /**
      * @return string
-     * @throws EmptyConfigKey
-     * @throws InvalidConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function forOptionGmtOffset(): string
     {
@@ -44,9 +47,7 @@ class Timezone extends Helper
 
     /**
      * @return string
-     * @throws EmptyConfigKey
-     * @throws InvalidConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function forOptionTimezoneString(): string
     {
@@ -59,9 +60,7 @@ class Timezone extends Helper
 
     /**
      * @return string
-     * @throws EmptyConfigKey
-     * @throws InvalidConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordpressConfigFile
      */
     public static function forPhpIni(): string
     {

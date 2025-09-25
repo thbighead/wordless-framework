@@ -3,20 +3,17 @@
 namespace Wordless\Infrastructure\Wordpress;
 
 use Generator;
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToFindCachedKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Core\Bootstrapper;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
 use Wordless\Core\InternalCache;
 use Wordless\Core\InternalCache\Exceptions\InternalCacheNotLoaded;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\AuthorizationCheck;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\ResourceValidation;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\RestingWordPress;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\Routing;
+use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 use WP_REST_Controller;
@@ -64,12 +61,8 @@ abstract class ApiController extends WP_REST_Controller
     abstract protected function version(): ?string;
 
     /**
-     * @return Generator<string>
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @return Generator
+     * @throws FailedToLoadBootstrapper
      */
     public static function all(): Generator
     {
@@ -87,12 +80,8 @@ abstract class ApiController extends WP_REST_Controller
     }
 
     /**
-     * @return string[]|ApiController[]
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidProviderClass
-     * @throws PathNotFoundException
+     * @return array
+     * @throws FailedToLoadBootstrapper
      */
     public static function loadProvidedApiControllers(): array
     {
@@ -118,6 +107,10 @@ abstract class ApiController extends WP_REST_Controller
         return 'wordless';
     }
 
+    /**
+     * @return void
+     * @throws InvalidAcfFunction
+     */
     protected function setAuthenticatedUser(): void
     {
         try {

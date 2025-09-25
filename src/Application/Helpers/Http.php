@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Wordless\Application\Helpers;
 
 use JsonException;
-use Symfony\Component\Dotenv\Exception\FormatException;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
 use Wordless\Application\Helpers\Http\Contracts\Subjectable;
 use Wordless\Application\Helpers\Http\Enums\Version;
+use Wordless\Application\Helpers\Http\Exceptions\FailedToResolveRequest;
 use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
 use Wordless\Application\Helpers\Http\Traits\Internal;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Http\Request\Enums\Verb;
 use Wordless\Infrastructure\Http\Response;
 use WP_Error;
@@ -26,13 +26,11 @@ class Http extends Subjectable
 
     /**
      * @param string $endpoint
-     * @param array<string, string>|string $body
-     * @param array<string, string> $headers
+     * @param array $body
+     * @param array $headers
      * @param Version $http_version
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public static function delete(
@@ -47,13 +45,11 @@ class Http extends Subjectable
 
     /**
      * @param string $endpoint
-     * @param array<string, string>|string $body
-     * @param array<string, string> $headers
+     * @param array $body
+     * @param array $headers
      * @param Version $http_version
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public static function get(
@@ -68,13 +64,11 @@ class Http extends Subjectable
 
     /**
      * @param string $endpoint
-     * @param array<string, string>|string $body
-     * @param array<string, string> $headers
+     * @param array $body
+     * @param array $headers
      * @param Version $http_version
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public static function patch(
@@ -89,13 +83,11 @@ class Http extends Subjectable
 
     /**
      * @param string $endpoint
-     * @param array<string, string>|string $body
-     * @param array<string, string> $headers
+     * @param array $body
+     * @param array $headers
      * @param Version $http_version
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public static function post(
@@ -110,13 +102,11 @@ class Http extends Subjectable
 
     /**
      * @param string $endpoint
-     * @param array<string, string>|string $body
-     * @param array<string, string> $headers
+     * @param array $body
+     * @param array $headers
      * @param Version $http_version
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public static function put(
@@ -132,14 +122,12 @@ class Http extends Subjectable
     /**
      * @param Verb $httpVerb
      * @param string $endpoint
-     * @param array<string, string>|string $body
-     * @param array<string, string> $headers
+     * @param array|string $body
+     * @param array $headers
      * @param bool|null $only_with_ssl
      * @param Version $http_version
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public static function request(
@@ -151,20 +139,28 @@ class Http extends Subjectable
         Version      $http_version = Version::http_1_0,
     ): Response
     {
-        $response = self::getWpHttp()->request($endpoint, wp_parse_args([
-            'method' => $httpVerb->value,
-            'headers' => $headers,
-            self::BODY => $body,
-            'timeout' => static::TIMEOUT,
-            'sslverify' => $only_with_ssl ?? Environment::isProduction(),
-            'httpversion' => $http_version->value,
-        ]));
+        try {
+            $response = self::getWpHttp()->request($endpoint, wp_parse_args([
+                'method' => $httpVerb->value,
+                'headers' => $headers,
+                self::BODY => $body,
+                'timeout' => static::TIMEOUT,
+                'sslverify' => $only_with_ssl ?? Environment::isProduction(),
+                'httpversion' => $http_version->value,
+            ]));
+        } catch (CannotResolveEnvironmentGet $exception) {
+            throw new FailedToResolveRequest($exception);
+        }
 
         if ($response instanceof WP_Error) {
             throw new RequestFailed($response);
         }
 
-        self::prepareResponseBody($response, $headers);
+        try {
+            self::prepareResponseBody($response, $headers);
+        } catch (JsonException $exception) {
+            throw new FailedToResolveRequest($exception);
+        }
 
         return new Response($response);
     }

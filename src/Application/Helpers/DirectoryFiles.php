@@ -4,6 +4,7 @@ namespace Wordless\Application\Helpers;
 
 use Exception;
 use Generator;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\CannotReadPath;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangeDirectoryTo;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToChangePathPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
@@ -14,6 +15,7 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWor
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToTravelDirectories;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\NotAPhpFile;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -51,19 +53,25 @@ class DirectoryFiles extends Helper
      * @param callable $do
      * @param string|null $back_to
      * @return mixed
-     * @throws FailedToChangeDirectoryTo
-     * @throws FailedToGetCurrentWorkingDirectory
-     * @throws PathNotFoundException
+     * @throws FailedToTravelDirectories
      */
     public static function changeWorkingDirectoryDoAndGoBack(string $to, callable $do, ?string $back_to = null): mixed
     {
-        $back_to = $back_to ?? static::getCurrentWorkingDirectory();
+        try {
+            $back_to = $back_to ?? static::getCurrentWorkingDirectory();
 
-        static::changeWorkingDirectory($to);
+            static::changeWorkingDirectory($to);
+        } catch (FailedToChangeDirectoryTo|FailedToGetCurrentWorkingDirectory|PathNotFoundException $exception) {
+            throw new FailedToTravelDirectories($to, $back_to, $exception);
+        }
 
         $result = $do();
 
-        static::changeWorkingDirectory($back_to);
+        try {
+            static::changeWorkingDirectory($back_to);
+        } catch (FailedToChangeDirectoryTo $exception) {
+            throw new FailedToTravelDirectories($to, $back_to, $exception);
+        }
 
         return $result;
     }
@@ -188,9 +196,8 @@ class DirectoryFiles extends Helper
      * @param string $target_relative_path
      * @param string|null $from_absolute_path
      * @return void
-     * @throws FailedToChangeDirectoryTo
      * @throws FailedToCreateSymlink
-     * @throws FailedToGetCurrentWorkingDirectory
+     * @throws FailedToTravelDirectories
      * @throws PathNotFoundException
      */
     public static function createSymbolicLink(
@@ -477,21 +484,24 @@ class DirectoryFiles extends Helper
 
     /**
      * @param string $path
-     * @return Generator
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
+     * @return Generator<string>
+     * @throws CannotReadPath
      */
     public static function recursiveRead(string $path): Generator
     {
-        if (is_dir($real_path = ProjectPath::realpath($path))) {
-            foreach (static::listFromDirectory($real_path) as $file) {
-                yield from static::recursiveRead("$real_path/$file");
+        try {
+            if (is_dir($real_path = ProjectPath::realpath($path))) {
+                foreach (static::listFromDirectory($real_path) as $file) {
+                    yield from static::recursiveRead("$real_path/$file");
+                }
+
+                return;
             }
 
-            return;
+            yield $real_path;
+        } catch (InvalidDirectory|PathNotFoundException $exception) {
+            throw new CannotReadPath($path, $exception);
         }
-
-        yield $real_path;
     }
 
     /**

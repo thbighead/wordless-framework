@@ -3,17 +3,16 @@
 namespace Wordless\Core\Bootstrapper\Traits;
 
 use Generator;
-use Symfony\Component\Dotenv\Exception\FormatException;
-use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
 use Wordless\Application\Helpers\DirectoryFiles;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\CannotReadPath;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Core\Bootstrapper\Exceptions\InvalidProviderClass;
+use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
+use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\FailedToBootMigrationCommand;
+use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\FailedToLoadProvidedMigration;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\InvalidMigrationFilename;
 use Wordless\Core\Bootstrapper\Traits\Migrations\Exceptions\MigrationFileNotFound;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 trait Migrations
 {
@@ -21,19 +20,16 @@ trait Migrations
 
     /**
      * @return array
-     * @throws DotEnvNotSetException
-     * @throws EmptyConfigKey
-     * @throws FormatException
-     * @throws InvalidDirectory
-     * @throws InvalidMigrationFilename
-     * @throws InvalidProviderClass
-     * @throws MigrationFileNotFound
-     * @throws PathNotFoundException
+     * @throws FailedToBootMigrationCommand
      */
     public static function bootIntoMigrationCommand(): array
     {
-        return self::getInstance()->loadProvidedMigrations()
-            ->getLoadedMigrationsFilepath();
+        try {
+            return self::getInstance()->loadProvidedMigrations()
+                ->getLoadedMigrationsFilepath();
+        } catch (FailedToLoadBootstrapper|FailedToLoadProvidedMigration $exception) {
+            throw new FailedToBootMigrationCommand($exception);
+        }
     }
 
     /**
@@ -46,23 +42,24 @@ trait Migrations
 
     /**
      * @return $this
-     * @throws InvalidDirectory
-     * @throws InvalidMigrationFilename
-     * @throws MigrationFileNotFound
-     * @throws PathNotFoundException
+     * @throws FailedToLoadProvidedMigration
      */
     private function loadProvidedMigrations(): static
     {
         foreach ($this->loaded_providers as $provider) {
             foreach ($provider->registerMigrations() as $migration_absolute_path) {
-                foreach ($this->retrieveMigrationFilePathsFrom($migration_absolute_path) as $migration_absolute_filepath) {
-                    $migration_absolute_filepath = $this->validateMigrationFilepath($migration_absolute_filepath);
+                try {
+                    foreach ($this->retrieveMigrationFilePathsFrom($migration_absolute_path) as $migration_absolute_filepath) {
+                        $migration_absolute_filepath = $this->validateMigrationFilepath($migration_absolute_filepath);
 
-                    $migration_filename = Str::afterLast($migration_absolute_filepath, DIRECTORY_SEPARATOR);
+                        $migration_filename = Str::afterLast($migration_absolute_filepath, DIRECTORY_SEPARATOR);
 
-                    $this->validateMigrationFilename($migration_filename);
+                        $this->validateMigrationFilename($migration_filename);
 
-                    $this->loaded_migrations_filepath[$migration_filename] = $migration_absolute_filepath;
+                        $this->loaded_migrations_filepath[$migration_filename] = $migration_absolute_filepath;
+                    }
+                } catch (CannotReadPath|InvalidMigrationFilename|MigrationFileNotFound $exception) {
+                    throw new FailedToLoadProvidedMigration($provider, $migration_absolute_path, $exception);
                 }
             }
         }
@@ -74,9 +71,8 @@ trait Migrations
 
     /**
      * @param string $migration_absolute_path
-     * @return Generator
-     * @throws InvalidDirectory
-     * @throws PathNotFoundException
+     * @return Generator<string>
+     * @throws CannotReadPath
      */
     private function retrieveMigrationFilePathsFrom(string $migration_absolute_path): Generator
     {

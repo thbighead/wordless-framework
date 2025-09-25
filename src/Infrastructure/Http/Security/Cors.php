@@ -7,14 +7,13 @@ use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Response;
 use Wordless\Application\Helpers\Config;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Application\Libraries\DesignPattern\Singleton;
 use Wordless\Application\Listeners\HandleCors;
+use Wordless\Exceptions\FailedToRetrieveConfigFromWordlessConfigFile;
 use Wordless\Infrastructure\Http\Request;
 use Wordless\Infrastructure\Http\Request\Enums\Verb;
 use Wordless\Infrastructure\Http\Response\Enums\StatusCode;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
-use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 
 final class Cors extends Singleton
 {
@@ -34,16 +33,20 @@ final class Cors extends Singleton
     }
 
     /**
-     * @throws EmptyConfigKey
-     * @throws InvalidAcfFunction
-     * @throws NoUserAuthenticated
-     * @throws PathNotFoundException
+     * @throws FailedToRetrieveConfigFromWordlessConfigFile
+     * @noinspection PhpDocMissingThrowsInspection
      */
     protected function __construct()
     {
-        $this->service = new CorsService(Config::wordlessCors()->get());
+        try {
+            $this->service = new CorsService(Config::wordlessCors()->get());
+        } catch (EmptyConfigKey|FailedToLoadConfigFile $exception) {
+            throw new FailedToRetrieveConfigFromWordlessConfigFile(Cors::CONFIG_KEY, previous: $exception);
+        }
+
         $this->request = Request::getInstance();
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         parent::__construct();
     }
 

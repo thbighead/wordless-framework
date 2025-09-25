@@ -1,15 +1,11 @@
-<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Wordless\Application\Helpers\Http\Contracts\Subjectable\DTO\HttpSubjectableDTO\Traits;
 
-use JsonException;
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Http;
+use Wordless\Application\Helpers\Http\Exceptions\FailedToResolveRequest;
 use Wordless\Application\Helpers\Http\Exceptions\RequestFailed;
 use Wordless\Application\Helpers\Str;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 use Wordless\Infrastructure\Http\Request\Enums\Verb;
 use Wordless\Infrastructure\Http\Response;
 
@@ -20,9 +16,7 @@ trait Requests
      * @param array<string, string>|string $body
      * @param array<string, string> $additional_headers
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public function delete(
@@ -39,9 +33,7 @@ trait Requests
      * @param array<string, string>|string $body
      * @param array<string, string> $additional_headers
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public function get(
@@ -58,9 +50,7 @@ trait Requests
      * @param array<string, string>|string $body
      * @param array<string, string> $additional_headers
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public function patch(
@@ -77,9 +67,7 @@ trait Requests
      * @param array<string, string>|string $body
      * @param array<string, string> $additional_headers
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public function post(
@@ -96,9 +84,7 @@ trait Requests
      * @param array<string, string>|string $body
      * @param array<string, string> $additional_headers
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public function put(
@@ -116,9 +102,7 @@ trait Requests
      * @param array<string, string>|string $body
      * @param array<string, string> $additional_headers
      * @return Response
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws JsonException
+     * @throws FailedToResolveRequest
      * @throws RequestFailed
      */
     public function request(

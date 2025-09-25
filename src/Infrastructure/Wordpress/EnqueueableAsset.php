@@ -2,16 +2,15 @@
 
 namespace Wordless\Infrastructure\Wordpress;
 
-use InvalidArgumentException;
 use Wordless\Application\Guessers\EnqueueableAssetIdGuesser;
 use Wordless\Application\Helpers\Arr;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Contracts\Context;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Enums\StandardContext;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\DuplicatedEnqueueableId;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\EmptyEnqueueableId;
+use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\InvalidEnqueueableId;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Exceptions\InvalidTypeEnqueueableClass;
 
 abstract class EnqueueableAsset
@@ -44,9 +43,7 @@ abstract class EnqueueableAsset
 
     /**
      * @return static
-     * @throws DuplicatedEnqueueableId
-     * @throws InvalidArgumentException
-     * @throws PathNotFoundException
+     * @throws InvalidEnqueueableId
      * @noinspection PhpDocRedundantThrowsInspection
      */
     public static function make(): static
@@ -78,9 +75,7 @@ abstract class EnqueueableAsset
     /**
      * @param Context $context
      * @return void
-     * @throws DuplicatedEnqueueableId
-     * @throws InvalidArgumentException
-     * @throws PathNotFoundException
+     * @throws InvalidEnqueueableId
      */
     final public function enqueueDependenciesRecursively(Context $context = StandardContext::no_context): void
     {
@@ -136,15 +131,17 @@ abstract class EnqueueableAsset
     }
 
     /**
-     * @throws DuplicatedEnqueueableId
-     * @throws EmptyEnqueueableId
-     * @throws InvalidTypeEnqueueableClass
+     * @throws InvalidEnqueueableId
      */
     private function __construct()
     {
-        $this->setId()
-            ->setFileUrl()
-            ->setDependenciesIds();
+        try {
+            $this->setId()
+                ->setFileUrl()
+                ->setDependenciesIds();
+        } catch (DuplicatedEnqueueableId|EmptyEnqueueableId|InvalidTypeEnqueueableClass $exception) {
+            throw new InvalidEnqueueableId($exception);
+        }
     }
 
     private function setDependenciesIds(): void

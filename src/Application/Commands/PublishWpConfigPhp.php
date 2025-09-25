@@ -3,10 +3,9 @@
 namespace Wordless\Application\Commands;
 
 use Symfony\Component\Console\Command\Command;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCopyFile;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\Environment;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
@@ -44,27 +43,27 @@ class PublishWpConfigPhp extends ConsoleCommand
 
     /**
      * @return int
-     * @throws FailedToCopyFile
-     * @throws FailedToCopyStub
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
-     * @throws PathNotFoundException
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
-        $wp_config_destiny_path = ProjectPath::wpCore() . '/wp-config.php';
+        try {
+            $wp_config_destiny_path = ProjectPath::wpCore() . '/wp-config.php';
 
-        if (Environment::isFramework()) {
-            DirectoryFiles::copyFile(
-                ProjectPath::root('wp-config.php'),
-                $wp_config_destiny_path,
-                false
-            );
+            if (Environment::isFramework()) {
+                DirectoryFiles::copyFile(
+                    ProjectPath::root('wp-config.php'),
+                    $wp_config_destiny_path,
+                    false
+                );
 
-            return Command::SUCCESS;
+                return Command::SUCCESS;
+            }
+
+            WpConfigStubMounter::make($wp_config_destiny_path)->mountNewFile();
+        } catch (FailedToCopyFile|FailedToCopyStub|PathNotFoundException $exception) {
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
         }
-
-        WpConfigStubMounter::make($wp_config_destiny_path)->mountNewFile();
 
         return Command::SUCCESS;
     }

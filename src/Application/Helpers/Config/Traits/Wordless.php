@@ -4,7 +4,7 @@ namespace Wordless\Application\Helpers\Config\Traits;
 
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO;
 use Wordless\Application\Helpers\Config\Contracts\Subjectable\DTO\ConfigSubjectDTO\Exceptions\EmptyConfigKey;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
+use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadConfigFile;
 use Wordless\Infrastructure\Http\Security\Cors;
 use Wordless\Infrastructure\Http\Security\Csp;
 
@@ -18,7 +18,6 @@ trait Wordless
      * @param string|null $key
      * @param mixed|null $default
      * @return mixed|ConfigSubjectDTO
-     * @throws PathNotFoundException
      */
     public static function wordless(?string $key = null, mixed $default = null): mixed
     {
@@ -28,9 +27,9 @@ trait Wordless
     /**
      * @param string|null $key
      * @param mixed|null $default
-     * @return ConfigSubjectDTO|mixed
+     * @return mixed|ConfigSubjectDTO
      * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToLoadConfigFile
      */
     public static function wordlessCors(?string $key = null, mixed $default = null): mixed
     {
@@ -40,9 +39,9 @@ trait Wordless
     /**
      * @param string|null $key
      * @param mixed|null $default
-     * @return ConfigSubjectDTO|mixed
+     * @return mixed|ConfigSubjectDTO
      * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToLoadConfigFile
      */
     public static function wordlessCsp(?string $key = null, mixed $default = null): mixed
     {
@@ -52,9 +51,9 @@ trait Wordless
     /**
      * @param string|null $key
      * @param mixed|null $default
-     * @return ConfigSubjectDTO|mixed
+     * @return mixed|ConfigSubjectDTO
      * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToLoadConfigFile
      */
     public static function wordlessDatabase(?string $key = null, mixed $default = null): mixed
     {
@@ -64,7 +63,7 @@ trait Wordless
     /**
      * @return string[]
      * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToLoadConfigFile
      */
     public static function wordlessPluginsOrder(): array
     {
@@ -77,7 +76,7 @@ trait Wordless
      * @param mixed|null $default
      * @return mixed|ConfigSubjectDTO
      * @throws EmptyConfigKey
-     * @throws PathNotFoundException
+     * @throws FailedToLoadConfigFile
      */
     private static function fromWordlessFile(string $ofKey, ?string $key = null, mixed $default = null): mixed
     {

@@ -3,11 +3,10 @@
 namespace Wordless\Application\Commands\Schedules;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Exception\ExceptionInterface;
-use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
+use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
 use Wordless\Infrastructure\ConsoleCommand;
 
 class ListSchedules extends ConsoleCommand
@@ -41,15 +40,16 @@ class ListSchedules extends ConsoleCommand
 
     /**
      * @return int
-     * @throws WpCliCommandReturnedNonZero
-     * @throws CommandNotFoundException
-     * @throws ExceptionInterface
-     * @throws InvalidArgumentException
+     * @throws FailedToRunCommand
      */
     protected function runIt(): int
     {
-        $this->runWpCliCommand('cron event list');
+        try {
+            $this->runWpCliCommand('cron event list');
 
-        return Command::SUCCESS;
+            return Command::SUCCESS;
+        } catch (FailedToRunWpCliCommand|WpCliCommandReturnedNonZero $exception) {
+            throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
+        }
     }
 }

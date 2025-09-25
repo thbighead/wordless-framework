@@ -6,14 +6,17 @@ use Composer\Script\Event;
 use RuntimeException;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
+use Wordless\Application\Helpers\Environment\Exceptions\DotEnvNotSetException;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToCopyDotEnvExampleIntoNewDotEnv;
+use Wordless\Application\Helpers\Environment\Exceptions\FailedToLoadDotEnv;
 use Wordless\Application\Helpers\Environment\Exceptions\FailedToRewriteDotEnvFile;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Core\Composer\Exceptions\AppHostAlreadySetOnDotEnv;
+use Wordless\Core\Composer\Traits\SetHostFromNginx\Exceptions\FailedToSetAppHostValueAtDotEnv;
 use Wordless\Core\Composer\Traits\SetHostFromNginx\Exceptions\UnavailableNginxServerName;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
 
 trait SetHostFromNginx
 {
@@ -110,25 +113,30 @@ trait SetHostFromNginx
      * @param string $app_host
      * @return void
      * @throws AppHostAlreadySetOnDotEnv
-     * @throws DotEnvNotSetException
-     * @throws FailedToRewriteDotEnvFile
-     * @throws FormatException
-     * @throws PathNotFoundException
+     * @throws FailedToSetAppHostValueAtDotEnv
      */
     private static function setAppHostValueAtDotEnv(string $app_host): void
     {
         try {
-            $dot_env_filepath = Environment::createDotEnvFromExample();
-        } catch (FailedToCopyDotEnvExampleIntoNewDotEnv) {
-            $dot_env_filepath = ProjectPath::root('.env');
+            try {
+                $dot_env_filepath = Environment::createDotEnvFromExample();
+            } catch (FailedToCopyDotEnvExampleIntoNewDotEnv) {
+                $dot_env_filepath = ProjectPath::root('.env');
+            }
+
+            Environment::loadDotEnv();
+
+            if (!empty($host = Environment::get(self::WORDLESS_APP_HOST_DOT_ENV_VARIABLE))) {
+                throw new AppHostAlreadySetOnDotEnv($host);
+            }
+
+            Environment::rewriteDotEnvFile($dot_env_filepath, self::replaceAppHost($dot_env_filepath, $app_host));
+        } catch (CannotResolveEnvironmentGet
+        |DotEnvNotSetException
+        |FailedToLoadDotEnv
+        |FailedToRewriteDotEnvFile
+        |PathNotFoundException $exception) {
+            throw new FailedToSetAppHostValueAtDotEnv($exception);
         }
-
-        Environment::loadDotEnv();
-
-        if (!empty($host = Environment::get(self::WORDLESS_APP_HOST_DOT_ENV_VARIABLE))) {
-            throw new AppHostAlreadySetOnDotEnv($host);
-        }
-
-        Environment::rewriteDotEnvFile($dot_env_filepath, self::replaceAppHost($dot_env_filepath, $app_host));
     }
 }

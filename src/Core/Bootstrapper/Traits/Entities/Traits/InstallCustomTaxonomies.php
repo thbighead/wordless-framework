@@ -2,13 +2,9 @@
 
 namespace Wordless\Core\Bootstrapper\Traits\Entities\Traits;
 
-use InvalidArgumentException;
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\CustomTaxonomyRegistrationFailed;
-use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\InvalidObjectTypeAssociationToTaxonomy;
-use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Traits\Validation\Exceptions\InvalidCustomTaxonomyName;
-use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Traits\Validation\Exceptions\ReservedCustomTaxonomyName;
 
 trait InstallCustomTaxonomies
 {
@@ -35,10 +31,6 @@ trait InstallCustomTaxonomies
     /**
      * @return $this
      * @throws CustomTaxonomyRegistrationFailed
-     * @throws InvalidArgumentException
-     * @throws InvalidCustomTaxonomyName
-     * @throws InvalidObjectTypeAssociationToTaxonomy
-     * @throws ReservedCustomTaxonomyName
      */
     private function resolveCustomTaxonomies(): static
     {

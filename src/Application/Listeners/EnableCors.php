@@ -3,9 +3,9 @@
 namespace Wordless\Application\Listeners;
 
 use InvalidArgumentException;
-use Symfony\Component\Dotenv\Exception\FormatException;
 use Wordless\Application\Helpers\Environment;
-use Wordless\Core\Exceptions\DotEnvNotSetException;
+use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
+use Wordless\Application\Listeners\EnableCors\Exceptions\FailedToEnableCors;
 use Wordless\Infrastructure\Http\Security\Cors;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener;
@@ -20,14 +20,16 @@ class EnableCors extends ActionListener
 
     /**
      * @return void
-     * @throws DotEnvNotSetException
-     * @throws FormatException
-     * @throws InvalidArgumentException
+     * @throws FailedToEnableCors
      */
     public static function enable(): void
     {
-        if (Environment::get('WORDLESS_CORS', false)) {
-            Cors::enable();
+        try {
+            if (Environment::get('WORDLESS_CORS', false)) {
+                Cors::enable();
+            }
+        } catch (CannotResolveEnvironmentGet|InvalidArgumentException $exception) {
+            throw new FailedToEnableCors($exception);
         }
     }
 
