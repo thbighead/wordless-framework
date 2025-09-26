@@ -9,7 +9,7 @@ use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironment
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Wordpress\Models\Role;
-use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
+use Wordless\Wordpress\Models\Role\Enums\StandardRole;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Create\Exceptions\FailedToCreateUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToDeleteWordlessUser;
@@ -35,7 +35,7 @@ final class WordlessUser extends User
      * @param string $email
      * @param string $password
      * @param string|null $username
-     * @param Role|DefaultRole|string|null $role
+     * @param Role|StandardRole|string|null $role
      * @return static
      * @throws FailedToCreateUser
      * @throws RandomException
@@ -45,11 +45,11 @@ final class WordlessUser extends User
         string                       $email = '',
         string                       $password = '',
         ?string                      $username = null,
-        Role|DefaultRole|string|null $role = DefaultRole::subscriber
+        Role|StandardRole|string|null $role = StandardRole::subscriber
     ): static
     {
         if (self::find() === null) {
-            return parent::create(self::email(), self::password(), role: DefaultRole::admin);
+            return parent::create(self::email(), self::password(), role: StandardRole::admin);
         }
 
         return self::make();

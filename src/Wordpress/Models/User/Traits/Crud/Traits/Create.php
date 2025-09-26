@@ -4,7 +4,7 @@ namespace Wordless\Wordpress\Models\User\Traits\Crud\Traits;
 
 use Wordless\Application\Helpers\Str;
 use Wordless\Wordpress\Models\Role;
-use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
+use Wordless\Wordpress\Models\Role\Enums\StandardRole;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Create\Exceptions\FailedToCreateUser;
 use WP_Error;
@@ -15,7 +15,7 @@ trait Create
      * @param string $email
      * @param string $password
      * @param string|null $username
-     * @param Role|DefaultRole|string|null $role
+     * @param Role|StandardRole|string|null $role
      * @return static
      * @throws FailedToCreateUser
      */
@@ -23,7 +23,7 @@ trait Create
         string                       $email,
         string                       $password,
         ?string                      $username = null,
-        Role|DefaultRole|string|null $role = null
+        Role|StandardRole|string|null $role = null
     ): static
     {
         if (($new_user_id = wp_create_user(
@@ -40,7 +40,7 @@ trait Create
         if ($role !== null) {
             $newUser->set_role(match (true) {
                 $role instanceof Role => $role->name,
-                $role instanceof DefaultRole => $role->value,
+                $role instanceof StandardRole => $role->value,
                 default => $role,
             });
         }
