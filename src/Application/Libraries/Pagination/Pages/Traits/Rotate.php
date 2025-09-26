@@ -1,10 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Libraries\Pagination\Pages;
+namespace Wordless\Application\Libraries\Pagination\Pages\Traits;
 
 use Wordless\Application\Libraries\Pagination\Pages;
+use Wordless\Application\Libraries\Pagination\Pages\Page;
 
-abstract class RotatingPages extends Pages
+trait Rotate
 {
     public function goToPage(int $index): Page
     {

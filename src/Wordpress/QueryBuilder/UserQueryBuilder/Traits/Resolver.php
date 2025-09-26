@@ -16,16 +16,23 @@ trait Resolver
 
     private const KEY_FIELDS = 'fields';
 
+    private bool $already_queried = false;
+
     /**
      * @param array $extra_arguments
+     * @param bool $query_again
      * @return int
      * @throws EmptyQueryBuilderArguments
      */
-    public function count(array $extra_arguments = []): int
+    public function count(array $extra_arguments = [], bool $query_again = false): int
     {
         $this->arguments[self::KEY_COUNT_TOTAL] = true;
 
-        return $this->query($this->buildArguments($extra_arguments))->getQuery()->get_total();
+        if (!$this->already_queried || $query_again || !empty($extra_arguments)) {
+            $this->query($this->buildArguments($extra_arguments));
+        }
+
+        return $this->getQuery()->get_total();
     }
 
     /**
@@ -79,6 +86,8 @@ trait Resolver
     {
         $this->getQuery()->prepare_query($arguments);
         $this->getQuery()->query();
+
+        $this->already_queried = true;
 
         return $this;
     }

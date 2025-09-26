@@ -8,18 +8,21 @@ abstract class Pages
 {
     abstract protected function getPageItems(int $index): array;
 
+    public readonly int $items_per_page;
+    public readonly int $number_of_pages;
     private Page $currentPage;
     /** @var array<int, Page> $pages_collection */
     private array $pages_collection = [];
 
     public function __construct(
-        public readonly int $items_per_page,
-        public readonly int $number_of_pages,
+        int $items_per_page,
         public readonly int $items_total,
         public readonly int $initial_page_index = 0
     )
     {
         $this->updateCurrentPage($this->initial_page_index);
+        $this->items_per_page = max($items_per_page, 1);
+        $this->number_of_pages = (int)ceil($this->items_total/$this->items_per_page);
     }
 
     public function currentPage(): Page
