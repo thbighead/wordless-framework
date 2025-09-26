@@ -8,7 +8,7 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
-use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
+use Wordless\Wordpress\Models\Role\Enums\StandardRole;
 use Wordless\Wordpress\Models\Traits\Terms;
 use Wordless\Wordpress\Models\Traits\WithAcfs;
 use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
@@ -61,11 +61,11 @@ class User extends WP_User implements IRelatedMetaData
         return $this->has_cap($capability, ...$for_id);
     }
 
-    public function hasRole(Role|DefaultRole|string $role): bool
+    public function hasRole(Role|StandardRole|string $role): bool
     {
         return Arr::hasValue($this->roles, match (true) {
             $role instanceof Role => $role->name,
-            $role instanceof DefaultRole => $role->value,
+            $role instanceof StandardRole => $role->value,
             default => $role,
         });
     }

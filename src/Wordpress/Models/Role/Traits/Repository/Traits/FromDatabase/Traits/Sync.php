@@ -10,7 +10,7 @@ use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\Role;
-use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
+use Wordless\Wordpress\Models\Role\Enums\StandardRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToCreateRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 use Wordless\Wordpress\Models\Role\Traits\Repository\Traits\FromDatabase\Traits\Sync\Exceptions\SynchroniseFailed;
@@ -87,7 +87,7 @@ trait Sync
      */
     public static function syncPermissionsToAdminAsDefault(): void
     {
-        self::syncCustomTaxonomiesPermissionsToRole($adminRole = Role::findOrFail(DefaultRole::admin->value));
+        self::syncCustomTaxonomiesPermissionsToRole($adminRole = Role::findOrFail(StandardRole::admin->value));
         self::syncCustomPostTypesPermissionsToRole($adminRole);
         self::syncRestResourcesPermissionsToRole($adminRole);
     }

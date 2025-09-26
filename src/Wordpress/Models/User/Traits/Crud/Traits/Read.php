@@ -2,7 +2,7 @@
 
 namespace Wordless\Wordpress\Models\User\Traits\Crud\Traits;
 
-use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
+use Wordless\Wordpress\Models\Role\Enums\StandardRole;
 use WP_Role;
 use WP_User;
 use WP_User_Query;
@@ -30,16 +30,16 @@ trait Read
     }
 
     /**
-     * @param DefaultRole|WP_Role|string $role
+     * @param StandardRole|WP_Role|string $role
      * @param bool $with_acfs
      * @return static[]
      */
-    public static function getByRole(DefaultRole|WP_Role|string $role, bool $with_acfs = true): array
+    public static function getByRole(StandardRole|WP_Role|string $role, bool $with_acfs = true): array
     {
         $users = [];
 
         foreach ((new WP_User_Query(['role' => match (true) {
-            $role instanceof DefaultRole => $role->value,
+            $role instanceof StandardRole => $role->value,
             $role instanceof WP_Role => $role->name,
             default => $role,
         }]))->get_results() as $wpUser) {

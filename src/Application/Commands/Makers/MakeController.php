@@ -19,7 +19,7 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMo
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
 use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Wordpress\Models\Role;
-use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
+use Wordless\Wordpress\Models\Role\Enums\StandardRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 
 class MakeController extends ConsoleCommand
@@ -126,7 +126,7 @@ class MakeController extends ConsoleCommand
                 $controller_class_guessed_namespace = "App\\Controllers\\$controller_class_name";
 
                 $controller_class_guessed_namespace::getInstance()->registerCapabilitiesToRole(
-                    Role::findOrFail(DefaultRole::admin->value)
+                    Role::findOrFail(StandardRole::admin->value)
                 );
             }
         );
