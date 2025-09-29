@@ -16,7 +16,7 @@ use Wordless\Application\Providers\RestApiProvider;
 use Wordless\Application\Providers\WpSpeedUpProvider;
 use Wordless\Core\Bootstrapper;
 use Wordless\Wordpress\Enums\StartOfWeek;
-use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
+use Wordless\Wordpress\Models\Role\Enums\StandardRole;
 
 return [
     Config::KEY_LANGUAGES => ['en_US'],
@@ -29,8 +29,8 @@ return [
         DoNotLoadWpAdminBarOutsidePanel::SHOW_WP_ADMIN_BAR_OUTSIDE_PANEL_CONFIG_KEY => true,
         ChooseImageEditor::CONFIG_KEY_IMAGE_LIBRARY => ChooseImageEditor::IMAGE_LIBRARY_CONFIG_VALUE_IMAGICK,
         HideDiagnosticsFromUserRoles::SHOW_DIAGNOSTICS_CONFIG_KEY => [
-            DefaultRole::admin->value => true,
-            DefaultRole::author->value => false,
+            StandardRole::admin->value => true,
+            StandardRole::author->value => false,
         ],
         AdminCustomUrlProvider::CONFIG_KEY_CUSTOM_ADMIN_URI => null,
         DisableCommentsActionListener::CONFIG_KEY_ENABLE_COMMENTS => false,

@@ -4,7 +4,7 @@ namespace Wordless\Wordpress\Models;
 
 use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
-use Wordless\Wordpress\Models\Role\Enums\DefaultRole;
+use Wordless\Wordpress\Models\Role\Enums\StandardRole;
 use Wordless\Wordpress\Models\Role\Exceptions\FailedToFindRole;
 use Wordless\Wordpress\Models\Role\Traits\Repository;
 use WP_Role;
@@ -19,7 +19,7 @@ class Role extends WP_Role
 
     public static function isDefaultByName(string $role): bool
     {
-        return DefaultRole::tryFrom(Str::slugCase($role)) !== null;
+        return StandardRole::tryFrom(Str::slugCase($role)) !== null;
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace Wordless\Wordpress\Models\Role\Enums;
 
-enum DefaultRole: string
+enum StandardRole: string
 {
     case admin = 'administrator';
     case author = 'author';
