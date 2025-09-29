@@ -4,9 +4,15 @@ namespace Wordless\Application\Libraries\Pagination\Pages\Traits;
 
 use Wordless\Application\Libraries\Pagination\Pages;
 use Wordless\Application\Libraries\Pagination\Pages\Page;
+use Wordless\Application\Libraries\Pagination\Pages\Page\Exceptions\EmptyPage;
 
 trait Rotate
 {
+    /**
+     * @param int $index
+     * @return Page
+     * @throws EmptyPage
+     */
     public function goToPage(int $index): Page
     {
         if (!is_null($newPage = parent::goToPage($index))) {
@@ -18,6 +24,7 @@ trait Rotate
 
     /**
      * @return Page
+     * @throws EmptyPage
      */
     public function nextPage(): Page
     {
@@ -26,6 +33,7 @@ trait Rotate
 
     /**
      * @return Page
+     * @throws EmptyPage
      */
     public function previousPage(): Page
     {

@@ -2,56 +2,79 @@
 
 namespace Wordless\Wordpress\QueryBuilder\UserQueryBuilder\Traits\Resolver\Traits;
 
+use Wordless\Application\Libraries\Pagination\Pages\Page\Exceptions\EmptyPage;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver\Traits\Pagination\PaginatedUsers;
+use Wordless\Wordpress\QueryBuilder\UserQueryBuilder\Traits\Resolver\Enums\ReturnField;
+use Wordless\Wordpress\QueryBuilder\UserQueryBuilder\Traits\Resolver\Traits\Pagination\PaginatedUsers;
+use Wordless\Wordpress\QueryBuilder\UserQueryBuilder\Traits\Resolver\Traits\Pagination\PaginatedUsers\Rotating;
 
 trait Pagination
 {
     private const KEY_COUNT_TOTAL = 'count_total';
+    private const KEY_PAGED = 'paged';
+
+    public function isPaginating(): bool
+    {
+        return isset($this->arguments[self::KEY_PAGED]);
+    }
 
     /**
      * @param int $users_per_page
-     * @param int $page
-     * @param array|null $fields
+     * @param ReturnField[]|null $fields
      * @param array $extra_arguments
      * @return PaginatedUsers
+     * @throws EmptyPage
      * @throws EmptyQueryBuilderArguments
      */
     public function paginate(
-        int $users_per_page,
-        int $page = 1,
+        int    $users_per_page,
         ?array $fields = null,
-        array $extra_arguments = []
+        array  $extra_arguments = []
     ): PaginatedUsers
     {
-        $page_index = ($page = max($page, 1)) - 1;
         $users_per_page = max($users_per_page, 1);
 
+        if (!empty($fields)) {
+            $this->select(...$fields);
+        }
+
         return new PaginatedUsers(
-            $this->preparePagination($page, $fields, $extra_arguments),
-            $users_per_page,
-            $page_index
+            $this->resolveExtraArguments($this->arguments, $extra_arguments),
+            $users_per_page
         );
     }
 
-    public function paginateRotating()
-    {
-
-    }
-
-    public function preparePagination(
-        int $page = 1,
+    /**
+     * @param int $users_per_page
+     * @param ReturnField[]|null $fields
+     * @param array $extra_arguments
+     * @return Rotating
+     * @throws EmptyPage
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function paginateRotating(
+        int    $users_per_page,
         ?array $fields = null,
-        array $extra_arguments = []
-    ): static
+        array  $extra_arguments = []
+    ): Rotating
     {
-        $this->arguments[self::KEY_COUNT_TOTAL] = true;
-        $this->arguments['paged'] = $page;
+        $users_per_page = max($users_per_page, 1);
 
         if (!empty($fields)) {
-            $this->arguments[self::KEY_FIELDS] = $fields;
+            $this->select(...$fields);
         }
 
-        return $this->resolveExtraArguments($this->arguments, $extra_arguments);
+        return new Rotating(
+            $this->resolveExtraArguments($this->arguments, $extra_arguments),
+            $users_per_page
+        );
+    }
+
+    public function preparePagination(int $page = 1): static
+    {
+        $this->arguments[self::KEY_COUNT_TOTAL] = true;
+        $this->arguments[self::KEY_PAGED] = $page;
+
+        return $this;
     }
 }

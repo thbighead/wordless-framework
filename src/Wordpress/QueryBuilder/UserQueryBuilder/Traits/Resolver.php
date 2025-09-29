@@ -60,10 +60,17 @@ trait Resolver
     public function get(?array $fields = null, array $extra_arguments = []): array
     {
         if (!empty($fields)) {
-            $this->arguments[self::KEY_FIELDS] = $fields;
+            $this->select(...$fields);
         }
 
         return $this->query($this->buildArguments($extra_arguments))->getQuery()->get_results();
+    }
+
+    public function select(ReturnField $field, ReturnField ...$fields): static
+    {
+        $this->arguments[self::KEY_FIELDS] = Arr::prepend($fields, $field);
+
+        return $this;
     }
 
     /**
