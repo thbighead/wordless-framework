@@ -47,6 +47,6 @@ class PaginatedPosts extends Pages
             return $items;
         }
 
-        return $this->queryBuilder->preparePagination($valid_index + 1)->get();
+        return $this->queryBuilder->preparePagination($this->items_per_page, $valid_index + 1)->get();
     }
 }

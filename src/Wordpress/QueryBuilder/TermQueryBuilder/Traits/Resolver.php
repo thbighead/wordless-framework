@@ -8,10 +8,23 @@ use Wordless\Wordpress\QueryBuilder\MetaSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\MetaSubQueryBuilder\Enums\Type;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Enums\TermsListFormat;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Exceptions\DoNotUseNumberWithObjectIds;
+use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\Resolver\Traits\Pagination;
 use WP_Term;
 
 trait Resolver
 {
+    use Pagination;
+
+    /**
+     * @param array $extra_arguments
+     * @return int
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function count(array $extra_arguments = []): int
+    {
+        return count($this->getIds($extra_arguments));
+    }
+
     /**
      * @param int $quantity
      * @param array $extra_arguments
@@ -21,7 +34,7 @@ trait Resolver
      */
     public function first(int $quantity = 1, array $extra_arguments = []): ?WP_Term
     {
-        return Arr::first($this->limit($quantity = max(1, $quantity))
+        return Arr::first($this->limit($quantity)
             ->get($extra_arguments), $quantity);
     }
 
@@ -34,7 +47,7 @@ trait Resolver
      */
     public function firstId(int $quantity = 1, array $extra_arguments = []): ?int
     {
-        return Arr::first($this->limit($quantity = max(1, $quantity))
+        return Arr::first($this->limit($quantity)
             ->getIds($extra_arguments), $quantity);
     }
 
@@ -47,7 +60,7 @@ trait Resolver
      */
     public function firstName(int $quantity = 1, array $extra_arguments = []): ?string
     {
-        return Arr::first($this->limit($quantity = max(1, $quantity))
+        return Arr::first($this->limit($quantity)
             ->getNames($extra_arguments), $quantity);
     }
 
@@ -60,7 +73,7 @@ trait Resolver
      */
     public function firstNumberOfAssociatedObjects(int $quantity = 1, array $extra_arguments = []): ?int
     {
-        return Arr::first($this->limit($quantity = max(1, $quantity))
+        return Arr::first($this->limit($quantity)
             ->getNumberOfAssociatedObjects($extra_arguments), $quantity);
     }
 
@@ -73,7 +86,7 @@ trait Resolver
      */
     public function firstParentId(int $quantity = 1, array $extra_arguments = []): ?int
     {
-        return Arr::first($this->limit($quantity = max(1, $quantity))
+        return Arr::first($this->limit($quantity)
             ->getParentIdsKeyedById($extra_arguments), $quantity);
     }
 
@@ -86,7 +99,7 @@ trait Resolver
      */
     public function firstSlug(int $quantity = 1, array $extra_arguments = []): ?string
     {
-        return Arr::first($this->limit($quantity = max(1, $quantity))
+        return Arr::first($this->limit($quantity)
             ->getSlugs($extra_arguments), $quantity);
     }
 
@@ -99,7 +112,7 @@ trait Resolver
      */
     public function firstTaxonomyTermId(int $quantity = 1, array $extra_arguments = []): ?string
     {
-        return Arr::first($this->limit($quantity = max(1, $quantity))
+        return Arr::first($this->limit($quantity)
             ->getTaxonomyTermIds($extra_arguments), $quantity);
     }
 
