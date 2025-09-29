@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver\Trait
 use Wordless\Application\Libraries\Pagination\Pages\Page\Exceptions\EmptyPage;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver\Traits\Pagination\PaginatedPosts;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver\Traits\Pagination\PaginatedPosts\Rotating;
 
 trait Pagination
 {
@@ -30,6 +31,21 @@ trait Pagination
     public function paginate(int $users_per_page, array $extra_arguments = []): PaginatedPosts
     {
         return new PaginatedPosts(
+            $this->resolveExtraArguments($this->arguments, $extra_arguments),
+            max($users_per_page, 1)
+        );
+    }
+
+    /**
+     * @param int $users_per_page
+     * @param array $extra_arguments
+     * @return Rotating
+     * @throws EmptyPage
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function paginateRotating(int $users_per_page, array $extra_arguments = []): Rotating
+    {
+        return new Rotating(
             $this->resolveExtraArguments($this->arguments, $extra_arguments),
             max($users_per_page, 1)
         );
