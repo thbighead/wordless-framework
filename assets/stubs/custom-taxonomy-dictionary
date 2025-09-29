@@ -1,0 +1,14 @@
+<?php declare(strict_types=1);
+
+namespace App\CustomTaxonomies\DummyCustomTaxonomyClass;
+
+use App\CustomTaxonomies\DummyCustomTaxonomyClass;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary as BaseDictionary;
+
+class Dictionary extends BaseDictionary
+{
+    protected function __construct()
+    {
+        parent::__construct(DummyCustomTaxonomyClass::getNameKey());
+    }
+}
