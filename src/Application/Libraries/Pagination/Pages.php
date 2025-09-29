@@ -3,23 +3,36 @@
 namespace Wordless\Application\Libraries\Pagination;
 
 use Wordless\Application\Libraries\Pagination\Pages\Page;
+use Wordless\Application\Libraries\Pagination\Pages\Page\Exceptions\EmptyPage;
 
 abstract class Pages
 {
-    abstract protected function getPageItems(int $index): array;
+    abstract protected function getPageItems(int $valid_index): array;
 
+    public readonly int $initial_page_index;
+    public readonly int $items_per_page;
+    public readonly int $number_of_pages;
     private Page $currentPage;
     /** @var array<int, Page> $pages_collection */
     private array $pages_collection = [];
 
+    /**
+     * @param int $items_per_page
+     * @param int $items_total
+     * @param int $initial_page_index
+     * @throws EmptyPage
+     */
     public function __construct(
-        public readonly int $items_per_page,
-        public readonly int $number_of_pages,
+        int $items_per_page,
         public readonly int $items_total,
-        public readonly int $initial_page_index = 0
+        int $initial_page_index = 0
     )
     {
-        $this->updateCurrentPage($this->initial_page_index);
+        $this->items_per_page = max($items_per_page, 1);
+        $this->number_of_pages = (int)ceil($this->items_total/$this->items_per_page);
+        $this->updateCurrentPage(
+            $this->initial_page_index = $this->calculateValidInitialPageIndex($initial_page_index)
+        );
     }
 
     public function currentPage(): Page
@@ -27,6 +40,11 @@ abstract class Pages
         return $this->currentPage;
     }
 
+    /**
+     * @param int $index
+     * @return Page|null
+     * @throws EmptyPage
+     */
     public function goToPage(int $index): ?Page
     {
         if ($index < 0 || $index >= $this->number_of_pages) {
@@ -36,6 +54,10 @@ abstract class Pages
         return $this->updateCurrentPage($index);
     }
 
+    /**
+     * @return Page|null
+     * @throws EmptyPage
+     */
     public function nextPage(): ?Page
     {
         if (!is_null($nextPage = $this->goToPage($this->currentPage->index + 1))) {
@@ -45,6 +67,10 @@ abstract class Pages
         return $nextPage;
     }
 
+    /**
+     * @return Page|null
+     * @throws EmptyPage
+     */
     public function previousPage(): ?Page
     {
         if (!is_null($previousPage = $this->goToPage($this->currentPage->index - 1))) {
@@ -54,17 +80,32 @@ abstract class Pages
         return $previousPage;
     }
 
-    protected function mountPage(int $index): Page
+    protected function calculateValidInitialPageIndex(int $initial_page_index): int
     {
-        return new Page($index, $this->getPageItems($index));
+        return min(max($initial_page_index, 0), $this->number_of_pages - 1);
     }
 
-    private function updateCurrentPage(int $index): Page
+    /**
+     * @param int $valid_index
+     * @return Page
+     * @throws EmptyPage
+     */
+    protected function mountPage(int $valid_index): Page
     {
-        if (isset($this->pages_collection[$index])) {
-            return $this->currentPage = $this->pages_collection[$index];
+        return new Page($valid_index, $this->getPageItems($valid_index));
+    }
+
+    /**
+     * @param int $valid_index
+     * @return Page
+     * @throws EmptyPage
+     */
+    private function updateCurrentPage(int $valid_index): Page
+    {
+        if (isset($this->pages_collection[$valid_index])) {
+            return $this->currentPage = $this->pages_collection[$valid_index];
         }
 
-        return $this->currentPage = $this->pages_collection[$index] = $this->mountPage($index);
+        return $this->currentPage = $this->pages_collection[$valid_index] = $this->mountPage($valid_index);
     }
 }
