@@ -2,7 +2,6 @@
 
 namespace Wordless\Application\Libraries\Pagination\Pages\Traits;
 
-use Wordless\Application\Libraries\Pagination\Pages;
 use Wordless\Application\Libraries\Pagination\Pages\Page;
 use Wordless\Application\Libraries\Pagination\Pages\Page\Exceptions\EmptyPage;
 

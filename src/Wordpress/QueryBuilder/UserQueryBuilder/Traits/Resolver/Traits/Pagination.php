@@ -32,15 +32,13 @@ trait Pagination
         array  $extra_arguments = []
     ): PaginatedUsers
     {
-        $users_per_page = max($users_per_page, 1);
-
         if (!empty($fields)) {
             $this->select(...$fields);
         }
 
         return new PaginatedUsers(
             $this->resolveExtraArguments($this->arguments, $extra_arguments),
-            $users_per_page
+            max($users_per_page, 1)
         );
     }
 

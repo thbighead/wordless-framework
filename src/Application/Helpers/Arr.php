@@ -35,7 +35,7 @@ class Arr extends Subjectable
 
     public static function first(array $array, int $quantity = 1): mixed
     {
-        array_splice($array, max(1, abs($quantity)));
+        array_splice($array, max(1, $quantity));
 
         return match (static::size($array)) {
             0 => null,

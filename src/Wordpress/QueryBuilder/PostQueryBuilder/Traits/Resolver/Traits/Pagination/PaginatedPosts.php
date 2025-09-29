@@ -1,25 +1,25 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Wordpress\QueryBuilder\UserQueryBuilder\Traits\Resolver\Traits\Pagination;
+namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver\Traits\Pagination;
 
 use Wordless\Application\Libraries\Pagination\Pages;
 use Wordless\Application\Libraries\Pagination\Pages\Page\Exceptions\EmptyPage;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
-use Wordless\Wordpress\QueryBuilder\UserQueryBuilder;
-use WP_User;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
+use WP_Post;
 
-class PaginatedUsers extends Pages
+class PaginatedPosts extends Pages
 {
     private array $initial_page_result;
 
     /**
-     * @param UserQueryBuilder $queryBuilder
+     * @param PostQueryBuilder $queryBuilder
      * @param int $items_per_page
      * @throws EmptyPage
      * @throws EmptyQueryBuilderArguments
      */
     public function __construct(
-        private readonly UserQueryBuilder $queryBuilder,
+        private readonly PostQueryBuilder $queryBuilder,
         int                               $items_per_page
     )
     {
@@ -34,7 +34,7 @@ class PaginatedUsers extends Pages
 
     /**
      * @param int $valid_index
-     * @return WP_User[]
+     * @return WP_Post[]
      * @throws EmptyQueryBuilderArguments
      */
     protected function getPageItems(int $valid_index): array
