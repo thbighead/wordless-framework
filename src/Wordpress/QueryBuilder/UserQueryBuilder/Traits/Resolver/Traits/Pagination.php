@@ -70,11 +70,11 @@ trait Pagination
         );
     }
 
-    public function preparePagination(int $page = 1): static
+    public function preparePagination(int $users_per_page, int $page = 1): static
     {
         $this->arguments[self::KEY_COUNT_TOTAL] = true;
         $this->arguments[self::KEY_PAGED] = $page;
 
-        return $this;
+        return $this->limit(max($users_per_page, 1));
     }
 }

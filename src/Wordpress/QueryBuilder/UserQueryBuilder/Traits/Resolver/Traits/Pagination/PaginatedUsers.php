@@ -24,7 +24,7 @@ class PaginatedUsers extends Pages
     )
     {
         if (!$this->queryBuilder->isPaginating()) {
-            $this->queryBuilder->preparePagination();
+            $this->queryBuilder->preparePagination($items_per_page);
         }
 
         $this->initial_page_result = $this->queryBuilder->get();
