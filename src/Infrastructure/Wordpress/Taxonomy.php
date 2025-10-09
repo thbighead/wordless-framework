@@ -69,7 +69,7 @@ abstract class Taxonomy implements IRelatedMetaData
         $this->wpTaxonomy = TaxonomyQueryBuilder::make()->whereName($this->name())->first();
 
         if ($with_acfs) {
-            $this->loadTermAcfs($this->wpTerm->term_id);
+            $this->loadAcfs($this->mountFromId());
         }
     }
 
@@ -165,18 +165,13 @@ abstract class Taxonomy implements IRelatedMetaData
         return $this->term_id;
     }
 
+    protected function mountFromId(): string
+    {
+        return "{$this->name()}_{$this->wpTerm->term_id}";
+    }
+
     protected function name(): string
     {
         return static::NAME_KEY ?? Str::slugCase(static::class);
-    }
-
-    /**
-     * @param int $from_id
-     * @return void
-     * @throws InvalidAcfFunction
-     */
-    private function loadTermAcfs(int $from_id): void
-    {
-        $this->loadAcfs("{$this->name()}_$from_id");
     }
 }

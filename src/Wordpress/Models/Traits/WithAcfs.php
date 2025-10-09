@@ -11,4 +11,6 @@ trait WithAcfs
     use Crud;
     use Loader;
     use Validate;
+
+    abstract protected function mountFromId(): string|int;
 }

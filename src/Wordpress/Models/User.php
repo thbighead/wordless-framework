@@ -52,7 +52,7 @@ class User extends WP_User implements IRelatedMetaData
         parent::__construct($wp_user);
 
         if ($with_acfs) {
-            $this->loadUserAcfs($this->ID);
+            $this->loadAcfs($this->mountFromId());
         }
     }
 
@@ -86,13 +86,8 @@ class User extends WP_User implements IRelatedMetaData
         return $this->ID;
     }
 
-    /**
-     * @param int $from_id
-     * @return void
-     * @throws InvalidAcfFunction
-     */
-    private function loadUserAcfs(int $from_id): void
+    protected function mountFromId(): string
     {
-        $this->loadAcfs("user_$from_id");
+        return "user_$this->ID";
     }
 }
