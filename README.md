@@ -10,7 +10,9 @@ The [Wordless](https://github.com/thbighead/Wordless) project framework.
 | assets (Publishable directories)
 | \
 |  | config (Keep base configuration files)
+|  | css (Keep internal CSS files to Admin Panel)
 |  | stubs (Keep files stubs to generate new ones)
+| dist (Keep the minified files to distribute for projects)
 | docker (Local development environment containers to work with framework changes)
 | logs (Local development environment log files)
 | src
@@ -19,12 +21,14 @@ The [Wordless](https://github.com/thbighead/Wordless) project framework.
 |  | \
 |  |  | Cachers (Classes to keep internal caches)
 |  |  | Commands (Wordless CLI commands. Make new as you wish, customize carefully)
+|  |  | Components (Wordless components to be used as front-end output. Make new as you wish, customize carefully)
 |  |  | Guessers (Classes to guess values)
 |  |  | Helpers (Keep helper classes)
 |  |  | Libraries (Library directories with useful abstractions)
 |  |  | Listeners (Keep listener classes for Wordpress hooks (Events))
 |  |  | Mounters (Class implementations which mount files with dynamic contents from stubs)
 |  |  | Providers (Classes which register any Application class as a group)
+|  |  | Styles (Wordless enqueueable styles. Make new as you wish, customize carefully)
 |  | Core (Core Wordless classes, they raise all framework functionalities)
 |  | Infrastructure (Abstract classes used by Application and Wordpress)
 |  | Wordpress (Wordpress adapted class abstractions)
@@ -67,11 +71,6 @@ where you will interact with your application most of the time. To access it fol
 ### MariaDB
 
 This container is responsible for creating and managing your database.
-
-### Adminer
-
-Adminer is a container that allows database interactions through the browser, providing an interface to perform 
-various tasks necessary for database-related development. Access it via `localhost:8081` with your browser.
 
 ### Commands
 
