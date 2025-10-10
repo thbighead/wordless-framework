@@ -27,15 +27,11 @@ use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType
 use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Traits\Validate;
 use WP_Error;
 use WP_Post;
 
 class Attachment extends Post
 {
-    use Validate;
-
     final public const KEY_ALTERNATIVE_TEXT = 'alt';
     final public const KEY_MIME_TYPE = 'mime-type';
     protected const TYPE_KEY = StandardType::attachment->name;
@@ -188,15 +184,13 @@ class Attachment extends Post
 
     /**
      * @param int|WP_Post $post
-     * @param bool $with_acfs
      * @throws InitializingModelWithWrongPostType
-     * @throws InvalidAcfFunction
      * @throws InvalidMetaKey
      * @throws PostTypeNotRegistered
      */
-    public function __construct(int|WP_Post $post, bool $with_acfs = true)
+    public function __construct(int|WP_Post $post)
     {
-        parent::__construct($post, $with_acfs);
+        parent::__construct($post);
 
         $this->setRawMetadata()->setAltText()->setMedia();
 
@@ -205,15 +199,6 @@ class Attachment extends Post
 
         $this->caption = empty($caption) ? $this->post_title : $caption;
         $this->description = empty($description) ? $this->post_title : $description;
-    }
-
-    /**
-     * @return array<string, mixed>
-     * @throws InvalidAcfFunction
-     */
-    public function fileAsAcfArray(): array
-    {
-        return $this->validateAcfFunction('acf_get_attachment')($this->asWpPost());
     }
 
     /**

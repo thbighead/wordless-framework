@@ -5,7 +5,6 @@ namespace Wordless\Infrastructure\Http;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Wordless\Application\Libraries\DesignPattern\Singleton\Traits\Constructors;
 use Wordless\Infrastructure\Http\Request\Enums\Verb;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 
 class Request extends SymfonyRequest
@@ -14,7 +13,6 @@ class Request extends SymfonyRequest
 
     /**
      * @return static
-     * @throws InvalidAcfFunction
      * @throws NoUserAuthenticated
      */
     protected static function newInstance(): static
@@ -47,7 +45,6 @@ class Request extends SymfonyRequest
      * @param array $files
      * @param array $server
      * @param $content
-     * @throws InvalidAcfFunction
      * @throws NoUserAuthenticated
      */
     protected function __construct(

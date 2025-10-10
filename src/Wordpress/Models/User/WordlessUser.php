@@ -95,6 +95,6 @@ final class WordlessUser extends User
 
     protected function __construct()
     {
-        parent::__construct(get_user_by('email', self::email()), false);
+        parent::__construct(get_user_by('email', self::email()));
     }
 }
