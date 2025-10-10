@@ -18,12 +18,12 @@ trait Delete
     {
         if (($result = $this->validateAcfFunction('delete_field')(
                 $acf_reference = Str::replace($acf_reference, '.', '_'),
-                $this->acf_from_id
+                $this->getAcfFromId()
             )) === false) {
-            throw new FailedToDeleteAcfValue($acf_reference, $this->acf_from_id);
+            throw new FailedToDeleteAcfValue($acf_reference, $this->getAcfFromId());
         }
 
-        $this->loadAcfs($this->acf_from_id);
+        $this->loadAcfs();
 
         return $result;
     }

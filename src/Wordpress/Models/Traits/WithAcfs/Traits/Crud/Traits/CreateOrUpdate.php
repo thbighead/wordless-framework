@@ -29,7 +29,7 @@ trait CreateOrUpdate
         }
 
         if (($result = $this->callUpdateField($acf_reference, $value)) !== false) {
-            $this->loadAcfs($this->acf_from_id);
+            $this->loadAcfs();
         }
 
         return $result;
@@ -52,7 +52,7 @@ trait CreateOrUpdate
         }
 
         if ($should_load_acfs_again) {
-            $this->loadAcfs($this->acf_from_id);
+            $this->loadAcfs();
         }
 
         return $results;

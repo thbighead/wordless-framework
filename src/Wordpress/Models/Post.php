@@ -97,7 +97,7 @@ class Post implements IRelatedMetaData
         }
 
         if ($with_acfs) {
-            $this->loadAcfs($this->mountFromId());
+            $this->loadAcfs();
         }
     }
 
@@ -133,7 +133,7 @@ class Post implements IRelatedMetaData
         return $this->ID;
     }
 
-    protected function mountFromId(): int
+    protected function mountAcfFromId(): int
     {
         return $this->wpPost->ID;
     }
