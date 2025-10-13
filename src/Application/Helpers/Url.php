@@ -90,7 +90,7 @@ class Url extends Helper
             return false;
         }
 
-        $is_regex = Str::isSurroundedBy($uri_pattern, self::SLASH, self::SLASH);
+        $is_regex = Str::isWrappedBy($uri_pattern, self::SLASH, self::SLASH);
 
         return preg_match($is_regex ? $uri_pattern : "/\/$uri_pattern(\/|$)/", $uri) === 1;
     }

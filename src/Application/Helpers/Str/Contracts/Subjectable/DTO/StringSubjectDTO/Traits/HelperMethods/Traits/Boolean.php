@@ -45,6 +45,6 @@ trait Boolean
 
     public function isSurroundedBy(string $prefix, string $suffix): bool
     {
-        return Str::isSurroundedBy($this->subject, $prefix, $suffix);
+        return Str::isWrappedBy($this->subject, $prefix, $suffix);
     }
 }
