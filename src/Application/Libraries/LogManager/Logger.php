@@ -10,7 +10,6 @@ use Wordless\Application\Helpers\Config\Traits\Internal\Exceptions\FailedToLoadC
 use Wordless\Application\Libraries\DesignPattern\Singleton;
 use Wordless\Application\Libraries\LogManager\Logger\Exceptions\LoggerInstantiationException;
 use Wordless\Application\Libraries\LogManager\Logger\RotatingFileHandler;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 
 class Logger extends Singleton
@@ -45,7 +44,7 @@ class Logger extends Singleton
             $this->logger = new MonologLogger(
                 $this->config->get(self::CONFIG_KEY_WORDLESS_LINE_PREFIX, 'wordless')
             );
-        } catch (EmptyConfigKey|FailedToLoadConfigFile|InvalidAcfFunction|NoUserAuthenticated $exception) {
+        } catch (EmptyConfigKey|FailedToLoadConfigFile|NoUserAuthenticated $exception) {
             throw new LoggerInstantiationException($exception);
         }
 

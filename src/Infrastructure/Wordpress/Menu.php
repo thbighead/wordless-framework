@@ -9,7 +9,6 @@ use Wordless\Infrastructure\Wordpress\Menu\Exceptions\MenuLocationHasNoMenuToRet
 use Wordless\Wordpress\Models\MenuItem;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use WP_Post;
 
 abstract class Menu
@@ -39,7 +38,6 @@ abstract class Menu
 
     /**
      * @throws InitializingModelWithWrongPostType
-     * @throws InvalidAcfFunction
      * @throws InvalidArgumentException
      * @throws MenuLocationHasNoMenuToRetrieveItems
      * @throws PostTypeNotRegistered
@@ -172,7 +170,6 @@ abstract class Menu
     /**
      * @return MenuItem[]
      * @throws InitializingModelWithWrongPostType
-     * @throws InvalidAcfFunction
      * @throws MenuLocationHasNoMenuToRetrieveItems
      * @throws PostTypeNotRegistered
      */

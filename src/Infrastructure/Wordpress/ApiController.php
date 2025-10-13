@@ -13,7 +13,6 @@ use Wordless\Infrastructure\Wordpress\ApiController\Traits\AuthorizationCheck;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\ResourceValidation;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\RestingWordPress;
 use Wordless\Infrastructure\Wordpress\ApiController\Traits\Routing;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 use WP_REST_Controller;
@@ -107,14 +106,10 @@ abstract class ApiController extends WP_REST_Controller
         return 'wordless';
     }
 
-    /**
-     * @return void
-     * @throws InvalidAcfFunction
-     */
     protected function setAuthenticatedUser(): void
     {
         try {
-            $this->authenticatedUser = new User(with_acfs: function_exists('get_fields'));
+            $this->authenticatedUser = new User;
         } catch (NoUserAuthenticated) {
             $this->authenticatedUser = null;
         }

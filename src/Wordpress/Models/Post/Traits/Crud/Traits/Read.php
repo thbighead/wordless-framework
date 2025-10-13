@@ -9,15 +9,14 @@ trait Read
 {
     /**
      * @param string $slug
-     * @param bool $with_acfs
      * @return static|null
      * @throws EmptyQueryBuilderArguments
      */
-    public static function findBySlug(string $slug, bool $with_acfs = true): ?static
+    public static function findBySlug(string $slug): ?static
     {
         $post = self::query()->whereSlug($slug)->first();
 
-        return $post === null ? null : new static($post, $with_acfs);
+        return $post === null ? null : new static($post);
     }
 
     /**
@@ -47,31 +46,29 @@ trait Read
     }
 
     /**
-     * @param bool $with_acfs
      * @return static[]
      * @throws EmptyQueryBuilderArguments
      */
-    public static function getAll(bool $with_acfs = true): array
+    public static function getAll(): array
     {
         $all = [];
 
         foreach (self::query()->get() as $post) {
-            $all[] = new static($post, $with_acfs);
+            $all[] = new static($post);
         }
 
         return $all;
     }
 
     /**
-     * @param bool $with_acfs
      * @return array<string, static>
      * @throws EmptyQueryBuilderArguments
      */
-    public static function getAllKeyedBySlug(bool $with_acfs = true): array
+    public static function getAllKeyedBySlug(): array
     {
         $all = [];
 
-        foreach (static::getAll($with_acfs) as $post) {
+        foreach (static::getAll() as $post) {
             $all[$post->post_name] = $post;
         }
 

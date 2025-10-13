@@ -9,32 +9,31 @@ use WP_User_Query;
 
 trait Read
 {
-    public static function findByEmail(string $user_email, bool $with_acfs = false): ?static
+    public static function findByEmail(string $user_email): ?static
     {
-        return self::findBy('email', $user_email, $with_acfs);
+        return self::findBy('email', $user_email);
     }
 
-    public static function findById(int $user_id, bool $with_acfs = false): ?static
+    public static function findById(int $user_id): ?static
     {
-        return self::findBy('id', $user_id, $with_acfs);
+        return self::findBy('id', $user_id);
     }
 
-    public static function findBySlug(string $user_slug, bool $with_acfs = false): ?static
+    public static function findBySlug(string $user_slug): ?static
     {
-        return self::findBy('slug', $user_slug, $with_acfs);
+        return self::findBy('slug', $user_slug);
     }
 
-    public static function findByUsername(string $username, bool $with_acfs = false): ?static
+    public static function findByUsername(string $username): ?static
     {
-        return self::findBy('login', $username, $with_acfs);
+        return self::findBy('login', $username);
     }
 
     /**
      * @param StandardRole|WP_Role|string $role
-     * @param bool $with_acfs
      * @return static[]
      */
-    public static function getByRole(StandardRole|WP_Role|string $role, bool $with_acfs = true): array
+    public static function getByRole(StandardRole|WP_Role|string $role): array
     {
         $users = [];
 
@@ -44,15 +43,15 @@ trait Read
             default => $role,
         }]))->get_results() as $wpUser) {
             if ($wpUser instanceof WP_User) {
-                $users[$wpUser->ID] = new static($wpUser, $with_acfs);
+                $users[$wpUser->ID] = new static($wpUser);
             }
         }
 
         return $users;
     }
 
-    private static function findBy(string $field, int|string $value, bool $with_acfs = false): ?static
+    private static function findBy(string $field, int|string $value): ?static
     {
-        return ($user = get_user_by($field, $value)) instanceof WP_User ? new static($user, $with_acfs) : null;
+        return ($user = get_user_by($field, $value)) instanceof WP_User ? new static($user) : null;
     }
 }
