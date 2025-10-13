@@ -16,12 +16,12 @@ abstract class CustomTaxonomy extends Taxonomy
         return static::isHierarchical() && parent::hasParent();
     }
 
-    public function parent(bool $with_acfs = false): ?static
+    public function parent(): ?static
     {
         if (!static::isHierarchical()) {
             return null;
         }
 
-        return parent::parent($with_acfs);
+        return parent::parent();
     }
 }

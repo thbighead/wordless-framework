@@ -27,13 +27,12 @@ trait FeaturedImage
     }
 
     /**
-     * @param bool $with_acfs
      * @return Attachment|null
      * @throws FailedToGetPostFeaturedImage
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */
-    public function getFeaturedImage(bool $with_acfs = false): ?Attachment
+    public function getFeaturedImage(): ?Attachment
     {
         if ($this->featuredImage !== false) {
             return $this->featuredImage;
@@ -44,7 +43,7 @@ trait FeaturedImage
         }
 
         return $this->featuredImage =
-            ($featured_image_id === 0 ? null : Attachment::make($featured_image_id, $with_acfs));
+            ($featured_image_id === 0 ? null : Attachment::make($featured_image_id));
     }
 
     /**
