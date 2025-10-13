@@ -104,6 +104,16 @@ class ProjectPath extends Subjectable
      * @return string
      * @throws PathNotFoundException
      */
+    final public static function customTaxonomies(string $additional_path = ''): string
+    {
+        return self::app("CustomTaxonomies/$additional_path");
+    }
+
+    /**
+     * @param string $additional_path
+     * @return string
+     * @throws PathNotFoundException
+     */
     final public static function dist(string $additional_path = ''): string
     {
         return self::vendorPackageRoot("dist/$additional_path");

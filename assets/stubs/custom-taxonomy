@@ -1,0 +1,16 @@
+<?php declare(strict_types=1);
+
+namespace App\CustomTaxonomies;
+
+use App\CustomTaxonomies\DummyCustomTaxonomyClass\Dictionary;
+use Wordless\Infrastructure\Wordpress\Taxonomy;
+
+class DummyCustomTaxonomyClass extends Taxonomy
+{
+    protected const NAME_KEY = 'snake_cased_taxonomy_key';
+
+    protected static function getDictionary(): Dictionary
+    {
+        return Dictionary::getInstance();
+    }
+}
