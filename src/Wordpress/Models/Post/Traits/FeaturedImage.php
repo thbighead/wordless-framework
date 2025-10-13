@@ -13,14 +13,20 @@ trait FeaturedImage
     protected Attachment|false|null $featuredImage = false;
 
     /**
-     * @param int $attachment_id
+     * @param Attachment|int $attachment
      * @return $this
      * @throws FailedToSetPostFeaturedImage
+     * @throws InitializingModelWithWrongPostType
+     * @throws PostTypeNotRegistered
      */
-    public function createOrUpdateFeaturedImage(int $attachment_id): static
+    public function setFeaturedImage(Attachment|int $attachment): static
     {
-        if (set_post_thumbnail($this->id(), $attachment_id) === false) {
-            throw new FailedToSetPostFeaturedImage($this, $attachment_id);
+        if ($this->getFeaturedImageId() === (is_int($attachment) ? $attachment : $attachment->id())) {
+            return $this;
+        }
+
+        if (set_post_thumbnail($this->id(), $attachment) === false) {
+            throw new FailedToSetPostFeaturedImage($this, $attachment);
         }
 
         return $this;
