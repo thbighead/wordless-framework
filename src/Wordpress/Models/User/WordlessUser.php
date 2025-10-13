@@ -15,13 +15,13 @@ use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Create\Exceptions\FailedTo
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToDeleteWordlessUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToUpdateWordlessUser;
 
-final class WordlessUser extends User
+class WordlessUser extends User
 {
     use Constructors;
 
     final public const USERNAME = WordlessInstall::WORDLESS_ADMIN_USER;
 
-    public static function email(): string
+    final public static function email(): string
     {
         try {
             $app_host = Environment::get('APP_HOST', $app_host = 'wordless.wordless');
@@ -39,9 +39,8 @@ final class WordlessUser extends User
      * @return static
      * @throws FailedToCreateUser
      * @throws RandomException
-     * @noinspection PhpUnnecessaryStaticReferenceInspection
      */
-    public static function create(
+    final public static function create(
         string                       $email = '',
         string                       $password = '',
         ?string                      $username = null,
@@ -55,12 +54,12 @@ final class WordlessUser extends User
         return self::make();
     }
 
-    public static function find(): ?self
+    final public static function find(): ?self
     {
         return parent::findByEmail(self::email());
     }
 
-    public static function make(): self
+    final public static function make(): self
     {
         return self::getInstance();
     }
@@ -78,7 +77,7 @@ final class WordlessUser extends User
      * @return void
      * @throws TryingToDeleteWordlessUser
      */
-    public function delete(): void
+    final public function delete(): void
     {
         throw new TryingToDeleteWordlessUser;
     }
@@ -86,14 +85,13 @@ final class WordlessUser extends User
     /**
      * @return $this
      * @throws TryingToUpdateWordlessUser
-     * @noinspection PhpUnnecessaryStaticReferenceInspection
      */
-    public function save(): static
+    final public function save(): static
     {
         throw new TryingToUpdateWordlessUser;
     }
 
-    protected function __construct()
+    final protected function __construct()
     {
         parent::__construct(get_user_by('email', self::email()));
     }

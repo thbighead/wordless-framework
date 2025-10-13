@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\Models\Page;
 use Wordless\Application\Helpers\Option;
 use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
 use Wordless\Wordpress\Models\Page;
+use Wordless\Wordpress\Models\Page\FrontPage\Exceptions\FailedToSetFrontPage;
 use Wordless\Wordpress\Models\Page\FrontPage\Exceptions\FrontPageIsNotSet;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
@@ -19,19 +20,14 @@ class FrontPage extends Page
      * @param int|WP_Post|Page $page
      * @param bool $override
      * @return static
-     * @throws FailedToUpdateOption
-     * @throws FrontPageIsNotSet
-     * @throws InitializingModelWithWrongPostType
-     * @throws PostTypeNotRegistered
+     * @throws FailedToSetFrontPage
      */
     public static function setPageAsFrontPage(
         int|WP_Post|Page $page,
         bool             $override = false
     ): static
     {
-        if (is_int($page)) {
-            $page = new Page($page);
-        }
+        $page_id = is_int($page) ? $page : $page->ID;
 
         try {
             $frontPage = new static;
@@ -40,16 +36,20 @@ class FrontPage extends Page
                 return $frontPage;
             }
 
-            if ($frontPage->ID === $page->ID) {
+            if ($frontPage->ID === $page_id) {
                 return $frontPage;
             }
         } catch (FrontPageIsNotSet) {
         }
 
-        Option::createUpdateOrFail(self::OPTION_KEY_FRONT_PAGE_ID, $page->ID);
-        Option::createUpdateOrFail(self::OPTION_KEY_SHOW_ON_FRONT, 'page');
+        try {
+            Option::createUpdateOrFail(self::OPTION_KEY_FRONT_PAGE_ID, $page_id);
+            Option::createUpdateOrFail(self::OPTION_KEY_SHOW_ON_FRONT, 'page');
 
-        return new static;
+            return new static;
+        } catch (FailedToUpdateOption|InitializingModelWithWrongPostType|PostTypeNotRegistered $exception) {
+            throw new FailedToSetFrontPage($page, $override, $exception);
+        }
     }
 
     /**
