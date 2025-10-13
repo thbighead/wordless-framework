@@ -4,6 +4,7 @@ namespace Wordless\Tests\Unit;
 
 use InvalidArgumentException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Enums\Language;
 use Wordless\Tests\Unit\StrHelperTest\Traits\BooleanTests;
 use Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests;
 use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests;
@@ -43,7 +44,7 @@ class StrHelperTest extends WordlessTestCase
     public function testPluralize(): void
     {
         $this->assertEquals('tests', Str::plural('test'));
-        $this->assertEquals('testes', Str::plural('teste', 'portuguese'));
+        $this->assertEquals('testes', Str::plural('teste', Language::portuguese));
     }
 
     /**
@@ -53,18 +54,19 @@ class StrHelperTest extends WordlessTestCase
     public function testSingularize(): void
     {
         $this->assertEquals('test', Str::singular('tests'));
-        $this->assertEquals('teste', Str::singular('testes', 'portuguese'));
+        $this->assertEquals('teste', Str::singular('testes', Language::portuguese));
     }
 
     public function testRandomString()
     {
-        $this->assertIsString(Str::random());
+        $this->assertEquals(Str::DEFAULT_RANDOM_SIZE, Str::length(Str::random()));
+        $this->assertEquals($size = 20, Str::length(Str::random($size)));
     }
 
     public function testTruncate()
     {
         $this->assertEquals('TestStringSubst', Str::truncate(self::BASE_STRING, 0));
         $this->assertEquals('TestS', Str::truncate(self::BASE_STRING, 5));
-        $this->assertEquals('TestStringSubst', Str::truncate(self::BASE_STRING, -1));
+        $this->assertEquals('TestStringSubstring', Str::truncate(self::BASE_STRING, -1));
     }
 }
