@@ -30,6 +30,10 @@ trait Substring
      */
     public static function afterLast(string $string, string $delimiter): string
     {
+        if (empty($delimiter)) {
+            return $string;
+        }
+
         $substring_position = strrpos($string, $delimiter);
 
         if ($substring_position === false) {
@@ -46,6 +50,10 @@ trait Substring
      */
     public static function before(string $string, string $delimiter): string
     {
+        if (empty($delimiter)) {
+            return $string;
+        }
+
         $result = strstr($string, $delimiter, true);
 
         return $result === false ? $string : $result;
@@ -69,7 +77,15 @@ trait Substring
 
     public static function between(string $string, string $prefix, ?string $suffix = null): string
     {
-        return static::before(static::after($string, $prefix), $suffix ?? $prefix);
+        if (($substring = static::after($string, $prefix)) === $string) {
+            return $string;
+        }
+
+        if (($substring = static::beforeLast($substring, $suffix ?? $prefix)) === $substring) {
+            return $string;
+        }
+
+        return $substring;
     }
 
     public static function countSubstring(string $string, string $substring): int

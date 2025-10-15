@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Application\Helpers\Str\Traits;
+namespace Wordless\Application\Helpers\Str\Traits\Mutators\Traits;
 
 use Wordless\Application\Helpers\Str\Enums\Encoding;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
