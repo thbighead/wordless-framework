@@ -752,7 +752,7 @@ class WordlessInstall extends ConsoleCommand
     {
         try {
             $app_url = $this->getEnvVariableByKey('APP_URL');
-            $db_table_prefix = $this->getEnvVariableByKey('DB_TABLE_PREFIX');
+            $db_table_prefix = $this->getEnvVariableByKey('DB_TABLE_PREFIX', 'wp_');
             $siteurl_option_value = "$app_url/" . AdminCustomUrlProvider::getCustomUri(false);
             $home_option_value = Environment::isFramework() ? '/' : $app_url;
 
@@ -802,7 +802,7 @@ class WordlessInstall extends ConsoleCommand
 
         try {
             $this->runWpCliCommandWithoutInterruption(
-                "db query 'UPDATE {$this->getEnvVariableByKey('DB_TABLE_PREFIX')}users SET user_pass=\""
+                "db query 'UPDATE {$this->getEnvVariableByKey('DB_TABLE_PREFIX', 'wp_')}users SET user_pass=\""
                 . Str::random()
                 . "\" WHERE user_email=\"$email\"'"
             );
