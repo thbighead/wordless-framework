@@ -1,8 +1,7 @@
 <?php
 
-namespace Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests\Traits;
+namespace StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits;
 
-use InvalidArgumentException;
 use PHPUnit\Framework\ExpectationFailedException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;

@@ -2,6 +2,7 @@
 
 namespace Wordless\Tests\Unit;
 
+use PHPUnit\Framework\ExpectationFailedException;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -12,6 +13,7 @@ class ProjectPathHelperTest extends WordlessTestCase
     /**
      * @return void
      * @throws PathNotFoundException
+     * @throws ExpectationFailedException
      */
     public function testAppPath()
     {

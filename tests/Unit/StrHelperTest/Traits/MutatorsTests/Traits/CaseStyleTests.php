@@ -1,13 +1,13 @@
 <?php
 
-namespace Wordless\Tests\Unit\StrHelperTest\Traits;
+namespace StrHelperTest\Traits\MutatorsTests\Traits;
 
-use Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests\Traits\FromCamelToAnother;
-use Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests\Traits\FromKebabToAnother;
-use Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests\Traits\FromPascalToAnother;
-use Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests\Traits\FromRawToAnother;
-use Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests\Traits\FromSnakeToAnother;
-use Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests\Traits\FromTitleToAnother;
+use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromCamelToAnother;
+use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromKebabToAnother;
+use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromPascalToAnother;
+use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromRawToAnother;
+use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromSnakeToAnother;
+use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromTitleToAnother;
 
 trait CaseStyleTests
 {
