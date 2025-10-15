@@ -67,19 +67,17 @@ trait Substring
         return static::substring($string, 0, $substring_position);
     }
 
-    /**
-     * @param string $string
-     * @param string $prefix
-     * @param string $suffix
-     * @return string
-     */
-    public static function between(string $string, string $prefix, string $suffix): string
+    public static function between(string $string, string $prefix, ?string $suffix = null): string
     {
-        return static::before(static::after($string, $prefix), $suffix);
+        return static::before(static::after($string, $prefix), $suffix ?? $prefix);
     }
 
     public static function countSubstring(string $string, string $substring): int
     {
+        if (empty($substring)) {
+            return 0;
+        }
+
         return substr_count($string, $substring);
     }
 
@@ -103,6 +101,10 @@ trait Substring
 
     public static function truncate(string $string, int $max_chars = self::DEFAULT_TRUNCATE_SIZE): string
     {
-        return static::substring($string, 0, $max_chars <= 0 ? self::DEFAULT_TRUNCATE_SIZE : $max_chars);
+        if ($max_chars < 0 && abs($max_chars) >= static::length($string)) {
+            $max_chars = self::DEFAULT_TRUNCATE_SIZE;
+        }
+
+        return static::substring($string, 0, $max_chars === 0 ? self::DEFAULT_TRUNCATE_SIZE : $max_chars);
     }
 }

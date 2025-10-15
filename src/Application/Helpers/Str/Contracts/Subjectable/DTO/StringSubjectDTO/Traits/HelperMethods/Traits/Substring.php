@@ -34,7 +34,7 @@ trait Substring
         return $this->recalculateLength();
     }
 
-    public function between(string $prefix, string $suffix): static
+    public function between(string $prefix, ?string $suffix = null): static
     {
         $this->subject = Str::between($this->subject, $prefix, $suffix);
 

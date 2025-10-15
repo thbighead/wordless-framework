@@ -43,7 +43,7 @@ trait Boolean
         return Str::isJson($this->subject);
     }
 
-    public function isSurroundedBy(string $prefix, string $suffix): bool
+    public function isWrappedBy(string $prefix, ?string $suffix = null): bool
     {
         return Str::isWrappedBy($this->subject, $prefix, $suffix);
     }
