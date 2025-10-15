@@ -3,13 +3,16 @@
 namespace Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests\Traits;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\ExpectationFailedException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 
 trait FromSnakeToAnother
 {
     /**
      * @return void
-     * @throws InvalidArgumentException
+     * @throws ExpectationFailedException
+     * @throws FailedToCreateInflector
      */
     public function testSnakeToTitleCase(): void
     {
@@ -25,7 +28,8 @@ trait FromSnakeToAnother
 
     /**
      * @return void
-     * @throws InvalidArgumentException
+     * @throws ExpectationFailedException
+     * @throws FailedToCreateInflector
      */
     public function testSnakeToCamelCase(): void
     {
@@ -41,7 +45,8 @@ trait FromSnakeToAnother
 
     /**
      * @return void
-     * @throws InvalidArgumentException
+     * @throws ExpectationFailedException
+     * @throws FailedToCreateInflector
      */
     public function testSnakeToPascalCase(): void
     {
@@ -57,7 +62,7 @@ trait FromSnakeToAnother
 
     /**
      * @return void
-     * @throws InvalidArgumentException
+     * @throws ExpectationFailedException
      */
     public function testSnakeToSnakeCase(): void
     {
@@ -73,7 +78,7 @@ trait FromSnakeToAnother
 
     /**
      * @return void
-     * @throws InvalidArgumentException
+     * @throws ExpectationFailedException
      */
     public function testSnakeToKebabCase(): void
     {
