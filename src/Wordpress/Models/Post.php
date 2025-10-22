@@ -15,8 +15,6 @@ use Wordless\Wordpress\Models\Post\Traits\Taxonomies;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\Models\Traits\Terms;
-use Wordless\Wordpress\Models\Traits\WithAcfs;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use WP_Post;
 
 /**
@@ -29,7 +27,6 @@ class Post implements IRelatedMetaData
     use MixinWpPost;
     use Taxonomies;
     use Terms;
-    use WithAcfs;
     use WithMetaData;
 
     protected const TYPE_KEY = StandardType::post->name;
@@ -59,15 +56,13 @@ class Post implements IRelatedMetaData
 
     /**
      * @param WP_Post|int $post
-     * @param bool $with_acfs
      * @return static
      * @throws InitializingModelWithWrongPostType
-     * @throws InvalidAcfFunction
      * @throws PostTypeNotRegistered
      */
-    public static function get(WP_Post|int $post, bool $with_acfs = true): static
+    public static function make(WP_Post|int $post): static
     {
-        return new static($post, $with_acfs);
+        return new static($post);
     }
 
     public static function objectType(): ObjectType
@@ -82,22 +77,16 @@ class Post implements IRelatedMetaData
 
     /**
      * @param WP_Post|int $post
-     * @param bool $with_acfs
      * @throws InitializingModelWithWrongPostType
-     * @throws InvalidAcfFunction
      * @throws PostTypeNotRegistered
      */
-    public function __construct(WP_Post|int $post, bool $with_acfs = true)
+    public function __construct(WP_Post|int $post)
     {
         $this->wpPost = $post instanceof WP_Post ? $post : get_post($post);
         $this->type = new PostType($this->post_type);
 
         if (!$this->type->is(static::TYPE_KEY)) {
-            throw new InitializingModelWithWrongPostType($this, $with_acfs);
-        }
-
-        if ($with_acfs) {
-            $this->loadAcfs($this->wpPost->ID);
+            throw new InitializingModelWithWrongPostType($this);
         }
     }
 

@@ -9,14 +9,11 @@ use Ramsey\Uuid\Uuid;
 use Random\RandomException;
 use Wordless\Application\Helpers\Str\Contracts\Subjectable;
 use Wordless\Application\Helpers\Str\Enums\Encoding;
-use Wordless\Application\Helpers\Str\Enums\Language;
 use Wordless\Application\Helpers\Str\Enums\UuidVersion;
 use Wordless\Application\Helpers\Str\Traits\Boolean;
 use Wordless\Application\Helpers\Str\Traits\Internal;
-use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Application\Helpers\Str\Traits\Mutators;
 use Wordless\Application\Helpers\Str\Traits\Substring;
-use Wordless\Application\Helpers\Str\Traits\WordCase;
 
 class Str extends Subjectable
 {
@@ -24,7 +21,6 @@ class Str extends Subjectable
     use Internal;
     use Mutators;
     use Substring;
-    use WordCase;
 
     final public const DEFAULT_RANDOM_SIZE = 16;
 
@@ -41,17 +37,6 @@ class Str extends Subjectable
     public static function length(string $string, ?Encoding $encoding = null): int
     {
         return mb_strlen($string, $encoding?->value);
-    }
-
-    /**
-     * @param string $string
-     * @param Language|null $language
-     * @return string
-     * @throws FailedToCreateInflector
-     */
-    public static function plural(string $string, ?Language $language = Language::english): string
-    {
-        return self::getInflector($language)->pluralize($string);
     }
 
     /**
@@ -78,17 +63,6 @@ class Str extends Subjectable
         }
 
         return implode('', $pieces);
-    }
-
-    /**
-     * @param string $string
-     * @param Language|null $language
-     * @return string
-     * @throws FailedToCreateInflector
-     */
-    public static function singular(string $string, ?Language $language = Language::english): string
-    {
-        return self::getInflector($language)->singularize($string);
     }
 
     /**

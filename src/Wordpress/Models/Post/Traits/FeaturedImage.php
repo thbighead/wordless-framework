@@ -7,35 +7,38 @@ use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType
 use Wordless\Wordpress\Models\Post\Traits\Crud\FeaturedImage\Exceptions\FailedToGetPostFeaturedImage;
 use Wordless\Wordpress\Models\Post\Traits\Crud\FeaturedImage\Exceptions\FailedToSetPostFeaturedImage;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 
 trait FeaturedImage
 {
     protected Attachment|false|null $featuredImage = false;
 
     /**
-     * @param int $attachment_id
+     * @param Attachment|int $attachment
      * @return $this
      * @throws FailedToSetPostFeaturedImage
+     * @throws InitializingModelWithWrongPostType
+     * @throws PostTypeNotRegistered
      */
-    public function createOrUpdateFeaturedImage(int $attachment_id): static
+    public function setFeaturedImage(Attachment|int $attachment): static
     {
-        if (set_post_thumbnail($this->id(), $attachment_id) === false) {
-            throw new FailedToSetPostFeaturedImage($this, $attachment_id);
+        if ($this->getFeaturedImageId() === (is_int($attachment) ? $attachment : $attachment->id())) {
+            return $this;
+        }
+
+        if (set_post_thumbnail($this->id(), $attachment) === false) {
+            throw new FailedToSetPostFeaturedImage($this, $attachment);
         }
 
         return $this;
     }
 
     /**
-     * @param bool $with_acfs
      * @return Attachment|null
      * @throws FailedToGetPostFeaturedImage
      * @throws InitializingModelWithWrongPostType
-     * @throws InvalidAcfFunction
      * @throws PostTypeNotRegistered
      */
-    public function getFeaturedImage(bool $with_acfs = false): ?Attachment
+    public function getFeaturedImage(): ?Attachment
     {
         if ($this->featuredImage !== false) {
             return $this->featuredImage;
@@ -46,14 +49,13 @@ trait FeaturedImage
         }
 
         return $this->featuredImage =
-            ($featured_image_id === 0 ? null : Attachment::get($featured_image_id, $with_acfs));
+            ($featured_image_id === 0 ? null : Attachment::make($featured_image_id));
     }
 
     /**
      * @param bool $keep_featured_image_loaded
      * @return int|null
      * @throws InitializingModelWithWrongPostType
-     * @throws InvalidAcfFunction
      * @throws PostTypeNotRegistered
      */
     public function getFeaturedImageId(bool $keep_featured_image_loaded = false): ?int
@@ -71,7 +73,7 @@ trait FeaturedImage
         }
 
         if ($keep_featured_image_loaded) {
-            $this->featuredImage = is_null($featured_image_id) ? null : Attachment::get($featured_image_id);
+            $this->featuredImage = is_null($featured_image_id) ? null : Attachment::make($featured_image_id);
         }
 
         return $featured_image_id;

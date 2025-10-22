@@ -14,8 +14,6 @@ use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
-use Wordless\Wordpress\Models\Traits\WithAcfs;
-use Wordless\Wordpress\Models\Traits\WithAcfs\Exceptions\InvalidAcfFunction;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 use WP_Error;
@@ -29,7 +27,6 @@ abstract class Taxonomy implements IRelatedMetaData
 {
     use MixinWpTerm;
     use Repository;
-    use WithAcfs;
     use WithMetaData;
 
     abstract protected static function getDictionary(): Dictionary;
@@ -53,24 +50,18 @@ abstract class Taxonomy implements IRelatedMetaData
 
     /**
      * @param WP_Term|int|string $term
-     * @param bool $with_acfs
      * @throws EmptyStringParameter
      * @throws InitializingModelWithWrongTaxonomyName
-     * @throws InvalidAcfFunction
      */
-    public function __construct(WP_Term|int|string $term, bool $with_acfs = true)
+    public function __construct(WP_Term|int|string $term)
     {
         $this->wpTerm = ($term instanceof WP_Term ? $term : static::get($term)) ?? static::find($term);
 
         if (!$this->is($this->name())) {
-            throw new InitializingModelWithWrongTaxonomyName($this, $with_acfs);
+            throw new InitializingModelWithWrongTaxonomyName($this);
         }
 
         $this->wpTaxonomy = TaxonomyQueryBuilder::make()->whereName($this->name())->first();
-
-        if ($with_acfs) {
-            $this->loadTermAcfs($this->wpTerm->term_id);
-        }
     }
 
     /**
@@ -109,17 +100,16 @@ abstract class Taxonomy implements IRelatedMetaData
     }
 
     /**
-     * @param bool $with_acfs
      * @return $this|null
      * @throws FailedToInstantiateParent
      */
-    public function parent(bool $with_acfs = false): ?static
+    public function parent(): ?static
     {
         try {
             return $this->parent
-                ?? $this->parent = $this->wpTerm->parent > 0 ? new static($this->wpTerm->parent, $with_acfs) : null;
-        } catch (EmptyStringParameter|InvalidAcfFunction|InitializingModelWithWrongTaxonomyName $exception) {
-            throw new FailedToInstantiateParent($this, $with_acfs, $exception);
+                ?? $this->parent = $this->wpTerm->parent > 0 ? new static($this->wpTerm->parent) : null;
+        } catch (EmptyStringParameter|InitializingModelWithWrongTaxonomyName $exception) {
+            throw new FailedToInstantiateParent($this, $exception);
         }
     }
 
@@ -165,18 +155,13 @@ abstract class Taxonomy implements IRelatedMetaData
         return $this->term_id;
     }
 
+    protected function mountAcfFromId(): string
+    {
+        return "{$this->name()}_{$this->wpTerm->term_id}";
+    }
+
     protected function name(): string
     {
         return static::NAME_KEY ?? Str::slugCase(static::class);
-    }
-
-    /**
-     * @param int $from_id
-     * @return void
-     * @throws InvalidAcfFunction
-     */
-    private function loadTermAcfs(int $from_id): void
-    {
-        $this->loadAcfs("{$this->name()}_$from_id");
     }
 }

@@ -79,15 +79,9 @@ trait Boolean
         }
     }
 
-    /**
-     * @param string $string
-     * @param string $prefix
-     * @param string $suffix
-     * @return bool
-     */
-    public static function isSurroundedBy(string $string, string $prefix, string $suffix): bool
+    public static function isWrappedBy(string $string, string $prefix, ?string $suffix = null): bool
     {
-        return static::beginsWith($string, $prefix) && static::endsWith($string, $suffix);
+        return static::beginsWith($string, $prefix) && static::endsWith($string, $suffix ?? $prefix);
     }
 
     /**

@@ -30,6 +30,10 @@ trait Substring
      */
     public static function afterLast(string $string, string $delimiter): string
     {
+        if (empty($delimiter)) {
+            return $string;
+        }
+
         $substring_position = strrpos($string, $delimiter);
 
         if ($substring_position === false) {
@@ -46,6 +50,10 @@ trait Substring
      */
     public static function before(string $string, string $delimiter): string
     {
+        if (empty($delimiter)) {
+            return $string;
+        }
+
         $result = strstr($string, $delimiter, true);
 
         return $result === false ? $string : $result;
@@ -67,19 +75,25 @@ trait Substring
         return static::substring($string, 0, $substring_position);
     }
 
-    /**
-     * @param string $string
-     * @param string $prefix
-     * @param string $suffix
-     * @return string
-     */
-    public static function between(string $string, string $prefix, string $suffix): string
+    public static function between(string $string, string $prefix, ?string $suffix = null): string
     {
-        return static::before(static::after($string, $prefix), $suffix);
+        if (($substring = static::after($string, $prefix)) === $string) {
+            return $string;
+        }
+
+        if (($substring = static::beforeLast($substring, $suffix ?? $prefix)) === $substring) {
+            return $string;
+        }
+
+        return $substring;
     }
 
     public static function countSubstring(string $string, string $substring): int
     {
+        if (empty($substring)) {
+            return 0;
+        }
+
         return substr_count($string, $substring);
     }
 
@@ -103,6 +117,10 @@ trait Substring
 
     public static function truncate(string $string, int $max_chars = self::DEFAULT_TRUNCATE_SIZE): string
     {
-        return static::substring($string, 0, $max_chars <= 0 ? self::DEFAULT_TRUNCATE_SIZE : $max_chars);
+        if ($max_chars < 0 && abs($max_chars) >= static::length($string)) {
+            $max_chars = self::DEFAULT_TRUNCATE_SIZE;
+        }
+
+        return static::substring($string, 0, $max_chars === 0 ? self::DEFAULT_TRUNCATE_SIZE : $max_chars);
     }
 }

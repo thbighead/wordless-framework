@@ -58,8 +58,9 @@ final class Bootstrapper extends Singleton
     /**
      * @return Bootstrapper
      * @throws FailedToLoadBootstrapper
+     * @noinspection PhpUnnecessaryStaticReferenceInspection
      */
-    public static function getInstance(): Bootstrapper
+    public static function getInstance(): static
     {
         return parent::getInstance()->load();
     }

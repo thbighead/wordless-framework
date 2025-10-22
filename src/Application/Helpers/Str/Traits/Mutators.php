@@ -2,10 +2,14 @@
 
 namespace Wordless\Application\Helpers\Str\Traits;
 
+use Wordless\Application\Helpers\Str\Enums\Language;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
+use Wordless\Application\Helpers\Str\Traits\Mutators\Traits\WordCase;
 
 trait Mutators
 {
+    use WordCase;
+
     /**
      * @param string $string
      * @param string $finish_with
@@ -16,6 +20,17 @@ trait Mutators
         $quoted = preg_quote($finish_with, '/');
 
         return preg_replace("/(?:$quoted)+$/u", '', $string) . $finish_with;
+    }
+
+    /**
+     * @param string $string
+     * @param Language|null $language
+     * @return string
+     * @throws FailedToCreateInflector
+     */
+    public static function plural(string $string, ?Language $language = Language::english): string
+    {
+        return self::getInflector($language)->pluralize($string);
     }
 
     /**
@@ -47,6 +62,17 @@ trait Mutators
     public static function replace(string $string, string|array $search, string|array $replace): string
     {
         return str_replace($search, $replace, $string);
+    }
+
+    /**
+     * @param string $string
+     * @param Language|null $language
+     * @return string
+     * @throws FailedToCreateInflector
+     */
+    public static function singular(string $string, ?Language $language = Language::english): string
+    {
+        return self::getInflector($language)->singularize($string);
     }
 
     /**

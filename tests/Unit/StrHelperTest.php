@@ -2,10 +2,12 @@
 
 namespace Wordless\Tests\Unit;
 
-use InvalidArgumentException;
+use JsonException;
+use PHPUnit\Framework\ExpectationFailedException;
+use Random\RandomException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Enums\Encoding;
 use Wordless\Tests\Unit\StrHelperTest\Traits\BooleanTests;
-use Wordless\Tests\Unit\StrHelperTest\Traits\CaseStyleTests;
 use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests;
 use Wordless\Tests\Unit\StrHelperTest\Traits\SubstringTests;
 use Wordless\Tests\Unit\StrHelperTest\Traits\UuidTests;
@@ -14,7 +16,6 @@ use Wordless\Tests\WordlessTestCase;
 class StrHelperTest extends WordlessTestCase
 {
     use BooleanTests;
-    use CaseStyleTests;
     use MutatorsTests;
     use UuidTests;
     use SubstringTests;
@@ -22,49 +23,54 @@ class StrHelperTest extends WordlessTestCase
     private const BASE_STRING = 'TestStringSubstrings';
     private const COUNT_STRING = 'Test Test Test Test';
 
-    public function testCountSubstring(): void
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     * @throws JsonException
+     */
+    public function testJsonDecode(): void
     {
-        $this->assertEquals(1, Str::countSubstring(self::BASE_STRING, 'Test'));
-        $this->assertEquals(2, Str::countSubstring(self::BASE_STRING, 'tring'));
-        $this->assertEquals(0, Str::countSubstring(self::BASE_STRING, '$'));
-    }
+        $this->assertEquals([], Str::jsonDecode('[]'));
+        $this->assertEquals([], Str::jsonDecode('{}'));
+        $this->assertEquals([
+            'test' => 'yeah',
+            'bool' => true,
+            'number' => 123,
+            'maybe_null' => null,
+            'list' => [
+                true,
+                false,
+                null,
+                45,
+                'told_ya',
+                ['big_test' => 'ok', 'or' => 'Not'],
+                [1, 2, 3, 4],
+            ],
+            'sub_object' => ['what' => 'is', 'done' => 80],
+        ], Str::jsonDecode('{"test":"yeah","bool":true,"number":123,"maybe_null":null,"list":[true,false,null,45,"told_ya",{"big_test": "ok","or":"Not"},[1,2,3,4]],"sub_object":{"what":"is","done":"is","done":80}}'));
 
-    public function testLimitWords(): void
-    {
-        $this->assertEquals('Test...', Str::limitWords(self::COUNT_STRING, 1));
-        $this->assertEquals('Test Test...', Str::limitWords(self::COUNT_STRING, 2));
-        $this->assertEquals('Test Test Test...', Str::limitWords(self::COUNT_STRING, 3));
+        $this->expectException(JsonException::class);
+        Str::jsonDecode('');
     }
 
     /**
      * @return void
-     * @throws InvalidArgumentException
+     * @throws ExpectationFailedException
      */
-    public function testPluralize(): void
+    public function testLength(): void
     {
-        $this->assertEquals('tests', Str::plural('test'));
-        $this->assertEquals('testes', Str::plural('teste', 'portuguese'));
+        $this->assertEquals(4, Str::length('àäáã'));
+        $this->assertEquals(8, Str::length('àäáã', Encoding::ASCII));
     }
 
     /**
      * @return void
-     * @throws InvalidArgumentException
+     * @throws ExpectationFailedException
+     * @throws RandomException
      */
-    public function testSingularize(): void
+    public function testRandomString(): void
     {
-        $this->assertEquals('test', Str::singular('tests'));
-        $this->assertEquals('teste', Str::singular('testes', 'portuguese'));
-    }
-
-    public function testRandomString()
-    {
-        $this->assertIsString(Str::random());
-    }
-
-    public function testTruncate()
-    {
-        $this->assertEquals('TestStringSubst', Str::truncate(self::BASE_STRING, 0));
-        $this->assertEquals('TestS', Str::truncate(self::BASE_STRING, 5));
-        $this->assertEquals('TestStringSubst', Str::truncate(self::BASE_STRING, -1));
+        $this->assertEquals(Str::DEFAULT_RANDOM_SIZE, Str::length(Str::random()));
+        $this->assertEquals($size = 20, Str::length(Str::random($size)));
     }
 }

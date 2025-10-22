@@ -4,6 +4,7 @@ namespace Wordless\Application\Providers;
 
 use Wordless\Application\Commands\Diagnostics;
 use Wordless\Application\Commands\HelixShell;
+use Wordless\Application\Commands\Utility\BreakPasswords;
 use Wordless\Application\Commands\Utility\DatabaseOverwrite;
 use Wordless\Application\Commands\Utility\MediaSync;
 use Wordless\Application\Commands\Utility\ReplaceBaseUrls;
@@ -16,6 +17,7 @@ class UtilityProvider extends Provider
     public function registerCommands(): array
     {
         return [
+            BreakPasswords::class,
             DatabaseOverwrite::class,
             Diagnostics::class,
             MediaSync::class,
