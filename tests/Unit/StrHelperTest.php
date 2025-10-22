@@ -6,6 +6,7 @@ use JsonException;
 use PHPUnit\Framework\ExpectationFailedException;
 use Random\RandomException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Enums\Encoding;
 use Wordless\Tests\Unit\StrHelperTest\Traits\BooleanTests;
 use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests;
 use Wordless\Tests\Unit\StrHelperTest\Traits\SubstringTests;
@@ -50,6 +51,16 @@ class StrHelperTest extends WordlessTestCase
 
         $this->expectException(JsonException::class);
         Str::jsonDecode('');
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     */
+    public function testLength(): void
+    {
+        $this->assertEquals(4, Str::length('àäáã'));
+        $this->assertEquals(8, Str::length('àäáã', Encoding::ASCII));
     }
 
     /**

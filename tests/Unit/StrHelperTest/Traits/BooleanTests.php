@@ -13,27 +13,6 @@ trait BooleanTests
      * @return void
      * @throws ExpectationFailedException
      */
-    public function testContains(): void
-    {
-        $this->assertTrue(Str::contains(self::BASE_STRING, 'Test'));
-        $this->assertTrue(Str::contains(self::BASE_STRING, ['Test', 'Test']));
-        $this->assertTrue(Str::contains(self::BASE_STRING, ''));
-        $this->assertTrue(Str::contains(self::BASE_STRING, ['', '']));
-        $this->assertTrue(Str::contains(self::BASE_STRING, 'Test', false));
-        $this->assertTrue(Str::contains(self::BASE_STRING, ['Test', 'Test'], false));
-        $this->assertTrue(Str::contains(self::BASE_STRING, '', false));
-        $this->assertTrue(Str::contains(self::BASE_STRING, ['', ''], false));
-        $this->assertTrue(Str::contains(self::BASE_STRING, ['tring', 'Test', 'k']));
-
-        $this->assertTrue(Str::contains(self::BASE_STRING, ['tring', 'Test', 'k'], false));
-        $this->assertFalse(Str::contains(self::BASE_STRING, '$'));
-        $this->assertFalse(Str::contains(self::BASE_STRING, '$', false));
-    }
-
-    /**
-     * @return void
-     * @throws ExpectationFailedException
-     */
     public function testBeginsWith(): void
     {
         $this->assertTrue(Str::beginsWith(self::BASE_STRING, 'Test'));
@@ -48,6 +27,27 @@ trait BooleanTests
      * @return void
      * @throws ExpectationFailedException
      */
+    public function testContains(): void
+    {
+        $this->assertTrue(Str::contains(self::BASE_STRING, 'Test'));
+        $this->assertTrue(Str::contains(self::BASE_STRING, ['Test', 'Test']));
+        $this->assertTrue(Str::contains(self::BASE_STRING, ''));
+        $this->assertTrue(Str::contains(self::BASE_STRING, ['', '']));
+        $this->assertTrue(Str::contains(self::BASE_STRING, 'Test', false));
+        $this->assertTrue(Str::contains(self::BASE_STRING, ['Test', 'Test'], false));
+        $this->assertTrue(Str::contains(self::BASE_STRING, '', false));
+        $this->assertTrue(Str::contains(self::BASE_STRING, ['', ''], false));
+        $this->assertTrue(Str::contains(self::BASE_STRING, ['tring', 'Test', 'k']));
+
+        $this->assertFalse(Str::contains(self::BASE_STRING, ['tring', 'Test', 'k'], false));
+        $this->assertFalse(Str::contains(self::BASE_STRING, '$'));
+        $this->assertFalse(Str::contains(self::BASE_STRING, '$', false));
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     */
     public function testEndsWith(): void
     {
         $this->assertTrue(Str::endsWith(self::BASE_STRING, 'strings'));
@@ -56,6 +56,17 @@ trait BooleanTests
 
         $this->assertFalse(Str::endsWith(self::BASE_STRING, '$'));
         $this->assertFalse(Str::endsWith(self::BASE_STRING, 'tring'));
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     */
+    public function testIsEmpty(): void
+    {
+        $this->assertTrue(Str::isEmpty(''));
+
+        $this->assertFalse(Str::isEmpty(self::BASE_STRING));
     }
 
     /**

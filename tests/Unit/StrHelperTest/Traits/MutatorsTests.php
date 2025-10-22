@@ -55,6 +55,50 @@ trait MutatorsTests
         $this->assertEquals('comuns', Str::plural('comum', Language::portuguese));
     }
 
+    public function testRemove(): void
+    {
+        $this->assertEquals(
+            'TestSubstrings',
+            Str::remove(self::BASE_STRING, 'String')
+        );
+        $this->assertEquals(
+            'TestSSubss',
+            Str::remove(self::BASE_STRING, 'tring')
+        );
+        $this->assertEquals(
+            'TestSSubss',
+            Str::remove(self::BASE_STRING, ['tring', 'SS'])
+        );
+        $this->assertEquals(
+            'TestStrngSubst',
+            Str::remove(self::BASE_STRING, ['rings', 'i'])
+        );
+        $this->assertEquals(
+            self::BASE_STRING,
+            Str::remove(self::BASE_STRING, ['aoao', 'aeae'])
+        );
+        $this->assertEquals(
+            self::BASE_STRING,
+            Str::remove(self::BASE_STRING, '$')
+        );
+        $this->assertEquals(
+            self::BASE_STRING,
+            Str::remove(self::BASE_STRING, '')
+        );
+        $this->assertEquals(
+            self::BASE_STRING,
+            Str::remove(self::BASE_STRING, ['', ''])
+        );
+        $this->assertEquals(
+            'AdvancedTest',
+            Str::remove('AdvancedStrStringingTest', ['String', 'String'])
+        );
+        $this->assertEquals(
+            'AdvancedStringTest',
+            Str::remove('AdvancedStrStringingTest', 'String')
+        );
+    }
+
     /**
      * @return void
      * @throws ExpectationFailedException
