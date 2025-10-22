@@ -31,10 +31,10 @@ trait FromDictionary
         return self::getDictionary()->allNames();
     }
 
-    public static function find(string $role): ?static
+    public static function get(string $role): ?static
     {
         try {
-            return static::findOrFail($role);
+            return static::getOrFail($role);
         } catch (FailedToFindRole) {
             return null;
         }
@@ -45,9 +45,9 @@ trait FromDictionary
      * @return static
      * @throws FailedToFindRole
      */
-    public static function findOrFail(string $role): static
+    public static function getOrFail(string $role): static
     {
-        if ($roleObject = self::getDictionary()->find($role)) {
+        if ($roleObject = self::getDictionary()->get($role)) {
             return new static($roleObject);
         }
 

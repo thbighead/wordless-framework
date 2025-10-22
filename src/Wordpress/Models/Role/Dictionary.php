@@ -43,7 +43,7 @@ class Dictionary extends Singleton
         return array_keys(self::$roles_keyed_by_name);
     }
 
-    public function find(string $role): ?WP_Role
+    public function get(string $role): ?WP_Role
     {
         return self::$roles_keyed_by_name[$role] ?? null;
     }
@@ -52,7 +52,7 @@ class Dictionary extends Singleton
      * @param string $role
      * @return array<string, string|array<string, bool>>|null
      */
-    public function findAsArray(string $role): ?array
+    public function getAsArray(string $role): ?array
     {
         return self::$roles_as_array_keyed_by_name[$role] ?? null;
     }

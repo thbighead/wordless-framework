@@ -30,7 +30,7 @@ class Role extends WP_Role
     public function __construct(WP_Role|string $role)
     {
         if (!($role instanceof WP_Role)) {
-            $role = static::findOrFail($role);
+            $role = static::getOrFail($role);
         }
 
         parent::__construct($role->name, $role->capabilities);
