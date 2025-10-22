@@ -9,7 +9,7 @@ use Wordless\Wordpress\Models\Post\Traits\Crud\Exceptions\FindOrCreateFailed;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\Delete;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\Read;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder;
 
 trait Crud
 {
@@ -39,8 +39,8 @@ trait Crud
         }
     }
 
-    private static function query(): PostQueryBuilder
+    public static function query(): PostModelQueryBuilder
     {
-        return new PostQueryBuilder(static::postType());
+        return new PostModelQueryBuilder(static::class);
     }
 }

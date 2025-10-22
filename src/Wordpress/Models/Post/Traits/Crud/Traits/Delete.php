@@ -16,7 +16,7 @@ trait Delete
         $trashed_posts = [];
 
         /** @var static $post */
-        foreach (static::getAll(false) as $post) {
+        foreach (static::all() as $post) {
             $trashed_posts[] = $post->trash();
         }
 
@@ -32,7 +32,7 @@ trait Delete
         $removed_posts = [];
 
         /** @var static $post */
-        foreach (static::getAll(false) as $post) {
+        foreach (static::all() as $post) {
             $removed_posts[] = $post->delete();
         }
 

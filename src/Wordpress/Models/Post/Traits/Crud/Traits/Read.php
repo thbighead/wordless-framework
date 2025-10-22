@@ -4,9 +4,37 @@ namespace Wordless\Wordpress\Models\Post\Traits\Crud\Traits;
 
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder;
 
+/**
+ * @method PostModelQueryBuilder query
+ */
 trait Read
 {
+    /**
+     * @return static[]
+     * @throws EmptyQueryBuilderArguments
+     */
+    public static function all(): array
+    {
+        return static::query()->get();
+    }
+
+    /**
+     * @return array<string, static>
+     * @throws EmptyQueryBuilderArguments
+     */
+    public static function allKeyedBySlug(): array
+    {
+        $all = [];
+
+        foreach (static::all() as $post) {
+            $all[$post->post_name] = $post;
+        }
+
+        return $all;
+    }
+
     /**
      * @param string $slug
      * @return static|null
@@ -14,9 +42,8 @@ trait Read
      */
     public static function findBySlug(string $slug): ?static
     {
-        $post = self::query()->whereSlug($slug)->first();
-
-        return $post === null ? null : new static($post);
+        /** @var static|null */
+        return static::query()->whereSlug($slug)->first();
     }
 
     /**
@@ -26,53 +53,7 @@ trait Read
      */
     public static function firstPublished(int $quantity = 1): static|array|null
     {
-        $result = self::query()->whereStatus(StandardStatus::publish)->first($quantity);
-
-        if ($result === null) {
-            return null;
-        }
-
-        if (!is_array($result)) {
-            return new static($result);
-        }
-
-        $posts = [];
-
-        foreach ($result as $wpPost) {
-            $posts[] = new static($wpPost);
-        }
-
-        return $posts;
-    }
-
-    /**
-     * @return static[]
-     * @throws EmptyQueryBuilderArguments
-     */
-    public static function getAll(): array
-    {
-        $all = [];
-
-        foreach (self::query()->get() as $post) {
-            $all[] = new static($post);
-        }
-
-        return $all;
-    }
-
-    /**
-     * @return array<string, static>
-     * @throws EmptyQueryBuilderArguments
-     */
-    public static function getAllKeyedBySlug(): array
-    {
-        $all = [];
-
-        foreach (static::getAll() as $post) {
-            $all[$post->post_name] = $post;
-        }
-
-        return $all;
+        return static::query()->whereStatus(StandardStatus::publish)->first($quantity);
     }
 
     /**
@@ -81,6 +62,6 @@ trait Read
      */
     public static function noneCreated(): bool
     {
-        return count(static::getAll(false)) <= 1;
+        return !static::query()->exists();
     }
 }
