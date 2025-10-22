@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Update\UpdateBuilder\Exceptions;
+namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Update\UpdateBuilder\Exceptions;
 
 use Wordless\Exceptions\WpErrorException;
 

@@ -10,11 +10,6 @@ use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 class Request extends SymfonyRequest
 {
     use Constructors;
-
-    /**
-     * @return static
-     * @throws NoUserAuthenticated
-     */
     protected static function newInstance(): static
     {
         return new self(
@@ -45,7 +40,6 @@ class Request extends SymfonyRequest
      * @param array $files
      * @param array $server
      * @param $content
-     * @throws NoUserAuthenticated
      */
     protected function __construct(
         array $query = [],
@@ -57,6 +51,9 @@ class Request extends SymfonyRequest
               $content = null
     )
     {
-        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+        try {
+            parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+        } catch (NoUserAuthenticated) {
+        }
     }
 }

@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits;
+namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits;
 
 use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Delete\Exceptions\DeleteTermError;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Delete\Exceptions\DeleteTermError;
 use WP_Error;
 use WP_Term;
 

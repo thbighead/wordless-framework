@@ -3,11 +3,11 @@
 namespace Wordless\Wordpress\Models\Post\Traits\Crud\Traits;
 
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
+use Wordless\Wordpress\Models\Post\Traits\Crud;
 use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder;
 
 /**
- * @method PostModelQueryBuilder query
+ * @mixin Crud
  */
 trait Read
 {

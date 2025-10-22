@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Create\Exceptions;
+namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Create\Exceptions;
 
 use DomainException;
 use Throwable;

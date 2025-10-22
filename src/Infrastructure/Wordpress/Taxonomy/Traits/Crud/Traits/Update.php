@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits;
+namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits;
 
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Update\UpdateBuilder;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Update\UpdateBuilder;
 
 trait Update
 {

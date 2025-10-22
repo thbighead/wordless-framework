@@ -9,6 +9,7 @@ use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedAggregatingObjec
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedDisaggregatingObject;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedToGetTermLink;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedToInstantiateParent;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\MixinWpTerm;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository;
 use Wordless\Wordpress\Enums\ObjectType;
@@ -25,6 +26,7 @@ use WP_Term;
  */
 abstract class Taxonomy implements IRelatedMetaData
 {
+    use Crud;
     use MixinWpTerm;
     use Repository;
     use WithMetaData;
@@ -37,6 +39,17 @@ abstract class Taxonomy implements IRelatedMetaData
     protected string $url;
     /** @var static|null $parent */
     private ?Taxonomy $parent;
+
+    /**
+     * @param WP_Term|int|string $term
+     * @return static
+     * @throws EmptyStringParameter
+     * @throws InitializingModelWithWrongTaxonomyName
+     */
+    public static function make(WP_Term|int|string $term): static
+    {
+        return new static($term);
+    }
 
     final public static function getNameKey(): string
     {

@@ -1,0 +1,110 @@
+<?php declare(strict_types=1);
+
+namespace Wordless\Wordpress\QueryBuilder\TermQueryBuilder;
+
+use Wordless\Infrastructure\Wordpress\Taxonomy;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidMethodException;
+use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidModelClass;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
+use Wordless\Wordpress\QueryBuilder\TermQueryBuilder;
+use WP_Term;
+
+/**
+ * @mixin TermQueryBuilder
+ */
+class TermModelQueryBuilder
+{
+    private TermQueryBuilder $queryBuilder;
+
+    /**
+     * @param string $model_class_namespace
+     * @return static
+     * @throws InvalidModelClass
+     */
+    public static function make(string $model_class_namespace): static
+    {
+        return new static($model_class_namespace);
+    }
+
+    /**
+     * @param string $name
+     * @param array $arguments
+     * @return $this|array|bool|int|string|Taxonomy|null
+     * @throws EmptyStringParameter
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws InvalidMethodException
+     */
+    public function __call(string $name, array $arguments)
+    {
+        if ($name !== 'onlyTaxonomies' && is_callable([$this->queryBuilder, $name])) {
+            return $this->resolveCallResult($this->queryBuilder->$name(...$arguments));
+        }
+
+        throw new InvalidMethodException($name, static::class);
+    }
+
+    /**
+     * @param class-string|Taxonomy $model_class_namespace
+     * @throws InvalidModelClass
+     */
+    public function __construct(private readonly string $model_class_namespace)
+    {
+        if (!is_a($this->model_class_namespace, $correct_class_namespace = Taxonomy::class, true)) {
+            throw new InvalidModelClass($this->model_class_namespace, $correct_class_namespace);
+        }
+
+        $this->queryBuilder = TermQueryBuilder::make($this->model_class_namespace::getNameKey());
+    }
+
+    public function toTermQueryBuilder(): TermQueryBuilder
+    {
+        return $this->queryBuilder;
+    }
+
+    /**
+     * @param bool|int|string|array|WP_Term|TermQueryBuilder|null $result
+     * @return bool|int|string|array|Taxonomy|$this|null
+     * @throws EmptyStringParameter
+     * @throws InitializingModelWithWrongTaxonomyName
+     */
+    private function resolveCallResult(
+        bool|int|string|array|WP_Term|TermQueryBuilder|null $result
+    ): bool|int|string|array|Taxonomy|static|null
+    {
+        if ($result instanceof TermQueryBuilder) {
+            return $this;
+        }
+
+        if ($result instanceof WP_Term) {
+            return $this->model_class_namespace::make($result);
+        }
+
+        if (is_array($result)) {
+            return $this->resolveCallArrayResult($result);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $result
+     * @return Taxonomy[]
+     * @throws EmptyStringParameter
+     * @throws InitializingModelWithWrongTaxonomyName
+     */
+    private function resolveCallArrayResult(array $result): array
+    {
+        $resolved_result = [];
+
+        foreach ($result as $key => $item) {
+            if (!($item instanceof WP_Term)) {
+                return $result;
+            }
+
+            $resolved_result[$key] = $this->model_class_namespace::make($item);
+        }
+
+        return $resolved_result;
+    }
+}
