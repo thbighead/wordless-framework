@@ -10,6 +10,7 @@ use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 class Request extends SymfonyRequest
 {
     use Constructors;
+
     protected static function newInstance(): static
     {
         return new self(

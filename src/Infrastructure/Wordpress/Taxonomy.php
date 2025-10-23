@@ -9,9 +9,11 @@ use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedAggregatingObjec
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedDisaggregatingObject;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedToGetTermLink;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\FailedToInstantiateParent;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\TermInstantiationError;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\MixinWpTerm;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Exceptions\FailedToFind;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
@@ -43,19 +45,21 @@ abstract class Taxonomy implements IRelatedMetaData
     /**
      * @param WP_Term|int|string $term
      * @return static
-     * @throws EmptyStringParameter
      * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
      */
     public static function make(WP_Term|int|string $term): static
     {
         return new static($term);
     }
 
+    /** @noinspection PhpHierarchyChecksInspection */
     final public static function getNameKey(): string
     {
         return static::NAME_KEY;
     }
 
+    /** @noinspection PhpHierarchyChecksInspection */
     final public static function objectType(): ObjectType
     {
         return ObjectType::term;
@@ -63,18 +67,22 @@ abstract class Taxonomy implements IRelatedMetaData
 
     /**
      * @param WP_Term|int|string $term
-     * @throws EmptyStringParameter
      * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
      */
     public function __construct(WP_Term|int|string $term)
     {
-        $this->wpTerm = ($term instanceof WP_Term ? $term : static::get($term)) ?? static::find($term);
+        try {
+            $this->wpTerm = ($term instanceof WP_Term ? $term : static::get($term)) ?? static::find($term);
 
-        if (!$this->is($this->name())) {
-            throw new InitializingModelWithWrongTaxonomyName($this);
+            if (!$this->is($this->name())) {
+                throw new InitializingModelWithWrongTaxonomyName($this);
+            }
+
+            $this->wpTaxonomy = TaxonomyQueryBuilder::make()->whereName($this->name())->first();
+        } catch (EmptyStringParameter|FailedToFind $exception) {
+            throw new TermInstantiationError($term, $exception);
         }
-
-        $this->wpTaxonomy = TaxonomyQueryBuilder::make()->whereName($this->name())->first();
     }
 
     /**
@@ -121,7 +129,7 @@ abstract class Taxonomy implements IRelatedMetaData
         try {
             return $this->parent
                 ?? $this->parent = $this->wpTerm->parent > 0 ? new static($this->wpTerm->parent) : null;
-        } catch (EmptyStringParameter|InitializingModelWithWrongTaxonomyName $exception) {
+        } catch (InitializingModelWithWrongTaxonomyName|TermInstantiationError $exception) {
             throw new FailedToInstantiateParent($this, $exception);
         }
     }
@@ -163,6 +171,7 @@ abstract class Taxonomy implements IRelatedMetaData
         return $this->url = $url;
     }
 
+    /** @noinspection PhpHierarchyChecksInspection */
     final public function id(): int
     {
         return $this->term_id;

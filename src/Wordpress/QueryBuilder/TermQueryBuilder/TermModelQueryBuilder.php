@@ -4,10 +4,11 @@ namespace Wordless\Wordpress\QueryBuilder\TermQueryBuilder;
 
 use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\TermInstantiationError;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidMethodException;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidModelClass;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\TermModelQueryBuilder\Exceptions\FailedToResolveCallResult;
 use WP_Term;
 
 /**
@@ -31,14 +32,19 @@ class TermModelQueryBuilder
      * @param string $name
      * @param array $arguments
      * @return $this|array|bool|int|string|Taxonomy|null
-     * @throws EmptyStringParameter
-     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws FailedToResolveCallResult
      * @throws InvalidMethodException
      */
     public function __call(string $name, array $arguments)
     {
         if ($name !== 'onlyTaxonomies' && is_callable([$this->queryBuilder, $name])) {
-            return $this->resolveCallResult($this->queryBuilder->$name(...$arguments));
+            $result = $this->queryBuilder->$name(...$arguments);
+
+            try {
+                return $this->resolveCallResult($result);
+            } catch (InitializingModelWithWrongTaxonomyName|TermInstantiationError $exception) {
+                throw new FailedToResolveCallResult($name, $arguments, $result, $exception);
+            }
         }
 
         throw new InvalidMethodException($name, static::class);
@@ -65,8 +71,8 @@ class TermModelQueryBuilder
     /**
      * @param bool|int|string|array|WP_Term|TermQueryBuilder|null $result
      * @return bool|int|string|array|Taxonomy|$this|null
-     * @throws EmptyStringParameter
      * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
      */
     private function resolveCallResult(
         bool|int|string|array|WP_Term|TermQueryBuilder|null $result
@@ -90,8 +96,8 @@ class TermModelQueryBuilder
     /**
      * @param array $result
      * @return Taxonomy[]
-     * @throws EmptyStringParameter
      * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
      */
     private function resolveCallArrayResult(array $result): array
     {

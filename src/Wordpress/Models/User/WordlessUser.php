@@ -41,9 +41,9 @@ class WordlessUser extends User
      * @throws RandomException
      */
     final public static function create(
-        string                       $email = '',
-        string                       $password = '',
-        ?string                      $username = null,
+        string                        $email = '',
+        string                        $password = '',
+        ?string                       $username = null,
         Role|StandardRole|string|null $role = StandardRole::subscriber
     ): static
     {

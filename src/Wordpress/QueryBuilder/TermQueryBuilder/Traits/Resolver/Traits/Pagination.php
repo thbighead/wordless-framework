@@ -4,8 +4,8 @@ namespace Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\Resolver\Trait
 
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Enums\TermsListFormat;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\Resolver\Traits\Pagination\PaginatedTerms;
-use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\Resolver\Traits\Pagination\PaginatedTerms\Rotating;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\Resolver\Traits\Pagination\PaginatedTerms\Exceptions\FailedToConstructPaginatedTerms;
+use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\Traits\Resolver\Traits\Pagination\PaginatedTerms\Rotating;
 
 trait Pagination
 {

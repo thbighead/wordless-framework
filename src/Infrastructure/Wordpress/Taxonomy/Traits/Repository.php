@@ -5,19 +5,21 @@ namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits;
 use Generator;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Infrastructure\Wordpress\Taxonomy;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\TermInstantiationError;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Enums\Field;
-use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\TermModelQueryBuilder;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Exceptions\FailedToFind;
 use WP_Term;
 
 /**
- * @method Dictionary getDictionary
- * @method TermModelQueryBuilder query
+ * @mixin Taxonomy
  */
 trait Repository
 {
     /**
      * @return Generator<static>
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
      */
     public static function all(): Generator
     {
@@ -26,10 +28,16 @@ trait Repository
         }
     }
 
+    public static function count(): int
+    {
+        return count(static::getDictionary()->all());
+    }
+
     /**
      * @param int|string $term
      * @return static|null
-     * @throws EmptyQueryBuilderArguments
+     * @throws FailedToFind
+     * @throws TermInstantiationError
      */
     public static function find(int|string $term): ?static
     {
@@ -40,6 +48,13 @@ trait Repository
         return static::findBySlug($term) ?? static::findByName($term);
     }
 
+    /**
+     * @param Field $field
+     * @param int|string $value
+     * @return static|null
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
+     */
     public static function findBy(Field $field, int|string $value): ?static
     {
         if (!(($term = get_term_by($field->name, $value, static::getNameKey())) instanceof WP_Term)) {
@@ -52,51 +67,72 @@ trait Repository
     /**
      * @param int $id
      * @return static|null
-     * @throws EmptyQueryBuilderArguments
+     * @throws FailedToFind
+     * @throws TermInstantiationError
      */
     public static function findById(int $id): ?static
     {
-        $term = self::findBy(Field::term_id, $id);
+        try {
+            $term = static::findBy(Field::term_id, $id);
 
-        if (!self::areEquals($term, static::getById($id))) {
-            static::getDictionary()->reload();
+            if (!self::areEquals($term, static::getById($id))) {
+                static::getDictionary()->reload();
+            }
+
+            return $term;
+        } catch (EmptyQueryBuilderArguments|InitializingModelWithWrongTaxonomyName $exception) {
+            throw new FailedToFind($id, $exception);
         }
-
-        return $term;
     }
 
     /**
      * @param string $name
      * @return static|null
-     * @throws EmptyQueryBuilderArguments
+     * @throws FailedToFind
+     * @throws TermInstantiationError
      */
     public static function findByName(string $name): ?static
     {
-        $term = self::findBy(Field::name, $name);
+        try {
+            $term = static::findBy(Field::name, $name);
 
-        if (!self::areEquals($term, static::getByName($name))) {
-            static::getDictionary()->reload();
+            if (!self::areEquals($term, static::getByName($name))) {
+                static::getDictionary()->reload();
+            }
+
+            return $term;
+        } catch (EmptyQueryBuilderArguments|InitializingModelWithWrongTaxonomyName $exception) {
+            throw new FailedToFind($name, $exception);
         }
-
-        return $term;
     }
 
     /**
      * @param string $slug
      * @return static|null
-     * @throws EmptyQueryBuilderArguments
+     * @throws FailedToFind
+     * @throws TermInstantiationError
      */
     public static function findBySlug(string $slug): ?static
     {
-        $term = self::findBy(Field::name, $slug);
+        try {
+            $term = static::findBy(Field::name, $slug);
 
-        if (!self::areEquals($term, static::getBySlug($slug))) {
-            static::getDictionary()->reload();
+            if (!self::areEquals($term, static::getBySlug($slug))) {
+                static::getDictionary()->reload();
+            }
+
+            return $term;
+        } catch (EmptyQueryBuilderArguments|InitializingModelWithWrongTaxonomyName $exception) {
+            throw new FailedToFind($slug, $exception);
         }
-
-        return $term;
     }
 
+    /**
+     * @param int|string $term
+     * @return static|null
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
+     */
     public static function get(int|string $term): ?static
     {
         if (is_int($term) || is_numeric($term)) {
@@ -106,6 +142,12 @@ trait Repository
         return static::getBySlug($term) ?? static::getByName($term);
     }
 
+    /**
+     * @param int $id
+     * @return static|null
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
+     */
     public static function getById(int $id): ?static
     {
         $term = static::getDictionary()->getById($id);
@@ -113,6 +155,12 @@ trait Repository
         return $term === null ? null : new static($term);
     }
 
+    /**
+     * @param string $name
+     * @return static|null
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
+     */
     public static function getByName(string $name): ?static
     {
         $term = static::getDictionary()->getByName($name);
@@ -120,6 +168,12 @@ trait Repository
         return $term === null ? null : new static($term);
     }
 
+    /**
+     * @param string $slug
+     * @return static|null
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
+     */
     public static function getBySlug(string $slug): ?static
     {
         $term = static::getDictionary()->getBySlug($slug);
