@@ -2,10 +2,13 @@
 
 namespace Wordless\Wordpress\QueryBuilder\UserQueryBuilder;
 
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
+use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Delete\Exceptions\FailedToDeleteUser;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidMethodException;
 use Wordless\Wordpress\QueryBuilder\UserQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\UserQueryBuilder\UserModelQueryBuilder\Exceptions\UpdateAnonymousFunctionDidNotReturnUserObject;
 use WP_User;
 
 /**
@@ -42,9 +45,49 @@ class UserModelQueryBuilder
         $this->queryBuilder = UserQueryBuilder::make();
     }
 
+    /**
+     * @return User[]
+     * @throws EmptyQueryBuilderArguments
+     * @throws FailedToDeleteUser
+     */
+    public function delete(): array
+    {
+        /** @var User[] $users */
+        $users = $this->get();
+
+        foreach ($users as $user) {
+            $user->delete();
+        }
+
+        return $users;
+    }
+
     public function toUserQueryBuilder(): UserQueryBuilder
     {
         return $this->queryBuilder;
+    }
+
+    /**
+     * @param callable $item_changes
+     * @return User[]
+     * @throws EmptyQueryBuilderArguments
+     * @throws UpdateAnonymousFunctionDidNotReturnUserObject
+     */
+    public function update(callable $item_changes): array
+    {
+        /** @var User[] $users */
+        $users = $this->get();
+
+        foreach ($users as $user) {
+            if (($user = $item_changes($user)) instanceof User) {
+                $user->save();
+                continue;
+            }
+
+            throw new UpdateAnonymousFunctionDidNotReturnUserObject;
+        }
+
+        return $users;
     }
 
     private function resolveCallResult(
