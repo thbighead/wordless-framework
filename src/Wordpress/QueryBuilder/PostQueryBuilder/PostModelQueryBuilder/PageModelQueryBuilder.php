@@ -5,6 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Page;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
+use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\Delete\Exceptions\WpDeletePostFailed;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidMethodException;
@@ -47,5 +48,25 @@ class PageModelQueryBuilder extends PostModelQueryBuilder
     public function buildEdit(): Builder
     {
         return new MultipleUpdateBuilder($this, $this->model_class_namespace::postType());
+    }
+
+    /**
+     * @return Page[]
+     * @throws EmptyQueryBuilderArguments
+     * @throws WpDeletePostFailed
+     */
+    public function delete(): array
+    {
+        return parent::delete();
+    }
+
+    /**
+     * @return Page[]
+     * @throws EmptyQueryBuilderArguments
+     * @throws WpDeletePostFailed
+     */
+    public function trash(): array
+    {
+        return parent::trash();
     }
 }

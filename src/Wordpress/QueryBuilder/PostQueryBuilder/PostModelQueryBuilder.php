@@ -6,6 +6,7 @@ use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderA
 use Wordless\Wordpress\Models\Post;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder;
+use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\Delete\Exceptions\WpDeletePostFailed;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidMethodException;
@@ -69,9 +70,43 @@ class PostModelQueryBuilder
         return new MultipleUpdateBuilder($this, $this->model_class_namespace::postType());
     }
 
+    /**
+     * @return Post[]
+     * @throws EmptyQueryBuilderArguments
+     * @throws WpDeletePostFailed
+     */
+    public function delete(): array
+    {
+        /** @var Post[] $posts */
+        $posts = $this->get();
+
+        foreach ($posts as $post) {
+            $post->delete();
+        }
+
+        return $posts;
+    }
+
     public function toPostQueryBuilder(): PostQueryBuilder
     {
         return $this->queryBuilder;
+    }
+
+    /**
+     * @return Post[]
+     * @throws EmptyQueryBuilderArguments
+     * @throws WpDeletePostFailed
+     */
+    public function trash(): array
+    {
+        /** @var Post[] $posts */
+        $posts = $this->get();
+
+        foreach ($posts as $post) {
+            $post->trash();
+        }
+
+        return $posts;
     }
 
     /**
