@@ -2,16 +2,20 @@
 
 namespace Wordless\Wordpress\QueryBuilder\TermQueryBuilder;
 
+use Wordless\Application\Helpers\Database;
+use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\TermInstantiationError;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Delete\Exceptions\DeleteTermError;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Update\UpdateBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidMethodException;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidModelClass;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\TermModelQueryBuilder\Exceptions\FailedToResolveCallResult;
-use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\TermModelQueryBuilder\MultipleUpdateBuilder;
+use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\TermModelQueryBuilder\Exceptions\FailedToUpdateTerms;
+use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\TermModelQueryBuilder\Exceptions\UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject;
 use WP_Term;
 
 /**
@@ -67,12 +71,37 @@ class TermModelQueryBuilder
     }
 
     /**
-     * @return MultipleUpdateBuilder
-     * @throws EmptyQueryBuilderArguments
+     * @param callable $item_changes
+     * @return Taxonomy[]
+     * @throws FailedToUpdateTerms
+     * @throws UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject
      */
-    public function buildEdit(): MultipleUpdateBuilder
+    public function update(callable $item_changes): array
     {
-        return new MultipleUpdateBuilder($this, $this->model_class_namespace::getNameKey());
+        try {
+            /** @var Taxonomy[] $terms */
+            $terms = $this->get();
+
+            Database::smartTransaction(function () use ($terms, $item_changes) {
+                foreach ($terms as $term) {
+                    $termUpdateBuilder = $item_changes($term);
+
+                    if ($termUpdateBuilder instanceof UpdateBuilder) {
+                        $termUpdateBuilder->update();
+                        continue;
+                    }
+
+                    throw new UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject;
+                }
+            });
+
+            return $terms;
+        } catch (EmptyQueryBuilderArguments|QueryError $exception) {
+            throw new FailedToUpdateTerms($exception);
+        } catch (UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject $exception) {
+            /** @noinspection PhpExceptionImmediatelyRethrownInspection */
+            throw $exception;
+        }
     }
 
     /**

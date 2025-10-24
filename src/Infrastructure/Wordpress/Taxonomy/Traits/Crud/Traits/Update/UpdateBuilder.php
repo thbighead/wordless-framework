@@ -69,17 +69,7 @@ class UpdateBuilder
      */
     public function update(): array
     {
-        return $this->callWpUpdateTerm($this->term_id);
-    }
-
-    /**
-     * @param int $term_id
-     * @return array
-     * @throws FailedToUpdateTaxonomyTerm
-     */
-    protected function callWpUpdateTerm(int $term_id): array
-    {
-        if (($result = wp_update_term($term_id, $this->taxonomy_key, $this->arguments)) instanceof WP_Error) {
+        if (($result = wp_update_term($this->term_id, $this->taxonomy_key, $this->arguments)) instanceof WP_Error) {
             throw new FailedToUpdateTaxonomyTerm($result);
         }
 

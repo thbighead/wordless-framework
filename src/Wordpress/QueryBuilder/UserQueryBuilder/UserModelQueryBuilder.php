@@ -2,12 +2,16 @@
 
 namespace Wordless\Wordpress\QueryBuilder\UserQueryBuilder;
 
+use Wordless\Application\Helpers\Database;
+use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Delete\Exceptions\FailedToDeleteUser;
+use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Update\Exceptions\FailedToUpdateUser;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidMethodException;
 use Wordless\Wordpress\QueryBuilder\UserQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\UserQueryBuilder\UserModelQueryBuilder\Exceptions\FailedToUpdateUsers;
 use Wordless\Wordpress\QueryBuilder\UserQueryBuilder\UserModelQueryBuilder\Exceptions\UpdateAnonymousFunctionDidNotReturnUserObject;
 use WP_User;
 
@@ -70,24 +74,35 @@ class UserModelQueryBuilder
     /**
      * @param callable $item_changes
      * @return User[]
-     * @throws EmptyQueryBuilderArguments
+     * @throws FailedToUpdateUsers
      * @throws UpdateAnonymousFunctionDidNotReturnUserObject
      */
     public function update(callable $item_changes): array
     {
-        /** @var User[] $users */
-        $users = $this->get();
+        try {
+            /** @var User[] $users */
+            $users = $this->get();
 
-        foreach ($users as $user) {
-            if (($user = $item_changes($user)) instanceof User) {
-                $user->save();
-                continue;
-            }
+            Database::smartTransaction(function () use ($users, $item_changes) {
+                foreach ($users as $user) {
+                    $changedUser = $item_changes($user);
 
-            throw new UpdateAnonymousFunctionDidNotReturnUserObject;
+                    if ($changedUser instanceof User) {
+                        $changedUser->save();
+                        continue;
+                    }
+
+                    throw new UpdateAnonymousFunctionDidNotReturnUserObject;
+                }
+            });
+
+            return $users;
+        } catch (EmptyQueryBuilderArguments|FailedToUpdateUser|QueryError $exception) {
+            throw new FailedToUpdateUsers($exception);
+        } catch (UpdateAnonymousFunctionDidNotReturnUserObject $exception) {
+            /** @noinspection PhpExceptionImmediatelyRethrownInspection */
+            throw $exception;
         }
-
-        return $users;
     }
 
     private function resolveCallResult(
