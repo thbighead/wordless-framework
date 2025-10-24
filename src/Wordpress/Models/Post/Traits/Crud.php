@@ -7,6 +7,7 @@ use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateIn
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Exceptions\FindOrCreateFailed;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate;
+use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder\Exceptions\WpInsertPostError;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\Delete;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\Read;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder;
@@ -26,7 +27,6 @@ trait Crud
     public static function findOrCreate(string $slug, ?string $title = null): static
     {
         try {
-            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
             return static::findBySlug($slug)
                 ?? new static(static::buildNew($title ?? Str::titleCase($slug))->slug($slug)->create());
         } catch (FailedToCreateInflector $exception) {
@@ -36,6 +36,8 @@ trait Crud
             );
         } catch (EmptyQueryBuilderArguments $exception) {
             throw new FindOrCreateFailed("Failed to find slug '$slug'.", $exception);
+        } catch (WpInsertPostError $exception) {
+            throw new FindOrCreateFailed('Failed to call wp_insert_post function.', $exception);
         }
     }
 
