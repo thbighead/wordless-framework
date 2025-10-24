@@ -2,13 +2,16 @@
 
 namespace Wordless\Wordpress\QueryBuilder\TermQueryBuilder;
 
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\TermInstantiationError;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Delete\Exceptions\DeleteTermError;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidMethodException;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidModelClass;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\TermModelQueryBuilder\Exceptions\FailedToResolveCallResult;
+use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\TermModelQueryBuilder\MultipleUpdateBuilder;
 use WP_Term;
 
 /**
@@ -61,6 +64,32 @@ class TermModelQueryBuilder
         }
 
         $this->queryBuilder = TermQueryBuilder::make($this->model_class_namespace::getNameKey());
+    }
+
+    /**
+     * @return MultipleUpdateBuilder
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function buildEdit(): MultipleUpdateBuilder
+    {
+        return new MultipleUpdateBuilder($this, $this->model_class_namespace::getNameKey());
+    }
+
+    /**
+     * @return Taxonomy[]
+     * @throws DeleteTermError
+     * @throws EmptyQueryBuilderArguments
+     */
+    public function delete(): array
+    {
+        /** @var Taxonomy[] $terms */
+        $terms = $this->get();
+
+        foreach ($terms as $term) {
+            $term->delete();
+        }
+
+        return $terms;
     }
 
     public function toTermQueryBuilder(): TermQueryBuilder

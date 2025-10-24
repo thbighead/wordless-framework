@@ -41,9 +41,9 @@ trait Delete
      */
     public static function truncate(): void
     {
+        /** @var Taxonomy $term */
         foreach (static::all() as $term) {
-            /** @var WP_Term $term */
-            static::deleteTerm($term->term_id);
+            $term->delete();
         }
     }
 

@@ -2,6 +2,7 @@
 
 namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Update;
 
+use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Update\UpdateBuilder\Exceptions\FailedToUpdateTaxonomyTerm;
 use WP_Error;
@@ -37,6 +38,13 @@ class UpdateBuilder
         return $this;
     }
 
+    public function name(string $new_name): static
+    {
+        $this->arguments['name'] = $new_name;
+
+        return $this;
+    }
+
     public function parent(int|Taxonomy|WP_Term $parent_id): static
     {
         if (!is_int($parent_id)) {
@@ -50,19 +58,31 @@ class UpdateBuilder
 
     public function slug(string $new_slug): static
     {
-        $this->arguments['slug'] = $new_slug;
+        $this->arguments['slug'] = Str::slugCase($new_slug);
 
         return $this;
     }
 
     /**
-     * @return void
+     * @return array<string, int>
      * @throws FailedToUpdateTaxonomyTerm
      */
-    public function update(): void
+    public function update(): array
     {
-        if (($result = wp_update_term($this->term_id, $this->taxonomy_key, $this->arguments)) instanceof WP_Error) {
+        return $this->callWpUpdateTerm($this->term_id);
+    }
+
+    /**
+     * @param int $term_id
+     * @return array
+     * @throws FailedToUpdateTaxonomyTerm
+     */
+    protected function callWpUpdateTerm(int $term_id): array
+    {
+        if (($result = wp_update_term($term_id, $this->taxonomy_key, $this->arguments)) instanceof WP_Error) {
             throw new FailedToUpdateTaxonomyTerm($result);
         }
+
+        return $result;
     }
 }
