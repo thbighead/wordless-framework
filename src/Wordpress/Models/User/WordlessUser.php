@@ -14,6 +14,7 @@ use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Create\Exceptions\FailedToCreateUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToDeleteWordlessUser;
 use Wordless\Wordpress\Models\User\WordlessUser\Exceptions\TryingToUpdateWordlessUser;
+use WP_User;
 
 class WordlessUser extends User
 {
@@ -59,7 +60,11 @@ class WordlessUser extends User
         return parent::findByEmail(self::email());
     }
 
-    final public static function make(): self
+    /**
+     * @param WP_User|null $wp_user
+     * @return static
+     */
+    final public static function make(?WP_User $wp_user = null): static
     {
         return self::getInstance();
     }

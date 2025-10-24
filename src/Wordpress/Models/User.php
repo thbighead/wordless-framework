@@ -20,6 +20,16 @@ class User extends WP_User implements IRelatedMetaData
     use Terms;
     use WithMetaData;
 
+    /**
+     * @param WP_User|null $wp_user
+     * @return static
+     * @throws NoUserAuthenticated
+     */
+    public static function make(?WP_User $wp_user = null): static
+    {
+        return new static($wp_user);
+    }
+
     public static function objectType(): ObjectType
     {
         return ObjectType::user;

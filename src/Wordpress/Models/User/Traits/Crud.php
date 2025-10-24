@@ -6,6 +6,7 @@ use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Create;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Delete;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Read;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Update;
+use Wordless\Wordpress\QueryBuilder\UserQueryBuilder\UserModelQueryBuilder;
 
 trait Crud
 {
@@ -13,4 +14,9 @@ trait Crud
     use Delete;
     use Read;
     use Update;
+
+    public static function query(): UserModelQueryBuilder
+    {
+        return UserModelQueryBuilder::make();
+    }
 }
