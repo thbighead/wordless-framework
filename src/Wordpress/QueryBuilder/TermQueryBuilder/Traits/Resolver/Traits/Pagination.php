@@ -31,10 +31,9 @@ trait Pagination
         array           $extra_arguments = []
     ): PaginatedTerms
     {
-        $this->arguments[TermsListFormat::FIELDS_KEY] = $format->value;
-
         return new PaginatedTerms(
-            $this->resolveExtraArguments($this->arguments, $extra_arguments),
+            $this->preparePagination($format)
+                ->resolveExtraArguments($this->arguments, $extra_arguments),
             max($terms_per_page, 1)
         );
     }
@@ -52,11 +51,17 @@ trait Pagination
         array           $extra_arguments = []
     ): Rotating
     {
-        $this->arguments[TermsListFormat::FIELDS_KEY] = $format->value;
-
         return new Rotating(
-            $this->resolveExtraArguments($this->arguments, $extra_arguments),
+            $this->preparePagination($format)
+                ->resolveExtraArguments($this->arguments, $extra_arguments),
             max($terms_per_page, 1)
         );
+    }
+
+    private function preparePagination(TermsListFormat $format): static
+    {
+        $this->arguments[TermsListFormat::FIELDS_KEY] = $format->value;
+
+        return $this;
     }
 }

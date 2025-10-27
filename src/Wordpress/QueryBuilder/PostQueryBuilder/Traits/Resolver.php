@@ -6,7 +6,6 @@ use stdClass;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Resolver\Traits\ArgumentsFixer;
@@ -18,17 +17,25 @@ trait Resolver
     use ArgumentsFixer;
     use Pagination;
 
+    private bool $already_queried = false;
+
     /**
+     * @param array $extra_arguments
+     * @param bool $query_again
      * @return int
      * @throws EmptyQueryBuilderArguments
      */
-    public function count(): int
+    public function count(array $extra_arguments = [], bool $query_again = false): int
     {
-        if (!$this->arePostsAlreadyLoaded()) {
-            $this->getIds([self::KEY_NO_FOUND_ROWS => true]);
+        if (!$this->already_queried || $query_again || !empty($extra_arguments)) {
+            $this->arguments[self::KEY_NO_FOUND_ROWS] = false;
+
+            $this->getIds($extra_arguments);
         }
 
-        return $this->getQuery()->found_posts;
+        return !($this->arguments[self::KEY_NO_FOUND_ROWS] ?? false)
+            ? $this->getQuery()->found_posts
+            : count($this->getQuery()->posts);
     }
 
     /**
@@ -116,32 +123,9 @@ trait Resolver
      */
     private function query(array $extra_arguments = []): array
     {
+        $this->already_queried = true;
+
         return $this->getQuery()->query($this->buildArguments($extra_arguments));
-    }
-
-    /**
-     * @param array $arguments
-     * @return $this
-     * @throws EmptyQueryBuilderArguments
-     */
-    private function resolveDateSubQuery(array &$arguments): static
-    {
-        $dateSubQueryBuilder = $arguments[DateSubQueryBuilder::ARGUMENT_KEY] ?? null;
-
-        if ($dateSubQueryBuilder instanceof DateSubQueryBuilder) {
-            $arguments[DateSubQueryBuilder::ARGUMENT_KEY] = $dateSubQueryBuilder->buildArguments();
-        }
-
-        return $this;
-    }
-
-    private function resolveExtraArguments(array &$arguments, array $extra_arguments): static
-    {
-        foreach ($extra_arguments as $extra_argument_key => $extra_argument_value) {
-            $arguments[$extra_argument_key] = $extra_argument_value;
-        }
-
-        return $this;
     }
 
     private function resolveMimeTypeArgument(array &$arguments): static

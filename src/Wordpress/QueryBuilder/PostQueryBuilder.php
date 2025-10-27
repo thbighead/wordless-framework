@@ -6,7 +6,6 @@ use Wordless\Infrastructure\Wordpress\QueryBuilder\WpQueryBuilder;
 use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Enums\PostsListFormat;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\TaxonomySubQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Author;
@@ -21,6 +20,7 @@ use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Slug;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Status;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Tag;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\Traits\Type;
+use Wordless\Wordpress\QueryBuilder\Traits\HasDateSubQuery;
 use Wordless\Wordpress\QueryBuilder\Traits\HasMetaSubQuery;
 use WP_Query;
 
@@ -29,6 +29,7 @@ class PostQueryBuilder extends WpQueryBuilder
     use Author;
     use Category;
     use Comment;
+    use HasDateSubQuery;
     use HasMetaSubQuery;
     use Id;
     use OrderBy;
@@ -56,13 +57,6 @@ class PostQueryBuilder extends WpQueryBuilder
             ->setPostsFormat(PostsListFormat::all_fields);
 
         parent::__construct();
-    }
-
-    public function whereDate(DateSubQueryBuilder $subQuery): static
-    {
-        $this->arguments[DateSubQueryBuilder::ARGUMENT_KEY] = $subQuery;
-
-        return $this;
     }
 
     public function whereTaxonomy(TaxonomySubQueryBuilder $subQuery): static
@@ -104,11 +98,6 @@ class PostQueryBuilder extends WpQueryBuilder
     protected function mountNewWpQuery(): WP_Query
     {
         return new WP_Query;
-    }
-
-    private function arePostsAlreadyLoaded(): bool
-    {
-        return isset($this->getQuery()->posts);
     }
 
     private function setPostsFormat(PostsListFormat $format): static

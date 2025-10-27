@@ -8,7 +8,7 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Application\Listeners\DisableComments\Contracts\DisableCommentsActionListener;
 use Wordless\Exceptions\FailedToRetrieveConfigFromWordpressConfigFile;
 use Wordless\Infrastructure\Wordpress\CustomPost;
-use Wordless\Wordpress\Models\Post;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder\Exceptions\WpInsertPostError;
 use Wordless\Wordpress\Models\PostStatus;
 use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
@@ -27,7 +27,7 @@ abstract class Builder
     private ?string $excerpt = null;
     /** @var array<string, string> $meta */
     private array $meta = [];
-    private Post|int|null $parent_id = null;
+    private BasePost|int|null $parent_id = null;
     private ?string $password = null;
     private DateTimeInterface|string|null $publishing_date = null;
     private ?string $slug = null;
@@ -92,7 +92,7 @@ abstract class Builder
         return $this;
     }
 
-    public function parent(Post|int $parent): static
+    public function parent(BasePost|int $parent): static
     {
         $this->parent_id = $parent;
 

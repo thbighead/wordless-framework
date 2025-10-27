@@ -3,11 +3,11 @@
 namespace Wordless\Tests\Unit\PostQueryBuilderTest\DateSubQueryBuilderTest\Traits\WhereDayOfMonth;
 
 use ReflectionException;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Relation;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfMonth;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Enums\Column;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Enums\Compare;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Enums\Relation;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfMonth;
 
 trait WhereGreaterThan
 {

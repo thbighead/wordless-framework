@@ -100,7 +100,6 @@ class UserModelQueryBuilder
         } catch (EmptyQueryBuilderArguments|FailedToUpdateUser|QueryError $exception) {
             throw new FailedToUpdateUsers($exception);
         } catch (UpdateAnonymousFunctionDidNotReturnUserObject $exception) {
-            /** @noinspection PhpExceptionImmediatelyRethrownInspection */
             throw $exception;
         }
     }

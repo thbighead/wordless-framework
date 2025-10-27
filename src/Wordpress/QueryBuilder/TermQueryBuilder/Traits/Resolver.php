@@ -15,14 +15,21 @@ trait Resolver
 {
     use Pagination;
 
+    private bool $already_queried = false;
+
     /**
      * @param array $extra_arguments
+     * @param bool $query_again
      * @return int
      * @throws EmptyQueryBuilderArguments
      */
-    public function count(array $extra_arguments = []): int
+    public function count(array $extra_arguments = [], bool $query_again = false): int
     {
-        return count($this->getIds($extra_arguments));
+        if (!$this->already_queried || $query_again || !empty($extra_arguments)) {
+            $this->getIds($extra_arguments);
+        }
+
+        return count($this->getQuery()->terms);
     }
 
     /**
@@ -259,6 +266,8 @@ trait Resolver
      */
     private function query(array $extra_arguments = []): array
     {
+        $this->already_queried = true;
+
         return $this->getQuery()->query($this->buildArguments($extra_arguments));
     }
 
@@ -266,15 +275,6 @@ trait Resolver
     {
         return $this->resolveUniqueKeyedArgumentArray($arguments, self::EXCLUDE_KEY)
             ->resolveUniqueKeyedArgumentArray($arguments, self::EXCLUDE_TREE_KEY);
-    }
-
-    private function resolveExtraArguments(array &$arguments, array $extra_arguments): static
-    {
-        foreach ($extra_arguments as $extra_argument_key => $extra_argument_value) {
-            $arguments[$extra_argument_key] = $extra_argument_value;
-        }
-
-        return $this;
     }
 
     private function resolveOnlyAssociatedToArgument(array &$arguments): static

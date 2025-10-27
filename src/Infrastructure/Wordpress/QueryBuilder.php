@@ -17,6 +17,15 @@ abstract class QueryBuilder
         return $this->validateArguments($this->arguments);
     }
 
+    final protected function resolveExtraArguments(array &$arguments, array $extra_arguments): static
+    {
+        foreach ($extra_arguments as $extra_argument_key => $extra_argument_value) {
+            $arguments[$extra_argument_key] = $extra_argument_value;
+        }
+
+        return $this;
+    }
+
     /**
      * @param array $arguments
      * @return array

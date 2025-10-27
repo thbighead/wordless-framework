@@ -94,7 +94,6 @@ class PageModelQueryBuilder extends PostModelQueryBuilder
         } catch (EmptyQueryBuilderArguments|QueryError $exception) {
             throw new FailedToUpdatePages($exception);
         } catch (UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject $exception) {
-            /** @noinspection PhpExceptionImmediatelyRethrownInspection */
             throw $exception;
         }
     }

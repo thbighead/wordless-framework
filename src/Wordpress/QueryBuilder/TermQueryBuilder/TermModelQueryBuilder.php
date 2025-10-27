@@ -99,7 +99,6 @@ class TermModelQueryBuilder
         } catch (EmptyQueryBuilderArguments|QueryError $exception) {
             throw new FailedToUpdateTerms($exception);
         } catch (UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject $exception) {
-            /** @noinspection PhpExceptionImmediatelyRethrownInspection */
             throw $exception;
         }
     }

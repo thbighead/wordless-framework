@@ -21,15 +21,15 @@ trait Read
             throw new InvalidMetaKey($meta_key);
         }
 
-        if (isset($this->metaFields[$meta_key])) {
-            return $this->metaFields[$meta_key];
+        if (isset($this->meta_fields[$meta_key])) {
+            return $this->meta_fields[$meta_key];
         }
 
         if (is_null($meta_field_value = $this->callGetFirstMetaData($meta_key))) {
             return $default;
         }
 
-        return $this->metaFields[$meta_key] = $meta_field_value;
+        return $this->meta_fields[$meta_key] = $meta_field_value;
     }
 
     /**
@@ -41,6 +41,6 @@ trait Read
             $this->loadMetaFields();
         }
 
-        return $this->metaFields;
+        return $this->meta_fields;
     }
 }

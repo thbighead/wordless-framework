@@ -26,13 +26,15 @@ trait Resolver
      */
     public function count(array $extra_arguments = [], bool $query_again = false): int
     {
-        $this->arguments[self::KEY_COUNT_TOTAL] = true;
-
         if (!$this->already_queried || $query_again || !empty($extra_arguments)) {
+            $this->arguments[self::KEY_COUNT_TOTAL] = true;
+
             $this->query($this->buildArguments($extra_arguments));
         }
 
-        return $this->getQuery()->get_total();
+        return ($this->arguments[self::KEY_COUNT_TOTAL] ?? false)
+            ? $this->getQuery()->get_total()
+            : count($this->getQuery()->get_results());
     }
 
     /**
@@ -95,15 +97,6 @@ trait Resolver
         $this->getQuery()->query();
 
         $this->already_queried = true;
-
-        return $this;
-    }
-
-    private function resolveExtraArguments(array &$arguments, array $extra_arguments): static
-    {
-        foreach ($extra_arguments as $extra_argument_key => $extra_argument_value) {
-            $arguments[$extra_argument_key] = $extra_argument_value;
-        }
 
         return $this;
     }

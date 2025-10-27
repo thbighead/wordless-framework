@@ -6,11 +6,12 @@ use Wordless\Wordpress\Models\MenuItem\DTO\LinkDTO;
 use Wordless\Wordpress\Models\MenuItem\DTO\ObjectDTO;
 use Wordless\Wordpress\Models\MenuItem\DTO\TypeDTO;
 use Wordless\Wordpress\Models\MenuItem\Enums\Type;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use WP_Post;
 
-class MenuItem extends Post
+class MenuItem extends BasePost
 {
     protected const TYPE_KEY = 'nav_menu_item';
 

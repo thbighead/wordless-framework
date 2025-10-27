@@ -5,7 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use Wordless\Application\Helpers\Database;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
-use Wordless\Wordpress\Models\Post;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost;
 use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder\UpdateBuilder;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\Delete\Exceptions\WpDeletePostFailed;
@@ -37,12 +37,12 @@ class PostModelQueryBuilder
     /**
      * @param string $name
      * @param array $arguments
-     * @return array|bool|int|string|Post|$this|null
+     * @return array|bool|int|string|BasePost|$this|null
      * @throws InitializingModelWithWrongPostType
      * @throws InvalidMethodException
      * @throws PostTypeNotRegistered
      */
-    public function __call(string $name, array $arguments): array|bool|int|string|static|Post|null
+    public function __call(string $name, array $arguments): array|bool|int|string|static|BasePost|null
     {
         if ($name !== 'onlyOfType' && $name !== 'whereType' && is_callable([$this->queryBuilder, $name])) {
             return $this->resolveCallResult($this->queryBuilder->$name(...$arguments));
@@ -52,12 +52,12 @@ class PostModelQueryBuilder
     }
 
     /**
-     * @param class-string|Post $model_class_namespace
+     * @param class-string|BasePost $model_class_namespace
      * @throws InvalidModelClass
      */
     public function __construct(protected readonly string $model_class_namespace)
     {
-        if (!is_a($this->model_class_namespace, $correct_class_namespace = Post::class, true)) {
+        if (!is_a($this->model_class_namespace, $correct_class_namespace = BasePost::class, true)) {
             throw new InvalidModelClass($this->model_class_namespace, $correct_class_namespace);
         }
 
@@ -65,13 +65,13 @@ class PostModelQueryBuilder
     }
 
     /**
-     * @return Post[]
+     * @return BasePost[]
      * @throws EmptyQueryBuilderArguments
      * @throws WpDeletePostFailed
      */
     public function delete(): array
     {
-        /** @var Post[] $posts */
+        /** @var BasePost[] $posts */
         $posts = $this->get();
 
         foreach ($posts as $post) {
@@ -87,13 +87,13 @@ class PostModelQueryBuilder
     }
 
     /**
-     * @return Post[]
+     * @return BasePost[]
      * @throws EmptyQueryBuilderArguments
      * @throws WpDeletePostFailed
      */
     public function trash(): array
     {
-        /** @var Post[] $posts */
+        /** @var BasePost[] $posts */
         $posts = $this->get();
 
         foreach ($posts as $post) {
@@ -106,14 +106,14 @@ class PostModelQueryBuilder
     /**
      * @param callable $item_changes
      * @param bool $firing_after_events
-     * @return Post[]
+     * @return BasePost[]
      * @throws FailedToUpdatePosts
      * @throws UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject
      */
     public function update(callable $item_changes, bool $firing_after_events = true): array
     {
         try {
-            /** @var Post[] $posts */
+            /** @var BasePost[] $posts */
             $posts = $this->get();
 
             Database::smartTransaction(function () use ($posts, $item_changes, $firing_after_events) {
@@ -133,20 +133,19 @@ class PostModelQueryBuilder
         } catch (EmptyQueryBuilderArguments|QueryError $exception) {
             throw new FailedToUpdatePosts($exception);
         } catch (UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject $exception) {
-            /** @noinspection PhpExceptionImmediatelyRethrownInspection */
             throw $exception;
         }
     }
 
     /**
      * @param bool|int|string|array|WP_Post|PostQueryBuilder|null $result
-     * @return bool|int|string|array|Post|$this|null
+     * @return bool|int|string|array|BasePost|$this|null
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */
     private function resolveCallResult(
         bool|int|string|array|WP_Post|PostQueryBuilder|null $result
-    ): bool|int|string|array|Post|static|null
+    ): bool|int|string|array|BasePost|static|null
     {
         if ($result instanceof PostQueryBuilder) {
             return $this;
@@ -165,7 +164,7 @@ class PostModelQueryBuilder
 
     /**
      * @param array $result
-     * @return Post[]
+     * @return BasePost[]
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */

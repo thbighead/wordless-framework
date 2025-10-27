@@ -16,7 +16,7 @@ use Wordless\Tests\Unit\PostQueryBuilderTest\DateSubQueryBuilderTest\Traits\Wher
 use Wordless\Tests\Unit\PostQueryBuilderTest\DateSubQueryBuilderTest\Traits\WhereYear;
 use Wordless\Tests\Unit\PostQueryBuilderTest\DateSubQueryBuilderTest\Traits\WhereYearMonth;
 use Wordless\Tests\WordlessTestCase\QueryBuilderTestCase;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder;
 
 class DateSubQueryBuilderTest extends QueryBuilderTestCase
 {
