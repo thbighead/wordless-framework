@@ -5,6 +5,9 @@ namespace Wordless\Wordpress\QueryBuilder;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\WpQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Author;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Id;
+use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\OrderBy;
+use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\ParentComment;
+use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Post;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver;
 use Wordless\Wordpress\QueryBuilder\Traits\HasDateSubQuery;
 use Wordless\Wordpress\QueryBuilder\Traits\HasMetaSubQuery;
@@ -16,13 +19,32 @@ class CommentQueryBuilder extends WpQueryBuilder
     use HasDateSubQuery;
     use HasMetaSubQuery;
     use Id;
+    use OrderBy;
+    use ParentComment;
+    use Post;
     use Resolver;
 
     private const KEY_INCLUDE_UNAPPROVED = 'include_unapproved';
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->arguments['update_comment_post_cache'] = true;
+
+        $this->disableOrderBy();
+    }
+
     public function limit(int $how_many): static
     {
         $this->arguments['number'] = max(1, $how_many);
+
+        return $this;
+    }
+
+    public function search(string $search): static
+    {
+        $this->arguments['search'] = $search;
 
         return $this;
     }

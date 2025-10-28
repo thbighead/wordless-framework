@@ -180,7 +180,7 @@ abstract class Builder
         }
 
         if ($this->status !== null) {
-            $post_array['post_status'] = $this->status->name;
+            $post_array['post_status'] = $this->status->value ?? $this->status->name;
         }
 
         if ($this->password !== null) {

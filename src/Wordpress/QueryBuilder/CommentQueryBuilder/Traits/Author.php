@@ -6,6 +6,10 @@ use Wordless\Application\Helpers\Arr;
 
 trait Author
 {
+    private const KEY_AUTHOR_IN = 'author__in';
+    private const KEY_AUTHOR_NOT_IN = 'author__not_in';
+    private const KEY_USER_ID = 'user_id';
+
     public function includeEvenIfUnapprovedAuthorEmails(string $email, string ...$emails): static
     {
         $emails = Arr::prepend($emails, $email);
@@ -26,19 +30,27 @@ trait Author
 
     public function whereAuthorId(int $author_id): static
     {
-        return $this->whereAuthorIdIn($author_id);
+        $this->arguments[self::KEY_USER_ID] = $author_id;
+
+        unset($this->arguments[self::KEY_AUTHOR_IN], $this->arguments[self::KEY_AUTHOR_NOT_IN]);
+
+        return $this;
     }
 
     public function whereAuthorIdIn(int $author_id, int ...$author_ids): static
     {
-        $this->arguments['author__in'] = Arr::prepend($author_ids, $author_id);
+        $this->arguments[self::KEY_AUTHOR_IN] = Arr::prepend($author_ids, $author_id);
+
+        unset($this->arguments[self::KEY_USER_ID], $this->arguments[self::KEY_AUTHOR_NOT_IN]);
 
         return $this;
     }
 
     public function whereAuthorIdNotIn(int $author_id, int ...$author_ids): static
     {
-        $this->arguments['author__not_in'] = Arr::prepend($author_ids, $author_id);
+        $this->arguments[self::KEY_AUTHOR_NOT_IN] = Arr::prepend($author_ids, $author_id);
+
+        unset($this->arguments[self::KEY_USER_ID], $this->arguments[self::KEY_AUTHOR_IN]);
 
         return $this;
     }

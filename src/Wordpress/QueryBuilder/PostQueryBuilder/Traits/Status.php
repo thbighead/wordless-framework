@@ -51,10 +51,7 @@ trait Status
 
     private function extractStatusString(StandardStatus|PostStatus $status): string
     {
-        return match (true) {
-            $status instanceof PostStatus => $status->name,
-            $status instanceof StandardStatus => $status->value,
-        };
+        return $status->value ?? $status->name;
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */

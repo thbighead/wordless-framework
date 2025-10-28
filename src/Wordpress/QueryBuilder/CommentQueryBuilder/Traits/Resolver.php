@@ -4,7 +4,10 @@ namespace Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits;
 
 use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
+use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver\Exceptions\TryingToOrderByMetaWithoutMetaQuery;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver\Traits\Pagination;
+use Wordless\Wordpress\QueryBuilder\Enums\Direction;
+use Wordless\Wordpress\QueryBuilder\MetaSubQueryBuilder;
 use WP_Comment;
 
 trait Resolver
@@ -18,6 +21,7 @@ trait Resolver
      * @param bool $query_again
      * @return int
      * @throws EmptyQueryBuilderArguments
+     * @throws TryingToOrderByMetaWithoutMetaQuery
      */
     public function count(array $extra_arguments = [], bool $query_again = false): int
     {
@@ -36,6 +40,7 @@ trait Resolver
     /**
      * @return bool
      * @throws EmptyQueryBuilderArguments
+     * @throws TryingToOrderByMetaWithoutMetaQuery
      */
     public function exists(): bool
     {
@@ -46,6 +51,7 @@ trait Resolver
      * @param int $quantity
      * @return WP_Comment|WP_Comment[]|null
      * @throws EmptyQueryBuilderArguments
+     * @throws TryingToOrderByMetaWithoutMetaQuery
      */
     public function first(int $quantity = 1): WP_Comment|array|null
     {
@@ -56,6 +62,7 @@ trait Resolver
      * @param array $extra_arguments
      * @return array<int, WP_Comment>
      * @throws EmptyQueryBuilderArguments
+     * @throws TryingToOrderByMetaWithoutMetaQuery
      */
     public function get(array $extra_arguments = []): array
     {
@@ -73,6 +80,7 @@ trait Resolver
      * @param array $extra_arguments
      * @return int[]
      * @throws EmptyQueryBuilderArguments
+     * @throws TryingToOrderByMetaWithoutMetaQuery
      */
     public function getIds(array $extra_arguments = []): array
     {
@@ -83,6 +91,7 @@ trait Resolver
      * @param array $extra_arguments
      * @return array<string, string|int|bool|array>
      * @throws EmptyQueryBuilderArguments
+     * @throws TryingToOrderByMetaWithoutMetaQuery
      */
     protected function buildArguments(array $extra_arguments = []): array
     {
@@ -90,6 +99,7 @@ trait Resolver
 
         $this->resolveDateSubQuery($arguments)
             ->resolveMetaSubQuery($arguments)
+            ->resolveOrderBy($arguments)
             ->resolveExtraArguments($arguments, $extra_arguments);
 
         return $arguments;
@@ -99,12 +109,31 @@ trait Resolver
      * @param array $extra_arguments
      * @return WP_Comment[]|int[]|int
      * @throws EmptyQueryBuilderArguments
+     * @throws TryingToOrderByMetaWithoutMetaQuery
      */
     private function query(array $extra_arguments = []): array|int
     {
         $this->already_queried = true;
 
         return $this->getQuery()->query($this->buildArguments($extra_arguments));
+    }
+
+    /**
+     * @param array $arguments
+     * @return $this
+     * @throws TryingToOrderByMetaWithoutMetaQuery
+     */
+    private function resolveOrderBy(array $arguments): static
+    {
+        if (empty($arguments[self::KEY_ORDER_BY])) {
+            return $this;
+        }
+
+        if ($this->ordering_by_meta && !isset($arguments[MetaSubQueryBuilder::ARGUMENT_KEY])) {
+            throw new TryingToOrderByMetaWithoutMetaQuery($arguments);
+        }
+
+        return $this;
     }
 
     private function setToReturnOnlyIds(): static
