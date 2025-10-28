@@ -109,6 +109,7 @@ class PostModelQueryBuilder
      * @return BasePost[]
      * @throws FailedToUpdatePosts
      * @throws UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject
+     * @noinspection PhpExceptionImmediatelyRethrownInspection
      */
     public function update(callable $item_changes, bool $firing_after_events = true): array
     {

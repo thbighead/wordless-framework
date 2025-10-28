@@ -7,8 +7,13 @@ use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Comment;
 use Wordless\Wordpress\Models\Comment\Exceptions\InvalidPostModelNamespace;
+use Wordless\Wordpress\Models\Comment\Traits\Crud\Traits\CreateAndUpdate\Builder\UpdateBuilder;
 use Wordless\Wordpress\Models\Post;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\CommentModelQueryBuilder\Exceptions\FailedToUpdateComments;
+use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\CommentModelQueryBuilder\Exceptions\RemoveCommentFailed;
+use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\CommentModelQueryBuilder\Exceptions\UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject;
+use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver\Exceptions\TryingToOrderByMetaWithoutMetaQuery;
 use Wordless\Wordpress\QueryBuilder\Exceptions\InvalidMethodException;
 use WP_Comment;
 
@@ -49,23 +54,23 @@ class CommentModelQueryBuilder
 
     /**
      * @param callable $item_changes
-     * @return Taxonomy[]
-     * @throws FailedToUpdateTerms
+     * @return Comment[]
+     * @throws FailedToUpdateComments
      * @throws UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject
      * @noinspection PhpExceptionImmediatelyRethrownInspection
      */
     public function update(callable $item_changes): array
     {
         try {
-            /** @var Taxonomy[] $terms */
-            $terms = $this->get();
+            /** @var Comment[] $comments */
+            $comments = $this->get();
 
-            Database::smartTransaction(function () use ($terms, $item_changes) {
-                foreach ($terms as $term) {
-                    $termUpdateBuilder = $item_changes($term);
+            Database::smartTransaction(function () use ($comments, $item_changes) {
+                foreach ($comments as $comment) {
+                    $commentUpdateBuilder = $item_changes($comment);
 
-                    if ($termUpdateBuilder instanceof UpdateBuilder) {
-                        $termUpdateBuilder->update();
+                    if ($commentUpdateBuilder instanceof UpdateBuilder) {
+                        $commentUpdateBuilder->update();
                         continue;
                     }
 
@@ -73,34 +78,61 @@ class CommentModelQueryBuilder
                 }
             });
 
-            return $terms;
-        } catch (EmptyQueryBuilderArguments|QueryError $exception) {
-            throw new FailedToUpdateTerms($exception);
+            return $comments;
+        } catch (EmptyQueryBuilderArguments|QueryError|TryingToOrderByMetaWithoutMetaQuery $exception) {
+            throw new FailedToUpdateComments($exception);
         } catch (UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject $exception) {
             throw $exception;
         }
     }
 
     /**
-     * @return Taxonomy[]
-     * @throws DeleteTermError
-     * @throws EmptyQueryBuilderArguments
+     * @return Comment[]
+     * @throws RemoveCommentFailed
      */
     public function delete(): array
     {
-        /** @var Taxonomy[] $terms */
-        $terms = $this->get();
+        try {
+            /** @var Comment[] $comments */
+            $comments = $this->get();
 
-        foreach ($terms as $term) {
-            $term->delete();
+            Database::smartTransaction(function () use ($comments) {
+                foreach ($comments as $comment) {
+                    $comment->delete();
+                }
+            });
+
+            return $comments;
+        } catch (EmptyQueryBuilderArguments|TryingToOrderByMetaWithoutMetaQuery|QueryError $exception) {
+            throw new RemoveCommentFailed(__METHOD__, $exception);
         }
-
-        return $terms;
     }
 
     public function toCommentQueryBuilder(): CommentQueryBuilder
     {
         return $this->queryBuilder;
+    }
+
+    /**
+     * @return Comment[]
+     * @throws RemoveCommentFailed
+     */
+    public function trash(): array
+    {
+        try {
+            /** @var Comment[] $comments */
+            $comments = $this->get();
+
+            Database::smartTransaction(function () use ($comments) {
+                foreach ($comments as $comment) {
+                    $comment->trash();
+                }
+            });
+
+            return $comments;
+        } catch (EmptyQueryBuilderArguments|TryingToOrderByMetaWithoutMetaQuery|QueryError $exception) {
+            throw new RemoveCommentFailed(__METHOD__, $exception);
+        }
     }
 
     /**

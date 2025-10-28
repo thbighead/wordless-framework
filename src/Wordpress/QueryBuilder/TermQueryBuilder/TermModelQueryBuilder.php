@@ -106,17 +106,19 @@ class TermModelQueryBuilder
 
     /**
      * @return Taxonomy[]
-     * @throws DeleteTermError
      * @throws EmptyQueryBuilderArguments
+     * @throws QueryError
      */
     public function delete(): array
     {
         /** @var Taxonomy[] $terms */
         $terms = $this->get();
 
-        foreach ($terms as $term) {
-            $term->delete();
-        }
+        Database::smartTransaction(function () use ($terms) {
+            foreach ($terms as $term) {
+                $term->delete();
+            }
+        });
 
         return $terms;
     }

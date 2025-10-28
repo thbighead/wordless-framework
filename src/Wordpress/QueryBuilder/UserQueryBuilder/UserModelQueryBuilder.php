@@ -52,16 +52,18 @@ class UserModelQueryBuilder
     /**
      * @return User[]
      * @throws EmptyQueryBuilderArguments
-     * @throws FailedToDeleteUser
+     * @throws QueryError
      */
     public function delete(): array
     {
         /** @var User[] $users */
         $users = $this->get();
 
-        foreach ($users as $user) {
-            $user->delete();
-        }
+        Database::smartTransaction(function () use ($users) {
+            foreach ($users as $user) {
+                $user->delete();
+            }
+        });
 
         return $users;
     }
@@ -76,6 +78,7 @@ class UserModelQueryBuilder
      * @return User[]
      * @throws FailedToUpdateUsers
      * @throws UpdateAnonymousFunctionDidNotReturnUserObject
+     * @noinspection PhpExceptionImmediatelyRethrownInspection
      */
     public function update(callable $item_changes): array
     {
