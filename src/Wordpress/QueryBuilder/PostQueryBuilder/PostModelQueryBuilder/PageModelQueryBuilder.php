@@ -21,12 +21,12 @@ class PageModelQueryBuilder extends PostModelQueryBuilder
     /**
      * @param string $name
      * @param array $arguments
-     * @return $this|array|bool|int|string|Page|null
+     * @return $this|array|bool|int|Page|null
      * @throws InitializingModelWithWrongPostType
      * @throws InvalidMethodException
      * @throws PostTypeNotRegistered
      */
-    public function __call(string $name, array $arguments): array|bool|int|string|static|Page|null
+    public function __call(string $name, array $arguments): array|bool|int|static|Page|null
     {
         return parent::__call($name, $arguments);
     }
@@ -70,6 +70,7 @@ class PageModelQueryBuilder extends PostModelQueryBuilder
      * @return Page[]
      * @throws FailedToUpdatePages
      * @throws UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject
+     * @noinspection PhpExceptionImmediatelyRethrownInspection
      */
     public function update(callable $item_changes, bool $firing_after_events = true): array
     {

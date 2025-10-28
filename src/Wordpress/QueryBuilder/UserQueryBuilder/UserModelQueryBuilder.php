@@ -7,7 +7,6 @@ use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
-use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Delete\Exceptions\FailedToDeleteUser;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Update\Exceptions\FailedToUpdateUser;
 use Wordless\Wordpress\QueryBuilder\Exceptions\InvalidMethodException;
 use Wordless\Wordpress\QueryBuilder\UserQueryBuilder;

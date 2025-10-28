@@ -2,6 +2,7 @@
 
 namespace Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver\Traits;
 
+use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver\Exceptions\TryingToOrderByMetaWithoutMetaQuery;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver\Traits\Pagination\PaginatedComments;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver\Traits\Pagination\PaginatedComments\Exceptions\FailedToConstructPaginatedComments;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver\Traits\Pagination\PaginatedComments\Rotating;
@@ -25,6 +26,7 @@ trait Pagination
      * @param array $extra_arguments
      * @return PaginatedComments
      * @throws FailedToConstructPaginatedComments
+     * @throws TryingToOrderByMetaWithoutMetaQuery
      */
     public function paginate(
         int   $comments_per_page,
@@ -45,6 +47,7 @@ trait Pagination
      * @param array $extra_arguments
      * @return Rotating
      * @throws FailedToConstructPaginatedComments
+     * @throws TryingToOrderByMetaWithoutMetaQuery
      */
     public function paginateRotating(
         int   $comments_per_page,

@@ -6,7 +6,6 @@ use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver\Exceptions\TryingToOrderByMetaWithoutMetaQuery;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver\Traits\Pagination;
-use Wordless\Wordpress\QueryBuilder\Enums\Direction;
 use Wordless\Wordpress\QueryBuilder\MetaSubQueryBuilder;
 use WP_Comment;
 

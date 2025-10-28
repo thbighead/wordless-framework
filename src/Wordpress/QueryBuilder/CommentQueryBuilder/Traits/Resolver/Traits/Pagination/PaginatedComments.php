@@ -6,6 +6,7 @@ use Wordless\Application\Libraries\Pagination\Pages;
 use Wordless\Application\Libraries\Pagination\Pages\Page\Exceptions\EmptyPage;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver\Exceptions\TryingToOrderByMetaWithoutMetaQuery;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver\Traits\Pagination\PaginatedComments\Exceptions\FailedToConstructPaginatedComments;
 use WP_Comment;
 
@@ -15,6 +16,7 @@ class PaginatedComments extends Pages
      * @param CommentQueryBuilder $queryBuilder
      * @param int $items_per_page
      * @throws FailedToConstructPaginatedComments
+     * @throws TryingToOrderByMetaWithoutMetaQuery
      */
     public function __construct(
         private readonly CommentQueryBuilder $queryBuilder,
@@ -34,6 +36,7 @@ class PaginatedComments extends Pages
      * @param int $valid_index
      * @return WP_Comment[]
      * @throws EmptyQueryBuilderArguments
+     * @throws TryingToOrderByMetaWithoutMetaQuery
      */
     protected function getPageItems(int $valid_index): array
     {

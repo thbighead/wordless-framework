@@ -2,7 +2,6 @@
 
 namespace Wordless\Wordpress\Models\Post\Traits\Crud\Traits;
 
-use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder\CreateBuilder;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder\UpdateBuilder;
 

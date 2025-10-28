@@ -2,7 +2,6 @@
 
 namespace Wordless\Wordpress\Models\Comment\Traits;
 
-use Wordless\Application\Helpers\Arr;
 use Wordless\Wordpress\Models\Comment\Traits\MixinWpComment\Exceptions\InvalidAttribute;
 use WP_Comment;
 

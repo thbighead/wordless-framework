@@ -8,7 +8,6 @@ use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderA
 use Wordless\Infrastructure\Wordpress\Taxonomy;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\TermInstantiationError;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Delete\Exceptions\DeleteTermError;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Update\UpdateBuilder;
 use Wordless\Wordpress\QueryBuilder\Exceptions\InvalidMethodException;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidModelClass;
