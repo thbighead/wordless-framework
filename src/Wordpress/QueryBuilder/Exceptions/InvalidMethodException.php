@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions;
+namespace Wordless\Wordpress\QueryBuilder\Exceptions;
 
 use BadMethodCallException;
 use Throwable;

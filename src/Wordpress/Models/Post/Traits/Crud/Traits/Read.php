@@ -36,6 +36,15 @@ trait Read
     }
 
     /**
+     * @return static[]
+     * @throws EmptyQueryBuilderArguments
+     */
+    public static function onlyPublished(): array
+    {
+        return static::query()->whereStatus(StandardStatus::publish)->get();
+    }
+
+    /**
      * @param string $slug
      * @return static|null
      * @throws EmptyQueryBuilderArguments

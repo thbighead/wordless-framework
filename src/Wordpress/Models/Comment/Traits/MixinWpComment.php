@@ -17,14 +17,6 @@ trait MixinWpComment
 
     public function __call(string $method_name, array $arguments)
     {
-        if ($method_name === 'add_child') {
-            // TODO
-        }
-
-        if ($method_name === 'get_child') {
-            return $this->child(Arr::first($arguments));
-        }
-
         return $this->wpComment->$method_name(...$arguments);
     }
 

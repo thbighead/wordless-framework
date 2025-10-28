@@ -10,7 +10,7 @@ use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\Initial
 use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\TermInstantiationError;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Delete\Exceptions\DeleteTermError;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Update\UpdateBuilder;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidMethodException;
+use Wordless\Wordpress\QueryBuilder\Exceptions\InvalidMethodException;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidModelClass;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TermQueryBuilder\TermModelQueryBuilder\Exceptions\FailedToResolveCallResult;
@@ -75,6 +75,7 @@ class TermModelQueryBuilder
      * @return Taxonomy[]
      * @throws FailedToUpdateTerms
      * @throws UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject
+     * @noinspection PhpExceptionImmediatelyRethrownInspection
      */
     public function update(callable $item_changes): array
     {

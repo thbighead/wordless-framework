@@ -10,9 +10,9 @@ use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder\UpdateBuilder;
 use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\Delete\Exceptions\WpDeletePostFailed;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
+use Wordless\Wordpress\QueryBuilder\Exceptions\InvalidMethodException;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\FailedToUpdatePosts;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidMethodException;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidModelClass;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject;
 use WP_Post;
@@ -37,12 +37,12 @@ class PostModelQueryBuilder
     /**
      * @param string $name
      * @param array $arguments
-     * @return array|bool|int|string|BasePost|$this|null
+     * @return array|bool|int|BasePost|$this|null
      * @throws InitializingModelWithWrongPostType
      * @throws InvalidMethodException
      * @throws PostTypeNotRegistered
      */
-    public function __call(string $name, array $arguments): array|bool|int|string|static|BasePost|null
+    public function __call(string $name, array $arguments): array|bool|int|static|BasePost|null
     {
         if ($name !== 'onlyOfType' && $name !== 'whereType' && is_callable([$this->queryBuilder, $name])) {
             return $this->resolveCallResult($this->queryBuilder->$name(...$arguments));
@@ -138,14 +138,14 @@ class PostModelQueryBuilder
     }
 
     /**
-     * @param bool|int|string|array|WP_Post|PostQueryBuilder|null $result
-     * @return bool|int|string|array|BasePost|$this|null
+     * @param bool|int|array|WP_Post|PostQueryBuilder|null $result
+     * @return bool|int|array|BasePost|$this|null
      * @throws InitializingModelWithWrongPostType
      * @throws PostTypeNotRegistered
      */
     private function resolveCallResult(
-        bool|int|string|array|WP_Post|PostQueryBuilder|null $result
-    ): bool|int|string|array|BasePost|static|null
+        bool|int|array|WP_Post|PostQueryBuilder|null $result
+    ): bool|int|array|BasePost|static|null
     {
         if ($result instanceof PostQueryBuilder) {
             return $this;

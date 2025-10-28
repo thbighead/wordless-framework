@@ -3,12 +3,14 @@
 namespace Wordless\Wordpress\QueryBuilder;
 
 use Wordless\Infrastructure\Wordpress\QueryBuilder\WpQueryBuilder;
+use Wordless\Wordpress\Models\Comment\Enums\Status;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Author;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Id;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\OrderBy;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\ParentComment;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Post;
 use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Resolver;
+use Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits\Type;
 use Wordless\Wordpress\QueryBuilder\Traits\HasDateSubQuery;
 use Wordless\Wordpress\QueryBuilder\Traits\HasMetaSubQuery;
 use WP_Comment_Query;
@@ -23,8 +25,14 @@ class CommentQueryBuilder extends WpQueryBuilder
     use ParentComment;
     use Post;
     use Resolver;
+    use Type;
 
     private const KEY_INCLUDE_UNAPPROVED = 'include_unapproved';
+
+    public static function make(): static
+    {
+        return new static;
+    }
 
     public function __construct()
     {
@@ -52,6 +60,13 @@ class CommentQueryBuilder extends WpQueryBuilder
     public function whereKarma(int $karma_score): static
     {
         $this->arguments['karma'] = $karma_score;
+
+        return $this;
+    }
+
+    public function whereStatus(Status $status): static
+    {
+        $this->arguments['status'] = $status->name;
 
         return $this;
     }

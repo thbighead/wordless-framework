@@ -3,7 +3,11 @@
 namespace Wordless\Wordpress\Models;
 
 use Wordless\Wordpress\Enums\ObjectType;
+use Wordless\Wordpress\Models\Comment\Enums\StandardType;
+use Wordless\Wordpress\Models\Comment\Enums\Status;
 use Wordless\Wordpress\Models\Comment\Exceptions\InvalidPostModelNamespace;
+use Wordless\Wordpress\Models\Comment\Traits\Children;
+use Wordless\Wordpress\Models\Comment\Traits\Crud;
 use Wordless\Wordpress\Models\Comment\Traits\MixinWpComment;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
@@ -17,12 +21,28 @@ use WP_Comment;
  */
 class Comment implements IRelatedMetaData
 {
+    use Children;
+    use Crud;
     use MixinWpComment;
     use WithMetaData;
 
     private BasePost $post;
-    /** @var WP_Comment[] $children */
-    private array $children;
+    private Status $status;
+    private StandardType|string $type;
+
+    /**
+     * @param WP_Comment|int $comment
+     * @param string $from_post_model_class_namespace
+     * @return static
+     * @throws InvalidPostModelNamespace
+     */
+    public static function make(
+        WP_Comment|int $comment,
+        string         $from_post_model_class_namespace = Post::class
+    ): static
+    {
+        return new static($comment, $from_post_model_class_namespace);
+    }
 
     public static function objectType(): ObjectType
     {
@@ -44,23 +64,6 @@ class Comment implements IRelatedMetaData
         }
 
         $this->wpComment = $comment instanceof WP_Comment ? $comment : WP_Comment::get_instance($comment);
-    }
-
-    public function child(int $comment_id): ?WP_Comment
-    {
-        return $this->children()[$comment_id] ?? null;
-    }
-
-    /**
-     * @return WP_Comment[]
-     */
-    public function children(): array
-    {
-        if (isset($this->children)) {
-            return $this->children;
-        }
-
-        return $this->children = $this->get_children();
     }
 
     /**
@@ -98,6 +101,26 @@ class Comment implements IRelatedMetaData
             }
         }
 
+        if (!empty($this->children)) {
+            foreach ($this->children as $key => $child) {
+                $array['children'][$key] = $child->toArray(false);
+            }
+        }
+
         return $array;
+    }
+
+    public function status(): Status
+    {
+        return $this->status ?? $this->status = Status::from($this->comment_approved);
+    }
+
+    public function type(): StandardType|string
+    {
+        if (isset($this->type)) {
+            return $this->type;
+        }
+
+        return $this->type = StandardType::tryFrom($this->comment_type) ?? $this->comment_type;
     }
 }

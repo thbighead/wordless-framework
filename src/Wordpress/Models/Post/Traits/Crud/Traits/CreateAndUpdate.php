@@ -8,19 +8,12 @@ use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder\Up
 
 trait CreateAndUpdate
 {
-    /**
-     * @param string $title
-     * @return CreateBuilder
-     */
-    public static function buildNew(string $title): Builder
+    public static function buildNew(string $title): CreateBuilder
     {
         return new CreateBuilder($title, static::TYPE_KEY);
     }
 
-    /**
-     * @return UpdateBuilder
-     */
-    public function buildEdit(): Builder
+    public function buildEdit(): UpdateBuilder
     {
         return new UpdateBuilder($this->ID, $this->post_title, static::TYPE_KEY);
     }

@@ -3,10 +3,12 @@
 namespace Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits;
 
 use Wordless\Application\Helpers\Arr;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost;
 use Wordless\Wordpress\Models\PostStatus;
 use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
+use WP_Post;
 
 trait Post
 {
@@ -21,13 +23,29 @@ trait Post
     private const KEY_POST_STATUS = 'post_status';
     private const KEY_POST_TYPE = 'post_type';
 
-    public function wherePost(int $post_id): static
+    public function wherePost(BasePost|WP_Post|int $post): static
     {
-        $this->arguments[self::KEY_POST_ID] = $post_id;
+        return $this->wherePostId($post->ID ?? $post);
+    }
 
-        unset($this->arguments[self::KEY_POST_IN], $this->arguments[self::KEY_POST_NOT_IN]);
+    public function wherePostIn(BasePost|WP_Post|int $post, BasePost|WP_Post|int ...$posts): static
+    {
+        return $this->wherePostIdIn(
+            $post->ID ?? $post,
+            ...array_map(function (BasePost|WP_Post|int $post): int {
+                return $post->ID ?? $post;
+            }, $posts)
+        );
+    }
 
-        return $this;
+    public function wherePostNotIn(BasePost|WP_Post|int $post, BasePost|WP_Post|int ...$posts): static
+    {
+        return $this->wherePostIdNotIn(
+            $post->ID ?? $post,
+            ...array_map(function (BasePost|WP_Post|int $post): int {
+                return $post->ID ?? $post;
+            }, $posts)
+        );
     }
 
     public function wherePostAuthor(int $author_id): static
@@ -57,7 +75,16 @@ trait Post
         return $this;
     }
 
-    public function wherePostIn(int $post_id, int ...$post_ids): static
+    public function wherePostId(int $post_id): static
+    {
+        $this->arguments[self::KEY_POST_ID] = $post_id;
+
+        unset($this->arguments[self::KEY_POST_IN], $this->arguments[self::KEY_POST_NOT_IN]);
+
+        return $this;
+    }
+
+    public function wherePostIdIn(int $post_id, int ...$post_ids): static
     {
         $this->arguments[self::KEY_POST_IN] = Arr::prepend($post_ids, $post_id);
 
@@ -66,7 +93,7 @@ trait Post
         return $this;
     }
 
-    public function wherePostNotIn(int $post_id, int ...$post_ids): static
+    public function wherePostIdNotIn(int $post_id, int ...$post_ids): static
     {
         $this->arguments[self::KEY_POST_NOT_IN] = Arr::prepend($post_ids, $post_id);
 

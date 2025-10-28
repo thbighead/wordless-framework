@@ -3,6 +3,8 @@
 namespace Wordless\Wordpress\QueryBuilder\CommentQueryBuilder\Traits;
 
 use Wordless\Application\Helpers\Arr;
+use Wordless\Wordpress\Models\User;
+use WP_User;
 
 trait Author
 {
@@ -19,6 +21,41 @@ trait Author
             : $emails;
 
         return $this;
+    }
+
+    public function onlyRegisteredAuthors(): static
+    {
+        return $this->whereAuthorIdNotIn(0);
+    }
+
+    public function onlyUnregisteredAuthors(): static
+    {
+        return $this->whereAuthorId(0);
+    }
+
+    public function whereAuthor(User|WP_User|int $author): static
+    {
+        return $this->whereAuthorId($author->ID ?? $author);
+    }
+
+    public function whereAuthorIn(User|WP_User|int $author, User|WP_User|int ...$authors): static
+    {
+        return $this->whereAuthorIdIn(
+            $author->ID ?? $author,
+            ...array_map(function (User|WP_User|int $author): int {
+                return $author->ID ?? $author;
+            }, $authors)
+        );
+    }
+
+    public function whereAuthorNotIn(User|WP_User|int $author, User|WP_User|int ...$authors): static
+    {
+        return $this->whereAuthorIdNotIn(
+            $author->ID ?? $author,
+            ...array_map(function (User|WP_User|int $author): int {
+                return $author->ID ?? $author;
+            }, $authors)
+        );
     }
 
     public function whereAuthorEmail(string $email): static

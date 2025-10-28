@@ -9,7 +9,7 @@ use Wordless\Wordpress\Models\User;
 use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Delete\Exceptions\FailedToDeleteUser;
 use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Update\Exceptions\FailedToUpdateUser;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder\Exceptions\InvalidMethodException;
+use Wordless\Wordpress\QueryBuilder\Exceptions\InvalidMethodException;
 use Wordless\Wordpress\QueryBuilder\UserQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\UserQueryBuilder\UserModelQueryBuilder\Exceptions\FailedToUpdateUsers;
 use Wordless\Wordpress\QueryBuilder\UserQueryBuilder\UserModelQueryBuilder\Exceptions\UpdateAnonymousFunctionDidNotReturnUserObject;
