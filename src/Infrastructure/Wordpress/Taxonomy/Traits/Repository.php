@@ -2,29 +2,44 @@
 
 namespace Wordless\Infrastructure\Wordpress\Taxonomy\Traits;
 
+use Generator;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
+use Wordless\Infrastructure\Wordpress\Taxonomy;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\TermInstantiationError;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Enums\Field;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Create;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Create\Exceptions\FailedToRetrieveNewTermId;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Create\Exceptions\InsertTermError;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Delete;
-use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Traits\Update;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Repository\Exceptions\FailedToFind;
 use WP_Term;
 
+/**
+ * @mixin Taxonomy
+ */
 trait Repository
 {
-    use Create;
-    use Update;
-    use Delete;
-
     /**
-     * @return WP_Term[]
+     * @return Generator<static>
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
      */
-    public static function all(): array
+    public static function all(): Generator
     {
-        return static::getDictionary()->all();
+        foreach (static::getDictionary()->all() as $term) {
+            yield new static($term);
+        }
     }
 
-    public static function find(int|string $term): ?WP_Term
+    public static function count(): int
+    {
+        return count(static::getDictionary()->all());
+    }
+
+    /**
+     * @param int|string $term
+     * @return static|null
+     * @throws FailedToFind
+     * @throws TermInstantiationError
+     */
+    public static function find(int|string $term): ?static
     {
         if (is_int($term) || is_numeric($term)) {
             return static::findById((int)$term);
@@ -33,60 +48,92 @@ trait Repository
         return static::findBySlug($term) ?? static::findByName($term);
     }
 
-    public static function findBy(Field $field, int|string $value): ?WP_Term
+    /**
+     * @param Field $field
+     * @param int|string $value
+     * @return static|null
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
+     */
+    public static function findBy(Field $field, int|string $value): ?static
     {
         if (!(($term = get_term_by($field->name, $value, static::getNameKey())) instanceof WP_Term)) {
             return null;
         }
 
-        return $term;
-    }
-
-    public static function findById(int $id): ?WP_Term
-    {
-        $term = self::findBy(Field::term_id, $id);
-
-        if (!self::areEquals($term, static::getById($id))) {
-            static::getDictionary()->reload();
-        }
-
-        return $term;
-    }
-
-    public static function findByName(string $name): ?WP_Term
-    {
-        $term = self::findBy(Field::name, $name);
-
-        if (!self::areEquals($term, static::getByName($name))) {
-            static::getDictionary()->reload();
-        }
-
-        return $term;
-    }
-
-    public static function findBySlug(string $slug): ?WP_Term
-    {
-        $term = self::findBy(Field::name, $slug);
-
-        if (!self::areEquals($term, static::getBySlug($slug))) {
-            static::getDictionary()->reload();
-        }
-
-        return $term;
+        return new static($term);
     }
 
     /**
-     * @param string $term_name
-     * @return static
-     * @throws FailedToRetrieveNewTermId
-     * @throws InsertTermError
+     * @param int $id
+     * @return static|null
+     * @throws FailedToFind
+     * @throws TermInstantiationError
      */
-    public static function findOrCreate(string $term_name): static
+    public static function findById(int $id): ?static
     {
-        return new static(static::getByName($term_name) ?? static::create($term_name));
+        try {
+            $term = static::findBy(Field::term_id, $id);
+
+            if (!self::areEquals($term, static::getById($id))) {
+                static::getDictionary()->reload();
+            }
+
+            return $term;
+        } catch (EmptyQueryBuilderArguments|InitializingModelWithWrongTaxonomyName $exception) {
+            throw new FailedToFind($id, $exception);
+        }
     }
 
-    public static function get(int|string $term): ?WP_Term
+    /**
+     * @param string $name
+     * @return static|null
+     * @throws FailedToFind
+     * @throws TermInstantiationError
+     */
+    public static function findByName(string $name): ?static
+    {
+        try {
+            $term = static::findBy(Field::name, $name);
+
+            if (!self::areEquals($term, static::getByName($name))) {
+                static::getDictionary()->reload();
+            }
+
+            return $term;
+        } catch (EmptyQueryBuilderArguments|InitializingModelWithWrongTaxonomyName $exception) {
+            throw new FailedToFind($name, $exception);
+        }
+    }
+
+    /**
+     * @param string $slug
+     * @return static|null
+     * @throws FailedToFind
+     * @throws TermInstantiationError
+     */
+    public static function findBySlug(string $slug): ?static
+    {
+        try {
+            $term = static::findBy(Field::name, $slug);
+
+            if (!self::areEquals($term, static::getBySlug($slug))) {
+                static::getDictionary()->reload();
+            }
+
+            return $term;
+        } catch (EmptyQueryBuilderArguments|InitializingModelWithWrongTaxonomyName $exception) {
+            throw new FailedToFind($slug, $exception);
+        }
+    }
+
+    /**
+     * @param int|string $term
+     * @return static|null
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
+     */
+    public static function get(int|string $term): ?static
     {
         if (is_int($term) || is_numeric($term)) {
             return static::getById((int)$term);
@@ -95,22 +142,46 @@ trait Repository
         return static::getBySlug($term) ?? static::getByName($term);
     }
 
-    public static function getById(int $id): ?WP_Term
+    /**
+     * @param int $id
+     * @return static|null
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
+     */
+    public static function getById(int $id): ?static
     {
-        return static::getDictionary()->getById($id);
+        $term = static::getDictionary()->getById($id);
+
+        return $term === null ? null : new static($term);
     }
 
-    public static function getByName(string $name): ?WP_Term
+    /**
+     * @param string $name
+     * @return static|null
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
+     */
+    public static function getByName(string $name): ?static
     {
-        return static::getDictionary()->getByName($name);
+        $term = static::getDictionary()->getByName($name);
+
+        return $term === null ? null : new static($term);
     }
 
-    public static function getBySlug(string $slug): ?WP_Term
+    /**
+     * @param string $slug
+     * @return static|null
+     * @throws InitializingModelWithWrongTaxonomyName
+     * @throws TermInstantiationError
+     */
+    public static function getBySlug(string $slug): ?static
     {
-        return static::getDictionary()->getBySlug($slug);
+        $term = static::getDictionary()->getBySlug($slug);
+
+        return $term === null ? null : new static($term);
     }
 
-    private static function areEquals(?WP_Term $term1, ?WP_Term $term2): bool
+    private static function areEquals(?Taxonomy $term1, ?Taxonomy $term2): bool
     {
         return $term1?->term_id === $term2?->term_id
             && $term1?->term_taxonomy_id === $term2?->term_taxonomy_id

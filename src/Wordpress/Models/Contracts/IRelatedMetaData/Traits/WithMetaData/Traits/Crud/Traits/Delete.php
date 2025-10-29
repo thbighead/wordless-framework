@@ -23,6 +23,6 @@ trait Delete
             throw new FailedToDeleteMetaData($this, $meta_key, $meta_value);
         }
 
-        unset($this->metaFields[$meta_key]);
+        unset($this->meta_fields[$meta_key]);
     }
 }

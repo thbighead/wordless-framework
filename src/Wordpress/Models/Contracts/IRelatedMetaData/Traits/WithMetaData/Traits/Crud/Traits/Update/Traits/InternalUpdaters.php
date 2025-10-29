@@ -15,6 +15,10 @@ trait InternalUpdaters
      */
     private function callUpdateMetaData(string $meta_key, mixed $meta_value, mixed $if_value_is = null): int|true
     {
+        if ($this->callGetFirstMetaData($meta_key) === $meta_value) {
+            return true;
+        }
+
         if (($result = update_metadata(
                 static::objectType()->name,
                 $this->ID,
@@ -25,7 +29,7 @@ trait InternalUpdaters
             throw new FailedToUpdateMetaData($this, $meta_key, $meta_value, $if_value_is);
         }
 
-        $this->metaFields[$meta_key] = $meta_value;
+        $this->meta_fields[$meta_key] = $meta_value;
 
         return $result;
     }

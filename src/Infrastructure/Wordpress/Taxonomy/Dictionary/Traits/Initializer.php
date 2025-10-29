@@ -2,6 +2,8 @@
 
 namespace Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary\Traits;
 
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
+use Wordless\Wordpress\QueryBuilder\TermQueryBuilder;
 use WP_Term;
 
 trait Initializer
@@ -49,6 +51,11 @@ trait Initializer
         return self::$loaded[$taxonomy] ?? false;
     }
 
+    /**
+     * @param string $taxonomy
+     * @return void
+     * @throws EmptyQueryBuilderArguments
+     */
     private static function loadTaxonomyInitializedInternalDictionaries(string $taxonomy): void
     {
         foreach (self::searchTaxonomyTerms($taxonomy) as $taxonomyTerm) {
@@ -69,9 +76,10 @@ trait Initializer
     /**
      * @param string $taxonomy
      * @return WP_Term[]
+     * @throws EmptyQueryBuilderArguments
      */
     private static function searchTaxonomyTerms(string $taxonomy): array
     {
-        return get_terms(['hide_empty' => false, 'taxonomy' => $taxonomy]);
+        return TermQueryBuilder::make($taxonomy)->get();
     }
 }

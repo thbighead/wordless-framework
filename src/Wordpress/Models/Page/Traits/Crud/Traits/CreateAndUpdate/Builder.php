@@ -2,7 +2,7 @@
 
 namespace Wordless\Wordpress\Models\Page\Traits\Crud\Traits\CreateAndUpdate;
 
-use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder as PostBuilder;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud\Traits\CreateAndUpdate\Builder as PostBuilder;
 
 abstract class Builder extends PostBuilder
 {

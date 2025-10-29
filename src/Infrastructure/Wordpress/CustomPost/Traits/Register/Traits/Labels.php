@@ -57,7 +57,7 @@ trait Labels
             $labels['archives'] = sprintf(__('%s Archives'), $singular_name);
             $labels['attributes'] = sprintf(__('%s Attributes'), $singular_name);
             $labels['insert_into_item'] = sprintf(
-                __('Insert into %s'),
+                __('Insert' . ' into %s'),
                 $lower_cased_singular_name = Str::lower($singular_name)
             );
             $labels['uploaded_to_this_item'] = sprintf(__('Uploaded to this %s'), $lower_cased_singular_name);

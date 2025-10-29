@@ -3,9 +3,9 @@
 namespace Wordless\Wordpress\Models\Post\Traits;
 
 use Wordless\Wordpress\Models\Attachment;
-use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
-use Wordless\Wordpress\Models\Post\Traits\Crud\FeaturedImage\Exceptions\FailedToGetPostFeaturedImage;
-use Wordless\Wordpress\Models\Post\Traits\Crud\FeaturedImage\Exceptions\FailedToSetPostFeaturedImage;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Exceptions\InitializingModelWithWrongPostType;
+use Wordless\Wordpress\Models\Post\Traits\FeaturedImage\Exceptions\FailedToGetPostFeaturedImage;
+use Wordless\Wordpress\Models\Post\Traits\FeaturedImage\Exceptions\FailedToSetPostFeaturedImage;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 
 trait FeaturedImage
@@ -35,8 +35,6 @@ trait FeaturedImage
     /**
      * @return Attachment|null
      * @throws FailedToGetPostFeaturedImage
-     * @throws InitializingModelWithWrongPostType
-     * @throws PostTypeNotRegistered
      */
     public function getFeaturedImage(): ?Attachment
     {
@@ -48,8 +46,12 @@ trait FeaturedImage
             throw new FailedToGetPostFeaturedImage($this);
         }
 
-        return $this->featuredImage =
-            ($featured_image_id === 0 ? null : Attachment::make($featured_image_id));
+        try {
+            return $this->featuredImage =
+                ($featured_image_id === 0 ? null : Attachment::make($featured_image_id));
+        } catch (InitializingModelWithWrongPostType|PostTypeNotRegistered $exception) {
+            throw new FailedToGetPostFeaturedImage($this, $exception);
+        }
     }
 
     /**
@@ -77,5 +79,19 @@ trait FeaturedImage
         }
 
         return $featured_image_id;
+    }
+
+    public function toArray(): array
+    {
+        $array = parent::toArray();
+
+        if ($this->featuredImage) {
+            try {
+                $array['featured_image'] = $this->getFeaturedImage()->toArray();
+            } catch (FailedToGetPostFeaturedImage) {
+            }
+        }
+
+        return $array;
     }
 }

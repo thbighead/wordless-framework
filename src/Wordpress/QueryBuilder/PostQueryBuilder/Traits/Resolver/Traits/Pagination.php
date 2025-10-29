@@ -22,32 +22,32 @@ trait Pagination
     }
 
     /**
-     * @param int $users_per_page
+     * @param int $posts_per_page
      * @param array $extra_arguments
      * @return PaginatedPosts
      * @throws EmptyPage
      * @throws EmptyQueryBuilderArguments
      */
-    public function paginate(int $users_per_page, array $extra_arguments = []): PaginatedPosts
+    public function paginate(int $posts_per_page, array $extra_arguments = []): PaginatedPosts
     {
         return new PaginatedPosts(
             $this->resolveExtraArguments($this->arguments, $extra_arguments),
-            max($users_per_page, 1)
+            max($posts_per_page, 1)
         );
     }
 
     /**
-     * @param int $users_per_page
+     * @param int $posts_per_page
      * @param array $extra_arguments
      * @return Rotating
      * @throws EmptyPage
      * @throws EmptyQueryBuilderArguments
      */
-    public function paginateRotating(int $users_per_page, array $extra_arguments = []): Rotating
+    public function paginateRotating(int $posts_per_page, array $extra_arguments = []): Rotating
     {
         return new Rotating(
             $this->resolveExtraArguments($this->arguments, $extra_arguments),
-            max($users_per_page, 1)
+            max($posts_per_page, 1)
         );
     }
 

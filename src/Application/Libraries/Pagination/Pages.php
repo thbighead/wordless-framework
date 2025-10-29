@@ -23,13 +23,13 @@ abstract class Pages
      * @throws EmptyPage
      */
     public function __construct(
-        int $items_per_page,
+        int                 $items_per_page,
         public readonly int $items_total,
-        int $initial_page_index = 0
+        int                 $initial_page_index = 0
     )
     {
         $this->items_per_page = max($items_per_page, 1);
-        $this->number_of_pages = (int)ceil($this->items_total/$this->items_per_page);
+        $this->number_of_pages = (int)ceil($this->items_total / $this->items_per_page);
         $this->updateCurrentPage(
             $this->initial_page_index = $this->calculateValidInitialPageIndex($initial_page_index)
         );

@@ -11,6 +11,7 @@ trait Rotate
      * @param int $index
      * @return Page
      * @throws EmptyPage
+     * @noinspection PhpMultipleClassDeclarationsInspection
      */
     public function goToPage(int $index): Page
     {
@@ -24,6 +25,7 @@ trait Rotate
     /**
      * @return Page
      * @throws EmptyPage
+     * @noinspection PhpMultipleClassDeclarationsInspection
      */
     public function nextPage(): Page
     {
@@ -33,6 +35,7 @@ trait Rotate
     /**
      * @return Page
      * @throws EmptyPage
+     * @noinspection PhpMultipleClassDeclarationsInspection
      */
     public function previousPage(): Page
     {

@@ -41,7 +41,7 @@ trait Sync
     {
         foreach (Config::wordpress(SyncRoles::CONFIG_KEY_PERMISSIONS, []) as $role_key => $permissions) {
             try {
-                $role = Role::findOrFail($role_key);
+                $role = Role::getOrFail($role_key);
             } catch (FailedToFindRole) {
                 Role::create(
                     Str::titleCase($role_key),
@@ -87,7 +87,7 @@ trait Sync
      */
     public static function syncPermissionsToAdminAsDefault(): void
     {
-        self::syncCustomTaxonomiesPermissionsToRole($adminRole = Role::findOrFail(StandardRole::admin->value));
+        self::syncCustomTaxonomiesPermissionsToRole($adminRole = Role::getOrFail(StandardRole::admin->value));
         self::syncCustomPostTypesPermissionsToRole($adminRole);
         self::syncRestResourcesPermissionsToRole($adminRole);
     }

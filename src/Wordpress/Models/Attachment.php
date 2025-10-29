@@ -22,15 +22,16 @@ use Wordless\Wordpress\Models\Attachment\Exceptions\FailedToCreateAttachmentFrom
 use Wordless\Wordpress\Models\Attachment\Exceptions\FailedToUpdateAttachmentFile;
 use Wordless\Wordpress\Models\Attachment\Exceptions\NewMetadataEqualsToOldMetadata;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData\Traits\Crud\Traits\Read\Exceptions\InvalidMetaKey;
-use Wordless\Wordpress\Models\Post\Exceptions\FailedToGetPermalink;
-use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Exceptions\FailedToGetPermalink;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use WP_Error;
 use WP_Post;
 
-class Attachment extends Post
+class Attachment extends BasePost
 {
     final public const KEY_ALTERNATIVE_TEXT = 'alt';
     final public const KEY_MIME_TYPE = 'mime-type';

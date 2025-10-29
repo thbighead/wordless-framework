@@ -62,7 +62,7 @@ class CommentsSeeder extends SeederCommand
         }
 
         try {
-            $posts = Post::getAll();
+            $posts = Post::all();
         } catch (EmptyQueryBuilderArguments $exception) {
             throw new FailedToRunCommentsSeederCommand('Failed to retrieve all posts.', $exception);
         }

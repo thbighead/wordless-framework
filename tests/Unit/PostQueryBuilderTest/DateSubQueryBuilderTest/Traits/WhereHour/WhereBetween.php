@@ -3,11 +3,11 @@
 namespace Wordless\Tests\Unit\PostQueryBuilderTest\DateSubQueryBuilderTest\Traits\WhereHour;
 
 use ReflectionException;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Relation;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidHour;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Enums\Column;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Enums\Compare;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Enums\Relation;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Exceptions\InvalidHour;
 
 trait WhereBetween
 {

@@ -32,9 +32,9 @@ enum StandardStatus: string
     public function is(PostStatus|StandardStatus|string $status): bool
     {
         if (!is_string($status)) {
-            $status = $status->name;
+            $status = $status->value ?? $status->name;
         }
 
-        return $this->name === $status;
+        return $this->value === $status;
     }
 }

@@ -3,7 +3,9 @@
 namespace Wordless\Infrastructure\Wordpress\Taxonomy;
 
 use Wordless\Application\Libraries\DesignPattern\Singleton;
+use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Dictionary\Traits\Initializer;
+use Wordless\Wordpress\Models\User\Exceptions\NoUserAuthenticated;
 use WP_Term;
 
 abstract class Dictionary extends Singleton
@@ -28,13 +30,25 @@ abstract class Dictionary extends Singleton
         return parent::getInstance();
     }
 
+    /**
+     * @param string $taxonomy
+     * @throws EmptyQueryBuilderArguments
+     */
     protected function __construct(readonly private string $taxonomy)
     {
-        parent::__construct();
+        try {
+            parent::__construct();
+        } catch (NoUserAuthenticated) {
+        }
 
         self::init($this->taxonomy);
     }
 
+    /**
+     * @param string $taxonomy
+     * @return void
+     * @throws EmptyQueryBuilderArguments
+     */
     private static function init(string $taxonomy): void
     {
         self::initializeLoaded();
@@ -79,6 +93,10 @@ abstract class Dictionary extends Singleton
         return self::$taxonomy_terms_keyed_by_slug[$this->taxonomy][$slug] ?? null;
     }
 
+    /**
+     * @return $this
+     * @throws EmptyQueryBuilderArguments
+     */
     public function reload(): static
     {
         unset(self::$taxonomy_terms_keyed_by_id[$this->taxonomy]);

@@ -18,6 +18,10 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\Internal\Exceptions\CallInternalCommandException;
+use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Exceptions\InitializingModelWithWrongTaxonomyName;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\TermInstantiationError;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Read\Exceptions\CouldNotResolveNoneCreated;
+use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Read\Exceptions\CouldNotResolveNoneCreatedForCategory;
 use Wordless\Wordpress\Models\Category;
 
 class PostsSeeder extends SeederCommand
@@ -63,25 +67,29 @@ class PostsSeeder extends SeederCommand
      */
     protected function runIt(): int
     {
-        if (Category::noneCreated()) {
-            try {
+        try {
+            if (Category::noneCreated()) {
                 $this->callConsoleCommand(TaxonomyTermsSeeder::COMMAND_NAME);
-            } catch (CliReturnedNonZero|CallInternalCommandException $exception) {
-                throw new FailedToPopulateCategories($exception);
             }
+        } catch (CallInternalCommandException
+        |CliReturnedNonZero
+        |CouldNotResolveNoneCreated
+        |CouldNotResolveNoneCreatedForCategory $exception) {
+            throw new FailedToPopulateCategories($exception);
         }
 
-        $categories = Category::all();
-
         try {
-            $progressBar = $this->progressBar($posts_total = count($categories) * $this->getQuantity());
+            $progressBar = $this->progressBar($posts_total = Category::count() * $this->getQuantity());
             $progressBar->setMessage('Creating Posts...');
             $progressBar->start();
 
-            foreach ($categories as $category) {
+            foreach (Category::all() as $category) {
                 $this->generatePostsCategorizedAs($category, $progressBar);
             }
-        } catch (FailedToGetCommandOptionValue|FailedToGenerateCategorizedPost $exception) {
+        } catch (FailedToGetCommandOptionValue
+        |FailedToGenerateCategorizedPost
+        |InitializingModelWithWrongTaxonomyName
+        |TermInstantiationError $exception) {
             throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
         }
 

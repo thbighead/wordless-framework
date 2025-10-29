@@ -3,12 +3,12 @@
 namespace Wordless\Tests\Unit\PostQueryBuilderTest\DateSubQueryBuilderTest\Traits\WhereYearMonth;
 
 use ReflectionException;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Relation;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYearMonth;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Enums\Column;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Enums\Compare;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Enums\Relation;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Exceptions\InvalidYearMonth;
 
 trait WhereIn
 {

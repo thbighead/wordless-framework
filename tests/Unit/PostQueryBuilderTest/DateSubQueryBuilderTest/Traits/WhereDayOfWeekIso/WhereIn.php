@@ -3,12 +3,12 @@
 namespace Wordless\Tests\Unit\PostQueryBuilderTest\DateSubQueryBuilderTest\Traits\WhereDayOfWeekIso;
 
 use ReflectionException;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Column;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Compare;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Enums\Relation;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
-use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfWeek;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Enums\Column;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Enums\Compare;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Enums\Relation;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Exceptions\EmptyDateArgument;
+use Wordless\Wordpress\QueryBuilder\DateSubQueryBuilder\Exceptions\InvalidDayOfWeek;
 
 trait WhereIn
 {
