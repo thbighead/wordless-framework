@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Helpers\Str\Traits\Mutators\Traits;
 
+use RuntimeException;
 use Wordless\Application\Helpers\Str\Enums\Encoding;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 
@@ -13,6 +14,7 @@ trait WordCase
      * @param string $string
      * @return string
      * @throws FailedToCreateInflector
+     * @throws RuntimeException
      */
     public static function camelCase(string $string): string
     {
@@ -26,6 +28,8 @@ trait WordCase
      * @param string $string
      * @param bool $upper_cased
      * @return string
+     * @throws FailedToCreateInflector
+     * @throws RuntimeException
      */
     public static function kebabCase(string $string, bool $upper_cased = false): string
     {
@@ -42,16 +46,35 @@ trait WordCase
         return mb_strtolower($string, $encoding?->value);
     }
 
+    /**
+     * @param string $string
+     * @return string
+     * @throws FailedToCreateInflector
+     * @throws RuntimeException
+     */
     public static function lowerKebabCase(string $string): string
     {
         return static::kebabCase($string);
     }
 
+    /**
+     * @param string $string
+     * @return string
+     * @throws FailedToCreateInflector
+     * @throws RuntimeException
+     */
     public static function lowerSlugCase(string $string): string
     {
         return static::slugCase($string);
     }
 
+    /**
+     * @param string $string
+     * @param string $delimiter
+     * @return string
+     * @throws FailedToCreateInflector
+     * @throws RuntimeException
+     */
     public static function lowerSnakeCase(string $string, string $delimiter = self::UNDERSCORE): string
     {
         return static::snakeCase($string, $delimiter);
@@ -61,17 +84,34 @@ trait WordCase
      * @param string $string
      * @return string
      * @throws FailedToCreateInflector
+     * @throws RuntimeException
      */
     public static function pascalCase(string $string): string
     {
         return self::getInflector()->classify(static::lowerSnakeCase($string));
     }
 
+    /**
+     * @param string $string
+     * @param bool $upper_cased
+     * @return string
+     * @throws FailedToCreateInflector
+     * @throws RuntimeException
+     */
     public static function slugCase(string $string, bool $upper_cased = false): string
     {
         return static::snakeCase($string, '-', $upper_cased);
     }
 
+    /**
+     * @param string $string
+     * @param string $delimiter
+     * @param bool $upper_cased
+     * @param Encoding|null $encoding
+     * @return string
+     * @throws FailedToCreateInflector
+     * @throws RuntimeException
+     */
     public static function snakeCase(
         string    $string,
         string    $delimiter = self::UNDERSCORE,
@@ -89,6 +129,13 @@ trait WordCase
             );
         }
 
+        $string = self::getInflector()->urlize($string);
+        $default_separator = '-';
+
+        if ($delimiter !== $default_separator) {
+            $string = static::replace($string, $default_separator, $delimiter);
+        }
+
         return $upper_cased ? static::upper($string, $encoding) : static::lower($string, $encoding);
     }
 
@@ -97,6 +144,7 @@ trait WordCase
      * @param Encoding|null $encoding
      * @return string
      * @throws FailedToCreateInflector
+     * @throws RuntimeException
      */
     public static function titleCase(string $string, ?Encoding $encoding = Encoding::UTF_8): string
     {
@@ -115,16 +163,35 @@ trait WordCase
         return mb_strtoupper($string, $encoding?->value);
     }
 
+    /**
+     * @param string $string
+     * @return string
+     * @throws FailedToCreateInflector
+     * @throws RuntimeException
+     */
     public static function upperKebabCase(string $string): string
     {
         return static::kebabCase($string, true);
     }
 
+    /**
+     * @param string $string
+     * @return string
+     * @throws FailedToCreateInflector
+     * @throws RuntimeException
+     */
     public static function upperSlugCase(string $string): string
     {
         return static::slugCase($string, true);
     }
 
+    /**
+     * @param string $string
+     * @param string $delimiter
+     * @return string
+     * @throws FailedToCreateInflector
+     * @throws RuntimeException
+     */
     public static function upperSnakeCase(string $string, string $delimiter = self::UNDERSCORE): string
     {
         return static::snakeCase($string, $delimiter, true);

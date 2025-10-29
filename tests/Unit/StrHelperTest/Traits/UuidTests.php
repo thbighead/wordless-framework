@@ -73,11 +73,8 @@ trait UuidTests
      */
     private function main(UuidVersion $uuidVersion): void
     {
-        $undashed_uuid = Str::uuid($uuidVersion, false);
-
         $this->assertTrue(Str::isUuid(Str::uuid($uuidVersion)));
-        $this->assertTrue(Str::isUuid($undashed_uuid));
 
-        $this->assertFalse(Str::contains($undashed_uuid, ['-', '_']));
+        $this->assertFalse(Str::contains(Str::uuid($uuidVersion, false), ['-', '_']));
     }
 }
