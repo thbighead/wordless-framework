@@ -1,11 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits;
+namespace Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits;
 
 use PHPUnit\Framework\ExpectationFailedException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
+use Wordless\Tests\Unit\StrHelperTest;
 
+/**
+ * @mixin StrHelperTest
+ */
 trait FromKebabToAnother
 {
     /**

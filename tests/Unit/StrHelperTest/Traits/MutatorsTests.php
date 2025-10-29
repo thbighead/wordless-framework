@@ -3,11 +3,11 @@
 namespace Wordless\Tests\Unit\StrHelperTest\Traits;
 
 use PHPUnit\Framework\ExpectationFailedException;
-use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Enums\Language;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Tests\Unit\StrHelperTest;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests;
 
 /**
  * @mixin StrHelperTest

@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace StrHelperTest\Traits\MutatorsTests\Traits;
+namespace Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits;
 
-use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromCamelToAnother;
-use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromKebabToAnother;
-use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromPascalToAnother;
-use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromRawToAnother;
-use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromSnakeToAnother;
-use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromTitleToAnother;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromCamelToAnother;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromKebabToAnother;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromPascalToAnother;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromRawToAnother;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromSnakeToAnother;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromTitleToAnother;
 
 trait CaseStyleTests
 {
