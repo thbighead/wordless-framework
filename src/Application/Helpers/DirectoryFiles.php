@@ -18,6 +18,7 @@ use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileConten
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToTravelDirectories;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\InvalidDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\NotAPhpFile;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\RecursiveCopyFailed;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Infrastructure\Helper;
 
@@ -28,10 +29,11 @@ class DirectoryFiles extends Helper
      * @param int $permissions
      * @return void
      * @throws FailedToChangePathPermissions
+     * @throws PathNotFoundException
      */
     public static function changePermissions(string $path, int $permissions): void
     {
-        if (!chmod($path, $permissions)) {
+        if (empty($path) || !chmod($path = ProjectPath::realpath($path), $permissions)) {
             throw new FailedToChangePathPermissions($path, $permissions);
         }
     }
@@ -40,10 +42,11 @@ class DirectoryFiles extends Helper
      * @param string $to
      * @return void
      * @throws FailedToChangeDirectoryTo
+     * @throws PathNotFoundException
      */
     public static function changeWorkingDirectory(string $to): void
     {
-        if (!chdir($to)) {
+        if (empty($to) || !chdir($to = ProjectPath::realpath($to))) {
             throw new FailedToChangeDirectoryTo($to);
         }
     }
@@ -69,7 +72,7 @@ class DirectoryFiles extends Helper
 
         try {
             static::changeWorkingDirectory($back_to);
-        } catch (FailedToChangeDirectoryTo $exception) {
+        } catch (FailedToChangeDirectoryTo|PathNotFoundException $exception) {
             throw new FailedToTravelDirectories($to, $back_to, $exception);
         }
 
@@ -85,8 +88,22 @@ class DirectoryFiles extends Helper
      */
     public static function copyFile(string $from, string $to, bool $secure_mode = true): void
     {
-        if ($secure_mode && file_exists($to)) {
+        if (empty($from) || empty($to)) {
             throw new FailedToCopyFile($from, $to, $secure_mode);
+        }
+
+        if ($secure_mode && file_exists($to)) {
+            return;
+        }
+
+        try {
+            $from = ProjectPath::realpath($from);
+
+            if (!is_file($from = ProjectPath::realpath($from))) {
+                throw new FailedToCopyFile($from, $to, $secure_mode);
+            }
+        } catch (PathNotFoundException $exception) {
+            throw new FailedToCopyFile($from, $to, $secure_mode, $exception);
         }
 
         if (!is_dir($parent_target_directory_path = dirname($to))) {
@@ -133,14 +150,19 @@ class DirectoryFiles extends Helper
 
     /**
      * @param string $path
+     * @param bool $secure_mode
      * @param int|null $permissions
      * @return void
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
      * @throws PathNotFoundException
      */
-    public static function createDirectoryAt(string $path, ?int $permissions = null): void
+    public static function createDirectoryAt(string $path, bool $secure_mode = true, ?int $permissions = null): void
     {
+        if ($secure_mode && file_exists($path)) {
+            return;
+        }
+
         $ancestor_path = dirname($path);
 
         while (!is_dir($ancestor_path)) {
@@ -167,9 +189,7 @@ class DirectoryFiles extends Helper
      * @param int|null $permissions
      * @return void
      * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
      * @throws FailedToPutFileContent
-     * @throws PathNotFoundException
      */
     public static function createFileAt(
         string $filepath,
@@ -178,12 +198,16 @@ class DirectoryFiles extends Helper
         ?int   $permissions = null
     ): void
     {
-        if (!is_dir($file_directory_path = dirname($filepath))) {
-            static::createDirectoryAt($file_directory_path, $permissions);
-        }
-
         if ($secure_mode && file_exists($filepath)) {
             return;
+        }
+
+        if (!is_dir($file_directory_path = dirname($filepath))) {
+            try {
+                static::createDirectoryAt($file_directory_path, $secure_mode, $permissions);
+            } catch (FailedToGetDirectoryPermissions|PathNotFoundException $exception) {
+                throw new FailedToCreateDirectory($file_directory_path, $exception);
+            }
         }
 
         if (file_put_contents($filepath, $file_content) === false) {
@@ -195,6 +219,7 @@ class DirectoryFiles extends Helper
      * @param string $link_relative_path
      * @param string $target_relative_path
      * @param string|null $from_absolute_path
+     * @param bool $secure_mode
      * @return void
      * @throws FailedToCreateSymlink
      * @throws FailedToTravelDirectories
@@ -203,7 +228,8 @@ class DirectoryFiles extends Helper
     public static function createSymbolicLink(
         string  $link_relative_path,
         string  $target_relative_path,
-        ?string $from_absolute_path = null
+        ?string $from_absolute_path = null,
+        bool    $secure_mode = true
     ): void
     {
         $from_absolute_path = $from_absolute_path ?? ProjectPath::root();
@@ -211,8 +237,13 @@ class DirectoryFiles extends Helper
         static::changeWorkingDirectoryDoAndGoBack($from_absolute_path, function () use (
             $link_relative_path,
             $target_relative_path,
-            $from_absolute_path
+            $from_absolute_path,
+            $secure_mode
         ) {
+            if ($secure_mode && file_exists($link_relative_path)) {
+                return;
+            }
+
             $target_relative_path_from_link_parent_directory = str_repeat(
                     '../',
                     Str::countSubstring($link_relative_path, '/')
@@ -249,14 +280,23 @@ class DirectoryFiles extends Helper
     /**
      * @param string $download_file_url
      * @param string $absolute_file_path
+     * @param bool $secure_mode
      * @return string
      * @throws FailedToPutFileContent
      */
-    public static function downloadFileAt(string $download_file_url, string $absolute_file_path): string
+    public static function downloadFileAt(
+        string $download_file_url,
+        string $absolute_file_path,
+        bool   $secure_mode = true
+    ): string
     {
         if (is_dir($absolute_file_path)) {
             $absolute_file_path = Str::finishWith($absolute_file_path, DIRECTORY_SEPARATOR)
                 . Str::afterLast($download_file_url, '/');
+        }
+
+        if ($secure_mode && file_exists($absolute_file_path)) {
+            return $absolute_file_path;
         }
 
         if (file_put_contents($absolute_file_path, fopen($download_file_url, 'r')) === false) {
@@ -321,7 +361,8 @@ class DirectoryFiles extends Helper
      */
     public static function getFileContent(string $filepath): string
     {
-        if (($file_content = file_get_contents($filepath = ProjectPath::realpath($filepath))) === false) {
+        if (empty($filepath)
+            || ($file_content = file_get_contents($filepath = ProjectPath::realpath($filepath))) === false) {
             throw new FailedToGetFileContent($filepath);
         }
 
@@ -372,43 +413,47 @@ class DirectoryFiles extends Helper
     /**
      * @param string $from
      * @param string $to
-     * @param string[] $except
-     * @param bool $secure_mode If true, only copy if file does not exist in destination.
+     * @param array $except
+     * @param bool $secure_mode
      * @return void
-     * @throws FailedToCopyFile
-     * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
-     * @throws PathNotFoundException
-     * @throws InvalidDirectory
+     * @throws RecursiveCopyFailed
      */
     public static function recursiveCopy(string $from, string $to, array $except = [], bool $secure_mode = true): void
     {
-        $from_real_path = ProjectPath::realpath($from);
+        try {
+            $from_real_path = ProjectPath::realpath($from);
 
-        if ($except[$from_real_path] ?? in_array($from_real_path, $except)) {
-            return;
-        }
-
-        if (is_link($from) || is_file($from)) {
-            if (!file_exists($directory_destination = dirname($to))) {
-                static::createDirectoryAt($directory_destination);
-            }
-
-            if ($secure_mode && file_exists($to)) {
+            if ($except[$from_real_path] ?? in_array($from_real_path, $except)) {
                 return;
             }
 
-            static::copyFile($from, $to, $secure_mode);
+            if (is_link($from) || is_file($from)) {
+                if (!file_exists($directory_destination = dirname($to))) {
+                    static::createDirectoryAt($directory_destination);
+                }
 
-            return;
-        }
+                if ($secure_mode && file_exists($to)) {
+                    return;
+                }
 
-        if (!file_exists($to)) {
-            static::createDirectoryAt($to);
-        }
+                static::copyFile($from, $to, $secure_mode);
 
-        foreach (static::listFromDirectory($from) as $file) {
-            static::recursiveCopy("$from_real_path/$file", "$to/$file", $except, $secure_mode);
+                return;
+            }
+
+            if (!file_exists($to)) {
+                static::createDirectoryAt($to);
+            }
+
+            foreach (static::listFromDirectory($from) as $file) {
+                static::recursiveCopy("$from_real_path/$file", "$to/$file", $except, $secure_mode);
+            }
+        } catch (FailedToCopyFile
+        |FailedToCreateDirectory
+        |FailedToGetDirectoryPermissions
+        |InvalidDirectory
+        |PathNotFoundException $exception) {
+            throw new RecursiveCopyFailed($from, $to, $except, $secure_mode, $exception);
         }
     }
 
