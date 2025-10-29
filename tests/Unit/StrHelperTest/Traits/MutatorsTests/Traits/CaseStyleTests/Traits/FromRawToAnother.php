@@ -3,6 +3,7 @@
 namespace Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits;
 
 use PHPUnit\Framework\ExpectationFailedException;
+use RuntimeException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Tests\Unit\StrHelperTest;
@@ -16,6 +17,7 @@ trait FromRawToAnother
      * @return void
      * @throws ExpectationFailedException
      * @throws FailedToCreateInflector
+     * @throws RuntimeException
      */
     public function testRawToTitleCase(): void
     {
@@ -37,6 +39,7 @@ trait FromRawToAnother
      * @return void
      * @throws ExpectationFailedException
      * @throws FailedToCreateInflector
+     * @throws RuntimeException
      */
     public function testRawToCamelCase(): void
     {
@@ -58,6 +61,7 @@ trait FromRawToAnother
      * @return void
      * @throws ExpectationFailedException
      * @throws FailedToCreateInflector
+     * @throws RuntimeException
      */
     public function testRawToPascalCase(): void
     {
@@ -78,6 +82,8 @@ trait FromRawToAnother
     /**
      * @return void
      * @throws ExpectationFailedException
+     * @throws FailedToCreateInflector
+     * @throws RuntimeException
      */
     public function testRawToSnakeCase(): void
     {
@@ -98,6 +104,8 @@ trait FromRawToAnother
     /**
      * @return void
      * @throws ExpectationFailedException
+     * @throws FailedToCreateInflector
+     * @throws RuntimeException
      */
     public function testRawToKebabCase(): void
     {

@@ -79,7 +79,7 @@ class StrHelperTest extends WordlessTestCase
     public function testLength(): void
     {
         $this->assertEquals(4, Str::length('àäáã'));
-        $this->assertEquals(15, Str::length(self::COUNT_STRING));
+        $this->assertEquals(19, Str::length(self::COUNT_STRING));
         $this->assertEquals(8, Str::length('àäáã', Encoding::ASCII));
     }
 

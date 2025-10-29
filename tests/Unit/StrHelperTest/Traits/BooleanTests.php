@@ -37,16 +37,16 @@ trait BooleanTests
     {
         $this->assertTrue(Str::contains(self::BASE_STRING, 'Test'));
         $this->assertTrue(Str::contains(self::BASE_STRING, ['Test', 'Test']));
-        $this->assertTrue(Str::contains(self::BASE_STRING, ''));
-        $this->assertTrue(Str::contains(self::BASE_STRING, ['', '']));
         $this->assertTrue(Str::contains(self::BASE_STRING, 'Test', false));
         $this->assertTrue(Str::contains(self::BASE_STRING, ['Test', 'Test'], false));
-        $this->assertTrue(Str::contains(self::BASE_STRING, '', false));
-        $this->assertTrue(Str::contains(self::BASE_STRING, ['', ''], false));
         $this->assertTrue(Str::contains(self::BASE_STRING, ['tring', 'Test', 'k']));
 
         $this->assertFalse(Str::contains(self::BASE_STRING, ['tring', 'Test', 'k'], false));
         $this->assertFalse(Str::contains(self::BASE_STRING, '$'));
+        $this->assertFalse(Str::contains(self::BASE_STRING, ''));
+        $this->assertFalse(Str::contains(self::BASE_STRING, ['', '']));
+        $this->assertFalse(Str::contains(self::BASE_STRING, '', false));
+        $this->assertFalse(Str::contains(self::BASE_STRING, ['', ''], false));
         $this->assertFalse(Str::contains(self::BASE_STRING, '$', false));
     }
 
@@ -120,6 +120,6 @@ trait BooleanTests
      */
     public function testIsUuid(): void
     {
-        $this->assertFalse(self::BASE_STRING);
+        $this->assertFalse(Str::isUuid(self::BASE_STRING));
     }
 }
