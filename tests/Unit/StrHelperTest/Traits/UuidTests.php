@@ -1,11 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Tests\Unit\StrHelperTest\Traits;
 
 use PHPUnit\Framework\ExpectationFailedException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Enums\UuidVersion;
+use Wordless\Tests\Unit\StrHelperTest;
 
+/**
+ * @mixin StrHelperTest
+ */
 trait UuidTests
 {
     /**
@@ -14,12 +18,7 @@ trait UuidTests
      */
     public function testVersion1(): void
     {
-        $undashed_uuid = Str::uuid(UuidVersion::one, false);
-
-        $this->assertTrue(Str::isUuid(Str::uuid(UuidVersion::one)));
-        $this->assertTrue(Str::isUuid($undashed_uuid));
-
-        $this->assertFalse(Str::contains($undashed_uuid, ['-', '_']));
+        $this->main(UuidVersion::one);
     }
 
     /**
@@ -28,12 +27,7 @@ trait UuidTests
      */
     public function testVersion2(): void
     {
-        $undashed_uuid = Str::uuid(UuidVersion::two, false);
-
-        $this->assertTrue(Str::isUuid(Str::uuid(UuidVersion::two)));
-        $this->assertTrue(Str::isUuid($undashed_uuid));
-
-        $this->assertFalse(Str::contains($undashed_uuid, ['-', '_']));
+        $this->main(UuidVersion::two);
     }
 
     /**
@@ -42,12 +36,7 @@ trait UuidTests
      */
     public function testVersion3(): void
     {
-        $undashed_uuid = Str::uuid(UuidVersion::three, false);
-
-        $this->assertTrue(Str::isUuid(Str::uuid(UuidVersion::three)));
-        $this->assertTrue(Str::isUuid($undashed_uuid));
-
-        $this->assertFalse(Str::contains($undashed_uuid, ['-', '_']));
+        $this->main(UuidVersion::three);
     }
 
     /**
@@ -56,12 +45,7 @@ trait UuidTests
      */
     public function testVersion4(): void
     {
-        $undashed_uuid = Str::uuid(UuidVersion::four, false);
-
-        $this->assertTrue(Str::isUuid(Str::uuid()));
-        $this->assertTrue(Str::isUuid($undashed_uuid));
-
-        $this->assertFalse(Str::contains($undashed_uuid, ['-', '_']));
+        $this->main(UuidVersion::four);
     }
 
     /**
@@ -70,12 +54,7 @@ trait UuidTests
      */
     public function testVersion5(): void
     {
-        $undashed_uuid = Str::uuid(UuidVersion::five, false);
-
-        $this->assertTrue(Str::isUuid(Str::uuid(UuidVersion::five)));
-        $this->assertTrue(Str::isUuid($undashed_uuid));
-
-        $this->assertFalse(Str::contains($undashed_uuid, ['-', '_']));
+        $this->main(UuidVersion::five);
     }
 
     /**
@@ -84,9 +63,19 @@ trait UuidTests
      */
     public function testVersion6(): void
     {
-        $undashed_uuid = Str::uuid(UuidVersion::six, false);
+        $this->main(UuidVersion::six);
+    }
 
-        $this->assertTrue(Str::isUuid(Str::uuid(UuidVersion::six)));
+    /**
+     * @param UuidVersion $uuidVersion
+     * @return void
+     * @throws ExpectationFailedException
+     */
+    private function main(UuidVersion $uuidVersion): void
+    {
+        $undashed_uuid = Str::uuid($uuidVersion, false);
+
+        $this->assertTrue(Str::isUuid(Str::uuid($uuidVersion)));
         $this->assertTrue(Str::isUuid($undashed_uuid));
 
         $this->assertFalse(Str::contains($undashed_uuid, ['-', '_']));

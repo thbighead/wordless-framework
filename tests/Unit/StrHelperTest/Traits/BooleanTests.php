@@ -1,10 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Tests\Unit\StrHelperTest\Traits;
 
 use PHPUnit\Framework\ExpectationFailedException;
+use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Tests\Unit\StrHelperTest;
 
+/**
+ * @mixin StrHelperTest
+ */
 trait BooleanTests
 {
     private const NON_UUID = 'non_uuid_string';
@@ -72,12 +78,18 @@ trait BooleanTests
     /**
      * @return void
      * @throws ExpectationFailedException
+     * @throws PathNotFoundException
      */
     public function testIsJson(): void
     {
         $this->assertTrue(Str::isJson('{}'));
         $this->assertTrue(Str::isJson('[]'));
+        $this->assertTrue(Str::isJson(
+            '{"test":"yeah","bool":true,"number":123,"maybe_null":null,"list":[true,false,null,45,"told_ya",{"big_test": "ok","or":"Not"},[1,2,3,4]],"sub_object":{"what":"is","done":"is","done":80}}'
+        ));
+        $this->assertTrue(Str::isJson(ProjectPath::root('composer.json')));
 
+        $this->assertFalse(Str::isJson(ProjectPath::root('.gitignore')));
         $this->assertFalse(Str::isJson(self::BASE_STRING));
         $this->assertFalse(Str::isJson(''));
     }
@@ -100,5 +112,14 @@ trait BooleanTests
         $this->assertFalse(Str::isWrappedBy(self::BASE_STRING, 'Test', '$'));
         $this->assertFalse(Str::isWrappedBy(self::BASE_STRING, '$', '$'));
         $this->assertFalse(Str::isWrappedBy(self::BASE_STRING, '$'));
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     */
+    public function testIsUuid(): void
+    {
+        $this->assertFalse(self::BASE_STRING);
     }
 }

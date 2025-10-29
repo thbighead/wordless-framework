@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace Wordless\Application\Helpers\Str\Traits;
 
-use JsonException;
 use Ramsey\Uuid\Uuid;
-use Wordless\Application\Helpers\Str\Enums\Encoding;
+use Wordless\Application\Helpers\Str\Exceptions\JsonDecodeError;
 
 trait Boolean
 {
@@ -24,23 +23,16 @@ trait Boolean
      * @param string $haystack
      * @param string|string[] $needles
      * @param bool $any
-     * @param Encoding|null $encoding
      * @return bool
      */
-    public static function contains(
-        string       $haystack,
-        string|array $needles,
-        bool         $any = true,
-        ?Encoding    $encoding = null
-    ): bool
+    public static function contains(string $haystack, string|array $needles, bool $any = true): bool
     {
         $contains = true;
 
         foreach ((array)$needles as $needle) {
             if (($contains &= ($needle !== '' && mb_strpos(
                         $haystack,
-                        $needle,
-                        encoding: $encoding?->value
+                        $needle
                     ) !== false)) && $any) {
                 return true;
             }
@@ -71,10 +63,10 @@ trait Boolean
     public static function isJson(string $string): bool
     {
         try {
-            self::jsonDecode($string);
+            static::jsonDecode($string);
 
             return true;
-        } catch (JsonException) {
+        } catch (JsonDecodeError) {
             return false;
         }
     }

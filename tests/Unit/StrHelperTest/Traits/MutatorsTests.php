@@ -1,14 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Tests\Unit\StrHelperTest\Traits;
 
 use PHPUnit\Framework\ExpectationFailedException;
 use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests;
-use TypeError;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Enums\Language;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
+use Wordless\Tests\Unit\StrHelperTest;
 
+/**
+ * @mixin StrHelperTest
+ */
 trait MutatorsTests
 {
     use CaseStyleTests;
@@ -55,6 +58,10 @@ trait MutatorsTests
         $this->assertEquals('comuns', Str::plural('comum', Language::portuguese));
     }
 
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     */
     public function testRemove(): void
     {
         $this->assertEquals(
@@ -106,6 +113,11 @@ trait MutatorsTests
     public function testRemoveSuffix(): void
     {
         $this->assertEquals(
+            'Test Test Test',
+            Str::removeSuffix(self::COUNT_STRING, ' Test')
+        );
+
+        $this->assertEquals(
             'TestString',
             Str::removeSuffix(self::BASE_STRING, 'Substrings')
         );
@@ -156,9 +168,19 @@ trait MutatorsTests
             self::BASE_STRING,
             Str::replace(self::BASE_STRING, 'Test', 'Test')
         );
+        $this->assertEquals(
+            'StringSubstrings',
+            Str::replace(self::BASE_STRING, ['Test'], [])
+        );
+        $this->assertEquals(
+            self::BASE_STRING,
+            Str::replace(self::BASE_STRING, ['&'], [])
+        );
 
-        $this->expectException(TypeError::class);
-        Str::replace(self::ACCENTED_RAW_CASE_EXAMPLE, 'ão', ['em', 'ion']);
+        $this->assertEquals(
+            Str::replace(self::ACCENTED_RAW_CASE_EXAMPLE, 'ão', 'em'),
+            Str::replace(self::ACCENTED_RAW_CASE_EXAMPLE, 'ão', ['em', 'ion'])
+        );
     }
 
     /**
@@ -218,6 +240,36 @@ trait MutatorsTests
         $this->assertEquals(
             'Euoa!!',
             Str::unaccented('Éûõà!!')
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     */
+    public function testWrap(): void
+    {
+        $prefix = $wrapper = '$';
+        $suffix = '&';
+
+        $this->assertEquals(
+            self::BASE_STRING,
+            Str::wrap(self::BASE_STRING, '')
+        );
+
+        $this->assertEquals(
+            self::BASE_STRING,
+            Str::wrap(self::BASE_STRING, '', '')
+        );
+
+        $this->assertEquals(
+            $wrapper . self::BASE_STRING . $wrapper,
+            Str::wrap(self::BASE_STRING, $wrapper)
+        );
+
+        $this->assertEquals(
+            $prefix . self::BASE_STRING . $suffix,
+            Str::wrap(self::BASE_STRING, $prefix, $suffix)
         );
     }
 }
