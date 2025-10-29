@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Tests\Unit\StrHelperTest\Traits;
 
@@ -43,6 +43,33 @@ trait SubstringTests
      * @return void
      * @throws ExpectationFailedException
      */
+    public function testAfterLastSubstring(): void
+    {
+        $this->assertEquals(
+            's',
+            Str::afterLast(self::BASE_STRING, 'tring')
+        );
+
+        $this->assertEquals(
+            'rings',
+            Str::afterLast(self::BASE_STRING, 't')
+        );
+
+        $this->assertEquals(
+            self::BASE_STRING,
+            Str::afterLast(self::BASE_STRING, '$')
+        );
+
+        $this->assertEquals(
+            self::BASE_STRING,
+            Str::afterLast(self::BASE_STRING, '')
+        );
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     */
     public function testBeforeSubstring(): void
     {
         $this->assertEquals(
@@ -68,33 +95,6 @@ trait SubstringTests
         $this->assertEquals(
             self::BASE_STRING,
             Str::before(self::BASE_STRING, '$')
-        );
-    }
-
-    /**
-     * @return void
-     * @throws ExpectationFailedException
-     */
-    public function testAfterLastSubstring(): void
-    {
-        $this->assertEquals(
-            's',
-            Str::afterLast(self::BASE_STRING, 'tring')
-        );
-
-        $this->assertEquals(
-            'rings',
-            Str::afterLast(self::BASE_STRING, 't')
-        );
-
-        $this->assertEquals(
-            self::BASE_STRING,
-            Str::afterLast(self::BASE_STRING, '$')
-        );
-
-        $this->assertEquals(
-            self::BASE_STRING,
-            Str::afterLast(self::BASE_STRING, '')
         );
     }
 
@@ -195,8 +195,8 @@ trait SubstringTests
     public function testTruncate(): void
     {
         $this->assertEquals(
-            Str::truncate(self::BASE_STRING),
-            Str::truncate(self::BASE_STRING, 0)
+            Str::truncate(self::BASE_STRING . self::BASE_STRING . self::BASE_STRING),
+            Str::truncate(self::BASE_STRING . self::BASE_STRING . self::BASE_STRING, 0)
         );
         $this->assertEquals(
             Str::truncate(self::BASE_STRING),

@@ -1,12 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Tests\Unit;
 
-use JsonException;
 use PHPUnit\Framework\ExpectationFailedException;
 use Random\RandomException;
+use Wordless\Application\Helpers\ProjectPath;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Enums\Encoding;
+use Wordless\Application\Helpers\Str\Exceptions\JsonDecodeError;
 use Wordless\Tests\Unit\StrHelperTest\Traits\BooleanTests;
 use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests;
 use Wordless\Tests\Unit\StrHelperTest\Traits\SubstringTests;
@@ -26,7 +28,7 @@ class StrHelperTest extends WordlessTestCase
     /**
      * @return void
      * @throws ExpectationFailedException
-     * @throws JsonException
+     * @throws JsonDecodeError
      */
     public function testJsonDecode(): void
     {
@@ -49,8 +51,25 @@ class StrHelperTest extends WordlessTestCase
             'sub_object' => ['what' => 'is', 'done' => 80],
         ], Str::jsonDecode('{"test":"yeah","bool":true,"number":123,"maybe_null":null,"list":[true,false,null,45,"told_ya",{"big_test": "ok","or":"Not"},[1,2,3,4]],"sub_object":{"what":"is","done":"is","done":80}}'));
 
-        $this->expectException(JsonException::class);
+        $this->expectException(JsonDecodeError::class);
         Str::jsonDecode('');
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     * @throws JsonDecodeError
+     * @throws PathNotFoundException
+     */
+    public function testJsonDecodeWithFiles(): void
+    {
+        $this->assertTrue(
+            is_array($json = Str::jsonDecode(ProjectPath::root('composer.json')))
+            && !empty($json)
+        );
+
+        $this->expectException(JsonDecodeError::class);
+        Str::jsonDecode(ProjectPath::root('.gitignore'));
     }
 
     /**
@@ -60,6 +79,7 @@ class StrHelperTest extends WordlessTestCase
     public function testLength(): void
     {
         $this->assertEquals(4, Str::length('àäáã'));
+        $this->assertEquals(15, Str::length(self::COUNT_STRING));
         $this->assertEquals(8, Str::length('àäáã', Encoding::ASCII));
     }
 

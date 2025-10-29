@@ -2,6 +2,8 @@
 
 namespace Wordless\Application\Helpers\Str\Traits;
 
+use Wordless\Application\Helpers\Arr;
+use Wordless\Application\Helpers\Expect;
 use Wordless\Application\Helpers\Str\Enums\Language;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Application\Helpers\Str\Traits\Mutators\Traits\WordCase;
@@ -61,6 +63,10 @@ trait Mutators
      */
     public static function replace(string $string, string|array $search, string|array $replace): string
     {
+        if (is_array($replace) && is_string($search)) {
+            $replace = Expect::string(Arr::first($replace));
+        }
+
         return str_replace($search, $replace, $string);
     }
 
