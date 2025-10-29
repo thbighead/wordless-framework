@@ -1,20 +1,20 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Wordpress\Models\Post\Exceptions;
+namespace Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud\Traits\Delete\Exceptions;
 
-use DomainException;
+use ErrorException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 use WP_Post;
 
-class FailedToGetPermalink extends DomainException
+class WpDeletePostFailed extends ErrorException
 {
     public function __construct(public readonly WP_Post $post, ?Throwable $previous = null)
     {
         parent::__construct(
-            "Failed to get the post {$this->post->post_name} (ID: {$this->post->ID}) permalink to calculate its url.",
+            "Failed to delete post with ID {$this->post->ID}",
             ExceptionCode::intentional_interrupt->value,
-            $previous
+            previous: $previous
         );
     }
 }

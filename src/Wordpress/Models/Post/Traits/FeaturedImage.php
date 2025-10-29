@@ -3,7 +3,7 @@
 namespace Wordless\Wordpress\Models\Post\Traits;
 
 use Wordless\Wordpress\Models\Attachment;
-use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\Post\Traits\FeaturedImage\Exceptions\FailedToGetPostFeaturedImage;
 use Wordless\Wordpress\Models\Post\Traits\FeaturedImage\Exceptions\FailedToSetPostFeaturedImage;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;

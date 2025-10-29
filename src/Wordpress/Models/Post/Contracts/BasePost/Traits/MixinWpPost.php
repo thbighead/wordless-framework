@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Wordpress\Models\Post\Traits;
+namespace Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits;
 
 use WP_Post;
 

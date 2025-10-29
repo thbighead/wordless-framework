@@ -7,7 +7,7 @@ use Wordless\Application\Helpers\Expect;
 use Wordless\Application\Helpers\Str;
 use Wordless\Infrastructure\Wordpress\Menu\Exceptions\MenuLocationHasNoMenuToRetrieveItems;
 use Wordless\Wordpress\Models\MenuItem;
-use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use WP_Post;
 

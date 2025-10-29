@@ -7,7 +7,7 @@ use Wordless\Application\Helpers\Option\Exception\FailedToUpdateOption;
 use Wordless\Wordpress\Models\Page;
 use Wordless\Wordpress\Models\Page\FrontPage\Exceptions\FailedToSetFrontPage;
 use Wordless\Wordpress\Models\Page\FrontPage\Exceptions\FrontPageIsNotSet;
-use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use WP_Post;
 

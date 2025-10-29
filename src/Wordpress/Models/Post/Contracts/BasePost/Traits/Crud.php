@@ -1,15 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Wordpress\Models\Post\Traits;
+namespace Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits;
 
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
-use Wordless\Wordpress\Models\Post\Traits\Crud\Exceptions\FindOrCreateFailed;
-use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate;
-use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder\Exceptions\WpInsertPostError;
-use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\Delete;
-use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\Read;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud\Exceptions\FindOrCreateFailed;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud\Traits\CreateAndUpdate;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud\Traits\CreateAndUpdate\Builder\Exceptions\WpInsertPostError;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud\Traits\Delete;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud\Traits\Read;
 use Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder;
 
 trait Crud

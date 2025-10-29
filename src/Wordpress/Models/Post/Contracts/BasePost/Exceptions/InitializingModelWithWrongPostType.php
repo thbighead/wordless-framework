@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Wordpress\Models\Post\Exceptions;
+namespace Wordless\Wordpress\Models\Post\Contracts\BasePost\Exceptions;
 
 use InvalidArgumentException;
 use Throwable;

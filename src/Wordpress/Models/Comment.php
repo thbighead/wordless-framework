@@ -12,7 +12,7 @@ use Wordless\Wordpress\Models\Comment\Traits\MixinWpComment;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData;
 use Wordless\Wordpress\Models\Contracts\IRelatedMetaData\Traits\WithMetaData;
 use Wordless\Wordpress\Models\Post\Contracts\BasePost;
-use Wordless\Wordpress\Models\Post\Exceptions\InitializingModelWithWrongPostType;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Exceptions\InitializingModelWithWrongPostType;
 use Wordless\Wordpress\Models\PostType\Exceptions\PostTypeNotRegistered;
 use WP_Comment;
 

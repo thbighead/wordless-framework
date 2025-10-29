@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Wordpress\Models\Post\Traits\Crud\Exceptions;
+namespace Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud\Exceptions;
 
 use RuntimeException;
 use Throwable;

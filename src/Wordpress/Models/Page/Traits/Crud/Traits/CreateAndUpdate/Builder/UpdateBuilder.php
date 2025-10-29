@@ -4,7 +4,7 @@ namespace Wordless\Wordpress\Models\Page\Traits\Crud\Traits\CreateAndUpdate\Buil
 
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Wordpress\Models\Page\Traits\Crud\Traits\CreateAndUpdate\Builder;
-use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder\Exceptions\WpInsertPostError;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud\Traits\CreateAndUpdate\Builder\Exceptions\WpInsertPostError;
 use Wordless\Wordpress\Models\PostType;
 use Wordless\Wordpress\Models\PostType\Enums\StandardType;
 

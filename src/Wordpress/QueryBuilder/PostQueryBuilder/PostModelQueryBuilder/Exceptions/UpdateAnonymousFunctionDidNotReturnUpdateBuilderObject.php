@@ -5,7 +5,7 @@ namespace Wordless\Wordpress\QueryBuilder\PostQueryBuilder\PostModelQueryBuilder
 use BadMethodCallException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
-use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\CreateAndUpdate\Builder\UpdateBuilder;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud\Traits\CreateAndUpdate\Builder\UpdateBuilder;
 
 class UpdateAnonymousFunctionDidNotReturnUpdateBuilderObject extends BadMethodCallException
 {

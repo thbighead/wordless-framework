@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Wordpress\Models\Post\Traits\Crud\Traits;
+namespace Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud\Traits;
 
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
-use Wordless\Wordpress\Models\Post\Traits\Crud;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud;
 use Wordless\Wordpress\Models\PostStatus\Enums\StandardStatus;
 
 /**

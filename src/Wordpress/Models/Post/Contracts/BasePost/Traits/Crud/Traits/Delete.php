@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Wordpress\Models\Post\Traits\Crud\Traits;
+namespace Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud\Traits;
 
-use Wordless\Wordpress\Models\Post\Traits\Crud\Traits\Delete\Exceptions\WpDeletePostFailed;
+use Wordless\Wordpress\Models\Post\Contracts\BasePost\Traits\Crud\Traits\Delete\Exceptions\WpDeletePostFailed;
 use WP_Post;
 
 trait Delete
