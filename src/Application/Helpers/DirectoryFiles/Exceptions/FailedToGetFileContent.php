@@ -14,7 +14,7 @@ class FailedToGetFileContent extends ErrorException
     public function __construct(private readonly string $filepath, ?Throwable $previous = null)
     {
         parent::__construct(
-            "Failed to get content from file at $this->filepath",
+            "Failed to get content from file at '$this->filepath'",
             ExceptionCode::intentional_interrupt->value,
             previous: $previous
         );
