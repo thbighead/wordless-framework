@@ -1,88 +1,115 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Tests\Unit;
 
-use Wordless\Application\Helpers\Reflection;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInAdminMenuTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInRestApiTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyAvailableInTagCloudTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyCustomTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyDefaultTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInAdminMenuTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInRestApiTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyHiddenInTagCloudTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPrivateTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\OnlyPublicTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAdminMenuLabelTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAdminMenuSingularLabelTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereAssignPermissionTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanBeUsedByTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereCanOnlyBeUsedByTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereDeletePermissionTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereEditPermissionTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereManagePermissionTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereNameTests;
-use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\WhereUrlQueryVariableTests;
+use Generator;
+use PHPUnit\Framework\ExpectationFailedException;
+use ReflectionException;
+use TaxonomyQueryBuilderTest\DTO\QueryBuildersDTO;
+use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Tests\WordlessTestCase\QueryBuilderTestCase;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
+use Wordless\Wordpress\Enums\ObjectType;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\ResultFormat;
 
 class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
 {
-    use OnlyAvailableInAdminMenuTests;
-    use OnlyAvailableInRestApiTests;
-    use OnlyAvailableInTagCloudTests;
-    use OnlyCustomTests;
-    use OnlyDefaultTests;
-    use OnlyHiddenInAdminMenuTests;
-    use OnlyHiddenInRestApiTests;
-    use OnlyHiddenInTagCloudTests;
-    use OnlyPrivateTests;
-    use OnlyPublicTests;
-    use WhereAdminMenuLabelTests;
-    use WhereAdminMenuSingularLabelTests;
-    use WhereAssignPermissionTests;
-    use WhereCanBeUsedByTests;
-    use WhereCanOnlyBeUsedByTests;
-    use WhereDeletePermissionTests;
-    use WhereEditPermissionTests;
-    use WhereManagePermissionTests;
-    use WhereNameTests;
-    use WhereUrlQueryVariableTests;
-
     /**
      * @return void
+     * @throws ExpectationFailedException
+     * @throws FailedToCreateInflector
      * @throws ReflectionException
      */
-    public function testNewTaxonomyQueryWithoutSetFormat()
+    public function testOnlyAvailableInAdminMenu(): void
     {
-        $this->assertEquals(
-            ResultFormat::objects,
-            $this->getFormatPropertyFromTaxonomyQueryBuilder(TaxonomyQueryBuilder::make())
-        );
+        $this->testAllQueryBuilders('show_ui', true);
     }
 
     /**
      * @return void
+     * @throws ExpectationFailedException
+     * @throws FailedToCreateInflector
      * @throws ReflectionException
      */
-    public function testNewTaxonomyQueryWithSetFormat()
+    public function testOnlyAvailableInRestApi(): void
     {
-        $this->assertEquals(
-            ResultFormat::names,
-            $this->getFormatPropertyFromTaxonomyQueryBuilder(
-                TaxonomyQueryBuilder::make(ResultFormat::names)
-            )
-        );
+        $this->testAllQueryBuilders('show_in_rest', true);
     }
 
     /**
-     * @param TaxonomyQueryBuilder $taxonomyQueryBuilder
-     * @return mixed
+     * @return void
+     * @throws ExpectationFailedException
+     * @throws FailedToCreateInflector
      * @throws ReflectionException
      */
-    private function getFormatPropertyFromTaxonomyQueryBuilder(TaxonomyQueryBuilder $taxonomyQueryBuilder): mixed
+    public function testOnlyCustom(): void
     {
-        return Reflection::getNonPublicPropertyValue($taxonomyQueryBuilder, 'format');
+        $this->testAllQueryBuilders('_builtin', false);
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     * @throws FailedToCreateInflector
+     * @throws ReflectionException
+     */
+    public function testWhereAdminMenuSingularLabel(): void
+    {
+        $this->testAllQueryBuilders('singular_label', $value = 'test', [$value]);
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     * @throws FailedToCreateInflector
+     * @throws ReflectionException
+     */
+    public function testWhereCanOnlyBeUsedBy(): void
+    {
+        $expected_argument_key = 'object_type';
+        $value1 = ObjectType::post;
+        $value2 = ObjectType::user;
+
+        $this->testAllQueryBuilders($expected_argument_key, [$value1->name], [$value1]);
+        $this->testAllQueryBuilders($expected_argument_key, [$value1->name, $value2->name], [$value1, $value2]);
+    }
+
+    /**
+     * @return Generator<QueryBuildersDTO>
+     */
+    private function queryBuilders(): Generator
+    {
+        foreach (ResultFormat::cases() as $format) {
+            foreach (Operator::cases() as $operator) {
+                yield new QueryBuildersDTO($format, $operator);
+            }
+        }
+    }
+
+    /**
+     * @param string $expected_argument_key
+     * @param string|bool|array $expected_argument_value
+     * @param array $method_parameters
+     * @param string $test_method
+     * @return void
+     * @throws ExpectationFailedException
+     * @throws FailedToCreateInflector
+     * @throws ReflectionException
+     */
+    private function testAllQueryBuilders(
+        string $expected_argument_key,
+        string|bool|array $expected_argument_value,
+        array $method_parameters = [],
+        string $test_method = __METHOD__
+    ): void
+    {
+        $method = Str::of($test_method)->after('test')->camelCase();
+
+        foreach ($this->queryBuilders() as $taxonomyQueryBuilder) {
+            $this->assertBuiltArguments([
+                $expected_argument_key => $expected_argument_value
+            ], $taxonomyQueryBuilder->queryBuilder->$method(...$method_parameters));
+        }
     }
 }
