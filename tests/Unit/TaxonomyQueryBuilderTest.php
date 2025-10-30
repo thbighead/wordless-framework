@@ -10,11 +10,15 @@ use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Tests\WordlessTestCase\QueryBuilderTestCase;
 use Wordless\Wordpress\Enums\ObjectType;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\ResultFormat;
+use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 
 class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
 {
+    private const ARGUMENT_KEY_OBJECT_TYPE = 'object_type';
+
     /**
      * @return void
      * @throws ExpectationFailedException
@@ -57,6 +61,39 @@ class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
     public function testWhereAdminMenuSingularLabel(): void
     {
         $this->testAllQueryBuilders('singular_label', $value = 'test', [$value]);
+
+        $this->expectException(EmptyStringParameter::class);
+        TaxonomyQueryBuilder::make()->whereAdminMenuSingularLabel('');
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     * @throws ReflectionException
+     */
+    public function testWhereCanBeUsedBy(): void
+    {
+        $value1 = ObjectType::post;
+        $value2 = ObjectType::user;
+        $value3 = ObjectType::comment;
+
+        foreach ($this->queryBuilders() as $taxonomyQueryBuilder) {
+            $this->assertBuiltArguments([
+                self::ARGUMENT_KEY_OBJECT_TYPE => [$value1->name]
+            ], $taxonomyQueryBuilder->queryBuilder->whereCanBeUsedBy($value1));
+            $this->assertBuiltArguments([
+                self::ARGUMENT_KEY_OBJECT_TYPE => [$value1->name]
+            ], $taxonomyQueryBuilder->queryBuilder->whereCanBeUsedBy($value1));
+            $this->assertBuiltArguments([
+                self::ARGUMENT_KEY_OBJECT_TYPE => [$value1->name, $value2->name]
+            ], $taxonomyQueryBuilder->queryBuilder->whereCanBeUsedBy($value2));
+            $this->assertBuiltArguments([
+                self::ARGUMENT_KEY_OBJECT_TYPE => [$value1->name, $value2->name]
+            ], $taxonomyQueryBuilder->queryBuilder->whereCanBeUsedBy($value1, $value2));
+            $this->assertBuiltArguments([
+                self::ARGUMENT_KEY_OBJECT_TYPE => [$value1->name, $value2->name, $value3->name]
+            ], $taxonomyQueryBuilder->queryBuilder->whereCanBeUsedBy($value1, $value3));
+        }
     }
 
     /**
@@ -67,12 +104,24 @@ class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
      */
     public function testWhereCanOnlyBeUsedBy(): void
     {
-        $expected_argument_key = 'object_type';
         $value1 = ObjectType::post;
         $value2 = ObjectType::user;
 
-        $this->testAllQueryBuilders($expected_argument_key, [$value1->name], [$value1]);
-        $this->testAllQueryBuilders($expected_argument_key, [$value1->name, $value2->name], [$value1, $value2]);
+        $this->testAllQueryBuilders(
+            self::ARGUMENT_KEY_OBJECT_TYPE,
+            [$value1->name],
+            [$value1]
+        );
+        $this->testAllQueryBuilders(
+            self::ARGUMENT_KEY_OBJECT_TYPE,
+            [$value1->name, $value2->name],
+            [$value1, $value2]
+        );
+        $this->testAllQueryBuilders(
+            self::ARGUMENT_KEY_OBJECT_TYPE,
+            [$value1->name, $value2->name],
+            [$value1, $value1, $value1, $value2, $value2]
+        );
     }
 
     /**
@@ -98,10 +147,10 @@ class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
      * @throws ReflectionException
      */
     private function testAllQueryBuilders(
-        string $expected_argument_key,
+        string            $expected_argument_key,
         string|bool|array $expected_argument_value,
-        array $method_parameters = [],
-        string $test_method = __METHOD__
+        array             $method_parameters = [],
+        string            $test_method = __METHOD__
     ): void
     {
         $method = Str::of($test_method)->after('test')->camelCase();
