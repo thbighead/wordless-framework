@@ -28,6 +28,8 @@ class JwtTest extends WordlessTestCase
     public static function setUpBeforeClass(): void
     {
         $_ENV[Token::ENVIRONMENT_SIGN_VARIABLE] = base64_encode(self::JWT_4096_KEY);
+
+        parent::setUpBeforeClass();
     }
 
     /**
