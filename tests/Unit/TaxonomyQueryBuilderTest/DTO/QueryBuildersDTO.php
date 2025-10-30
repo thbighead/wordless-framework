@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace TaxonomyQueryBuilderTest\DTO;
+namespace Wordless\Tests\Unit\TaxonomyQueryBuilderTest\DTO;
 
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;

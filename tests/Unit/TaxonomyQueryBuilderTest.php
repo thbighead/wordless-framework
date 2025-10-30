@@ -5,9 +5,9 @@ namespace Wordless\Tests\Unit;
 use Generator;
 use PHPUnit\Framework\ExpectationFailedException;
 use ReflectionException;
-use TaxonomyQueryBuilderTest\DTO\QueryBuildersDTO;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
+use Wordless\Tests\Unit\TaxonomyQueryBuilderTest\DTO\QueryBuildersDTO;
 use Wordless\Tests\WordlessTestCase\QueryBuilderTestCase;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
@@ -27,7 +27,7 @@ class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
      */
     public function testOnlyAvailableInAdminMenu(): void
     {
-        $this->testAllQueryBuilders('show_ui', true);
+        $this->testAllQueryBuilders(__METHOD__, 'show_ui', true);
     }
 
     /**
@@ -38,7 +38,11 @@ class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
      */
     public function testOnlyAvailableInRestApi(): void
     {
-        $this->testAllQueryBuilders('show_in_rest', true);
+        $this->testAllQueryBuilders(
+            __METHOD__,
+            'show_in_rest',
+            true
+        );
     }
 
     /**
@@ -49,7 +53,11 @@ class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
      */
     public function testOnlyCustom(): void
     {
-        $this->testAllQueryBuilders('_builtin', false);
+        $this->testAllQueryBuilders(
+            __METHOD__,
+            '_builtin',
+            false
+        );
     }
 
     /**
@@ -60,7 +68,12 @@ class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
      */
     public function testWhereAdminMenuSingularLabel(): void
     {
-        $this->testAllQueryBuilders('singular_label', $value = 'test', [$value]);
+        $this->testAllQueryBuilders(
+            __METHOD__,
+            'singular_label',
+            $value = 'test',
+            [$value]
+        );
 
         $this->expectException(EmptyStringParameter::class);
         TaxonomyQueryBuilder::make()->whereAdminMenuSingularLabel('');
@@ -108,16 +121,19 @@ class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
         $value2 = ObjectType::user;
 
         $this->testAllQueryBuilders(
+            __METHOD__,
             self::ARGUMENT_KEY_OBJECT_TYPE,
             [$value1->name],
             [$value1]
         );
         $this->testAllQueryBuilders(
+            __METHOD__,
             self::ARGUMENT_KEY_OBJECT_TYPE,
             [$value1->name, $value2->name],
             [$value1, $value2]
         );
         $this->testAllQueryBuilders(
+            __METHOD__,
             self::ARGUMENT_KEY_OBJECT_TYPE,
             [$value1->name, $value2->name],
             [$value1, $value1, $value1, $value2, $value2]
@@ -147,13 +163,13 @@ class TaxonomyQueryBuilderTest extends QueryBuilderTestCase
      * @throws ReflectionException
      */
     private function testAllQueryBuilders(
+        string            $test_method,
         string            $expected_argument_key,
         string|bool|array $expected_argument_value,
-        array             $method_parameters = [],
-        string            $test_method = __METHOD__
+        array             $method_parameters = []
     ): void
     {
-        $method = Str::of($test_method)->after('test')->camelCase();
+        $method = (string)Str::of($test_method)->after('test')->camelCase();
 
         foreach ($this->queryBuilders() as $taxonomyQueryBuilder) {
             $this->assertBuiltArguments([
