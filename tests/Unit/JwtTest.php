@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Wordless\Tests\Unit;
 
@@ -27,19 +27,18 @@ class JwtTest extends WordlessTestCase
      */
     public static function setUpBeforeClass(): void
     {
-        define('ROOT_PROJECT_PATH', __DIR__ . '/../..');
         $_ENV[Token::ENVIRONMENT_SIGN_VARIABLE] = base64_encode(self::JWT_4096_KEY);
     }
 
     /**
      * @return void
      * @throws EmptyConfigKey
+     * @throws ExpectationFailedException
+     * @throws FailedToLoadConfigFile
      * @throws InvalidConfigKey
      * @throws InvalidJwtCryptoAlgorithmId
      * @throws NoConstraintsGiven
      * @throws RequiredConstraintsViolated
-     * @throws ExpectationFailedException
-     * @throws FailedToLoadConfigFile
      */
     public function testParsingTokenConstructor()
     {

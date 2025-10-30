@@ -42,9 +42,14 @@ class TaxonomyQueryBuilder extends QueryBuilder
         return !empty($this->get());
     }
 
+    /**
+     * @param int $quantity
+     * @param ResultFormat|null $format
+     * @return WP_Taxonomy|WP_Taxonomy[]|string[]|string|null
+     */
     public function first(int $quantity = 1, ?ResultFormat $format = null): WP_Taxonomy|array|string|null
     {
-        return Arr::first($this->get($format), $quantity) ?? null;
+        return Arr::first($this->get($format), $quantity);
     }
 
     /**
@@ -173,12 +178,8 @@ class TaxonomyQueryBuilder extends QueryBuilder
      */
     public function whereCanBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): static
     {
-        if (!isset($this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE])) {
-            $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] = [];
-        }
-
         $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] = array_merge(
-            $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE],
+            $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] ?? [],
             Arr::prepend($objectTypes, $objectType)
         );
 
