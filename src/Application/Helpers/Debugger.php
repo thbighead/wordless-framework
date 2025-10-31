@@ -12,7 +12,6 @@ class Debugger extends Helper
     public static function calledFrom(): string
     {
         $where_it_was_called_info = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3)[2];
-        $unknown_result = 'UNKNOWN_METHOD';
         $where_it_was_called = '';
         $class_key = 'class';
         $function_key = 'function';
@@ -23,7 +22,7 @@ class Debugger extends Helper
 
         return isset($where_it_was_called_info[$function_key]) ?
             "$where_it_was_called$where_it_was_called_info[$function_key]" :
-            "$where_it_was_called$unknown_result";
+            "{$where_it_was_called}UNKNOWN_METHOD";
     }
 
     public static function dd(mixed ...$vars): void

@@ -2,16 +2,19 @@
 
 namespace Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO;
 
+use Wordless\Application\Helpers\Arr;
+use Wordless\Application\Helpers\Arr\Contracts\Subjectable\DTO\ArraySubjectDTO;
 use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
-use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\NotAPhpFile;
 use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO;
+use Wordless\Application\Helpers\ProjectPath\Contracts\Subjectable\DTO\ProjectPathSubjectDTO\FilePathSubjectDTO\Exceptions\InvalidJsonFile;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Exceptions\JsonDecodeError;
 
 final class FilePathSubjectDTO extends ProjectPathSubjectDTO
 {
@@ -35,6 +38,19 @@ final class FilePathSubjectDTO extends ProjectPathSubjectDTO
     }
 
     /**
+     * @return ArraySubjectDTO
+     * @throws InvalidJsonFile
+     */
+    public function getJsonContent(): ArraySubjectDTO
+    {
+        try {
+            return Arr::of(Str::jsonDecode($this->getContent()));
+        } catch (FailedToGetFileContent|JsonDecodeError|PathNotFoundException $exception) {
+            throw new InvalidJsonFile($this, $exception);
+        }
+    }
+
+    /**
      * @return string
      * @throws NotAPhpFile
      * @throws PathNotFoundException
@@ -42,6 +58,16 @@ final class FilePathSubjectDTO extends ProjectPathSubjectDTO
     public function getPhpEcho(): string
     {
         return $this->php_echo ?? $this->php_echo = DirectoryFiles::getFileEcho($this->subject);
+    }
+
+    /**
+     * @return bool
+     * @throws FailedToGetFileContent
+     * @throws PathNotFoundException
+     */
+    public function isJson(): bool
+    {
+        return Str::isJson($this->getContent());
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Helpers;
 
+use Wordless\Application\Helpers\Crypto\Exceptions\DecryptionFailed;
 use Wordless\Application\Helpers\Crypto\Traits\Base64;
 use Wordless\Application\Helpers\Crypto\Traits\Base64\Exceptions\FailedToDecode;
 use Wordless\Application\Helpers\Crypto\Traits\Internal;
@@ -19,19 +20,26 @@ class Crypto extends Helper
 
     /**
      * @param string $string_to_decrypt
-     * @return bool|string
-     * @throws CannotResolveEnvironmentGet
-     * @throws FailedToDecode
+     * @return string
+     * @throws DecryptionFailed
      */
-    public static function decrypt(string $string_to_decrypt): bool|string
+    public static function decrypt(string $string_to_decrypt): string
     {
-        return openssl_decrypt(
-            self::base64Decode($string_to_decrypt),
-            self::OPENSSL_CIPHER_ALGORITHM,
-            self::hashedKey(),
-            0,
-            self::hashedIv()
-        );
+        try {
+            if (!is_string($decrypted = openssl_decrypt(
+                self::base64Decode($string_to_decrypt),
+                self::OPENSSL_CIPHER_ALGORITHM,
+                self::hashedKey(),
+                0,
+                self::hashedIv()
+            ))) {
+                throw new DecryptionFailed($string_to_decrypt);
+            }
+        } catch (CannotResolveEnvironmentGet|FailedToDecode $exception) {
+            throw new DecryptionFailed($string_to_decrypt, $exception);
+        }
+
+        return $decrypted;
     }
 
     /**
