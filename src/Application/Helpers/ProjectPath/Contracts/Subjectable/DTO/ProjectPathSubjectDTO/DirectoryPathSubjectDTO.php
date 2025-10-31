@@ -6,6 +6,7 @@ use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateSymlink;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToTravelDirectories;
@@ -17,6 +18,8 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 
 final class DirectoryPathSubjectDTO extends ProjectPathSubjectDTO
 {
+    private array $relative_to = [];
+
     /**
      * @param string $additional_relative_path
      * @return ProjectPathSubjectDTO
@@ -123,5 +126,17 @@ final class DirectoryPathSubjectDTO extends ProjectPathSubjectDTO
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $to
+     * @return string
+     * @throws FailedToGetCurrentWorkingDirectory
+     * @throws PathNotFoundException
+     */
+    public function relativeTo(string $to): string
+    {
+        return $this->relative_to[$to]
+            ?? $this->relative_to[$to] = ProjectPath::relativeTo($to, $this->subject);
     }
 }
