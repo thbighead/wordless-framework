@@ -160,7 +160,7 @@ class ProjectPath extends Subjectable
             throw new PathNotFoundException($full_path);
         }
 
-        return $real_path;
+        return rtrim($real_path, DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -221,19 +221,12 @@ class ProjectPath extends Subjectable
     final public static function relativeTo(string $to_absolute_path, ?string $from_absolute_path = null): string
     {
         $to_absolute_path = self::realpath($to_absolute_path);
-        $from_absolute_path = $from_absolute_path
+        $from_absolute_path = !is_null($from_absolute_path)
             ? self::realpath($from_absolute_path)
             : DirectoryFiles::getCurrentWorkingDirectory();
 
-        $exploded_to_path = explode(
-            DIRECTORY_SEPARATOR,
-            rtrim($to_absolute_path, DIRECTORY_SEPARATOR)
-        );
-
-        $exploded_from_path = explode(
-            DIRECTORY_SEPARATOR,
-            rtrim($from_absolute_path, DIRECTORY_SEPARATOR)
-        );
+        $exploded_from_path = explode(DIRECTORY_SEPARATOR, $from_absolute_path);
+        $exploded_to_path = explode(DIRECTORY_SEPARATOR, $to_absolute_path);
 
         $match_count = 0;
 
@@ -243,10 +236,10 @@ class ProjectPath extends Subjectable
             }
         }
 
-        $relativePath = str_repeat('..' . DIRECTORY_SEPARATOR, count($exploded_from_path) - $match_count)
+        $relative_path = str_repeat('..' . DIRECTORY_SEPARATOR, count($exploded_from_path) - $match_count)
             . implode(DIRECTORY_SEPARATOR, array_slice($exploded_to_path, $match_count));
 
-        return $relativePath === '' ? '.' : $relativePath;
+        return $relative_path === '' ? '.' : $relative_path;
     }
 
     /**

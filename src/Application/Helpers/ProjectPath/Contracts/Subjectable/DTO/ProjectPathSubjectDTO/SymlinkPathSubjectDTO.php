@@ -20,6 +20,6 @@ final class SymlinkPathSubjectDTO extends ProjectPathSubjectDTO
      */
     public function target(): ProjectPathSubjectDTO
     {
-        return ProjectPath::of($this->target ?? $this->target = realpath($this->subject));
+        return ProjectPath::of($this->target ?? $this->target = ProjectPath::path($this->subject));
     }
 }
