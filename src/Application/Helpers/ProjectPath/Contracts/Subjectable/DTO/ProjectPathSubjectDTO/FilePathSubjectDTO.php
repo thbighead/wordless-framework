@@ -51,7 +51,7 @@ final class FilePathSubjectDTO extends ProjectPathSubjectDTO
      */
     public function delete(): void
     {
-        DirectoryFiles::delete($this->subject);
+        parent::delete();
 
         unset($this->content);
     }
@@ -61,9 +61,7 @@ final class FilePathSubjectDTO extends ProjectPathSubjectDTO
      * @param bool $overwrite
      * @return $this
      * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
      * @throws FailedToPutFileContent
-     * @throws PathNotFoundException
      */
     public function writeContent(string $content, bool $overwrite = true): self
     {
