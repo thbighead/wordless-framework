@@ -5,10 +5,12 @@ namespace Wordless\Tests\Unit;
 use PHPUnit\Framework\ExpectationFailedException;
 use Random\RandomException;
 use ReflectionException;
-use ReflectionType;
+use ReflectionMethod;
+use Wordless\Application\Helpers\Arr\Contracts\Subjectable\DTO\ArraySubjectDTO;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO;
 use Wordless\Application\Helpers\Str\Enums\Encoding;
 use Wordless\Application\Helpers\Str\Exceptions\JsonDecodeError;
 use Wordless\Tests\Unit\StrHelperTest\Traits\BooleanTests;
@@ -28,22 +30,6 @@ class StrHelperTest extends WordlessTestCase
 
     private const BASE_STRING = 'TestStringSubstrings';
     private const COUNT_STRING = 'Test Test Test Test';
-
-    /**
-     * @param ReflectionType $subjectReturnType
-     * @param ReflectionType $helperReturnType
-     * @return void
-     * @throws ExpectationFailedException
-     */
-    private function assertSimilarReturnType(ReflectionType $subjectReturnType, ReflectionType $helperReturnType): void
-    {
-        $this->assertTrue(true);
-    }
-
-    private function subject(): string
-    {
-        return self::BASE_STRING;
-    }
 
     /**
      * @return void
@@ -122,5 +108,41 @@ class StrHelperTest extends WordlessTestCase
     public function testSubjectDto(): void
     {
         $this->assertSubjectDtoMethods(['random', 'uuid', 'of']);
+    }
+
+    /**
+     * @param ReflectionMethod $subjectMethod
+     * @param ReflectionMethod $helperMethod
+     * @return void
+     * @throws ExpectationFailedException
+     */
+    private function assertSimilarMethodsReturnTypes(
+        ReflectionMethod $subjectMethod,
+        ReflectionMethod $helperMethod
+    ): void
+    {
+        $subject_method_return_type = Str::replace(
+            (string)$subjectMethod->getReturnType(),
+            ['static', 'self'],
+            StringSubjectDTO::class
+        );
+
+        match ($subjectMethod->name) {
+            'jsonDecode' => $this->assertEquals(
+                Str::replace((string)$helperMethod->getReturnType(), 'array', ArraySubjectDTO::class),
+                $subject_method_return_type,
+                "Failed asserting subject method $subjectMethod->name return type."
+            ),
+            default => $this->assertEquals(
+                Str::replace((string)$helperMethod->getReturnType(), 'string', StringSubjectDTO::class),
+                $subject_method_return_type,
+                "Failed asserting that helper and subject method $helperMethod->name return types are equal."
+            )
+        };
+    }
+
+    private function subject(): string
+    {
+        return self::BASE_STRING;
     }
 }

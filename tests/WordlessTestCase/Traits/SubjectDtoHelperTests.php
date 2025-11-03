@@ -4,12 +4,7 @@ namespace Wordless\Tests\WordlessTestCase\Traits;
 
 use PHPUnit\Framework\ExpectationFailedException;
 use ReflectionException;
-use ReflectionIntersectionType;
 use ReflectionMethod;
-use ReflectionNamedType;
-use ReflectionParameter;
-use ReflectionType;
-use ReflectionUnionType;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Reflection;
 use Wordless\Application\Helpers\Str;
@@ -21,113 +16,14 @@ use Wordless\Tests\WordlessTestCase;
  */
 trait SubjectDtoHelperTests
 {
-    abstract private function assertSimilarReturnType(
-        ReflectionType $subjectReturnType,
-        ReflectionType $helperReturnType
+    abstract private function assertSimilarMethodsReturnTypes(
+        ReflectionMethod $subjectMethod,
+        ReflectionMethod $helperMethod
     ): void;
 
     abstract private function subject(): mixed;
 
     abstract public function testSubjectDto(): void;
-
-    /**
-     * @param ReflectionIntersectionType $subjectType
-     * @param ReflectionIntersectionType $helperType
-     * @return void
-     * @throws ExpectationFailedException
-     */
-    private function assertReflectedParameterIntersectionType(
-        ReflectionIntersectionType $subjectType,
-        ReflectionIntersectionType $helperType
-    ): void
-    {
-        $this->assertParametersReflectedTypes($subjectType->getTypes(), $helperType->getTypes());
-    }
-
-    /**
-     * @param ReflectionNamedType $subjectType
-     * @param ReflectionNamedType $helperType
-     * @return void
-     * @throws ExpectationFailedException
-     */
-    private function assertReflectedParameterNamedType(ReflectionNamedType $subjectType, ReflectionNamedType $helperType): void
-    {
-        $this->assertEquals($helperType->getName(), $subjectType->getName());
-        $this->assertEquals(
-            $helperType->allowsNull(),
-            $subjectType->allowsNull(),
-            "Failed asserting helper parameter type {$helperType->getName()} and subject parameter type {$subjectType->getName()} both allows null."
-        );
-        $this->assertEquals(
-            $helperType->isBuiltin(),
-            $subjectType->isBuiltin(),
-            "Failed asserting helper parameter type {$helperType->getName()} and subject parameter type {$subjectType->getName()} both are builtin."
-        );
-    }
-
-    /**
-     * @param ReflectionType $subjectType
-     * @param ReflectionType $helperType
-     * @return void
-     * @throws ExpectationFailedException
-     */
-    private function assertReflectedParameterType(ReflectionType $subjectType, ReflectionType $helperType): void
-    {
-        $this->assertEquals(
-            $helperType::class,
-            $subjectType::class,
-            'Failed asserting parameters reflected classes.'
-        );
-
-        match (true) {
-            $helperType instanceof ReflectionIntersectionType
-            && $subjectType instanceof ReflectionIntersectionType => $this->assertReflectedParameterIntersectionType(
-                $subjectType,
-                $helperType
-            ),
-            $helperType instanceof ReflectionNamedType
-            && $subjectType instanceof ReflectionNamedType => $this->assertReflectedParameterNamedType(
-                $subjectType,
-                $helperType
-            ),
-            $helperType instanceof ReflectionUnionType
-            && $subjectType instanceof ReflectionUnionType => $this->assertReflectedParameterUnionType(
-                $subjectType,
-                $helperType
-            ),
-            default => throw new ExpectationFailedException('Types are not similar')
-        };
-    }
-
-    /**
-     * @param ReflectionUnionType $subjectType
-     * @param ReflectionUnionType $helperType
-     * @return void
-     * @throws ExpectationFailedException
-     */
-    private function assertReflectedParameterUnionType(ReflectionUnionType $subjectType, ReflectionUnionType $helperType): void
-    {
-        $this->assertParametersReflectedTypes($subjectType->getTypes(), $helperType->getTypes());
-    }
-
-    /**
-     * @param ReflectionType[] $subject_types
-     * @param ReflectionType[] $helper_types
-     * @return void
-     * @throws ExpectationFailedException
-     */
-    private function assertParametersReflectedTypes(array $subject_types, array $helper_types): void
-    {
-        $this->assertEquals(
-            $types_count = count($helper_types),
-            count($subject_types),
-            'Failed asserting subject and helper parameters types count.'
-        );
-
-        for ($i = 0; $i < $types_count; $i++) {
-            $this->assertReflectedParameterType($subject_types[$i], $helper_types[$i]);
-        }
-    }
 
     /**
      * @param ReflectionMethod $subjectMethod
@@ -208,26 +104,12 @@ trait SubjectDtoHelperTests
                 $subjectMethodParameter->isVariadic(),
                 "Failed asserting that helper and subject methods' parameter $helperMethodParameter->name are variadic."
             );
-
-            $this->assertParametersReflectedTypes(
-                $this->getParameterTypes($subjectMethodParameter),
-                $this->getParameterTypes($helperMethodParameter)
+            $this->assertEquals(
+                (string)$helperMethodParameter->getType(),
+                (string)$subjectMethodParameter->getType(),
+                "Failed asserting that helper and subject methods' parameter $helperMethodParameter->name types are equal."
             );
         }
-    }
-
-    /**
-     * @param ReflectionMethod $subjectMethod
-     * @param ReflectionMethod $helperMethod
-     * @return void
-     * @throws ExpectationFailedException
-     */
-    private function assertSimilarMethodsReturnTypes(ReflectionMethod $subjectMethod, ReflectionMethod $helperMethod): void
-    {
-        $this->assertSimilarReturnType(
-            $subjectMethod->getReturnType(),
-            $helperMethod->getReturnType()
-        );
     }
 
     /**
@@ -261,23 +143,6 @@ trait SubjectDtoHelperTests
                 $helperPublicStaticMethod
             );
         }
-    }
-
-    /**
-     * @param ReflectionParameter|null $reflectedParameter
-     * @return ReflectionType[]
-     */
-    private function getParameterTypes(?ReflectionParameter $reflectedParameter): array
-    {
-        if (is_null($type = $reflectedParameter->getType())) {
-            return [];
-        }
-
-        if ($type instanceof ReflectionNamedType) {
-            return [$type];
-        }
-
-        return $type->getTypes();
     }
 
     /**
