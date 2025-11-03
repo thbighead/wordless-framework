@@ -16,14 +16,14 @@ use Wordless\Tests\WordlessTestCase;
  */
 trait SubjectDtoHelperTests
 {
+    abstract public function testSubjectDto(): void;
+
     abstract private function assertSimilarMethodsReturnTypes(
         ReflectionMethod $subjectMethod,
         ReflectionMethod $helperMethod
     ): void;
 
     abstract private function subject(): mixed;
-
-    abstract public function testSubjectDto(): void;
 
     /**
      * @param ReflectionMethod $subjectMethod
@@ -82,32 +82,32 @@ trait SubjectDtoHelperTests
             $this->assertEquals(
                 $helper_method_parameter_default_value,
                 $subject_method_parameter_default_value,
-                "Failed asserting that helper and subject methods' parameter $helperMethodParameter->name default value are equals."
+                "Failed asserting that helper and subject $helperMethod->name method parameter $helperMethodParameter->name default value are equals."
             );
             $this->assertEquals(
                 $helperMethodParameter->isOptional(),
                 $subjectMethodParameter->isOptional(),
-                "Failed asserting that helper and subject methods' parameter $helperMethodParameter->name are optional."
+                "Failed asserting that helper and subject $helperMethod->name method parameter $helperMethodParameter->name are optional."
             );
             $this->assertEquals(
                 $helperMethodParameter->isPassedByReference(),
                 $subjectMethodParameter->isPassedByReference(),
-                "Failed asserting that helper and subject methods' parameter $helperMethodParameter->name are passed by reference."
+                "Failed asserting that helper and subject $helperMethod->name method parameter $helperMethodParameter->name are passed by reference."
             );
             $this->assertEquals(
                 $helperMethodParameter->isPromoted(),
                 $subjectMethodParameter->isPromoted(),
-                "Failed asserting that helper and subject methods' parameter $helperMethodParameter->name are promoted."
+                "Failed asserting that helper and subject $helperMethod->name method parameter $helperMethodParameter->name are promoted."
             );
             $this->assertEquals(
                 $helperMethodParameter->isVariadic(),
                 $subjectMethodParameter->isVariadic(),
-                "Failed asserting that helper and subject methods' parameter $helperMethodParameter->name are variadic."
+                "Failed asserting that helper and subject $helperMethod->name method parameter $helperMethodParameter->name are variadic."
             );
             $this->assertEquals(
                 (string)$helperMethodParameter->getType(),
                 (string)$subjectMethodParameter->getType(),
-                "Failed asserting that helper and subject methods' parameter $helperMethodParameter->name types are equal."
+                "Failed asserting that helper and subject $helperMethod->name method parameter $helperMethodParameter->name types are equal."
             );
         }
     }
