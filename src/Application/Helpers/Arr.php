@@ -173,7 +173,7 @@ class Arr extends Subjectable
         return rtrim(var_export($array, true));
     }
 
-    public static function prepend(array $array, mixed $value, string|int|bool|null $with_key = null): array
+    public static function prepend(array $array, mixed $value, string|int|null $with_key = null): array
     {
         if (!static::isAssociative($array) && $with_key === null) {
             $clone = $array;
@@ -193,10 +193,10 @@ class Arr extends Subjectable
     }
 
     public static function pushValueIntoIndex(
-        array                $array,
-        int                  $index,
-        mixed                $value,
-        string|int|bool|null $with_key = null
+        array           $array,
+        int             $index,
+        mixed           $value,
+        string|int|null $with_key = null
     ): array
     {
         if (($index = abs($index)) === 0) {
@@ -234,12 +234,12 @@ class Arr extends Subjectable
         return $new_array;
     }
 
-    public static function recursiveJoin(array $array_1, array $array_2, array ...$arrays): array
+    public static function recursiveJoin(array $initial_array, array $array, array ...$arrays): array
     {
         $joined_array = [];
 
-        self::resolveRecursiveJoin($array_1, $joined_array);
-        self::resolveRecursiveJoin($array_2, $joined_array);
+        self::resolveRecursiveJoin($initial_array, $joined_array);
+        self::resolveRecursiveJoin($array, $joined_array);
 
         foreach ($arrays as $array) {
             self::resolveRecursiveJoin($array, $joined_array);
