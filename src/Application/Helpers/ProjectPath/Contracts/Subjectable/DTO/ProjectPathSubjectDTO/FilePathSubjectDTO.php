@@ -23,6 +23,22 @@ final class FilePathSubjectDTO extends ProjectPathSubjectDTO
     private string $php_echo;
 
     /**
+     * @return null
+     * @throws FailedToDeletePath
+     * @throws PathNotFoundException
+     */
+    public function delete(): null
+    {
+        parent::delete();
+
+        unset($this->content);
+        unset($this->extension);
+        unset($this->php_echo);
+
+        return null;
+    }
+
+    /**
      * @return string
      * @throws FailedToGetFileContent
      * @throws PathNotFoundException
@@ -68,18 +84,6 @@ final class FilePathSubjectDTO extends ProjectPathSubjectDTO
     public function isJson(): bool
     {
         return Str::isJson($this->getContent());
-    }
-
-    /**
-     * @return void
-     * @throws FailedToDeletePath
-     * @throws PathNotFoundException
-     */
-    public function delete(): void
-    {
-        parent::delete();
-
-        unset($this->content);
     }
 
     /**
