@@ -3,8 +3,12 @@
 namespace Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\Traits\HelperMethods\Traits;
 
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO;
 use Wordless\Application\Helpers\Str\Enums\Encoding;
 
+/**
+ * @mixin StringSubjectDTO
+ */
 trait Boolean
 {
     public function beginsWith(string $substring): bool
@@ -41,6 +45,11 @@ trait Boolean
     public function isJson(): bool
     {
         return Str::isJson($this->subject);
+    }
+
+    public function isUuid(): bool
+    {
+        return Str::isUuid($this->subject);
     }
 
     public function isWrappedBy(string $prefix, ?string $suffix = null): bool

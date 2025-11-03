@@ -3,13 +3,48 @@
 namespace Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\Traits\HelperMethods\Traits;
 
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO;
+use Wordless\Application\Helpers\Str\Enums\Language;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 
+/**
+ * @mixin StringSubjectDTO
+ */
 trait Mutators
 {
     public function finishWith(string $finish_with): static
     {
         $this->subject = Str::finishWith($this->subject, $finish_with);
+
+        return $this->recalculateLength();
+    }
+
+    /**
+     * @param Language|null $language
+     * @return $this
+     * @throws FailedToCreateInflector
+     */
+    public function plural(?Language $language = Language::english): static
+    {
+        $this->subject = Str::plural(
+            $this->subject,
+            $this->resolveLanguage($language, func_get_args(), get_defined_vars())
+        );
+
+        return $this->recalculateLength();
+    }
+
+    /**
+     * @param Language|null $language
+     * @return $this
+     * @throws FailedToCreateInflector
+     */
+    public function singular(?Language $language = Language::english): static
+    {
+        $this->subject = Str::singular(
+            $this->subject,
+            $this->resolveLanguage($language, func_get_args(), get_defined_vars())
+        );
 
         return $this->recalculateLength();
     }
@@ -55,7 +90,7 @@ trait Mutators
      * @return $this
      * @throws FailedToCreateInflector
      */
-    public function unnaccented(): static
+    public function unaccented(): static
     {
         $this->subject = Str::unaccented($this->subject);
 

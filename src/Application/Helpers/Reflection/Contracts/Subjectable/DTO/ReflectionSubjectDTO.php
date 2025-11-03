@@ -32,7 +32,7 @@ final class ReflectionSubjectDTO extends SubjectDTO
 
     public function getNonPublicConstValue(string $constant): mixed
     {
-        return Reflection::getNonPublicConstValue($this->getSubject(), $constant);
+        return Reflection::getNonPublicConstantValue($this->getSubject(), $constant);
     }
 
     /**

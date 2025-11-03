@@ -11,9 +11,7 @@ use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\
 use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\Traits\HelperMethods\Traits\Substring;
 use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\Traits\HelperMethods\Traits\WordCase;
 use Wordless\Application\Helpers\Str\Enums\Encoding;
-use Wordless\Application\Helpers\Str\Enums\Language;
 use Wordless\Application\Helpers\Str\Exceptions\JsonDecodeError;
-use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 
 /**
  * @mixin StringSubjectDTO
@@ -40,35 +38,5 @@ trait HelperMethods
             $this->getOriginalSubject(),
             $this->resolveEncoding($encoding, func_get_args(), get_defined_vars())
         );
-    }
-
-    /**
-     * @param Language|null $language
-     * @return $this
-     * @throws FailedToCreateInflector
-     */
-    public function plural(?Language $language = Language::english): static
-    {
-        $this->subject = Str::plural(
-            $this->subject,
-            $this->resolveLanguage($language, func_get_args(), get_defined_vars())
-        );
-
-        return $this->recalculateLength();
-    }
-
-    /**
-     * @param Language|null $language
-     * @return $this
-     * @throws FailedToCreateInflector
-     */
-    public function singular(?Language $language = Language::english): static
-    {
-        $this->subject = Str::singular(
-            $this->subject,
-            $this->resolveLanguage($language, func_get_args(), get_defined_vars())
-        );
-
-        return $this->recalculateLength();
     }
 }

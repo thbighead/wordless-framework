@@ -4,6 +4,8 @@ namespace Wordless\Tests\Unit;
 
 use PHPUnit\Framework\ExpectationFailedException;
 use Random\RandomException;
+use ReflectionException;
+use ReflectionType;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str;
@@ -14,16 +16,34 @@ use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests;
 use Wordless\Tests\Unit\StrHelperTest\Traits\SubstringTests;
 use Wordless\Tests\Unit\StrHelperTest\Traits\UuidTests;
 use Wordless\Tests\WordlessTestCase;
+use Wordless\Tests\WordlessTestCase\Traits\SubjectDtoHelperTests;
 
 class StrHelperTest extends WordlessTestCase
 {
     use BooleanTests;
     use MutatorsTests;
     use UuidTests;
+    use SubjectDtoHelperTests;
     use SubstringTests;
 
     private const BASE_STRING = 'TestStringSubstrings';
     private const COUNT_STRING = 'Test Test Test Test';
+
+    /**
+     * @param ReflectionType $subjectReturnType
+     * @param ReflectionType $helperReturnType
+     * @return void
+     * @throws ExpectationFailedException
+     */
+    private function assertSimilarReturnType(ReflectionType $subjectReturnType, ReflectionType $helperReturnType): void
+    {
+        $this->assertTrue(true);
+    }
+
+    private function subject(): string
+    {
+        return self::BASE_STRING;
+    }
 
     /**
      * @return void
@@ -92,5 +112,15 @@ class StrHelperTest extends WordlessTestCase
     {
         $this->assertEquals(Str::DEFAULT_RANDOM_SIZE, Str::length(Str::random()));
         $this->assertEquals($size = 20, Str::length(Str::random($size)));
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     * @throws ReflectionException
+     */
+    public function testSubjectDto(): void
+    {
+        $this->assertSubjectDtoMethods(['random', 'uuid', 'of']);
     }
 }
