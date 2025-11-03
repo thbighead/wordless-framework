@@ -20,7 +20,7 @@ abstract class ProjectPathSubjectDTO extends SubjectDTO
      * @throws FailedToDeletePath
      * @throws PathNotFoundException
      */
-    public function delete(): void
+    public function delete(): mixed
     {
         DirectoryFiles::delete($this->subject);
     }
