@@ -15,7 +15,7 @@ class FailedToParseArrayKey extends ErrorException
     {
         parent::__construct(
             "Failed to parse '$this->full_key_string'.",
-            ExceptionCode::development_error->value,
+            ExceptionCode::intentional_interrupt->value,
             previous: $previous
         );
     }
