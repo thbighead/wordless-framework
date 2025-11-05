@@ -106,17 +106,17 @@ trait Internal
     }
 
     /**
-     * @param array $keys
+     * @param array $key
      * @param array $config
      * @param string $original_keys_as_string
      * @return mixed
      * @throws InvalidConfigKey
      */
-    private static function searchKeysIntoConfig(array $keys, array $config, string $original_keys_as_string): mixed
+    private static function searchKeyIntoConfig(array $key, array $config, string $original_keys_as_string): mixed
     {
         $pointer = $config;
 
-        foreach ($keys as $parsed_key) {
+        foreach ($key as $parsed_key) {
             if (!is_array($pointer) || !key_exists($parsed_key, $pointer)) {
                 throw new InvalidConfigKey($original_keys_as_string);
             }
