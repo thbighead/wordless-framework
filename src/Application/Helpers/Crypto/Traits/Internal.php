@@ -31,7 +31,7 @@ trait Internal
      */
     private static function secretIv(): string
     {
-        return Environment::get('SECURE_AUTH_SALT');
+        return Environment::get('SECURE_AUTH_SALT', SECURE_AUTH_SALT);
     }
 
     /**
@@ -40,6 +40,6 @@ trait Internal
      */
     private static function secretKey(): string
     {
-        return Environment::get('SECURE_AUTH_KEY');
+        return Environment::get('SECURE_AUTH_KEY', SECURE_AUTH_KEY);
     }
 }

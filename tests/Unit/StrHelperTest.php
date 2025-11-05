@@ -28,9 +28,9 @@ class StrHelperTest extends WordlessTestCase
     use SubjectDtoHelperTests;
     use SubstringTests;
 
+    public const BASE_STRING = 'TestStringSubstrings';
     public const JSON_STRING =
         '{"test":"yeah","bool":true,"number":123,"maybe_null":null,"list":[true,false,null,45,"told_ya",{"big_test":"ok","or":"Not"},[1,2,3,4]],"sub_object":{"what":"is","done":80}}';
-    private const BASE_STRING = 'TestStringSubstrings';
     private const COUNT_STRING = 'Test Test Test Test';
 
     /**
