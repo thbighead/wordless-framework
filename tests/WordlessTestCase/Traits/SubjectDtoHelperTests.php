@@ -5,6 +5,7 @@ namespace Wordless\Tests\WordlessTestCase\Traits;
 use PHPUnit\Framework\ExpectationFailedException;
 use ReflectionException;
 use ReflectionMethod;
+use ReflectionParameter;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Reflection;
 use Wordless\Application\Helpers\Str;
@@ -54,12 +55,12 @@ trait SubjectDtoHelperTests
      */
     private function assertSimilarMethodsParameters(ReflectionMethod $subjectMethod, ReflectionMethod $helperMethod): void
     {
-        $helperMethodParameters = $helperMethod->getParameters();
         $subjectMethodParameters = $subjectMethod->getParameters();
+        $helperMethodParameters = $this->getHelperMethodParameters($helperMethod);
 
-        for ($i = 1; $i < count($helperMethodParameters); $i++) {
+        for ($i = 0; $i < count($helperMethodParameters); $i++) {
             $helperMethodParameter = $helperMethodParameters[$i];
-            $subjectMethodParameter = $subjectMethodParameters[$i - 1];
+            $subjectMethodParameter = $subjectMethodParameters[$i];
 
             $this->assertEquals(
                 $helperMethodParameter->name,
@@ -143,6 +144,18 @@ trait SubjectDtoHelperTests
                 $helperPublicStaticMethod
             );
         }
+    }
+
+    /**
+     * @param ReflectionMethod $helperMethod
+     * @return ReflectionParameter[]
+     */
+    private function getHelperMethodParameters(ReflectionMethod $helperMethod): array
+    {
+        $helperMethodParameters = $helperMethod->getParameters();
+        array_shift($helperMethodParameters);
+
+        return $helperMethodParameters;
     }
 
     /**
