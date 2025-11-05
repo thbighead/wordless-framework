@@ -2,6 +2,7 @@
 
 namespace Wordless\Tests\Unit;
 
+use JsonException;
 use PHPUnit\Framework\ExpectationFailedException;
 use ReflectionException;
 use ReflectionMethod;
@@ -51,9 +52,11 @@ class ArrHelperTest extends WordlessTestCase
 
         $this->assertEquals([$value], Arr::append([], $value));
         $this->assertEquals([4 => $value], Arr::append([], $value, 4));
+        $this->assertEquals(['' => $value], Arr::append([], $value, ''));
         $this->assertEquals([1, 2, 3, 4, $value], Arr::append(self::LIST_ARRAY, $value));
         $this->assertEquals([1, 2, 3, 4, $value], Arr::append(self::LIST_ARRAY, $value, 4));
         $this->assertEquals([1, 2, 3, 4, $key1 => $value], Arr::append(self::LIST_ARRAY, $value, $key1));
+        $this->assertEquals([1, 2, 3, 4, '' => $value], Arr::append(self::LIST_ARRAY, $value, ''));
 
         $this->assertEquals(
             ['big_test' => 'ok', 'or' => 'Not', $value],
@@ -66,6 +69,10 @@ class ArrHelperTest extends WordlessTestCase
         $this->assertEquals(
             ['big_test' => 'ok', 'or' => 'Not', $key1 => $value],
             Arr::append(self::ASSOCIATIVE_ARRAY, $value, $key1)
+        );
+        $this->assertEquals(
+            ['big_test' => 'ok', 'or' => 'Not', '' => $value],
+            Arr::append(self::ASSOCIATIVE_ARRAY, $value, '')
         );
 
         $this->expectException(ArrayKeyAlreadySet::class);
@@ -82,6 +89,7 @@ class ArrHelperTest extends WordlessTestCase
         $this->assertEquals([], Arr::except([], 2));
         $this->assertEquals([], Arr::except([], 7, 'test'));
         $this->assertEquals([], Arr::except([], 'or'));
+        $this->assertEquals([], Arr::except([], ''));
         $this->assertEquals([], Arr::except([]));
 
         $this->assertEquals([2 => 3, 3 => 4], Arr::except(self::LIST_ARRAY, 0, 1));
@@ -89,6 +97,7 @@ class ArrHelperTest extends WordlessTestCase
         $this->assertEquals([1, 2, 3 => 4], Arr::except(self::LIST_ARRAY, 2));
         $this->assertEquals(self::LIST_ARRAY, Arr::except(self::LIST_ARRAY, 7));
         $this->assertEquals(self::LIST_ARRAY, Arr::except(self::LIST_ARRAY, 7, 'test'));
+        $this->assertEquals(self::LIST_ARRAY, Arr::except(self::LIST_ARRAY, ''));
         $this->assertEquals(self::LIST_ARRAY, Arr::except(self::LIST_ARRAY));
 
         $this->assertEquals(
@@ -107,6 +116,10 @@ class ArrHelperTest extends WordlessTestCase
         $this->assertEquals(
             self::ASSOCIATIVE_ARRAY,
             Arr::except(self::ASSOCIATIVE_ARRAY, 7, 'test')
+        );
+        $this->assertEquals(
+            self::ASSOCIATIVE_ARRAY,
+            Arr::except(self::ASSOCIATIVE_ARRAY, '', '')
         );
         $this->assertEquals(self::ASSOCIATIVE_ARRAY, Arr::except(self::ASSOCIATIVE_ARRAY));
     }
@@ -157,18 +170,28 @@ class ArrHelperTest extends WordlessTestCase
         $this->assertNull(Arr::get([], 0));
         $this->assertNull(Arr::get([], 4));
         $this->assertNull(Arr::get([], 'ggg'));
+        $this->assertNull(Arr::get([], ''));
+        $this->assertEquals($default, Arr::get([], -1, $default));
+        $this->assertEquals($default, Arr::get([], 0, $default));
+        $this->assertEquals($default, Arr::get([], 4, $default));
+        $this->assertEquals($default, Arr::get([], 'ggg', $default));
+        $this->assertEquals($default, Arr::get([], '', $default));
 
         $this->assertEquals(1, Arr::get(self::LIST_ARRAY, 0));
         $this->assertEquals(1, Arr::get(self::LIST_ARRAY, 0, $default));
         $this->assertEquals(3, Arr::get(self::LIST_ARRAY, 2));
         $this->assertEquals(3, Arr::get(self::LIST_ARRAY, 2, $default));
         $this->assertNull(Arr::get(self::LIST_ARRAY, -1));
+        $this->assertNull(Arr::get(self::LIST_ARRAY, ''));
         $this->assertEquals($default, Arr::get(self::LIST_ARRAY, -1, $default));
+        $this->assertEquals($default, Arr::get(self::LIST_ARRAY, '', $default));
 
         $this->assertEquals('Not', Arr::get(self::ASSOCIATIVE_ARRAY, 'or'));
         $this->assertEquals('Not', Arr::get(self::ASSOCIATIVE_ARRAY, 'or', $default));
         $this->assertNull(Arr::get(self::ASSOCIATIVE_ARRAY, 2));
+        $this->assertNull(Arr::get(self::ASSOCIATIVE_ARRAY, ''));
         $this->assertEquals($default, Arr::get(self::ASSOCIATIVE_ARRAY, -1, $default));
+        $this->assertEquals($default, Arr::get(self::ASSOCIATIVE_ARRAY, '', $default));
 
         $this->assertEquals(45, Arr::get(self::JSON_ARRAY, 'list.3'));
         $this->assertEquals(45, Arr::get(self::JSON_ARRAY, 'list.3', $default));
@@ -197,11 +220,15 @@ class ArrHelperTest extends WordlessTestCase
     {
         $this->assertNull(Arr::getIndexOfKey([], 1));
         $this->assertNull(Arr::getIndexOfKey([], 'test'));
+        $this->assertNull(Arr::getIndexOfKey([], ''));
         $this->assertEquals(0, Arr::getIndexOfKey(self::ASSOCIATIVE_ARRAY, 'big_test'));
         $this->assertNull(Arr::getIndexOfKey(self::ASSOCIATIVE_ARRAY, 'aaaa'));
+        $this->assertNull(Arr::getIndexOfKey(self::ASSOCIATIVE_ARRAY, ''));
         $this->assertEquals(3, Arr::getIndexOfKey(self::LIST_ARRAY, 3));
         $this->assertNull(Arr::getIndexOfKey(self::LIST_ARRAY, 'ffff'));
+        $this->assertNull(Arr::getIndexOfKey(self::LIST_ARRAY, ''));
         $this->assertEquals(2, Arr::getIndexOfKey(self::JSON_ARRAY, 'number'));
+        $this->assertEquals(1, Arr::getIndexOfKey(['u', '' => 'v'], ''));
     }
 
     /**
@@ -221,7 +248,7 @@ class ArrHelperTest extends WordlessTestCase
         $this->assertEquals('is', Arr::getOrFail(self::JSON_ARRAY, 'sub_object.what'));
 
         $this->expectException(FailedToFindArrayKey::class);
-        Arr::getOrFail([], 'o');
+        Arr::getOrFail([], '');
     }
 
     /**
@@ -259,11 +286,15 @@ class ArrHelperTest extends WordlessTestCase
     {
         $this->assertTrue(Arr::hasKey(self::LIST_ARRAY, 1));
         $this->assertTrue(Arr::hasKey(self::ASSOCIATIVE_ARRAY, 'or'));
+        $this->assertTrue(Arr::hasKey(['' => 6], ''));
 
         $this->assertFalse(Arr::hasKey(self::LIST_ARRAY, 'lalala'));
+        $this->assertFalse(Arr::hasKey(self::LIST_ARRAY, ''));
         $this->assertFalse(Arr::hasKey(self::ASSOCIATIVE_ARRAY, 'lalala'));
+        $this->assertFalse(Arr::hasKey(self::ASSOCIATIVE_ARRAY, ''));
         $this->assertFalse(Arr::hasKey([], 0));
         $this->assertFalse(Arr::hasKey([], 'lalala'));
+        $this->assertFalse(Arr::hasKey([], ''));
     }
 
     /**
@@ -329,12 +360,15 @@ class ArrHelperTest extends WordlessTestCase
     public function testOnly(): void
     {
         $this->assertEquals([], Arr::only([]));
+        $this->assertEquals([], Arr::only([], ''));
         $this->assertEquals([], Arr::only([], ...self::LIST_ARRAY));
         $this->assertEquals([], Arr::only(self::LIST_ARRAY));
         $this->assertEquals([], Arr::only([], ...self::ASSOCIATIVE_ARRAY));
         $this->assertEquals([], Arr::only(self::ASSOCIATIVE_ARRAY));
         $this->assertEquals([], Arr::only(self::LIST_ARRAY, 'nothing'));
+        $this->assertEquals([], Arr::only(self::LIST_ARRAY, '', '', 'nothing'));
         $this->assertEquals([], Arr::only(self::ASSOCIATIVE_ARRAY, 'nothing'));
+        $this->assertEquals([], Arr::only(self::ASSOCIATIVE_ARRAY, ''));
 
         $this->assertEquals([0 => 1, 2 => 3], Arr::only(self::LIST_ARRAY, 0, 2));
         $this->assertEquals([0 => 1, 2 => 3], Arr::only(self::LIST_ARRAY, 0, 0, 2));
@@ -347,6 +381,21 @@ class ArrHelperTest extends WordlessTestCase
         $this->assertEquals(
             ['big_test' => 'ok'],
             Arr::only(self::ASSOCIATIVE_ARRAY, 'big_test', 8, 9)
+        );
+        $this->assertEquals(
+            [
+                'number' => 123,
+                'list' => [5 => ['big_test' => 'ok']],
+                'sub_object' => ['what' => 'is', 'done' => 80],
+            ],
+            Arr::only(self::JSON_ARRAY, 'number', 'list.5.big_test', 'sub_object')
+        );
+        $this->assertEquals(
+            [
+                'number' => 123,
+                'sub_object' => ['what' => 'is', 'done' => 80],
+            ],
+            Arr::only(self::JSON_ARRAY, 'number', 'list.5.', 'sub_object')
         );
 
         $this->assertEquals(
@@ -428,6 +477,7 @@ class ArrHelperTest extends WordlessTestCase
         $this->assertEquals([$value, 1, 2, 3, 4], Arr::prepend(self::LIST_ARRAY, $value));
         $this->assertEquals([$value, 1, 2, 3, 4], Arr::prepend(self::LIST_ARRAY, $value, 0));
         $this->assertEquals([$key1 => $value, 1, 2, 3, 4], Arr::prepend(self::LIST_ARRAY, $value, $key1));
+        $this->assertEquals(['' => $value, 1, 2, 3, 4], Arr::prepend(self::LIST_ARRAY, $value, ''));
 
         $this->assertEquals(
             [$value, 'big_test' => 'ok', 'or' => 'Not'],
@@ -440,6 +490,10 @@ class ArrHelperTest extends WordlessTestCase
         $this->assertEquals(
             [$key1 => $value, 'big_test' => 'ok', 'or' => 'Not'],
             Arr::prepend(self::ASSOCIATIVE_ARRAY, $value, $key1)
+        );
+        $this->assertEquals(
+            ['' => $value, 'big_test' => 'ok', 'or' => 'Not'],
+            Arr::prepend(self::ASSOCIATIVE_ARRAY, $value, '')
         );
 
         $this->expectException(ArrayKeyAlreadySet::class);
@@ -480,6 +534,8 @@ class ArrHelperTest extends WordlessTestCase
         $this->assertEquals([$value], Arr::pushValueIntoIndex([], 7, $value));
         $this->assertEquals([$key => $value], Arr::pushValueIntoIndex([], 0, $value, $key));
         $this->assertEquals([$key => $value], Arr::pushValueIntoIndex([], 7, $value, $key));
+        $this->assertEquals(['' => $value], Arr::pushValueIntoIndex([], 0, $value, ''));
+        $this->assertEquals(['' => $value], Arr::pushValueIntoIndex([], 7, $value, ''));
         $this->assertEquals(
             Arr::append(self::LIST_ARRAY, $value),
             Arr::pushValueIntoIndex(self::LIST_ARRAY, count(self::LIST_ARRAY), $value)
@@ -501,16 +557,32 @@ class ArrHelperTest extends WordlessTestCase
             Arr::pushValueIntoIndex(self::LIST_ARRAY, 2, $value, $key)
         );
         $this->assertEquals(
+            [1, 2, '' => $value, 3, 4],
+            Arr::pushValueIntoIndex(self::LIST_ARRAY, 2, $value, '')
+        );
+        $this->assertEquals(
             Arr::append(self::LIST_ARRAY, $value, $key),
             Arr::pushValueIntoIndex(self::LIST_ARRAY, count(self::LIST_ARRAY), $value, $key)
+        );
+        $this->assertEquals(
+            Arr::append(self::LIST_ARRAY, $value, ''),
+            Arr::pushValueIntoIndex(self::LIST_ARRAY, count(self::LIST_ARRAY), $value, '')
         );
         $this->assertEquals(
             Arr::append(self::LIST_ARRAY, $value, $key),
             Arr::pushValueIntoIndex(self::LIST_ARRAY, -count(self::LIST_ARRAY), $value, $key)
         );
         $this->assertEquals(
+            Arr::append(self::LIST_ARRAY, $value, ''),
+            Arr::pushValueIntoIndex(self::LIST_ARRAY, -count(self::LIST_ARRAY), $value, '')
+        );
+        $this->assertEquals(
             Arr::prepend(self::LIST_ARRAY, $value, $key),
             Arr::pushValueIntoIndex(self::LIST_ARRAY, 0, $value, $key)
+        );
+        $this->assertEquals(
+            Arr::prepend(self::LIST_ARRAY, $value, ''),
+            Arr::pushValueIntoIndex(self::LIST_ARRAY, 0, $value, '')
         );
         $this->assertEquals(
             Arr::append(self::ASSOCIATIVE_ARRAY, $value),
@@ -565,6 +637,26 @@ class ArrHelperTest extends WordlessTestCase
             Arr::pushValueIntoIndex(self::JSON_ARRAY, 2, $value, $key)
         );
         $this->assertEquals(
+            [
+                'test' => 'yeah',
+                'bool' => true,
+                '' => $value,
+                'number' => 123,
+                'maybe_null' => null,
+                'list' => [
+                    true,
+                    false,
+                    null,
+                    45,
+                    'told_ya',
+                    self::ASSOCIATIVE_ARRAY,
+                    self::LIST_ARRAY,
+                ],
+                'sub_object' => ['what' => 'is', 'done' => 80],
+            ],
+            Arr::pushValueIntoIndex(self::JSON_ARRAY, 2, $value, '')
+        );
+        $this->assertEquals(
             ['a' => 'b', 2 => $value, 0 => 3, 1 => 4, 'c' => 'd'],
             Arr::pushValueIntoIndex(['a' => 'b', 3, 4, 'c' => 'd'], 1, $value)
         );
@@ -573,22 +665,155 @@ class ArrHelperTest extends WordlessTestCase
             Arr::pushValueIntoIndex(['a' => 'b', 3, 4, 'c' => 'd'], 1, $value, $key)
         );
         $this->assertEquals(
+            ['a' => 'b', '' => $value, 3, 4, 'c' => 'd'],
+            Arr::pushValueIntoIndex(['a' => 'b', 3, 4, 'c' => 'd'], 1, $value, '')
+        );
+        $this->assertEquals(
             Arr::append(self::ASSOCIATIVE_ARRAY, $value, $key),
             Arr::pushValueIntoIndex(self::ASSOCIATIVE_ARRAY, count(self::ASSOCIATIVE_ARRAY), $value, $key)
+        );
+        $this->assertEquals(
+            Arr::append(self::ASSOCIATIVE_ARRAY, $value, ''),
+            Arr::pushValueIntoIndex(
+                self::ASSOCIATIVE_ARRAY,
+                count(self::ASSOCIATIVE_ARRAY),
+                $value,
+                ''
+            )
         );
         $this->assertEquals(
             Arr::append(self::ASSOCIATIVE_ARRAY, $value, $key),
             Arr::pushValueIntoIndex(self::ASSOCIATIVE_ARRAY, -count(self::ASSOCIATIVE_ARRAY), $value, $key)
         );
         $this->assertEquals(
+            Arr::append(self::ASSOCIATIVE_ARRAY, $value, ''),
+            Arr::pushValueIntoIndex(
+                self::ASSOCIATIVE_ARRAY,
+                -count(self::ASSOCIATIVE_ARRAY),
+                $value,
+                ''
+            )
+        );
+        $this->assertEquals(
             Arr::prepend(self::ASSOCIATIVE_ARRAY, $value, $key),
             Arr::pushValueIntoIndex(self::ASSOCIATIVE_ARRAY, 0, $value, $key)
         );
+        $this->assertEquals(
+            Arr::prepend(self::ASSOCIATIVE_ARRAY, $value, ''),
+            Arr::pushValueIntoIndex(self::ASSOCIATIVE_ARRAY, 0, $value, '')
+        );
     }
 
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     */
     public function testRecursiveJoin(): void
     {
+        $this->assertEquals([], Arr::recursiveJoin([], []));
+        $this->assertEquals(self::LIST_ARRAY, Arr::recursiveJoin(self::LIST_ARRAY, []));
+        $this->assertEquals(
+            self::ASSOCIATIVE_ARRAY,
+            Arr::recursiveJoin(self::ASSOCIATIVE_ARRAY, [])
+        );
+        $this->assertEquals(self::LIST_ARRAY, Arr::recursiveJoin([], self::LIST_ARRAY));
+        $this->assertEquals(
+            self::ASSOCIATIVE_ARRAY,
+            Arr::recursiveJoin([], self::ASSOCIATIVE_ARRAY)
+        );
+        $this->assertEquals(
+            self::LIST_ARRAY,
+            Arr::recursiveJoin(self::LIST_ARRAY, self::LIST_ARRAY)
+        );
+        $this->assertEquals(
+            self::ASSOCIATIVE_ARRAY,
+            Arr::recursiveJoin(self::ASSOCIATIVE_ARRAY, self::ASSOCIATIVE_ARRAY)
+        );
+        $this->assertEquals(
+            [1, 2, 3, 4, 'big_test' => 'ok', 'or' => 'Not'],
+            Arr::recursiveJoin(self::LIST_ARRAY, self::ASSOCIATIVE_ARRAY)
+        );
+        $this->assertEquals(
+            ['big_test' => 'ok', 'or' => 'Not', 1, 2, 3, 4],
+            Arr::recursiveJoin(self::ASSOCIATIVE_ARRAY, self::LIST_ARRAY)
+        );
+        $this->assertEquals(
+            [0, 1, 2, 4],
+            Arr::recursiveJoin(self::LIST_ARRAY, [0, 1, 2])
+        );
+        $this->assertEquals(
+            [0, 1, 2, 4, 87 => 94],
+            Arr::recursiveJoin(self::LIST_ARRAY, [0, 1, 2, 87 => 94])
+        );
+        $this->assertEquals(
+            ['big_test' => 'ok', 'or' => 'Yep'],
+            Arr::recursiveJoin(self::ASSOCIATIVE_ARRAY, ['or' => 'Yep'])
+        );
+        $this->assertEquals(
+            ['big_test' => 'failure', 'or' => 'Not', 'h' => 'o'],
+            Arr::recursiveJoin(self::ASSOCIATIVE_ARRAY, ['big_test' => 'failure', 'h' => 'o'])
+        );
+        $this->assertEquals(
+            [
+                'test' => 'yeah',
+                'bool' => true,
+                'number' => 100,
+                'maybe_null' => null,
+                'list' => [
+                    true,
+                    false,
+                    null,
+                    45,
+                    'told_ya',
+                    ['big_test' => 77, 'or' => 'Not', 'hi'],
+                    'poof!',
+                    'test',
+                ],
+                'sub_object' => ['what' => 'is', 'done' => 80],
+                1, 2, 3, 4,
+                'big_test' => 'ok', 'or' => 'Yep',
+                7,
+                '' => 'final',
+            ],
+            Arr::recursiveJoin(
+                self::JSON_ARRAY,
+                self::LIST_ARRAY,
+                self::ASSOCIATIVE_ARRAY,
+                [
+                    'number' => 100,
+                    'list' => [7 => 'test', 5 => ['big_test' => 77, 'hi'], 6 => 'poof!'],
+                    4 => 7,
+                    'or' => 'Yep',
+                ],
+                ['' => 'final']
+            )
+        );
+    }
 
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     */
+    public function testSearchValueKey()
+    {
+        $this->assertNull(Arr::searchValueKey([], 'i'));
+        $this->assertNull(Arr::searchValueKey(self::LIST_ARRAY, 'i'));
+        $this->assertNull(Arr::searchValueKey(self::ASSOCIATIVE_ARRAY, 'i'));
+        $this->assertEquals(1, Arr::searchValueKey(self::LIST_ARRAY, 2));
+        $this->assertEquals('big_test', Arr::searchValueKey(self::ASSOCIATIVE_ARRAY, 'ok'));
+        $this->assertEquals('a', Arr::searchValueKey(['a' => 'b', 'c' => 'b'], 'b'));
+        $this->assertEquals('', Arr::searchValueKey(['d' => '', '' => 'b', 'c' => 'b'], 'b'));
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     */
+    public function testSize(): void
+    {
+        $this->assertEquals(count([]), Arr::size([]));
+        $this->assertEquals(count(self::LIST_ARRAY), Arr::size(self::LIST_ARRAY));
+        $this->assertEquals(count(self::ASSOCIATIVE_ARRAY), Arr::size(self::ASSOCIATIVE_ARRAY));
     }
 
     /**
@@ -599,6 +824,55 @@ class ArrHelperTest extends WordlessTestCase
     public function testSubjectDto(): void
     {
         $this->assertSubjectDtoMethods(['wrap', 'of']);
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     * @throws JsonException
+     */
+    public function testToJson(): void
+    {
+        $this->assertEquals('[]', Arr::toJson([]));
+        $this->assertEquals(StrHelperTest::JSON_STRING, Arr::toJson(self::JSON_ARRAY));
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     * @throws FailedToParseArrayKey
+     */
+    public function testUnwrap(): void
+    {
+        $list_specific_key = 2;
+
+        $this->assertNull(Arr::unwrap([]));
+        $this->assertNull(Arr::unwrap([], 'i'));
+        $this->assertNull(Arr::unwrap(self::LIST_ARRAY, 'i'));
+        $this->assertNull(Arr::unwrap(self::ASSOCIATIVE_ARRAY, 'i'));
+        $this->assertNull(Arr::unwrap([], ''));
+        $this->assertNull(Arr::unwrap(self::LIST_ARRAY, ''));
+        $this->assertNull(Arr::unwrap(self::ASSOCIATIVE_ARRAY, ''));
+        $this->assertEquals(Arr::first(self::LIST_ARRAY), Arr::unwrap(self::LIST_ARRAY));
+        $this->assertEquals(
+            Arr::get(self::LIST_ARRAY, $list_specific_key),
+            Arr::unwrap(self::LIST_ARRAY, $list_specific_key)
+        );
+        $this->assertEquals(Arr::first(['' => 8]), Arr::unwrap(['' => 8]));
+        $this->assertEquals(Arr::get(['' => 8], ''), Arr::unwrap(['' => 8], ''));
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     */
+    public function testWrap(): void
+    {
+        $this->assertEquals([], Arr::wrap([]));
+        $this->assertEquals(self::LIST_ARRAY, Arr::wrap(self::LIST_ARRAY));
+        $this->assertEquals(self::ASSOCIATIVE_ARRAY, Arr::wrap(self::ASSOCIATIVE_ARRAY));
+        $this->assertEquals(self::JSON_ARRAY, Arr::wrap(self::JSON_ARRAY));
+        $this->assertEquals(['i'], Arr::wrap('i'));
     }
 
     /**

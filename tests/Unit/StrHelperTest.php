@@ -29,7 +29,7 @@ class StrHelperTest extends WordlessTestCase
     use SubstringTests;
 
     public const JSON_STRING =
-        '{"test":"yeah","bool":true,"number":123,"maybe_null":null,"list":[true,false,null,45,"told_ya",{"big_test": "ok","or":"Not"},[1,2,3,4]],"sub_object":{"what":"is","done":"is","done":80}}';
+        '{"test":"yeah","bool":true,"number":123,"maybe_null":null,"list":[true,false,null,45,"told_ya",{"big_test":"ok","or":"Not"},[1,2,3,4]],"sub_object":{"what":"is","done":80}}';
     private const BASE_STRING = 'TestStringSubstrings';
     private const COUNT_STRING = 'Test Test Test Test';
 
