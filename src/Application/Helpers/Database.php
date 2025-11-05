@@ -42,6 +42,26 @@ class Database extends Helper
 
     /**
      * @param string $table
+     * @param array<string, double|int|string> $and_wheres
+     * @return QueryResultDTO
+     * @throws InvalidDataTypeToInsert
+     * @throws QueryError
+     */
+    public static function delete(string $table, array $and_wheres): QueryResultDTO
+    {
+        if (($affected_rows = self::wpdb()->delete(
+                Str::startWith($table, self::wpdb()->prefix),
+                $and_wheres,
+                self::parseDataTypes($and_wheres)
+            )) === false) {
+            throw new QueryError(self::wpdb()->last_query);
+        }
+
+        return new QueryResultDTO($affected_rows, self::wpdb()->last_result);
+    }
+
+    /**
+     * @param string $table
      * @param array<string, double|int|string> $data
      * @return QueryResultDTO
      * @throws InvalidDataTypeToInsert
@@ -69,6 +89,29 @@ class Database extends Helper
     {
         if (($affected_rows = self::wpdb()->query($query)) === false) {
             throw new QueryError($query);
+        }
+
+        return new QueryResultDTO($affected_rows, self::wpdb()->last_result);
+    }
+
+    /**
+     * @param string $table
+     * @param array<string, double|int|string> $data
+     * @param array<string, double|int|string> $and_wheres
+     * @return QueryResultDTO
+     * @throws InvalidDataTypeToInsert
+     * @throws QueryError
+     */
+    public static function update(string $table, array $data, array $and_wheres): QueryResultDTO
+    {
+        if (($affected_rows = self::wpdb()->update(
+                Str::startWith($table, self::wpdb()->prefix),
+                $data,
+                $and_wheres,
+                self::parseDataTypes($data),
+                self::parseDataTypes($and_wheres)
+            )) === false) {
+            throw new QueryError(self::wpdb()->last_query);
         }
 
         return new QueryResultDTO($affected_rows, self::wpdb()->last_result);
