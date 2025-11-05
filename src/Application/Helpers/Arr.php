@@ -104,7 +104,7 @@ class Arr extends Subjectable
             throw new FailedToFindArrayKey($array, $key, $key);
         }
 
-        $key_pathing = explode('.', $key);
+        $key_pathing = self::parseArrayKey($key);
         $first_key = array_shift($key_pathing) ?? throw new FailedToParseArrayKey($key);
         $pointer = $array[$first_key] ?? throw new FailedToFindArrayKey($array, $key, $first_key);
 
@@ -184,10 +184,27 @@ class Arr extends Subjectable
 
         foreach ($only_keys as $key_to_filter) {
             try {
-                $filtered_array[$key_to_filter] = static::getOrFail($array, $key_to_filter);
+                $value = static::getOrFail($array, $key_to_filter);
             } catch (FailedToFindArrayKey) {
                 continue;
             }
+
+            $pointer = null;
+
+            foreach (self::parseArrayKey((string)$key_to_filter) as $parsed_key) {
+                if (is_null($pointer)) {
+                    $filtered_array[$parsed_key] = [];
+                    $pointer = &$filtered_array[$parsed_key];
+
+                    continue;
+                }
+
+                $pointer[$parsed_key] = [];
+                $pointer = &$pointer[$parsed_key];
+            }
+
+            $pointer = $value;
+            unset($pointer);
         }
 
         return $filtered_array;
@@ -308,6 +325,10 @@ class Arr extends Subjectable
 
     public static function recursiveJoin(array $initial_array, array $array, array ...$arrays): array
     {
+        if (empty($array) && empty($arrays)) {
+            return $initial_array;
+        }
+
         $joined_array = [];
 
         self::resolveRecursiveJoin($initial_array, $joined_array);
@@ -372,21 +393,30 @@ class Arr extends Subjectable
         return [$something];
     }
 
+    /**
+     * @param string $full_key
+     * @return string[]
+     * @throws FailedToParseArrayKey
+     */
+    private static function parseArrayKey(string $full_key): array
+    {
+        if (empty($parsed_key = explode('.', $full_key))) {
+            throw new FailedToParseArrayKey($full_key);
+        }
+
+        return $parsed_key;
+    }
+
     private static function resolveRecursiveJoin(array $array, array &$joined_array): void
     {
         foreach ($array as $key => $value) {
-            if (!isset($joined_array[$key])) {
-                $joined_array[$key] = $value;
-                continue;
-            }
-
-            if (!is_array($joined_array[$key])) {
+            if (!isset($joined_array[$key]) || !is_array($joined_array[$key])) {
                 $joined_array[$key] = $value;
                 continue;
             }
 
             if (!is_array($value)) {
-                $joined_array[$key][] = $value;
+                $joined_array[$key] = $value;
                 continue;
             }
 
