@@ -6,6 +6,7 @@ use DateTimeInterface;
 use Wordless\Application\Helpers\DataCache\Exceptions\FailedToSetTransient;
 use Wordless\Application\Helpers\DataCache\Exceptions\InvalidTransientExpirationValue;
 use Wordless\Application\Helpers\GetType;
+use Wordless\Application\Libraries\Carbon\Carbon;
 
 trait Internal
 {
@@ -14,17 +15,22 @@ trait Internal
 
     /**
      * @param string $key
-     * @param DateTimeInterface|int|string $expiration
+     * @param Carbon|DateTimeInterface|int|string $expiration
      * @return int only positive values
      * @throws InvalidTransientExpirationValue
      */
-    private static function prepareTransientExpirationValue(string $key, DateTimeInterface|int|string $expiration): int
+    private static function prepareTransientExpirationValue(
+        string $key,
+        Carbon|DateTimeInterface|int|string $expiration
+    ): int
     {
-        switch (GetType::of($expiration)) {
-            case GetType::INTEGER:
+        $type = GetType::of($expiration);
+
+        switch (true) {
+            case $type === GetType::INTEGER:
                 $expiration_as_int = $expiration;
                 break;
-            case GetType::STRING:
+            case $type === GetType::STRING:
                 if (($transformed_expiration = strtotime($expiration)) !== false) {
                     $expiration_as_int = $transformed_expiration - time();
                     break;
@@ -36,8 +42,9 @@ trait Internal
                 }
 
                 throw new InvalidTransientExpirationValue($key, $expiration);
-            case DateTimeInterface::class:
-                /** @var DateTimeInterface $expiration */
+            case is_a($type, DateTimeInterface::class, true)
+                || is_a($type, Carbon::class, true):
+                /** @var DateTimeInterface|Carbon $expiration */
                 $expiration_as_int = $expiration->getTimestamp() - time();
                 break;
             default:
