@@ -98,9 +98,7 @@ class CommentsSeeder extends SeederCommand
         for ($i = 0; $i < $this->getQuantity(); $i++) {
             $comment_author = $this->faker->userName();
 
-            $progressBar->setMessage(
-                "Generating a comment from user $comment_author for post $post->ID."
-            );
+            $progressBar->setMessage("Generating user $comment_author comment for post $post->ID.");
             $progressBar->advance(0);
 
             $command =
