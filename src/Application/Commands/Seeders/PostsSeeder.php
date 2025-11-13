@@ -26,6 +26,7 @@ use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Read\Exception
 use Wordless\Wordpress\Models\Category;
 use Wordless\Wordpress\Models\PostStatus;
 use Wordless\Wordpress\Models\PostStatus\Exceptions\FailedToConstructPostStatus;
+use Wordless\Wordpress\Models\User\WordlessUser;
 
 class PostsSeeder extends SeederCommand
 {
@@ -135,7 +136,7 @@ class PostsSeeder extends SeederCommand
                     $progressBar->advance(0);
 
                     $this->runWpCliCommandSilently(
-                        "post create --post_status=$status->name --post_date='$post_date' --post_title='$post_title' --post_content='$post_content' --post_excerpt='{$this->faker->sentence()}' --post_category='$category->name' --quiet"
+                        "post create --post_author={$this->postAuthorId()} --post_status=$status->name --post_date='$post_date' --post_title='$post_title' --post_content='$post_content' --post_excerpt='{$this->faker->sentence()}' --post_category='$category->name' --quiet"
                     );
 
                     $progressBar->advance();
@@ -159,6 +160,11 @@ class PostsSeeder extends SeederCommand
         } catch (InvalidArgumentException) {
             return self::MIN_POST_SIZE_IN_PARAGRAPHS;
         }
+    }
+
+    private function postAuthorId(): int
+    {
+        return WordlessUser::make()->id();
     }
 
     /**
