@@ -12,6 +12,7 @@ use Wordless\Application\Commands\Seeders\CommentsSeeder\Exceptions\FailedToRunC
 use Wordless\Application\Commands\Seeders\Contracts\SeederCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
+use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\Internal\Exceptions\CallInternalCommandException;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Post;
@@ -62,20 +63,16 @@ class CommentsSeeder extends SeederCommand
         }
 
         try {
-            $posts = Post::all();
+            $posts = Arr::random($posts = Post::all(), intdiv(count($posts), 2));
         } catch (EmptyQueryBuilderArguments $exception) {
-            throw new FailedToRunCommentsSeederCommand('Failed to retrieve all posts.', $exception);
+            throw new FailedToRunCommentsSeederCommand('Failed to retrieve posts.', $exception);
         }
 
         $progressBar = $this->progressBar($comments_total = count($posts) * $this->getQuantity());
         $progressBar->setMessage('Creating Comments...');
         $progressBar->start();
 
-        foreach ($posts as $index => $post) {
-            if ($index % 2) {
-                continue;
-            }
-
+        foreach ($posts as $post) {
             $this->generateCommentsForPost($post, $progressBar);
         }
 

@@ -323,6 +323,33 @@ class Arr extends Subjectable
         return $new_array;
     }
 
+    public static function random(array $array, int $quantity = 1): mixed
+    {
+        try {
+            $last_index = static::lastIndex($array);
+        } catch (EmptyArrayHasNoIndex) {
+            return null;
+        }
+
+        $array_values = array_values($array);
+        $quantity = max($quantity, 1);
+
+        if ($quantity === 1) {
+            return $array_values[Integer::random(0, $last_index)];
+        }
+
+        $array_keys = array_keys($array);
+        $randoms = [];
+
+        for ($i = 0; $i < $quantity; $i++) {
+            $random_index = Integer::random(0, $last_index);
+
+            $randoms[$array_keys[$random_index]] = $array_values[$random_index];
+        }
+
+        return $randoms;
+    }
+
     public static function recursiveJoin(array $initial_array, array $array, array ...$arrays): array
     {
         if (empty($array) && empty($arrays)) {

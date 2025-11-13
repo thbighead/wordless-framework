@@ -3,6 +3,7 @@
 namespace Wordless\Tests\Unit;
 
 use JsonException;
+use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\ExpectationFailedException;
 use ReflectionException;
 use ReflectionMethod;
@@ -707,6 +708,21 @@ class ArrHelperTest extends WordlessTestCase
     /**
      * @return void
      * @throws ExpectationFailedException
+     * @throws Exception
+     */
+    public function testRandom(): void
+    {
+        $this->assertNull(Arr::random([]));
+        $this->assertContains(Arr::random(self::JSON_ARRAY), self::JSON_ARRAY);
+
+        foreach (Arr::random(self::JSON_ARRAY, 3) as $key => $value) {
+            $this->assertEquals(self::JSON_ARRAY[$key], $value);
+        }
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
      */
     public function testRecursiveJoin(): void
     {
@@ -823,7 +839,7 @@ class ArrHelperTest extends WordlessTestCase
      */
     public function testSubjectDto(): void
     {
-        $this->assertSubjectDtoMethods(['wrap', 'of']);
+        $this->assertSubjectDtoMethods(['of', 'random', 'wrap']);
     }
 
     /**

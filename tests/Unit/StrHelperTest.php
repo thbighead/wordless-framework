@@ -3,7 +3,6 @@
 namespace Wordless\Tests\Unit;
 
 use PHPUnit\Framework\ExpectationFailedException;
-use Random\RandomException;
 use ReflectionException;
 use ReflectionMethod;
 use Wordless\Application\Helpers\Arr\Contracts\Subjectable\DTO\ArraySubjectDTO;
@@ -82,7 +81,6 @@ class StrHelperTest extends WordlessTestCase
     /**
      * @return void
      * @throws ExpectationFailedException
-     * @throws RandomException
      */
     public function testRandomString(): void
     {
@@ -97,7 +95,22 @@ class StrHelperTest extends WordlessTestCase
      */
     public function testSubjectDto(): void
     {
-        $this->assertSubjectDtoMethods(['random', 'uuid', 'of']);
+        $this->assertSubjectDtoMethods(['random', 'swap', 'uuid', 'of']);
+    }
+
+    /**
+     * @return void
+     * @throws ExpectationFailedException
+     */
+    public function testSwap(): void
+    {
+        $string1 = self::BASE_STRING;
+        $string2 = self::COUNT_STRING;
+
+        Str::swap($string1, $string2);
+
+        $this->assertEquals(self::COUNT_STRING, $string1);
+        $this->assertEquals(self::BASE_STRING, $string2);
     }
 
     /**
