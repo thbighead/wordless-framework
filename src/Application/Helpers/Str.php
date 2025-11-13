@@ -6,7 +6,6 @@ namespace Wordless\Application\Helpers;
 
 use JsonException;
 use Ramsey\Uuid\Uuid;
-use Random\RandomException;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str\Contracts\Subjectable;
@@ -50,11 +49,6 @@ class Str extends Subjectable
         return mb_strlen($string, $encoding?->value);
     }
 
-    /**
-     * @param int $size
-     * @return string
-     * @throws RandomException
-     */
     public static function random(int $size = self::DEFAULT_RANDOM_SIZE): string
     {
         if ($size <= 0) {
@@ -70,10 +64,15 @@ class Str extends Subjectable
         $max = mb_strlen($keyspace, '8bit') - 1;
 
         for ($i = 0; $i < $size; ++$i) {
-            $pieces [] = $keyspace[random_int(0, $max)];
+            $pieces[] = $keyspace[Integer::random(0, $max)];
         }
 
         return implode('', $pieces);
+    }
+
+    public static function swap(string &$value1, string &$value2): void
+    {
+        list($value1, $value2) = [$value2, $value1];
     }
 
     /**
