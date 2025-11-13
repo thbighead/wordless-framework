@@ -18,7 +18,6 @@
 ### WORDLESS ###
 /.env
 /app
-/cache
 /config
 /stubs
 

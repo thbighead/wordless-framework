@@ -50,6 +50,7 @@ class WpCliCaller extends ConsoleCommand
 
     /**
      * @return int
+     * @throws CliReturnedNonZero
      * @throws FailedToRunCommand
      */
     protected function runIt(): int
@@ -80,7 +81,6 @@ class WpCliCaller extends ConsoleCommand
 
             return $this->callExternalCommand($full_command, !$this->isNoTtyMode())->result_code;
         } catch (CallExternalCommandException
-        |CliReturnedNonZero
         |InvalidArgumentException
         |PathNotFoundException $exception) {
             throw new FailedToRunCommand(self::COMMAND_NAME, $exception);

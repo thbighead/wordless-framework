@@ -29,7 +29,7 @@ class CommentsSeeder extends SeederCommand
 
     protected function help(): string
     {
-        return 'Creates a given number of dummy comments to each created post. Default is '
+        return 'Creates a given number of dummy comments to each even indexed created post. Default is '
             . static::DEFAULT_NUMBER_OF_OBJECTS
             . '.';
     }
@@ -71,12 +71,17 @@ class CommentsSeeder extends SeederCommand
         $progressBar->setMessage('Creating Comments...');
         $progressBar->start();
 
-        foreach ($posts as $post) {
+        foreach ($posts as $index => $post) {
+            if ($index % 2) {
+                continue;
+            }
+
             $this->generateCommentsForPost($post, $progressBar);
         }
 
         $progressBar->setMessage("Done! A total of $comments_total comments were generated.");
         $progressBar->finish();
+        $this->writeln('');
 
         return Command::SUCCESS;
     }
@@ -91,11 +96,12 @@ class CommentsSeeder extends SeederCommand
     private function generateCommentsForPost(Post $post, ProgressBar $progressBar): void
     {
         for ($i = 0; $i < $this->getQuantity(); $i++) {
-            $comment_author = $this->faker->name;
+            $comment_author = $this->faker->userName();
 
             $progressBar->setMessage(
-                "Generating a comment from user $comment_author for post $post->post_title."
+                "Generating a comment from user $comment_author for post $post->ID."
             );
+            $progressBar->advance(0);
 
             $command =
                 "comment create --comment_post_ID=$post->ID --comment_content='{$this->faker->paragraph()}' --comment_author='$comment_author' --quiet";
@@ -105,6 +111,8 @@ class CommentsSeeder extends SeederCommand
             } catch (WpCliCommandReturnedNonZero|FailedToRunWpCliCommand $exception) {
                 throw new FailedToRunCommand($exception->full_command ?? $command);
             }
+
+            $progressBar->advance();
         }
     }
 }
