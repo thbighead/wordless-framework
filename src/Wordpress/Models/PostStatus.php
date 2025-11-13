@@ -51,7 +51,6 @@ readonly class PostStatus implements IPolymorphicConstructor
             }
         } catch (ClassDoesNotImplementsPolymorphicConstructor
         |ConstructorNotImplemented
-        |EmptyQueryBuilderArguments
         |FailedToGuessConstructor $exception) {
             throw new FailedToConstructPostStatus(
                 $post_status_slug ?? null,
