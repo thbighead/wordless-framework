@@ -12,7 +12,7 @@ use Wordless\Wordpress\Models\Category\Dictionary;
 
 class Category extends Taxonomy
 {
-    final protected const UNCATEGORIZED_SLUG = 'uncategorized';
+    final public const UNCATEGORIZED_SLUG = 'uncategorized';
 
     final protected const NAME_KEY = StandardTaxonomy::category->value;
 

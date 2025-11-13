@@ -78,6 +78,8 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\Internal\Exceptions\CallInternalCommandException;
 use Wordless\Infrastructure\Mounters\StubMounter\Exceptions\FailedToCopyStub;
+use Wordless\Wordpress\Models\User\Traits\Crud\Traits\Create\Exceptions\FailedToCreateUser;
+use Wordless\Wordpress\Models\User\WordlessUser;
 
 class WordlessInstall extends ConsoleCommand
 {
@@ -140,6 +142,7 @@ class WordlessInstall extends ConsoleCommand
                 ->createWordlessPluginFromStub()
                 ->createWpDatabase()
                 ->coreSteps()
+                ->createWordlessUser()
                 ->createCache()
                 ->registerSchedules()
                 ->runMigrations()
@@ -150,6 +153,7 @@ class WordlessInstall extends ConsoleCommand
         } catch (FailedToCreateCacheException
         |FailedToCreateConfigFromStubsException
         |FailedToCreateRobotsTxtException
+        |FailedToCreateUser
         |FailedToCreateWordlessPluginFromStubException
         |FailedToCreateWpDatabaseException
         |FailedToFlushCacheException
@@ -161,7 +165,8 @@ class WordlessInstall extends ConsoleCommand
         |FailedToResolveWpConfigChmodException
         |FailedToRunCoreStepsException
         |FailedToRunMigrationsException
-        |FailedToSyncRolesException $exception) {
+        |FailedToSyncRolesException
+        |RandomException $exception) {
             throw new FailedToRunCommand(static::COMMAND_NAME, $exception);
         }
     }
@@ -292,7 +297,8 @@ class WordlessInstall extends ConsoleCommand
         } finally {
             try {
                 $this->switchingMaintenanceMode(false);
-            } catch (FailedToSwitchToMaintenanceModeException $exception) {
+                require_once ProjectPath::wpCore('wp-config.php');
+            } catch (FailedToSwitchToMaintenanceModeException|PathNotFoundException $exception) {
                 throw new FailedToRunCoreStepsException($exception);
             }
         }
@@ -342,6 +348,18 @@ class WordlessInstall extends ConsoleCommand
         } catch (FailedToCopyStub|FailedToGetEnvVariableException|PathNotFoundException $exception) {
             throw new FailedToCreateRobotsTxtException($exception);
         }
+    }
+
+    /**
+     * @return $this
+     * @throws FailedToCreateUser
+     * @throws RandomException
+     */
+    private function createWordlessUser(): static
+    {
+        WordlessUser::create();
+
+        return $this;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Wordless\Application\Commands\Seeders;
 
 use Carbon\Carbon;
+use OverflowException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -23,6 +24,8 @@ use Wordless\Infrastructure\Wordpress\Taxonomy\Exceptions\TermInstantiationError
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Read\Exceptions\CouldNotResolveNoneCreated;
 use Wordless\Infrastructure\Wordpress\Taxonomy\Traits\Crud\Traits\Read\Exceptions\CouldNotResolveNoneCreatedForCategory;
 use Wordless\Wordpress\Models\Category;
+use Wordless\Wordpress\Models\PostStatus;
+use Wordless\Wordpress\Models\PostStatus\Exceptions\FailedToConstructPostStatus;
 
 class PostsSeeder extends SeederCommand
 {
@@ -30,6 +33,8 @@ class PostsSeeder extends SeederCommand
     private const DEFAULT_POST_SIZE_IN_PARAGRAPHS = 3;
     private const MIN_POST_SIZE_IN_PARAGRAPHS = 1;
     private const OPTION_POST_SIZE_IN_PARAGRAPHS = 'paragraphs';
+
+    private array $statuses;
 
     protected function description(): string
     {
@@ -79,7 +84,9 @@ class PostsSeeder extends SeederCommand
         }
 
         try {
-            $progressBar = $this->progressBar($posts_total = Category::count() * $this->getQuantity());
+            $progressBar = $this->progressBar(
+                $posts_total = Category::count() * $this->getQuantity() * count($this->statuses())
+            );
             $progressBar->setMessage('Creating Posts...');
             $progressBar->start();
 
@@ -87,6 +94,7 @@ class PostsSeeder extends SeederCommand
                 $this->generatePostsCategorizedAs($category, $progressBar);
             }
         } catch (FailedToGetCommandOptionValue
+        |FailedToConstructPostStatus
         |FailedToGenerateCategorizedPost
         |InitializingModelWithWrongTaxonomyName
         |TermInstantiationError $exception) {
@@ -95,6 +103,7 @@ class PostsSeeder extends SeederCommand
 
         $progressBar->setMessage("Done! A total of $posts_total posts were generated.");
         $progressBar->finish();
+        $this->writeln('');
 
         return Command::SUCCESS;
     }
@@ -104,27 +113,39 @@ class PostsSeeder extends SeederCommand
      * @param ProgressBar $progressBar
      * @return void
      * @throws FailedToGenerateCategorizedPost
+     * @throws FailedToConstructPostStatus
      */
     private function generatePostsCategorizedAs(Category $category, ProgressBar $progressBar): void
     {
-        try {
-            for ($i = 0; $i < $this->getQuantity(); $i++) {
-                $post_title = $this->faker->sentence();
-                $category_name = $category->name;
-                $post_date = Carbon::now()->subDays($i)->format('Y-m-d H:i:s');
-                $post_content = Str::remove(
-                    nl2br($this->faker->paragraphs($this->getPostParagraphs(), true)),
-                    ["\n", "\r"]
-                );
+        foreach ($this->statuses() as $status) {
+            try {
+                for ($i = 0; $i < $this->getQuantity(); $i++) {
+                    $post_title = $this->faker->unique()->sentence();
+                    $post_date = Carbon::now()->subDays($i)->format('Y-m-d H:i:s');
+                    $post_content = Str::remove(
+                        nl2br($this->faker->paragraphs($this->getPostParagraphs(), true)),
+                        ["\n", "\r"]
+                    );
 
-                $progressBar->setMessage("Creating post '$post_title' categorized as '$category_name'...");
+                    $progressBar->setMessage(
+                        "Creating '$category->name' post '"
+                        . Str::limitWords($post_title, 3)
+                        . '\'...'
+                    );
+                    $progressBar->advance(0);
 
-                $this->runWpCliCommandSilently(
-                    "post create --post_status=publish --post_date='$post_date' --post_title='$post_title' --post_content='$post_content' --post_excerpt='{$this->faker->paragraph()}' --post_category='$category->name' --quiet"
-                );
+                    $this->runWpCliCommandSilently(
+                        "post create --post_status=$status->name --post_date='$post_date' --post_title='$post_title' --post_content='$post_content' --post_excerpt='{$this->faker->sentence()}' --post_category='$category->name' --quiet"
+                    );
+
+                    $progressBar->advance();
+                }
+            } catch (FailedToGetCommandOptionValue
+            |FailedToRunWpCliCommand
+            |OverflowException
+            |WpCliCommandReturnedNonZero $exception) {
+                throw new FailedToGenerateCategorizedPost($category, $exception);
             }
-        } catch (FailedToGetCommandOptionValue|FailedToRunWpCliCommand|WpCliCommandReturnedNonZero $exception) {
-            throw new FailedToGenerateCategorizedPost($category, $exception);
         }
     }
 
@@ -138,5 +159,14 @@ class PostsSeeder extends SeederCommand
         } catch (InvalidArgumentException) {
             return self::MIN_POST_SIZE_IN_PARAGRAPHS;
         }
+    }
+
+    /**
+     * @return array<string, PostStatus>
+     * @throws FailedToConstructPostStatus
+     */
+    private function statuses(): array
+    {
+        return $this->statuses ?? $this->statuses = PostStatus::all();
     }
 }

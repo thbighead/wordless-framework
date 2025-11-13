@@ -1,3 +1,4 @@
+/cache/                                         export-ignore
 /docker/                                        export-ignore
 /logs/                                          export-ignore
 /.editorconfig                                  export-ignore
