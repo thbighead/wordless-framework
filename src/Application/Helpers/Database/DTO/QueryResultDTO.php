@@ -11,6 +11,7 @@ readonly class QueryResultDTO
 
     public function __construct(
         public int|true $affected_rows,
+        public string   $sql_query,
         array|object    $results
     )
     {
