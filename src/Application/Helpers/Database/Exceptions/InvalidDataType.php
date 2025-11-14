@@ -7,7 +7,7 @@ use Throwable;
 use Wordless\Application\Helpers\GetType;
 use Wordless\Infrastructure\Enums\ExceptionCode;
 
-class InvalidDataTypeToInsert extends InvalidArgumentException
+class InvalidDataType extends InvalidArgumentException
 {
     public function __construct(
         public readonly string $type,

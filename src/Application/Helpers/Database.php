@@ -3,7 +3,7 @@
 namespace Wordless\Application\Helpers;
 
 use Wordless\Application\Helpers\Database\DTO\QueryResultDTO;
-use Wordless\Application\Helpers\Database\Exceptions\InvalidDataTypeToInsert;
+use Wordless\Application\Helpers\Database\Exceptions\InvalidDataType;
 use Wordless\Application\Helpers\Database\Exceptions\QueryError;
 use Wordless\Application\Helpers\Database\Traits\SmartTransaction;
 use Wordless\Application\Helpers\Environment\Exceptions\CannotResolveEnvironmentGet;
@@ -44,7 +44,7 @@ class Database extends Helper
      * @param string $table
      * @param array<string, double|int|string> $and_wheres
      * @return QueryResultDTO
-     * @throws InvalidDataTypeToInsert
+     * @throws InvalidDataType
      * @throws QueryError
      */
     public static function delete(string $table, array $and_wheres): QueryResultDTO
@@ -57,14 +57,14 @@ class Database extends Helper
             throw new QueryError(self::wpdb()->last_query);
         }
 
-        return new QueryResultDTO($affected_rows, self::wpdb()->last_result);
+        return new QueryResultDTO($affected_rows, self::wpdb()->last_query, self::wpdb()->last_result);
     }
 
     /**
      * @param string $table
      * @param array<string, double|int|string> $data
      * @return QueryResultDTO
-     * @throws InvalidDataTypeToInsert
+     * @throws InvalidDataType
      * @throws QueryError
      */
     public static function insert(string $table, array $data): QueryResultDTO
@@ -77,7 +77,7 @@ class Database extends Helper
             throw new QueryError(self::wpdb()->last_query);
         }
 
-        return new QueryResultDTO($affected_rows, self::wpdb()->last_result);
+        return new QueryResultDTO($affected_rows, self::wpdb()->last_query, self::wpdb()->last_result);
     }
 
     /**
@@ -91,7 +91,7 @@ class Database extends Helper
             throw new QueryError($query);
         }
 
-        return new QueryResultDTO($affected_rows, self::wpdb()->last_result);
+        return new QueryResultDTO($affected_rows, self::wpdb()->last_query, self::wpdb()->last_result);
     }
 
     /**
@@ -99,7 +99,7 @@ class Database extends Helper
      * @param array<string, double|int|string> $data
      * @param array<string, double|int|string> $and_wheres
      * @return QueryResultDTO
-     * @throws InvalidDataTypeToInsert
+     * @throws InvalidDataType
      * @throws QueryError
      */
     public static function update(string $table, array $data, array $and_wheres): QueryResultDTO
@@ -114,7 +114,7 @@ class Database extends Helper
             throw new QueryError(self::wpdb()->last_query);
         }
 
-        return new QueryResultDTO($affected_rows, self::wpdb()->last_result);
+        return new QueryResultDTO($affected_rows, self::wpdb()->last_query, self::wpdb()->last_result);
     }
 
     final public static function wpdb(): wpdb
@@ -127,7 +127,7 @@ class Database extends Helper
     /**
      * @param array<string, double|int|string> $data
      * @return array
-     * @throws InvalidDataTypeToInsert
+     * @throws InvalidDataType
      */
     private static function parseDataTypes(array $data): array
     {
@@ -138,7 +138,7 @@ class Database extends Helper
                 GetType::DOUBLE => '%f',
                 GetType::INTEGER => '%d',
                 GetType::STRING => '%s',
-                default => throw new InvalidDataTypeToInsert($type, $key, $value),
+                default => throw new InvalidDataType($type, $key, $value),
             };
         }
 
