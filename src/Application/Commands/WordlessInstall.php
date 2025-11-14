@@ -316,7 +316,7 @@ class WordlessInstall extends ConsoleCommand
     private function createCache(): static
     {
         try {
-            if ($this->getEnvVariableByKey('APP_ENV') !== Environment::LOCAL) {
+            if ($this->getEnvVariableByKey('APP_ENV') !== Environment::LOCAL && Environment::isNotFramework()) {
                 $this->callConsoleCommand(CreateInternalCache::COMMAND_NAME);
             }
 
