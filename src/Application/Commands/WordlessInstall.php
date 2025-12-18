@@ -19,6 +19,7 @@ use Wordless\Application\Commands\Exceptions\CliReturnedNonZero;
 use Wordless\Application\Commands\Migrations\Migrate;
 use Wordless\Application\Commands\Schedules\RegisterSchedules;
 use Wordless\Application\Commands\Traits\ForceMode;
+use Wordless\Application\Commands\Traits\NoTtyMode\DTO\NoTtyModeOptionDTO;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Commands\WordlessInstall\Traits\ForFramework;
@@ -224,7 +225,9 @@ class WordlessInstall extends ConsoleCommand
      */
     private function applyAdminConfiguration(): void
     {
-        $this->callConsoleCommand(ConfigureDateOptions::COMMAND_NAME);
+        $this->callConsoleCommand(ConfigureDateOptions::COMMAND_NAME, [
+            '--' . NoTtyModeOptionDTO::NO_TTY_MODE => $this->isNoTtyMode(),
+        ]);
     }
 
     /**
