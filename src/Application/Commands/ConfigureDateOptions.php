@@ -5,6 +5,7 @@ namespace Wordless\Application\Commands;
 use Symfony\Component\Console\Command\Command;
 use Wordless\Application\Commands\ConfigureDateOptions\Exceptions\FailedToSetTimezone;
 use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
+use Wordless\Application\Commands\Traits\NoTtyMode;
 use Wordless\Application\Commands\Traits\RunWpCliCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
@@ -23,6 +24,7 @@ use Wordless\Wordpress\Enums\StartOfWeek;
 class ConfigureDateOptions extends ConsoleCommand
 {
     use RunWpCliCommand;
+    use NoTtyMode;
 
     final public const COMMAND_NAME = 'options:date';
     final public const CONFIG_KEY_ADMIN_DATETIME = 'datetime';
@@ -55,6 +57,7 @@ class ConfigureDateOptions extends ConsoleCommand
     {
         return [
             ...$this->mountRunWpCliOptions(),
+            $this->mountNoTtyOption(),
         ];
     }
 
