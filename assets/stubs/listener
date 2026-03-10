@@ -3,9 +3,9 @@
 namespace App\Listeners;
 
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
+use Wordless\Infrastructure\Wordpress\Hook\Enums\Type;
 use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Wordpress\Hook\Enums\Filter;
-use Wordless\Wordpress\Hook\Enums\Type;
 
 class DummyListener extends Listener
 {

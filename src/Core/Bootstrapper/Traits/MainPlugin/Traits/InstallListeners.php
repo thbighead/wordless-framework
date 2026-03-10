@@ -4,8 +4,8 @@ namespace Wordless\Core\Bootstrapper\Traits\MainPlugin\Traits;
 
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Provider\DTO\RemoveHookDTO;
+use Wordless\Infrastructure\Wordpress\Hook\Enums\Type;
 use Wordless\Infrastructure\Wordpress\Listener;
-use Wordless\Wordpress\Hook\Enums\Type;
 
 trait InstallListeners
 {

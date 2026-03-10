@@ -5,7 +5,7 @@ namespace Wordless\Application\Commands\Utility\WpHooksList\Exceptions;
 use DomainException;
 use Throwable;
 use Wordless\Infrastructure\Enums\ExceptionCode;
-use Wordless\Wordpress\Hook\Enums\Type;
+use Wordless\Infrastructure\Wordpress\Hook\Enums\Type;
 
 class InvalidHookType extends DomainException
 {

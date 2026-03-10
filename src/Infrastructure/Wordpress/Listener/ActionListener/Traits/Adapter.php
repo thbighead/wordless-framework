@@ -3,7 +3,7 @@
 namespace Wordless\Infrastructure\Wordpress\Listener\ActionListener\Traits;
 
 use Closure;
-use Wordless\Wordpress\Hook\Enums\Type;
+use Wordless\Infrastructure\Wordpress\Hook\Enums\Type;
 
 trait Adapter
 {

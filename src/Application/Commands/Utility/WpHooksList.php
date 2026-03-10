@@ -16,9 +16,9 @@ use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\ArgumentDTO\Enums\Argume
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO;
 use Wordless\Infrastructure\ConsoleCommand\DTO\InputDTO\OptionDTO\Enums\OptionMode;
 use Wordless\Infrastructure\Wordpress\Hook;
+use Wordless\Infrastructure\Wordpress\Hook\Enums\Type;
 use Wordless\Wordpress\Hook\Enums\Action;
 use Wordless\Wordpress\Hook\Enums\Filter;
-use Wordless\Wordpress\Hook\Enums\Type;
 
 class WpHooksList extends ConsoleCommand
 {
