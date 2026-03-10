@@ -3,10 +3,11 @@
 namespace Wordless\Wordpress\QueryBuilder;
 
 use Wordless\Application\Helpers\Arr;
+use Wordless\Application\Helpers\Arr\Exceptions\ArrayKeyAlreadySet;
 use Wordless\Infrastructure\Wordpress\QueryBuilder;
 use Wordless\Wordpress\Enums\ObjectType;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\Operator;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\ResultFormat;
+use Wordless\Wordpress\QueryBuilder\Enums\ResultFormat;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Exceptions\EmptyStringParameter;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Traits\ArgumentsBuilder;
 use WP_Taxonomy;
@@ -42,9 +43,14 @@ class TaxonomyQueryBuilder extends QueryBuilder
         return !empty($this->get());
     }
 
+    /**
+     * @param int $quantity
+     * @param ResultFormat|null $format
+     * @return WP_Taxonomy|WP_Taxonomy[]|string[]|string|null
+     */
     public function first(int $quantity = 1, ?ResultFormat $format = null): WP_Taxonomy|array|string|null
     {
-        return Arr::first($this->get($format), $quantity) ?? null;
+        return Arr::first($this->get($format), $quantity);
     }
 
     /**
@@ -55,7 +61,7 @@ class TaxonomyQueryBuilder extends QueryBuilder
     {
         return get_taxonomies(
             $this->buildArguments(),
-            $format ?? $this->format->name,
+            ($format ?? $this->format)->name,
             $this->operator->name
         );
     }
@@ -170,15 +176,12 @@ class TaxonomyQueryBuilder extends QueryBuilder
      * @param ObjectType $objectType
      * @param ObjectType ...$objectTypes
      * @return $this
+     * @throws ArrayKeyAlreadySet
      */
     public function whereCanBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): static
     {
-        if (!isset($this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE])) {
-            $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] = [];
-        }
-
         $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] = array_merge(
-            $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE],
+            $this->arguments[self::ARGUMENT_KEY_OBJECT_TYPE] ?? [],
             Arr::prepend($objectTypes, $objectType)
         );
 
@@ -189,6 +192,7 @@ class TaxonomyQueryBuilder extends QueryBuilder
      * @param ObjectType $objectType
      * @param ObjectType ...$objectTypes
      * @return $this
+     * @throws ArrayKeyAlreadySet
      */
     public function whereCanOnlyBeUsedBy(ObjectType $objectType, ObjectType ...$objectTypes): static
     {

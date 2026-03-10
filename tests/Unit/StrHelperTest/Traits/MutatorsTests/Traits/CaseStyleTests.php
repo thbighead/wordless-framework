@@ -1,13 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace StrHelperTest\Traits\MutatorsTests\Traits;
+namespace Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits;
 
-use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromCamelToAnother;
-use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromKebabToAnother;
-use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromPascalToAnother;
-use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromRawToAnother;
-use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromSnakeToAnother;
-use StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromTitleToAnother;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromCamelToAnother;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromKebabToAnother;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromPascalToAnother;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromRawToAnother;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromSnakeToAnother;
+use Wordless\Tests\Unit\StrHelperTest\Traits\MutatorsTests\Traits\CaseStyleTests\Traits\FromTitleToAnother;
 
 trait CaseStyleTests
 {
@@ -30,10 +30,10 @@ trait CaseStyleTests
     private const NUMERICAL_RAW_CASE_EXAMPLE = 'thanks 4 reading';
     private const NUMERICAL_SNAKE_CASE_EXAMPLE = 'thanks_4_reading';
     private const NUMERICAL_TITLE_CASE_EXAMPLE = 'Thanks 4 Reading';
-    private const ACCENTED_CAMEL_CASE_EXAMPLE = 'ACacadaHegemonicaNaoEResponsavelPelaDestruicao';
+    private const ACCENTED_CAMEL_CASE_EXAMPLE = 'aCacadaHegemonicaNaoEResponsavelPelaDestruicao';
     private const ACCENTED_KEBAB_CASE_EXAMPLE = 'a-cacada-hegemonica-nao-e-responsavel-pela-destruicao';
-    private const ACCENTED_PASCAL_CASE_EXAMPLE = 'ACacadaHegemonicaNãoEResponsavelPelaDestruicao';
+    private const ACCENTED_PASCAL_CASE_EXAMPLE = 'ACacadaHegemonicaNaoEResponsavelPelaDestruicao';
     private const ACCENTED_RAW_CASE_EXAMPLE = 'a caçada hegemônica não é responsável pela destruição?!';
     private const ACCENTED_SNAKE_CASE_EXAMPLE = 'a_cacada_hegemonica_nao_e_responsavel_pela_destruicao';
-    private const ACCENTED_TITLE_CASE_EXAMPLE = 'A Cacada Hegemonica Não E Responsavel Pela Destruicao';
+    private const ACCENTED_TITLE_CASE_EXAMPLE = 'A Cacada Hegemonica Nao E Responsavel Pela Destruicao';
 }

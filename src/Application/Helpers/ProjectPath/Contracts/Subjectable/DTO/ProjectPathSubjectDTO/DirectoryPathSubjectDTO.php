@@ -6,6 +6,7 @@ use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToCreateSymlink;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToDeletePath;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetCurrentWorkingDirectory;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetDirectoryPermissions;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToPutFileContent;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToTravelDirectories;
@@ -17,6 +18,8 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 
 final class DirectoryPathSubjectDTO extends ProjectPathSubjectDTO
 {
+    private array $relative_to = [];
+
     /**
      * @param string $additional_relative_path
      * @return ProjectPathSubjectDTO
@@ -30,15 +33,20 @@ final class DirectoryPathSubjectDTO extends ProjectPathSubjectDTO
 
     /**
      * @param string $directory_name
+     * @param bool $secure_mode
      * @param int|null $permissions
      * @return self
      * @throws FailedToCreateDirectory
      * @throws FailedToGetDirectoryPermissions
      * @throws PathNotFoundException
      */
-    public function createDirectory(string $directory_name, ?int $permissions = null): self
+    public function createDirectory(string $directory_name, bool $secure_mode = true, ?int $permissions = null): self
     {
-        DirectoryFiles::createDirectoryAt($directory_path = "$this->subject/$directory_name", $permissions);
+        DirectoryFiles::createDirectoryAt(
+            $directory_path = "$this->subject/$directory_name",
+            $secure_mode,
+            $permissions
+        );
 
         return new self($directory_path);
     }
@@ -50,7 +58,6 @@ final class DirectoryPathSubjectDTO extends ProjectPathSubjectDTO
      * @param int|null $permissions
      * @return FilePathSubjectDTO
      * @throws FailedToCreateDirectory
-     * @throws FailedToGetDirectoryPermissions
      * @throws FailedToPutFileContent
      * @throws PathNotFoundException
      */
@@ -75,6 +82,7 @@ final class DirectoryPathSubjectDTO extends ProjectPathSubjectDTO
      * @param string $symbolic_link_name
      * @param string $symbolic_link_target
      * @param string|null $from_absolute_path
+     * @param bool $secure_mode
      * @return SymlinkPathSubjectDTO
      * @throws FailedToCreateSymlink
      * @throws FailedToTravelDirectories
@@ -83,13 +91,15 @@ final class DirectoryPathSubjectDTO extends ProjectPathSubjectDTO
     public function createSymlink(
         string  $symbolic_link_name,
         string  $symbolic_link_target,
-        ?string $from_absolute_path = null
+        ?string $from_absolute_path = null,
+        bool   $secure_mode = true
     ): SymlinkPathSubjectDTO
     {
         DirectoryFiles::createSymbolicLink(
             $symlink_path = "$this->subject/$symbolic_link_name",
             $symbolic_link_target,
-            $from_absolute_path
+            $from_absolute_path,
+            $secure_mode
         );
 
         return new SymlinkPathSubjectDTO($symlink_path);
@@ -116,5 +126,17 @@ final class DirectoryPathSubjectDTO extends ProjectPathSubjectDTO
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $to
+     * @return string
+     * @throws FailedToGetCurrentWorkingDirectory
+     * @throws PathNotFoundException
+     */
+    public function relativeTo(string $to): string
+    {
+        return $this->relative_to[$to]
+            ?? $this->relative_to[$to] = ProjectPath::relativeTo($to, $this->subject);
     }
 }

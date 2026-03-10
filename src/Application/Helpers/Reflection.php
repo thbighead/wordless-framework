@@ -6,6 +6,7 @@ use ReflectionClass;
 use ReflectionClassConstant;
 use ReflectionException;
 use ReflectionMethod;
+use ReflectionObject;
 use ReflectionProperty;
 use Wordless\Application\Helpers\Reflection\Contracts\Subjectable;
 
@@ -34,7 +35,7 @@ class Reflection extends Subjectable
         return (new ReflectionProperty($object, $property))->getValue($object);
     }
 
-    public static function getNonPublicConstValue(object|string $object, string $constant): mixed
+    public static function getNonPublicConstantValue(object|string $object, string $constant): mixed
     {
         return (new ReflectionClassConstant($object, $constant))->getValue();
     }
@@ -47,5 +48,14 @@ class Reflection extends Subjectable
     public static function getReflectionClass(object|string $object): ReflectionClass
     {
         return new ReflectionClass($object);
+    }
+
+    /**
+     * @param object $object
+     * @return ReflectionObject
+     */
+    public static function getReflectionObject(object $object): ReflectionObject
+    {
+        return new ReflectionObject($object);
     }
 }

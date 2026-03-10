@@ -2,7 +2,6 @@
 
 namespace Wordless\Infrastructure;
 
-use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Mounters\Stub\SimpleCacheStubMounter;
@@ -33,10 +32,6 @@ abstract class Cacher
     private function cache(): void
     {
         $array_to_cache = $this->mountCacheArray();
-
-        if (!Arr::isAssociative($array_to_cache)) {
-            $array_to_cache = Arr::recursiveJoin(...$array_to_cache);
-        }
 
         try {
             $this->getSimpleCacheStubMounter()

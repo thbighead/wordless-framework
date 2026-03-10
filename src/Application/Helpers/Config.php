@@ -41,10 +41,10 @@ class Config extends Subjectable
      */
     public static function getFresh(string $key): mixed
     {
-        $keys = self::mountKeys($key);
-        $config = self::retrieveConfig($keys);
+        $parsed_key = self::mountKeys($key);
+        $config = self::retrieveConfig($parsed_key);
 
-        return self::searchKeysIntoConfig($keys, $config, $key);
+        return self::searchKeyIntoConfig($parsed_key, $config, $key);
     }
 
     /**

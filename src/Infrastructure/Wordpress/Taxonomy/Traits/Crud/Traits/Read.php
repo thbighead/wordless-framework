@@ -29,7 +29,7 @@ trait Read
         }
 
         try {
-            return static::query()->count() > 0;
+            return static::query()->count() <= 0;
         } catch (EmptyQueryBuilderArguments|InvalidModelClass $exception) {
             throw new CouldNotResolveNoneCreated(static::getNameKey(), $exception);
         }
@@ -44,11 +44,11 @@ trait Read
         try {
             $query = static::query();
 
-            if ($uncategorized = Category::findBySlug(self::UNCATEGORIZED_SLUG)) {
+            if ($uncategorized = Category::findBySlug(Category::UNCATEGORIZED_SLUG)) {
                 $query->except($uncategorized);
             }
 
-            return $query->count() > 0;
+            return $query->count() <= 0;
         } catch (EmptyQueryBuilderArguments|FailedToFind|InvalidModelClass|TermInstantiationError $exception) {
             throw new CouldNotResolveNoneCreatedForCategory($exception);
         }

@@ -77,15 +77,15 @@ trait Substring
 
     public static function between(string $string, string $prefix, ?string $suffix = null): string
     {
-        if (($substring = static::after($string, $prefix)) === $string) {
+        if (($substring1 = static::after($string, $prefix)) === $string) {
             return $string;
         }
 
-        if (($substring = static::beforeLast($substring, $suffix ?? $prefix)) === $substring) {
+        if (($substring2 = static::beforeLast($substring1, $suffix ?? $prefix)) === $substring1) {
             return $string;
         }
 
-        return $substring;
+        return $substring2;
     }
 
     public static function countSubstring(string $string, string $substring): int

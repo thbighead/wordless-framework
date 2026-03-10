@@ -8,7 +8,6 @@ use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 trait Internal
 {
     protected array $relative_from = [];
-    protected array $relative_to = [];
 
     /**
      * @param string $subject

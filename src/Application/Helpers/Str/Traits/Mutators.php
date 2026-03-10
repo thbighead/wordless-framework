@@ -2,6 +2,8 @@
 
 namespace Wordless\Application\Helpers\Str\Traits;
 
+use Wordless\Application\Helpers\Arr;
+use Wordless\Application\Helpers\Expect;
 use Wordless\Application\Helpers\Str\Enums\Language;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
 use Wordless\Application\Helpers\Str\Traits\Mutators\Traits\WordCase;
@@ -50,7 +52,7 @@ trait Mutators
      */
     public static function removeSuffix(string $string, string $suffix): string
     {
-        return !static::endsWith($string, $suffix) ? $string : static::substring($string, 0, -strlen($suffix));
+        return (empty($suffix) || !static::endsWith($string, $suffix)) ? $string : static::substring($string, 0, -strlen($suffix));
     }
 
     /**
@@ -61,6 +63,25 @@ trait Mutators
      */
     public static function replace(string $string, string|array $search, string|array $replace): string
     {
+        if (empty($search)) {
+            return $string;
+        }
+
+        if (is_array($replace) && !is_array($search)) {
+            $replace = Expect::string(Arr::first($replace));
+        }
+
+        if (is_array($replace) && is_array($search)) {
+            $size = min(Arr::size($replace), Arr::size($search));
+
+            if ($size <= 0) {
+                return $string;
+            }
+
+            $replace = Arr::wrap(Arr::first($replace, $size));
+            $search = Arr::wrap(Arr::first($search, $size));
+        }
+
         return str_replace($search, $replace, $string);
     }
 

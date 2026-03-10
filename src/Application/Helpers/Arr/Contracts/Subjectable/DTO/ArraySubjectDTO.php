@@ -7,6 +7,8 @@ namespace Wordless\Application\Helpers\Arr\Contracts\Subjectable\DTO;
 use JsonException;
 use Wordless\Application\Helpers\Arr;
 use Wordless\Application\Helpers\Arr\Contracts\Subjectable\DTO\ArraySubjectDTO\Traits\Internal;
+use Wordless\Application\Helpers\Arr\Exceptions\ArrayKeyAlreadySet;
+use Wordless\Application\Helpers\Arr\Exceptions\EmptyArrayHasNoIndex;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 use Wordless\Infrastructure\Helper\Contracts\Subjectable\DTO\SubjectDTO;
@@ -20,6 +22,12 @@ final class ArraySubjectDTO extends SubjectDTO
         return $this->print();
     }
 
+    /**
+     * @param mixed $value
+     * @param string|int|null $with_key
+     * @return self
+     * @throws ArrayKeyAlreadySet
+     */
     public function append(mixed $value, string|int|null $with_key = null): self
     {
         $this->subject = Arr::append($this->subject, $value, $with_key);
@@ -27,9 +35,9 @@ final class ArraySubjectDTO extends SubjectDTO
         return $this->incrementSize()->recalculateAssociativeAfterAddition();
     }
 
-    public function except(array $except_keys): self
+    public function except(string|int ...$except_keys): self
     {
-        $this->subject = Arr::except($this->subject, $except_keys);
+        $this->subject = Arr::except($this->subject, ...$except_keys);
 
         return $this->updateSize()->recalculateAssociative();
     }
@@ -55,7 +63,7 @@ final class ArraySubjectDTO extends SubjectDTO
         return Arr::getFirstKey($this->subject);
     }
 
-    public function getIndexOfKey(string|int|null $key): ?int
+    public function getIndexOfKey(string|int $key): ?int
     {
         return Arr::getIndexOfKey($this->subject, $key);
     }
@@ -76,7 +84,7 @@ final class ArraySubjectDTO extends SubjectDTO
         return Arr::hasAnyOtherValueThan($this->subject, $forbidden_value);
     }
 
-    public function hasKey(string|int|null $key): bool
+    public function hasKey(string|int $key): bool
     {
         return Arr::hasKey($this->subject, $key);
     }
@@ -96,28 +104,37 @@ final class ArraySubjectDTO extends SubjectDTO
         return isset($this->size) ? $this->size === 0 : Arr::isEmpty($this->subject);
     }
 
+    /**
+     * @return int
+     * @throws EmptyArrayHasNoIndex
+     */
     public function lastIndex(): int
     {
-        return isset($this->size) ? $this->size - 1 : Arr::lastIndex($this->subject);
+        if (isset($this->size)) {
+            return $this->size === 0 ? throw new EmptyArrayHasNoIndex : $this->size - 1;
+        }
+
+        try {
+            $last_index = Arr::lastIndex($this->subject);
+
+            return $this->size = $last_index + 1;
+        } catch (EmptyArrayHasNoIndex $exception) {
+            $this->size = 0;
+
+            throw $exception;
+        }
     }
 
     /**
-     * @param array $only_keys
-     * @return $this
+     * @param string|int ...$only_keys
+     * @return self
      * @throws FailedToParseArrayKey
      */
-    public function only(array $only_keys): self
+    public function only(string|int ...$only_keys): self
     {
-        $this->subject = Arr::only($this->subject, $only_keys);
+        $this->subject = Arr::only($this->subject, ...$only_keys);
 
         return $this->updateSize()->recalculateAssociative();
-    }
-
-    public function prepend(mixed $value, string|int|null $with_key = null): self
-    {
-        $this->subject = Arr::prepend($this->subject, $value, $with_key);
-
-        return $this->incrementSize()->recalculateAssociativeAfterAddition();
     }
 
     public function packBy(int $by): self
@@ -127,11 +144,31 @@ final class ArraySubjectDTO extends SubjectDTO
         return $this->resetAssociative()->updateSize();
     }
 
+    /**
+     * @param mixed $value
+     * @param string|int|null $with_key
+     * @return self
+     * @throws ArrayKeyAlreadySet
+     */
+    public function prepend(mixed $value, string|int|null $with_key = null): self
+    {
+        $this->subject = Arr::prepend($this->subject, $value, $with_key);
+
+        return $this->incrementSize()->recalculateAssociativeAfterAddition();
+    }
+
     public function print(): string
     {
         return rtrim(var_export($this->subject, true));
     }
 
+    /**
+     * @param int $index
+     * @param mixed $value
+     * @param string|int|null $with_key
+     * @return self
+     * @throws ArrayKeyAlreadySet
+     */
     public function pushValueIntoIndex(int $index, mixed $value, string|int|null $with_key = null): self
     {
         $this->subject = Arr::pushValueIntoIndex($this->subject, $index, $value, $with_key);

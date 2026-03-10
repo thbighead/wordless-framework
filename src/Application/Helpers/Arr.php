@@ -6,28 +6,43 @@ namespace Wordless\Application\Helpers;
 
 use JsonException;
 use Wordless\Application\Helpers\Arr\Contracts\Subjectable;
+use Wordless\Application\Helpers\Arr\Exceptions\ArrayKeyAlreadySet;
+use Wordless\Application\Helpers\Arr\Exceptions\EmptyArrayHasNoIndex;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToFindArrayKey;
 use Wordless\Application\Helpers\Arr\Exceptions\FailedToParseArrayKey;
 
 class Arr extends Subjectable
 {
+    /**
+     * @param array $array
+     * @param mixed $value
+     * @param string|int|null $with_key
+     * @return array
+     * @throws ArrayKeyAlreadySet
+     */
     public static function append(array $array, mixed $value, string|int|null $with_key = null): array
     {
-        $with_key !== null && !static::hasKey($array, $with_key) ? $array[$with_key] = $value : $array[] = $value;
+        if ($with_key === null) {
+            $array[] = $value;
+
+            return $array;
+        }
+
+        if (static::hasKey($array, $with_key)) {
+            throw new ArrayKeyAlreadySet($array, $with_key, __METHOD__);
+        }
+
+        $array[$with_key] = $value;
 
         return $array;
     }
 
-    public static function except(array $array, array $except_keys): array
+    public static function except(array $array, string|int ...$except_keys): array
     {
-        $except_array = $except_keys;
+        $except_array = [];
 
-        if (!static::isAssociative($except_array)) {
-            $except_array = [];
-
-            foreach ($except_keys as $key) {
-                $except_array[$key] = $key;
-            }
+        foreach ($except_keys as $key) {
+            $except_array[$key] = $key;
         }
 
         return array_diff_key($array, $except_array);
@@ -65,8 +80,12 @@ class Arr extends Subjectable
         return array_key_first($array);
     }
 
-    public static function getIndexOfKey(array $array, string|int|null $key): ?int
+    public static function getIndexOfKey(array $array, string|int $key): ?int
     {
+        if (!static::isAssociative($array)) {
+            return isset($array[$key]) ? $key : null;
+        }
+
         return array_flip(array_keys($array))[$key] ?? null;
     }
 
@@ -80,7 +99,12 @@ class Arr extends Subjectable
     public static function getOrFail(array $array, int|string $key): mixed
     {
         $key = (string)$key;
-        $key_pathing = explode('.', $key);
+
+        if (empty($array)) {
+            throw new FailedToFindArrayKey($array, $key, $key);
+        }
+
+        $key_pathing = self::parseArrayKey($key);
         $first_key = array_shift($key_pathing) ?? throw new FailedToParseArrayKey($key);
         $pointer = $array[$first_key] ?? throw new FailedToFindArrayKey($array, $key, $first_key);
 
@@ -106,7 +130,7 @@ class Arr extends Subjectable
         return false;
     }
 
-    public static function hasKey(array $array, string|int|null $key): bool
+    public static function hasKey(array $array, string|int $key): bool
     {
         return key_exists($key, $array);
     }
@@ -118,7 +142,11 @@ class Arr extends Subjectable
 
     public static function isAssociative(array $array): bool
     {
-        return array_keys($array) !== range(0, static::lastIndex($array));
+        try {
+            return range(0, static::lastIndex($array)) !== array_keys($array);
+        } catch (EmptyArrayHasNoIndex) {
+            return true;
+        }
     }
 
     public static function isEmpty(array $array): bool
@@ -126,27 +154,57 @@ class Arr extends Subjectable
         return empty($array);
     }
 
+    /**
+     * @param array $array
+     * @return int
+     * @throws EmptyArrayHasNoIndex
+     */
     public static function lastIndex(array $array): int
     {
+        if (empty($array)) {
+            throw new EmptyArrayHasNoIndex;
+        }
+
         return static::size($array) - 1;
     }
 
     /**
      * @param array $array
-     * @param array $only_keys
+     * @param string|int ...$only_keys
      * @return array
      * @throws FailedToParseArrayKey
      */
-    public static function only(array $array, array $only_keys): array
+    public static function only(array $array, string|int ...$only_keys): array
     {
+        if (empty($array) || empty($only_keys)) {
+            return [];
+        }
+
         $filtered_array = [];
 
         foreach ($only_keys as $key_to_filter) {
             try {
-                $filtered_array[$key_to_filter] = static::getOrFail($array, $key_to_filter);
+                $value = static::getOrFail($array, $key_to_filter);
             } catch (FailedToFindArrayKey) {
                 continue;
             }
+
+            $pointer = null;
+
+            foreach (self::parseArrayKey((string)$key_to_filter) as $parsed_key) {
+                if (is_null($pointer)) {
+                    $filtered_array[$parsed_key] = [];
+                    $pointer = &$filtered_array[$parsed_key];
+
+                    continue;
+                }
+
+                $pointer[$parsed_key] = [];
+                $pointer = &$pointer[$parsed_key];
+            }
+
+            $pointer = $value;
+            unset($pointer);
         }
 
         return $filtered_array;
@@ -154,6 +212,10 @@ class Arr extends Subjectable
 
     public static function packBy(array $array, int $by): array
     {
+        if (empty($array)) {
+            return [];
+        }
+
         $result = [];
         $preserve_keys = static::isAssociative($array);
         $by = max(1, abs($by));
@@ -168,22 +230,28 @@ class Arr extends Subjectable
         return $result;
     }
 
-    public static function print(array $array): string
+    /**
+     * @param array $array
+     * @param mixed $value
+     * @param string|int|null $with_key
+     * @return array
+     * @throws ArrayKeyAlreadySet
+     */
+    public static function prepend(array $array, mixed $value, string|int|null $with_key = null): array
     {
-        return rtrim(var_export($array, true));
-    }
+        $with_key ??= 0;
 
-    public static function prepend(array $array, mixed $value, string|int|bool|null $with_key = null): array
-    {
-        if (!static::isAssociative($array) && $with_key === null) {
-            $clone = $array;
+        if (!static::isAssociative($array) && $with_key === 0) {
+            array_unshift($array, $value);
 
-            array_unshift($clone, $value);
-
-            return $clone;
+            return $array;
         }
 
-        $new_array = $with_key === null || static::hasKey($array, $with_key) ? [$value] : [$with_key => $value];
+        if (static::hasKey($array, $with_key)) {
+            throw new ArrayKeyAlreadySet($array, $with_key, __METHOD__);
+        }
+
+        $new_array = [$with_key => $value];
 
         foreach ($array as $item_key => $item_value) {
             $new_array[$item_key] = $item_value;
@@ -192,32 +260,47 @@ class Arr extends Subjectable
         return $new_array;
     }
 
+    public static function print(array $array): string
+    {
+        return rtrim(var_export($array, true));
+    }
+
+    /**
+     * @param array $array
+     * @param int $index
+     * @param mixed $value
+     * @param string|int|null $with_key
+     * @return array
+     * @throws ArrayKeyAlreadySet
+     */
     public static function pushValueIntoIndex(
-        array                $array,
-        int                  $index,
-        mixed                $value,
-        string|int|bool|null $with_key = null
+        array           $array,
+        int             $index,
+        mixed           $value,
+        string|int|null $with_key = null
     ): array
     {
+        if ($with_key !== null && static::hasKey($array, $with_key)) {
+            throw new ArrayKeyAlreadySet($array, $with_key, 'push value into index');
+        }
+
         if (($index = abs($index)) === 0) {
             return static::prepend($array, $value, $with_key);
         }
 
-        if ($index >= static::lastIndex($array)) {
-            return static::append($array, $value, $with_key);
+        try {
+            if ($index >= static::lastIndex($array)) {
+                return static::append($array, $value, $with_key);
+            }
+        } catch (EmptyArrayHasNoIndex) {
+            return static::prepend($array, $value, $with_key);
         }
 
         $preserve_keys = static::isAssociative($array);
-        $new_array = array_slice($array, 0, $index + 1, $preserve_keys);
-        $second_part = array_slice($array, 0, $index + 1, true);
-
-        if (static::hasKey($array, $with_key)) {
-            $with_key = null;
-        }
+        $new_array = array_slice($array, 0, $index, $preserve_keys);
+        $second_part = array_slice($array, $index, preserve_keys: true);
 
         if (!$preserve_keys) {
-            $value = $with_key === null ? [$value] : [$with_key => $value];
-
             return array_merge(
                 $new_array,
                 $with_key === null ? [$value] : [$with_key => $value],
@@ -225,7 +308,13 @@ class Arr extends Subjectable
             );
         }
 
-        $with_key === null ? $new_array[] = $value : $new_array[$with_key] = $value;
+        if ($with_key === null) {
+            $temp_value = Str::uuid();
+            $array[] = $temp_value;
+            $with_key = static::searchValueKey($array, $temp_value);
+        }
+
+        $new_array[$with_key] = $value;
 
         foreach ($second_part as $second_part_key => $second_part_value) {
             $new_array[$second_part_key] = $second_part_value;
@@ -234,12 +323,43 @@ class Arr extends Subjectable
         return $new_array;
     }
 
-    public static function recursiveJoin(array $array_1, array $array_2, array ...$arrays): array
+    public static function random(array $array, int $quantity = 1): mixed
     {
+        try {
+            $last_index = static::lastIndex($array);
+        } catch (EmptyArrayHasNoIndex) {
+            return null;
+        }
+
+        $array_values = array_values($array);
+        $quantity = max($quantity, 1);
+
+        if ($quantity === 1) {
+            return $array_values[Integer::random(0, $last_index)];
+        }
+
+        $array_keys = array_keys($array);
+        $randoms = [];
+
+        for ($i = 0; $i < $quantity; $i++) {
+            $random_index = Integer::random(0, $last_index);
+
+            $randoms[$array_keys[$random_index]] = $array_values[$random_index];
+        }
+
+        return $randoms;
+    }
+
+    public static function recursiveJoin(array $initial_array, array $array, array ...$arrays): array
+    {
+        if (empty($array) && empty($arrays)) {
+            return $initial_array;
+        }
+
         $joined_array = [];
 
-        self::resolveRecursiveJoin($array_1, $joined_array);
-        self::resolveRecursiveJoin($array_2, $joined_array);
+        self::resolveRecursiveJoin($initial_array, $joined_array);
+        self::resolveRecursiveJoin($array, $joined_array);
 
         foreach ($arrays as $array) {
             self::resolveRecursiveJoin($array, $joined_array);
@@ -300,21 +420,30 @@ class Arr extends Subjectable
         return [$something];
     }
 
+    /**
+     * @param string $full_key
+     * @return string[]
+     * @throws FailedToParseArrayKey
+     */
+    private static function parseArrayKey(string $full_key): array
+    {
+        if (empty($parsed_key = explode('.', $full_key))) {
+            throw new FailedToParseArrayKey($full_key);
+        }
+
+        return $parsed_key;
+    }
+
     private static function resolveRecursiveJoin(array $array, array &$joined_array): void
     {
         foreach ($array as $key => $value) {
-            if (!isset($joined_array[$key])) {
-                $joined_array[$key] = $value;
-                continue;
-            }
-
-            if (!is_array($joined_array[$key])) {
+            if (!isset($joined_array[$key]) || !is_array($joined_array[$key])) {
                 $joined_array[$key] = $value;
                 continue;
             }
 
             if (!is_array($value)) {
-                $joined_array[$key][] = $value;
+                $joined_array[$key] = $value;
                 continue;
             }
 

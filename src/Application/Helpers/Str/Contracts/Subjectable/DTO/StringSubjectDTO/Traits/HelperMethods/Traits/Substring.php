@@ -3,7 +3,11 @@
 namespace Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO\Traits\HelperMethods\Traits;
 
 use Wordless\Application\Helpers\Str;
+use Wordless\Application\Helpers\Str\Contracts\Subjectable\DTO\StringSubjectDTO;
 
+/**
+ * @mixin StringSubjectDTO
+ */
 trait Substring
 {
     public function after(string $delimiter): static

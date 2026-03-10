@@ -2,15 +2,17 @@
 
 namespace Wordless\Application\Commands\Seeders;
 
+use OverflowException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Wordless\Application\Commands\Exceptions\FailedToGetCommandOptionValue;
 use Wordless\Application\Commands\Seeders\Contracts\SeederCommand;
+use Wordless\Application\Commands\Seeders\TaxonomyTermsSeeder\Exceptions\FailedToGenerateTaxonomyTerm;
 use Wordless\Application\Commands\Seeders\TaxonomyTermsSeeder\Exceptions\FailedToGenerateTaxonomyTerms;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
 use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder;
-use Wordless\Wordpress\QueryBuilder\TaxonomyQueryBuilder\Enums\ResultFormat;
+use Wordless\Wordpress\QueryBuilder\Enums\ResultFormat;
 
 class TaxonomyTermsSeeder extends SeederCommand
 {
@@ -49,6 +51,7 @@ class TaxonomyTermsSeeder extends SeederCommand
 
         $progressBar->setMessage("Done! A total of $taxonomy_terms_total taxonomy terms were generated.");
         $progressBar->finish();
+        $this->writeln('');
 
         return Command::SUCCESS;
     }
@@ -57,18 +60,22 @@ class TaxonomyTermsSeeder extends SeederCommand
      * @param string $taxonomy
      * @param ProgressBar $progressBar
      * @return void
-     * @throws FailedToRunWpCliCommand
-     * @throws WpCliCommandReturnedNonZero
+     * @throws FailedToGenerateTaxonomyTerm
      */
     private function generateTaxonomyTerm(string $taxonomy, ProgressBar $progressBar): void
     {
-        $new_term = $this->faker->word();
+        try {
+            $new_term = $this->faker->unique()->word();
 
-        $progressBar->setMessage("Creating $taxonomy '$new_term'...");
+            $progressBar->setMessage("Creating $taxonomy '$new_term'...");
+            $progressBar->advance(0);
 
-        $this->runWpCliCommandSilently(
-            "term create $taxonomy $new_term --description='{$this->faker->paragraph()}' --quiet"
-        );
+            $this->runWpCliCommandSilently(
+                "term create $taxonomy $new_term --description='{$this->faker->paragraph()}' --quiet"
+            );
+        } catch (FailedToRunWpCliCommand|OverflowException|WpCliCommandReturnedNonZero $exception) {
+            throw new FailedToGenerateTaxonomyTerm($taxonomy, $new_term ?? null, $exception);
+        }
 
         $progressBar->advance();
     }
@@ -85,7 +92,7 @@ class TaxonomyTermsSeeder extends SeederCommand
             for ($i = 0; $i < $this->getQuantity(); $i++) {
                 $this->generateTaxonomyTerm($taxonomy, $progressBar);
             }
-        } catch (FailedToGetCommandOptionValue|FailedToRunWpCliCommand|WpCliCommandReturnedNonZero $exception) {
+        } catch (FailedToGenerateTaxonomyTerm|FailedToGetCommandOptionValue $exception) {
             throw new FailedToGenerateTaxonomyTerms($taxonomy, $exception);
         }
     }

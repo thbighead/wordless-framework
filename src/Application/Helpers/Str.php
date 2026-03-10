@@ -6,10 +6,12 @@ namespace Wordless\Application\Helpers;
 
 use JsonException;
 use Ramsey\Uuid\Uuid;
-use Random\RandomException;
+use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
+use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
 use Wordless\Application\Helpers\Str\Contracts\Subjectable;
 use Wordless\Application\Helpers\Str\Enums\Encoding;
 use Wordless\Application\Helpers\Str\Enums\UuidVersion;
+use Wordless\Application\Helpers\Str\Exceptions\JsonDecodeError;
 use Wordless\Application\Helpers\Str\Traits\Boolean;
 use Wordless\Application\Helpers\Str\Traits\Internal;
 use Wordless\Application\Helpers\Str\Traits\Mutators;
@@ -27,11 +29,19 @@ class Str extends Subjectable
     /**
      * @param string $json
      * @return array
-     * @throws JsonException
+     * @throws JsonDecodeError
      */
     public static function jsonDecode(string $json): array
     {
-        return json_decode($json, true, flags: JSON_THROW_ON_ERROR);
+        try {
+            return json_decode($json, true, flags: JSON_THROW_ON_ERROR);
+        } catch (JsonException $jsonException) {
+            try {
+                return static::jsonDecode(DirectoryFiles::getFileContent($json));
+            } catch (FailedToGetFileContent|PathNotFoundException $fileException) {
+                throw new JsonDecodeError($json, $fileException->setPrevious($jsonException));
+            }
+        }
     }
 
     public static function length(string $string, ?Encoding $encoding = null): int
@@ -39,11 +49,6 @@ class Str extends Subjectable
         return mb_strlen($string, $encoding?->value);
     }
 
-    /**
-     * @param int $size
-     * @return string
-     * @throws RandomException
-     */
     public static function random(int $size = self::DEFAULT_RANDOM_SIZE): string
     {
         if ($size <= 0) {
@@ -59,10 +64,15 @@ class Str extends Subjectable
         $max = mb_strlen($keyspace, '8bit') - 1;
 
         for ($i = 0; $i < $size; ++$i) {
-            $pieces [] = $keyspace[random_int(0, $max)];
+            $pieces[] = $keyspace[Integer::random(0, $max)];
         }
 
         return implode('', $pieces);
+    }
+
+    public static function swap(string &$value1, string &$value2): void
+    {
+        list($value1, $value2) = [$value2, $value1];
     }
 
     /**

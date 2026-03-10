@@ -12,6 +12,7 @@ use Wordless\Application\Commands\Seeders\CommentsSeeder\Exceptions\FailedToRunC
 use Wordless\Application\Commands\Seeders\Contracts\SeederCommand;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Exceptions\WpCliCommandReturnedNonZero;
 use Wordless\Application\Commands\Traits\RunWpCliCommand\Traits\Exceptions\FailedToRunWpCliCommand;
+use Wordless\Application\Helpers\Arr;
 use Wordless\Infrastructure\ConsoleCommand\Traits\CallCommand\Traits\Internal\Exceptions\CallInternalCommandException;
 use Wordless\Infrastructure\Wordpress\QueryBuilder\Exceptions\EmptyQueryBuilderArguments;
 use Wordless\Wordpress\Models\Post;
@@ -29,7 +30,7 @@ class CommentsSeeder extends SeederCommand
 
     protected function help(): string
     {
-        return 'Creates a given number of dummy comments to each created post. Default is '
+        return 'Creates a given number of dummy comments to each even indexed created post. Default is '
             . static::DEFAULT_NUMBER_OF_OBJECTS
             . '.';
     }
@@ -62,9 +63,9 @@ class CommentsSeeder extends SeederCommand
         }
 
         try {
-            $posts = Post::all();
+            $posts = Arr::random($posts = Post::all(), intdiv(count($posts), 2));
         } catch (EmptyQueryBuilderArguments $exception) {
-            throw new FailedToRunCommentsSeederCommand('Failed to retrieve all posts.', $exception);
+            throw new FailedToRunCommentsSeederCommand('Failed to retrieve posts.', $exception);
         }
 
         $progressBar = $this->progressBar($comments_total = count($posts) * $this->getQuantity());
@@ -77,6 +78,7 @@ class CommentsSeeder extends SeederCommand
 
         $progressBar->setMessage("Done! A total of $comments_total comments were generated.");
         $progressBar->finish();
+        $this->writeln('');
 
         return Command::SUCCESS;
     }
@@ -91,11 +93,10 @@ class CommentsSeeder extends SeederCommand
     private function generateCommentsForPost(Post $post, ProgressBar $progressBar): void
     {
         for ($i = 0; $i < $this->getQuantity(); $i++) {
-            $comment_author = $this->faker->name;
+            $comment_author = $this->faker->userName();
 
-            $progressBar->setMessage(
-                "Generating a comment from user $comment_author for post $post->post_title."
-            );
+            $progressBar->setMessage("Generating user $comment_author comment for post $post->ID.");
+            $progressBar->advance(0);
 
             $command =
                 "comment create --comment_post_ID=$post->ID --comment_content='{$this->faker->paragraph()}' --comment_author='$comment_author' --quiet";
@@ -105,6 +106,8 @@ class CommentsSeeder extends SeederCommand
             } catch (WpCliCommandReturnedNonZero|FailedToRunWpCliCommand $exception) {
                 throw new FailedToRunCommand($exception->full_command ?? $command);
             }
+
+            $progressBar->advance();
         }
     }
 }

@@ -3,14 +3,16 @@
 namespace Wordless\Application\Helpers;
 
 use DateTimeInterface;
+use Wordless\Application\Helpers\DataCache\Contracts\Subjectable;
 use Wordless\Application\Helpers\DataCache\Exceptions\FailedToSetTransient;
 use Wordless\Application\Helpers\DataCache\Exceptions\InvalidTransientExpirationValue;
 use Wordless\Application\Helpers\DataCache\Exceptions\TransientKeyIsTooLong;
 use Wordless\Application\Helpers\DataCache\Exceptions\TransientKeyNotFound;
 use Wordless\Application\Helpers\DataCache\Traits\Internal;
+use Wordless\Application\Libraries\Carbon\Carbon;
 use Wordless\Infrastructure\Helper;
 
-class DataCache extends Helper
+class DataCache extends Subjectable
 {
     use Internal;
 
@@ -36,13 +38,13 @@ class DataCache extends Helper
     /**
      * @param string $key
      * @param mixed $value
-     * @param DateTimeInterface|int|string $expires_in
+     * @param Carbon|DateTimeInterface|int|string $expires_in
      * @return void
      * @throws FailedToSetTransient
      * @throws InvalidTransientExpirationValue
      * @throws TransientKeyIsTooLong
      */
-    public static function set(string $key, mixed $value, DateTimeInterface|int|string $expires_in = 0): void
+    public static function set(string $key, mixed $value, Carbon|DateTimeInterface|int|string $expires_in = 0): void
     {
         if (strlen($key) > self::MAX_TRANSIENT_KEY_SIZE) {
             throw new TransientKeyIsTooLong($key);

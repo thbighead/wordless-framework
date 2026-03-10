@@ -90,14 +90,14 @@ define('DB_COLLATE', Environment::get('DB_COLLATE', 'utf8_general_ci'));
  *
  * @since 2.6.0
  */
-define('AUTH_KEY', Environment::get('AUTH_KEY'));
-define('SECURE_AUTH_KEY', Environment::get('SECURE_AUTH_KEY'));
-define('LOGGED_IN_KEY', Environment::get('LOGGED_IN_KEY'));
-define('NONCE_KEY', Environment::get('NONCE_KEY'));
-define('AUTH_SALT', Environment::get('AUTH_SALT'));
-define('SECURE_AUTH_SALT', Environment::get('SECURE_AUTH_SALT'));
-define('LOGGED_IN_SALT', Environment::get('LOGGED_IN_SALT'));
-define('NONCE_SALT', Environment::get('NONCE_SALT'));
+const AUTH_KEY = '8(^f@L+q|Ne9+#85|[+Wss.ta)wKgG:lF/]YjV=s^,cM!7 ~Iy!Kf.B_xq!BZ,+7';
+const SECURE_AUTH_KEY = 'F0iEv I;iRd2n~>-!}&:-Xyi4ty#qCt6-jH8Ks+jOuZ a|O:VLb+X0sd,g-8TU&-';
+const LOGGED_IN_KEY = 'cRBq)?+>8:v-*|8NkV2Ih:qx8(nl@.~^=qE[>wwAU*4x9c683m#KXpu0zpnJ;b`1';
+const NONCE_KEY = '-Gc+eM{U]3}z6T`(9ECMTy%x@@}?chA8dY,&G.y5J/}RYi%Qxao#R[z<)rdqv]MQ';
+const AUTH_SALT = '{xvvA)lqVW0,qgF.xMO1E(Kxa_xKwcK:~_l3R*n>wlv.CS%<8Ngb7=t[ghhEX9$}';
+const SECURE_AUTH_SALT = 'o+-!0w:mWTopQSoOg>#)9aN)NA@BE#Et/t*dfkD(5=7{IeI}2+-hOE@GIv/Nb9-&';
+const LOGGED_IN_SALT = 'wfCA #rO-L= Ou7hn_j;5-1S_EFD|f!v -|:LBlKuad[fMX}ll`bwEVg^L=+n@!y';
+const NONCE_SALT = '`cE)N8pR@4YVXKX35:YIRKay0B/e+*J09VU3W]|?X=n0>8+=Af-qWcQ,CG5{<a:S';
 
 /**#@-*/
 
