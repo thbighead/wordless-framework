@@ -3,7 +3,7 @@
 namespace Wordless\Infrastructure\Wordpress;
 
 use Closure;
-use Wordless\Wordpress\Hook\Enums\Type;
+use Wordless\Infrastructure\Wordpress\Hook\Enums\Type;
 
 abstract class Listener
 {

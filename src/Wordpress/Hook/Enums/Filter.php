@@ -3,6 +3,7 @@
 namespace Wordless\Wordpress\Hook\Enums;
 
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\FilterHook;
+use Wordless\Infrastructure\Wordpress\Hook\Enums\Type;
 
 enum Filter: string implements FilterHook
 {
@@ -1706,5 +1707,10 @@ enum Filter: string implements FilterHook
     public function dispatch(...$arguments): mixed
     {
         return apply_filters($this->value, ...$arguments);
+    }
+
+    public function type(): Type
+    {
+        return Type::filter;
     }
 }

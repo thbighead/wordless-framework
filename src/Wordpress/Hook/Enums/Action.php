@@ -3,6 +3,7 @@
 namespace Wordless\Wordpress\Hook\Enums;
 
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Infrastructure\Wordpress\Hook\Enums\Type;
 
 enum Action: string implements ActionHook
 {
@@ -659,5 +660,10 @@ enum Action: string implements ActionHook
     public function dispatch(...$arguments): void
     {
         do_action($this->value, ...$arguments);
+    }
+
+    public function type(): Type
+    {
+        return Type::action;
     }
 }

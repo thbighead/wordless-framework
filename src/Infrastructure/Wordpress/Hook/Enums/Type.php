@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Wordpress\Hook\Enums;
+namespace Wordless\Infrastructure\Wordpress\Hook\Enums;
 
 enum Type
 {

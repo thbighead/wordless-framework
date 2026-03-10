@@ -8,13 +8,13 @@ declare(strict_types=1);
 
 use Wordless\Infrastructure\Wordpress\Hook;
 use Wordless\Infrastructure\Wordpress\Hook\Contracts\ActionHook;
+use Wordless\Infrastructure\Wordpress\Hook\Enums\Type;
 use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener\AjaxListener;
 use Wordless\Infrastructure\Wordpress\Menu;
 use Wordless\Infrastructure\Wordpress\Schedule;
 use Wordless\Infrastructure\Wordpress\Schedule\Enums\StandardRecurrence;
 use Wordless\Wordpress\Hook\Enums\Action;
-use Wordless\Wordpress\Hook\Enums\Type;
 
 const INTERNAL_WORDLESS_CACHE = [];
 
