@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress;
+namespace Wordless\Infrastructure\Wordpress\Registrar;
 
 abstract class SidebarRegistrar
 {

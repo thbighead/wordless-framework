@@ -12,6 +12,7 @@ use Wordless\Infrastructure\Wordpress\Hook\Enums\Type;
 use Wordless\Infrastructure\Wordpress\Listener;
 use Wordless\Infrastructure\Wordpress\Listener\ActionListener\AjaxListener;
 use Wordless\Infrastructure\Wordpress\Menu;
+use Wordless\Infrastructure\Wordpress\Registrar\ShortcodeRegistrar;
 use Wordless\Infrastructure\Wordpress\Schedule;
 use Wordless\Infrastructure\Wordpress\Schedule\Enums\StandardRecurrence;
 use Wordless\Wordpress\Hook\Enums\Action;
@@ -53,6 +54,19 @@ final class ExampleSchedule extends Schedule
     public static function recurrence(): StandardRecurrence
     {
         return StandardRecurrence::daily;
+    }
+}
+
+final class ExampleShortcodeRegistrar extends ShortcodeRegistrar
+{
+    public static function mountHtml(array $attributes = [], ?string $content = null): string
+    {
+        return '';
+    }
+
+    public static function tag(): string
+    {
+        return '';
     }
 }
 
