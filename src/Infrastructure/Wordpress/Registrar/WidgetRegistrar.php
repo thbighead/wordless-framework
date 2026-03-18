@@ -1,13 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress;
+namespace Wordless\Infrastructure\Wordpress\Registrar;
 
-use Wordless\Infrastructure\Wordpress\WidgetRegistrar\AdminFormField;
-use Wordless\Infrastructure\Wordpress\WidgetRegistrar\DTO\ControlOptionsDTO;
-use Wordless\Infrastructure\Wordpress\WidgetRegistrar\DTO\SidebarOptionsDTO;
+use Wordless\Infrastructure\Wordpress\Registrar;
+use Wordless\Infrastructure\Wordpress\Registrar\WidgetRegistrar\AdminFormField;
+use Wordless\Infrastructure\Wordpress\Registrar\WidgetRegistrar\DTO\ControlOptionsDTO;
+use Wordless\Infrastructure\Wordpress\Registrar\WidgetRegistrar\DTO\SidebarOptionsDTO;
 use WP_Widget;
 
-abstract class WidgetRegistrar extends WP_Widget
+abstract class WidgetRegistrar extends WP_Widget implements Registrar
 {
     abstract protected function controlOptions(): ControlOptionsDTO;
 

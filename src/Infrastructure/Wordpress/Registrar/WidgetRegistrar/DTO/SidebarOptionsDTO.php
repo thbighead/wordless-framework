@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\WidgetRegistrar\DTO;
+namespace Wordless\Infrastructure\Wordpress\Registrar\WidgetRegistrar\DTO;
 
 class SidebarOptionsDTO
 {

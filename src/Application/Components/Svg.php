@@ -7,12 +7,12 @@ use Wordless\Application\Helpers\DirectoryFiles;
 use Wordless\Application\Helpers\DirectoryFiles\Exceptions\FailedToGetFileContent;
 use Wordless\Application\Helpers\ProjectPath;
 use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Libraries\Component\Component;
+use Wordless\Application\Libraries\Component\StaticComponent;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\Enums\StandardContext;
 
-class Svg extends Component
+class Svg extends StaticComponent
 {
     readonly public string $filtered_svg_content;
     readonly public ?string $svg_absolute_file_path;
