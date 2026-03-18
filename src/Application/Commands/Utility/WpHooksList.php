@@ -2,6 +2,7 @@
 
 namespace Wordless\Application\Commands\Utility;
 
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException as SymfonyInvalidArgumentException;
 use Wordless\Application\Commands\Exceptions\FailedToRunCommand;
@@ -73,6 +74,7 @@ class WpHooksList extends ConsoleCommand
     /**
      * @return int
      * @throws FailedToRunCommand
+     * @throws RuntimeException
      */
     protected function runIt(): int
     {
@@ -139,6 +141,7 @@ class WpHooksList extends ConsoleCommand
     /**
      * @return void
      * @throws FailedToResolveDiffMode
+     * @throws RuntimeException
      */
     private function resolveDiffMode(): void
     {
