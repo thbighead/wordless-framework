@@ -2,14 +2,19 @@
 
 namespace Wordless\Infrastructure\Wordpress\Registrar;
 
-abstract class SidebarRegistrar
+use Wordless\Infrastructure\Wordpress\Registrar;
+use Wordless\Infrastructure\Wordpress\Sidebar;
+
+abstract class SidebarRegistrar implements Registrar
 {
     private const MARKER_1 = '%1$s';
     private const MARKER_2 = '%2$s';
 
-    public static function register(): string
+    abstract protected function sidebar(): string|Sidebar;
+
+    public static function register(): void
     {
-        return register_sidebar(self::make()->toArray());
+        register_sidebar(self::make()->toArray());
     }
 
     private static function make(): static
@@ -52,11 +57,6 @@ abstract class SidebarRegistrar
         return null;
     }
 
-    protected function id(): ?string
-    {
-        return null;
-    }
-
     protected function name(): ?string
     {
         return null;
@@ -86,7 +86,7 @@ abstract class SidebarRegistrar
         $return = [];
 
         $this->appendToArray($return, 'name', $this->name())
-            ->appendToArray($return, 'id', $this->id())
+            ->appendToArray($return, 'id', $this->sidebar()::id())
             ->appendToArray($return, 'description', $this->widgetsInterfaceDescription())
             ->appendToArray($return, 'class', $this->htmlClasses())
             ->appendToArray(
