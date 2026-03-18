@@ -18,7 +18,7 @@ abstract class StaticComponent extends BaseComponent
 {
     abstract protected function template(): string;
 
-    private string $html;
+    readonly private string $html;
 
     /**
      * @return string

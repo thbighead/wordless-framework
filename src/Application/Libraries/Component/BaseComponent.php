@@ -2,13 +2,6 @@
 
 namespace Wordless\Application\Libraries\Component;
 
-use Wordless\Application\Helpers\ProjectPath;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\FailedToGetWordpressTheme;
-use Wordless\Application\Helpers\ProjectPath\Exceptions\PathNotFoundException;
-use Wordless\Application\Helpers\Str;
-use Wordless\Application\Helpers\Template;
-use Wordless\Application\Libraries\Component\Contracts\TemplateFile;
-use Wordless\Application\Libraries\Component\Exceptions\InvalidTemplatePathing;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableScript;
 use Wordless\Infrastructure\Wordpress\EnqueueableAsset\EnqueueableStyle;
