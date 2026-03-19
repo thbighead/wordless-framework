@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions;
+namespace Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Traits\Validation\Exceptions;
 
 use InvalidArgumentException;
 use Throwable;

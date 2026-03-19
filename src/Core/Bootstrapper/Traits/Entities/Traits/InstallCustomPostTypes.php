@@ -2,19 +2,20 @@
 
 namespace Wordless\Core\Bootstrapper\Traits\Entities\Traits;
 
+use RuntimeException;
 use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomPostTypes\Exceptions\FailedToResolveCustomPostTypeRegistrar;
 use Wordless\Infrastructure\Provider;
-use Wordless\Infrastructure\Wordpress\CustomPost;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKeyFormat;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKeyFormat;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Exceptions\CustomPostTypeRegistrationFailed;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Traits\Validation\Exceptions\InvalidCustomPostTypeKeyFormat;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Traits\Validation\Exceptions\ReservedCustomPostTypeKeyFormat;
 
 trait InstallCustomPostTypes
 {
     private array $loaded_custom_post_types = [];
 
     /**
-     * @return string[]|CustomPost[]
+     * @return string[]|CustomPostRegistrar[]
      */
     private function getLoadedCustomPostTypes(): array
     {
@@ -34,6 +35,7 @@ trait InstallCustomPostTypes
     /**
      * @return $this
      * @throws FailedToResolveCustomPostTypeRegistrar
+     * @throws RuntimeException
      */
     private function resolveCustomPostTypes(): static
     {

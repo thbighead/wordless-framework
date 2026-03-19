@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits;
+namespace Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Traits;
 
 use Wordless\Application\Helpers\Reserved;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKeyFormat;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKeyFormat;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Traits\Validation\Exceptions\InvalidCustomPostTypeKeyFormat;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Traits\Validation\Exceptions\ReservedCustomPostTypeKeyFormat;
 use Wordless\Wordpress\Models\PostType;
 
 trait Validation

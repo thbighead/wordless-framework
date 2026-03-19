@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Enums;
+namespace Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Enums;
 
 enum MenuPosition: int
 {

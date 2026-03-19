@@ -9,6 +9,8 @@ use Wordless\Infrastructure\Wordpress\ApiController;
 use Wordless\Infrastructure\Wordpress\CustomPost;
 use Wordless\Infrastructure\Wordpress\CustomPostStatus;
 use Wordless\Infrastructure\Wordpress\Menu;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostStatusRegistrar;
 use Wordless\Infrastructure\Wordpress\Registrar\ShortcodeRegistrar;
 use Wordless\Infrastructure\Wordpress\Registrar\SidebarRegistrar;
 use Wordless\Infrastructure\Wordpress\Registrar\WidgetRegistrar;
@@ -72,7 +74,7 @@ abstract class Provider
     }
 
     /**
-     * @return string[]|CustomPostStatus[]
+     * @return string[]|CustomPostStatusRegistrar[]
      */
     public function registerPostStatuses(): array
     {
@@ -80,7 +82,7 @@ abstract class Provider
     }
 
     /**
-     * @return string[]|CustomPost[]
+     * @return string[]|CustomPostRegistrar[]
      */
     public function registerPostTypes(): array
     {

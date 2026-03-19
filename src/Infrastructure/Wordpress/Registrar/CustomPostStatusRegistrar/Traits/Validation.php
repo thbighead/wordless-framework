@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits;
+namespace Wordless\Infrastructure\Wordpress\Registrar\CustomPostStatusRegistrar\Traits;
 
 use Wordless\Application\Helpers\Reserved;
-use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostStatusRegistrar\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
 
 trait Validation
 {

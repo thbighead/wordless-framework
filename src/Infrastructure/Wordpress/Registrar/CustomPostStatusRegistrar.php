@@ -1,14 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits;
+namespace Wordless\Infrastructure\Wordpress\Registrar;
 
 use Wordless\Application\Guessers\CustomPostStatusNameGuesser;
-use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Validation;
-use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
+use Wordless\Infrastructure\Wordpress\Registrar;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostStatusRegistrar\Traits\Validation;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostStatusRegistrar\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
 
-trait Register
+abstract class CustomPostStatusRegistrar implements Registrar
 {
     use Validation;
+
+    protected const NAME = null;
 
     private static array $status_names = [];
 

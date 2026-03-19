@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO;
+namespace Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\DTO;
 
 use Wordless\Application\Libraries\DesignPattern\DataTransferObject\ArrayDTO;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO\Enums\CustomPostTypeFieldSupported;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO\Traits\DataSetter;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\DTO\FieldsSupportedArrayDTO\Enums\CustomPostTypeFieldSupported;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\DTO\FieldsSupportedArrayDTO\Traits\DataSetter;
 
 final class FieldsSupportedArrayDTO extends ArrayDTO
 {

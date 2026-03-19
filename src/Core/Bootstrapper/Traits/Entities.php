@@ -2,6 +2,7 @@
 
 namespace Wordless\Core\Bootstrapper\Traits;
 
+use RuntimeException;
 use Wordless\Core\Bootstrapper;
 use Wordless\Core\Bootstrapper\Exceptions\FailedToLoadBootstrapper;
 use Wordless\Core\Bootstrapper\Traits\Entities\Exceptions\FailedToRegisterWordlessEntity;
@@ -9,7 +10,7 @@ use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomPostStatuses;
 use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomPostTypes;
 use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomPostTypes\Exceptions\FailedToResolveCustomPostTypeRegistrar;
 use Wordless\Core\Bootstrapper\Traits\Entities\Traits\InstallCustomTaxonomies;
-use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostStatusRegistrar\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
 use Wordless\Infrastructure\Wordpress\Taxonomy\CustomTaxonomy\Traits\Register\Exceptions\CustomTaxonomyRegistrationFailed;
 
 trait Entities
@@ -21,6 +22,7 @@ trait Entities
     /**
      * @return void
      * @throws FailedToRegisterWordlessEntity
+     * @throws RuntimeException
      */
     public static function registerEntities(): void
     {

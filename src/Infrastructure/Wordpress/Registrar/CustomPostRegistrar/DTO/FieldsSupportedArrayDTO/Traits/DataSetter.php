@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO\Traits;
+namespace Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\DTO\FieldsSupportedArrayDTO\Traits;
 
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO\Enums\CustomPostTypeFieldSupported;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\DTO\FieldsSupportedArrayDTO;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\DTO\FieldsSupportedArrayDTO\Enums\CustomPostTypeFieldSupported;
 
 trait DataSetter
 {

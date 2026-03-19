@@ -4,14 +4,15 @@ namespace Wordless\Core\Bootstrapper\Traits\Entities\Traits;
 
 use Wordless\Infrastructure\Provider;
 use Wordless\Infrastructure\Wordpress\CustomPostStatus;
-use Wordless\Infrastructure\Wordpress\CustomPostStatus\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostStatusRegistrar;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostStatusRegistrar\Traits\Validation\Exceptions\ReservedCustomPostStatusKey;
 
 trait InstallCustomPostStatuses
 {
     private array $loaded_custom_post_statuses = [];
 
     /**
-     * @return string[]|CustomPostStatus[]
+     * @return string[]|CustomPostStatusRegistrar[]
      */
     private function getLoadedCustomPostStatuses(): array
     {

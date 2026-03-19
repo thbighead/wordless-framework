@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits;
+namespace Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Traits;
 
 /**
  * https://developer.wordpress.org/reference/functions/register_post_type/#rewrite

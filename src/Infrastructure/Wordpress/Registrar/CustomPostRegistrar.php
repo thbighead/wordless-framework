@@ -1,25 +1,29 @@
 <?php declare(strict_types=1);
 
-namespace Wordless\Infrastructure\Wordpress\CustomPost\Traits;
+namespace Wordless\Infrastructure\Wordpress\Registrar;
 
+use RuntimeException;
 use Wordless\Application\Guessers\CustomPostTypeKeyGuesser;
 use Wordless\Application\Helpers\Str;
 use Wordless\Application\Helpers\Str\Traits\Internal\Exceptions\FailedToCreateInflector;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\DTO\FieldsSupportedArrayDTO;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Enums\MenuPosition;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Exceptions\CustomPostTypeRegistrationFailed;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Labels;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Rewrite;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\InvalidCustomPostTypeKeyFormat;
-use Wordless\Infrastructure\Wordpress\CustomPost\Traits\Register\Traits\Validation\Exceptions\ReservedCustomPostTypeKeyFormat;
+use Wordless\Infrastructure\Wordpress\Registrar;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\DTO\FieldsSupportedArrayDTO;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Enums\MenuPosition;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Exceptions\CustomPostTypeRegistrationFailed;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Traits\Labels;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Traits\Rewrite;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Traits\Validation;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Traits\Validation\Exceptions\InvalidCustomPostTypeKeyFormat;
+use Wordless\Infrastructure\Wordpress\Registrar\CustomPostRegistrar\Traits\Validation\Exceptions\ReservedCustomPostTypeKeyFormat;
 use WP_Error;
 
-trait Register
+abstract class CustomPostRegistrar implements Registrar
 {
     use Labels;
     use Rewrite;
     use Validation;
+
+    protected const TYPE_KEY = null;
 
     /** @var array<static, string> */
     private static array $type_keys = [];
@@ -29,6 +33,7 @@ trait Register
      * @throws CustomPostTypeRegistrationFailed
      * @throws InvalidCustomPostTypeKeyFormat
      * @throws ReservedCustomPostTypeKeyFormat
+     * @throws RuntimeException
      */
     public static function register(): void
     {
@@ -115,6 +120,8 @@ trait Register
     /**
      * https://developer.wordpress.org/reference/functions/register_post_type/#capability_type
      * @return string[]|null
+     * @throws FailedToCreateInflector
+     * @throws RuntimeException
      */
     protected static function getCapabilityType(): ?array
     {
@@ -230,6 +237,7 @@ trait Register
     /**
      * @return array
      * @throws FailedToCreateInflector
+     * @throws RuntimeException
      */
     protected static function mountArguments(): array
     {
